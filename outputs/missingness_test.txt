@@ -1,0 +1,4 @@
+VERDICT: Missing end-timestamps are NOT completely at random (MCAR).
+Likelihood-ratio test: LR=954.56, df=23, p=6.04e-187.
+Interpretation: missingness is systematic (MAR/MNAR). Naive survival curves may be biased; censored rows with high predicted missingness probability are down-weighted via trust_score.
+Significant covariates (p<0.05): corridor_fill_Mysore Road (p=0.0002), corridor_fill_ORR North 1 (p=0.0333), corridor_fill_Old Madras Road (p=0.0225), corridor_fill_Tumkur Road (p=0.0000), cause_fill_accident (p=0.0000), cause_fill_congestion (p=0.0000), cause_fill_construction (p=0.0000), cause_fill_others (p=0.0000), cause_fill_pot_holes (p=0.0000), cause_fill_public_event (p=0.0000), cause_fill_tree_fall (p=0.0296), cause_fill_vehicle_breakdown (p=0.0000), closure_int (p=0.0449)
