@@ -1,0 +1,332 @@
+[
+  {
+    "label": "Highest confidence",
+    "query_event_id": "FKID001569",
+    "cause": "procession",
+    "corridor": "Non-corridor",
+    "confidence": 0.9144,
+    "n_eff": 4.987,
+    "mean_similarity": 0.9144,
+    "abstain": false,
+    "abstain_reason": "sufficient_evidence",
+    "prototypes_retrieved": [
+      {
+        "prototype_id": 9,
+        "cause": "procession",
+        "corridor": "Non-corridor",
+        "similarity": 0.9867,
+        "gower_dist": 0.0067,
+        "median_duration": 67.59724811666666,
+        "closure_rate": 0.0
+      },
+      {
+        "prototype_id": 14,
+        "cause": "procession",
+        "corridor": "Non-corridor",
+        "similarity": 0.9302,
+        "gower_dist": 0.0362,
+        "median_duration": 35.836165083333334,
+        "closure_rate": 0.0
+      },
+      {
+        "prototype_id": 22,
+        "cause": "procession",
+        "corridor": "Non-corridor",
+        "similarity": 0.915,
+        "gower_dist": 0.0444,
+        "median_duration": 67.59724811666666,
+        "closure_rate": 0.0
+      },
+      {
+        "prototype_id": 6,
+        "cause": "procession",
+        "corridor": "Non-corridor",
+        "similarity": 0.898,
+        "gower_dist": 0.0538,
+        "median_duration": 67.59724811666666,
+        "closure_rate": 0.0
+      },
+      {
+        "prototype_id": 7,
+        "cause": "procession",
+        "corridor": "Non-corridor",
+        "similarity": 0.8423,
+        "gower_dist": 0.0858,
+        "median_duration": 67.59724811666666,
+        "closure_rate": 0.0
+      }
+    ],
+    "predicted_duration_p50": 61.1,
+    "predicted_duration_p80": 77.4,
+    "predicted_duration_p95": 107.1,
+    "predicted_closure_prob": 0.0,
+    "predicted_severity": 1.0,
+    "delta_obi": 0.113,
+    "actual_duration": 67.6,
+    "abs_error": 6.5
+  },
+  {
+    "label": "Lowest confidence (non-abstained)",
+    "query_event_id": "FKID004711",
+    "cause": "public_event",
+    "corridor": "Non-corridor",
+    "confidence": 0.4521,
+    "n_eff": 4.964,
+    "mean_similarity": 0.4521,
+    "abstain": false,
+    "abstain_reason": "sufficient_evidence",
+    "prototypes_retrieved": [
+      {
+        "prototype_id": 13,
+        "cause": "public_event",
+        "corridor": "Non-corridor",
+        "similarity": 0.524,
+        "gower_dist": 0.1448,
+        "median_duration": 1440.0,
+        "closure_rate": 0.0
+      },
+      {
+        "prototype_id": 32,
+        "cause": "vip_movement",
+        "corridor": "Non-corridor",
+        "similarity": 0.4543,
+        "gower_dist": 0.2162,
+        "median_duration": 1440.0,
+        "closure_rate": 0.0
+      },
+      {
+        "prototype_id": 18,
+        "cause": "public_event",
+        "corridor": "Bellary Road 2",
+        "similarity": 0.444,
+        "gower_dist": 0.3247,
+        "median_duration": 1080.0697666666667,
+        "closure_rate": 0.0
+      },
+      {
+        "prototype_id": 28,
+        "cause": "protest",
+        "corridor": "Mysore Road",
+        "similarity": 0.4251,
+        "gower_dist": 0.2494,
+        "median_duration": 1440.0,
+        "closure_rate": 0.0
+      },
+      {
+        "prototype_id": 34,
+        "cause": "public_event",
+        "corridor": "Non-corridor",
+        "similarity": 0.4132,
+        "gower_dist": 0.2635,
+        "median_duration": 1333.8602166666667,
+        "closure_rate": 0.0
+      }
+    ],
+    "predicted_duration_p50": 1349.9,
+    "predicted_duration_p80": 1392.3,
+    "predicted_duration_p95": 1413.5,
+    "predicted_closure_prob": 0.0,
+    "predicted_severity": 1.581,
+    "delta_obi": 0.1803,
+    "actual_duration": 1440.0,
+    "abs_error": 90.1
+  },
+  {
+    "label": "Highest predicted duration",
+    "query_event_id": "FKID004165",
+    "cause": "protest",
+    "corridor": "Non-corridor",
+    "confidence": 0.5197,
+    "n_eff": 4.939,
+    "mean_similarity": 0.5197,
+    "abstain": false,
+    "abstain_reason": "sufficient_evidence",
+    "prototypes_retrieved": [
+      {
+        "prototype_id": 28,
+        "cause": "protest",
+        "corridor": "Mysore Road",
+        "similarity": 0.5944,
+        "gower_dist": 0.0817,
+        "median_duration": 1440.0,
+        "closure_rate": 0.0
+      },
+      {
+        "prototype_id": 32,
+        "cause": "vip_movement",
+        "corridor": "Non-corridor",
+        "similarity": 0.5714,
+        "gower_dist": 0.1015,
+        "median_duration": 1440.0,
+        "closure_rate": 0.0
+      },
+      {
+        "prototype_id": 42,
+        "cause": "protest",
+        "corridor": "Tumkur Road",
+        "similarity": 0.5077,
+        "gower_dist": 0.1606,
+        "median_duration": 1440.0,
+        "closure_rate": 0.0
+      },
+      {
+        "prototype_id": 2,
+        "cause": "procession",
+        "corridor": "Non-corridor",
+        "similarity": 0.4917,
+        "gower_dist": 0.1766,
+        "median_duration": 1440.0,
+        "closure_rate": 0.0
+      },
+      {
+        "prototype_id": 33,
+        "cause": "public_event",
+        "corridor": "Hennur Main Road",
+        "similarity": 0.4336,
+        "gower_dist": 0.2395,
+        "median_duration": 1440.0,
+        "closure_rate": 0.0
+      }
+    ],
+    "predicted_duration_p50": 1440.0,
+    "predicted_duration_p80": 1440.0,
+    "predicted_duration_p95": 1440.0,
+    "predicted_closure_prob": 0.0,
+    "predicted_severity": 1.953,
+    "delta_obi": 0.2024,
+    "actual_duration": 1440.0,
+    "abs_error": 0.0
+  },
+  {
+    "label": "Rarest cause type",
+    "query_event_id": "FKID000378",
+    "cause": "protest",
+    "corridor": "Non-corridor",
+    "confidence": 0.749,
+    "n_eff": 4.915,
+    "mean_similarity": 0.749,
+    "abstain": false,
+    "abstain_reason": "sufficient_evidence",
+    "prototypes_retrieved": [
+      {
+        "prototype_id": 26,
+        "cause": "protest",
+        "corridor": "Non-corridor",
+        "similarity": 0.9441,
+        "gower_dist": 0.0288,
+        "median_duration": 35.137540725,
+        "closure_rate": 1.0
+      },
+      {
+        "prototype_id": 1,
+        "cause": "public_event",
+        "corridor": "Non-corridor",
+        "similarity": 0.7289,
+        "gower_dist": 0.1155,
+        "median_duration": 67.59724811666666,
+        "closure_rate": 1.0
+      },
+      {
+        "prototype_id": 8,
+        "cause": "public_event",
+        "corridor": "Old Madras Road",
+        "similarity": 0.6976,
+        "gower_dist": 0.1801,
+        "median_duration": 67.59724811666666,
+        "closure_rate": 1.0
+      },
+      {
+        "prototype_id": 6,
+        "cause": "procession",
+        "corridor": "Non-corridor",
+        "similarity": 0.6923,
+        "gower_dist": 0.1839,
+        "median_duration": 67.59724811666666,
+        "closure_rate": 0.0
+      },
+      {
+        "prototype_id": 46,
+        "cause": "public_event",
+        "corridor": "CBD 2",
+        "similarity": 0.6823,
+        "gower_dist": 0.1911,
+        "median_duration": 67.59724811666666,
+        "closure_rate": 1.0
+      }
+    ],
+    "predicted_duration_p50": 59.4,
+    "predicted_duration_p80": 67.6,
+    "predicted_duration_p95": 95.4,
+    "predicted_closure_prob": 0.8151,
+    "predicted_severity": 1.737,
+    "delta_obi": 0.1501,
+    "actual_duration": 67.6,
+    "abs_error": 8.2
+  },
+  {
+    "label": "Best prediction accuracy",
+    "query_event_id": "FKID000008",
+    "cause": "public_event",
+    "corridor": "CBD 2",
+    "confidence": 0.8324,
+    "n_eff": 4.949,
+    "mean_similarity": 0.8324,
+    "abstain": false,
+    "abstain_reason": "sufficient_evidence",
+    "prototypes_retrieved": [
+      {
+        "prototype_id": 20,
+        "cause": "public_event",
+        "corridor": "CBD 2",
+        "similarity": 1.0,
+        "gower_dist": 0.0,
+        "median_duration": 67.59724811666666,
+        "closure_rate": 0.0
+      },
+      {
+        "prototype_id": 29,
+        "cause": "procession",
+        "corridor": "Magadi Road",
+        "similarity": 0.8042,
+        "gower_dist": 0.1089,
+        "median_duration": 67.59724811666666,
+        "closure_rate": 0.0
+      },
+      {
+        "prototype_id": 46,
+        "cause": "public_event",
+        "corridor": "CBD 2",
+        "similarity": 0.7947,
+        "gower_dist": 0.1149,
+        "median_duration": 67.59724811666666,
+        "closure_rate": 1.0
+      },
+      {
+        "prototype_id": 4,
+        "cause": "procession",
+        "corridor": "Hosur Road",
+        "similarity": 0.7864,
+        "gower_dist": 0.1201,
+        "median_duration": 67.59724811666666,
+        "closure_rate": 0.0
+      },
+      {
+        "prototype_id": 8,
+        "cause": "public_event",
+        "corridor": "Old Madras Road",
+        "similarity": 0.7767,
+        "gower_dist": 0.1263,
+        "median_duration": 67.59724811666666,
+        "closure_rate": 1.0
+      }
+    ],
+    "predicted_duration_p50": 67.6,
+    "predicted_duration_p80": 67.6,
+    "predicted_duration_p95": 67.6,
+    "predicted_closure_prob": 0.3776,
+    "predicted_severity": 3.0,
+    "delta_obi": 0.2266,
+    "actual_duration": 67.6,
+    "abs_error": 0.0
+  }
+]

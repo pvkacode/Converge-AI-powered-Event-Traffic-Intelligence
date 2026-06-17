@@ -1,0 +1,193 @@
+[
+  {
+    "scenario": "peak_hour_large_crowd",
+    "inputs": {
+      "event_type": "public_event",
+      "corridor": "Non-corridor",
+      "hour": 18,
+      "day_of_week": 4,
+      "expected_crowd": 10000,
+      "requires_closure": null
+    },
+    "matched_cause": "public_event",
+    "matched_corridor": "Non-corridor",
+    "confidence": 0.8188,
+    "n_eff": 4.998,
+    "mean_similarity": 0.8188,
+    "abstain": false,
+    "abstain_reason": "sufficient_evidence",
+    "outcomes": {
+      "predicted_duration_median": 70.983,
+      "predicted_duration_p80": 95.201,
+      "predicted_duration_p95": 107.31,
+      "predicted_closure_probability": 0.0,
+      "predicted_severity": 1.41,
+      "crowd_factor": 1.099
+    },
+    "delta_obi": 0.1415,
+    "top_prototypes": [
+      {
+        "prototype_id": 20,
+        "cause": "public_event",
+        "corridor": "CBD 2",
+        "similarity": 0.8383,
+        "gower_dist": 0.0882
+      },
+      {
+        "prototype_id": 43,
+        "cause": "public_event",
+        "corridor": "Non-corridor",
+        "similarity": 0.8362,
+        "gower_dist": 0.0894
+      },
+      {
+        "prototype_id": 17,
+        "cause": "public_event",
+        "corridor": "Non-corridor",
+        "similarity": 0.8244,
+        "gower_dist": 0.0965
+      },
+      {
+        "prototype_id": 6,
+        "cause": "procession",
+        "corridor": "Non-corridor",
+        "similarity": 0.8008,
+        "gower_dist": 0.1111
+      },
+      {
+        "prototype_id": 22,
+        "cause": "procession",
+        "corridor": "Non-corridor",
+        "similarity": 0.7942,
+        "gower_dist": 0.1152
+      }
+    ]
+  },
+  {
+    "scenario": "offpeak_rare_cause",
+    "inputs": {
+      "event_type": "protest",
+      "corridor": "Non-corridor",
+      "hour": 11,
+      "day_of_week": 1,
+      "expected_crowd": 500,
+      "requires_closure": null
+    },
+    "matched_cause": "protest",
+    "matched_corridor": "Non-corridor",
+    "confidence": 0.7798,
+    "n_eff": 4.993,
+    "mean_similarity": 0.7798,
+    "abstain": false,
+    "abstain_reason": "sufficient_evidence",
+    "outcomes": {
+      "predicted_duration_median": 61.154,
+      "predicted_duration_p80": 67.939,
+      "predicted_duration_p95": 80.273,
+      "predicted_closure_probability": 0.0,
+      "predicted_severity": 1.375,
+      "crowd_factor": 0.095
+    },
+    "delta_obi": 0.1391,
+    "top_prototypes": [
+      {
+        "prototype_id": 9,
+        "cause": "procession",
+        "corridor": "Non-corridor",
+        "similarity": 0.8202,
+        "gower_dist": 0.0991
+      },
+      {
+        "prototype_id": 14,
+        "cause": "procession",
+        "corridor": "Non-corridor",
+        "similarity": 0.791,
+        "gower_dist": 0.1173
+      },
+      {
+        "prototype_id": 6,
+        "cause": "procession",
+        "corridor": "Non-corridor",
+        "similarity": 0.7853,
+        "gower_dist": 0.1209
+      },
+      {
+        "prototype_id": 22,
+        "cause": "procession",
+        "corridor": "Non-corridor",
+        "similarity": 0.7713,
+        "gower_dist": 0.1298
+      },
+      {
+        "prototype_id": 20,
+        "cause": "public_event",
+        "corridor": "CBD 2",
+        "similarity": 0.7313,
+        "gower_dist": 0.1564
+      }
+    ]
+  },
+  {
+    "scenario": "forced_closure_override",
+    "inputs": {
+      "event_type": "public_event",
+      "corridor": "Non-corridor",
+      "hour": 15,
+      "day_of_week": 3,
+      "expected_crowd": 0,
+      "requires_closure": true
+    },
+    "matched_cause": "public_event",
+    "matched_corridor": "Non-corridor",
+    "confidence": 0.8143,
+    "n_eff": 4.97,
+    "mean_similarity": 0.8143,
+    "abstain": false,
+    "abstain_reason": "sufficient_evidence",
+    "outcomes": {
+      "predicted_duration_median": 61.596,
+      "predicted_duration_p80": 67.597,
+      "predicted_duration_p95": 95.168,
+      "predicted_closure_probability": 0.95,
+      "predicted_severity": 2.19
+    },
+    "delta_obi": 0.1636,
+    "top_prototypes": [
+      {
+        "prototype_id": 1,
+        "cause": "public_event",
+        "corridor": "Non-corridor",
+        "similarity": 0.8968,
+        "gower_dist": 0.0118
+      },
+      {
+        "prototype_id": 8,
+        "cause": "public_event",
+        "corridor": "Old Madras Road",
+        "similarity": 0.8583,
+        "gower_dist": 0.0764
+      },
+      {
+        "prototype_id": 46,
+        "cause": "public_event",
+        "corridor": "CBD 2",
+        "similarity": 0.8341,
+        "gower_dist": 0.0907
+      },
+      {
+        "prototype_id": 26,
+        "cause": "protest",
+        "corridor": "Non-corridor",
+        "similarity": 0.7527,
+        "gower_dist": 0.142
+      },
+      {
+        "prototype_id": 27,
+        "cause": "public_event",
+        "corridor": "Bannerghata Road",
+        "similarity": 0.7295,
+        "gower_dist": 0.0764
+      }
+    ]
+  }
+]

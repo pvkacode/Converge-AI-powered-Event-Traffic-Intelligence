@@ -1,0 +1,28 @@
+{
+  "hybrid_weights": {
+    "event_cause": 0.35,
+    "corridor": 0.25,
+    "closure_binary": 0.15,
+    "priority_numeric": 0.1,
+    "hour_of_day": 0.1,
+    "month": 0.05
+  },
+  "gower_weight": 0.4,
+  "hybrid_weight": 0.6,
+  "rationale": "Cause and corridor dominate because same cause+corridor predicts outcome most reliably in traffic operations",
+  "categorical_features": [
+    "event_cause",
+    "corridor"
+  ],
+  "binary_features": [
+    "closure_binary"
+  ],
+  "continuous_features": [
+    "hour_of_day",
+    "day_of_week",
+    "duration_clean",
+    "priority_numeric",
+    "trust_score",
+    "month"
+  ]
+}

@@ -1,0 +1,295 @@
+junction,dis_score,risk_level,strategy,barricades,ods_driven_barricades,closure_type,barricade_window_start,barricade_window_end,teams_needed,severity_hotspot_score
+JalahalliCross(SM Circle),100.0,Critical,emergency_closure,21,21,full_road,deploy_at_event_start,remove_after_360_min,3,367.80090252785175
+SatteliteBusStandJunc,91.57,Critical,emergency_closure,20,20,full_road,deploy_at_event_start,remove_after_360_min,3,484.48576149006175
+MekhriCircle,80.3,Critical,emergency_closure,17,17,full_road,deploy_at_event_start,remove_after_360_min,3,747.0484175065194
+YeshwanthpuraCircle,77.14,High,full_barricading,17,17,full_road,deploy_at_event_start,remove_after_360_min,3,411.5617578656687
+toll gate mysore road,78.72,High,full_barricading,17,17,full_road,deploy_at_event_start,remove_after_360_min,3,399.1137379304063
+GokuldasImagesJunc,81.95,Critical,emergency_closure,18,18,full_road,deploy_at_event_start,remove_after_360_min,3,320.6704924886729
+HesaraghattaJunction,72.59,High,full_barricading,16,16,full_road,deploy_at_event_start,remove_after_360_min,2,326.56704565462746
+KIMCO Junction,84.21,Critical,emergency_closure,18,18,full_road,deploy_at_event_start,remove_after_360_min,3,378.2872755298367
+YelhankaCircle,69.52,High,full_barricading,15,15,full_road,deploy_at_event_start,remove_after_360_min,2,403.2306397661429
+BagalurCrossJunc,85.82,Critical,emergency_closure,19,19,full_road,deploy_at_event_start,remove_after_360_min,3,355.1821857474685
+TownhallJunction,82.99,Critical,emergency_closure,18,18,full_road,deploy_at_event_start,remove_after_360_min,3,356.52439340762373
+AyyappaTempleJunc,60.46,High,full_barricading,13,13,full_road,deploy_at_event_start,remove_after_360_min,2,629.4602540048987
+GoruguntepalyaJunc,69.62,High,full_barricading,15,15,full_road,deploy_at_event_start,remove_after_360_min,2,225.5690176597376
+SRS Peenya Junc,65.27,High,full_barricading,14,14,full_road,deploy_at_event_start,remove_after_360_min,2,227.06061298980217
+HebbalFlyoverJunc,83.06,Critical,emergency_closure,18,18,full_road,deploy_at_event_start,remove_after_360_min,3,348.7990965568259
+RajeshwariJunc,57.84,Moderate,partial_closure,13,13,partial_lane,deploy_at_event_start,remove_after_360_min,2,258.3542226440709
+SilkBoardJunc,66.37,High,full_barricading,14,14,full_road,deploy_at_event_start,remove_after_360_min,2,386.5420983635855
+Bommanahalli,59.14,Moderate,partial_closure,13,13,partial_lane,deploy_at_event_start,remove_after_360_min,2,317.0122527312272
+SantheCircle,69.43,High,full_barricading,15,15,full_road,deploy_at_event_start,remove_after_360_min,2,302.0611834162734
+BangaloreBodyBuildersJunc,71.39,High,full_barricading,15,15,full_road,deploy_at_event_start,remove_after_360_min,2,227.2017627825516
+MysoreRd-RingRdJunc(Nayandanahallii),58.61,Moderate,partial_closure,13,13,partial_lane,deploy_at_event_start,remove_after_360_min,2,257.0344436144693
+CMP GateJunc,64.49,High,full_barricading,14,14,full_road,deploy_at_event_start,remove_after_360_min,2,370.7669257384987
+Chokasandra (Tumkur road),55.13,Moderate,partial_closure,12,12,partial_lane,deploy_at_event_start,remove_after_360_min,2,196.954513673018
+PoliceCornerJunc,50.58,Moderate,partial_closure,11,11,partial_lane,deploy_at_event_start,remove_after_360_min,2,255.9720368368549
+YelhankaBypass,63.32,High,full_barricading,14,14,full_road,deploy_at_event_start,remove_after_360_min,2,223.93475680235343
+HudsonCircle,59.8,Moderate,partial_closure,13,13,partial_lane,deploy_at_event_start,remove_after_360_min,2,177.79824624521896
+KoramangalaWaterTankJunc,41.19,Moderate,partial_closure,9,9,partial_lane,deploy_at_event_start,remove_after_360_min,2,369.8443715960219
+TumkurRdMarappanapalyaJunc,49.13,Moderate,partial_closure,11,11,partial_lane,deploy_at_event_start,remove_after_360_min,2,140.05931130030672
+BEL Circle,57.96,Moderate,partial_closure,13,13,partial_lane,deploy_at_event_start,remove_after_360_min,2,289.597784550514
+TataInstituteCircle,45.48,Moderate,partial_closure,10,10,partial_lane,deploy_at_event_start,remove_after_360_min,2,143.1638148545095
+PeenyaPoliceStation,42.45,Moderate,partial_closure,9,9,partial_lane,deploy_at_event_start,remove_after_360_min,2,145.47104208602204
+MS RamaiahJunc(TollGate),51.05,Moderate,partial_closure,11,11,partial_lane,deploy_at_event_start,remove_after_360_min,2,125.94038590152658
+Batrayanapura(Amrutahalli)Junction,42.3,Moderate,partial_closure,9,9,partial_lane,deploy_at_event_start,remove_after_360_min,2,171.48804674999832
+"VeerannapalyaJunction(BEL,HO)",44.69,Moderate,partial_closure,10,10,partial_lane,deploy_at_event_start,remove_after_360_min,2,334.16390396004886
+BigBazaarJunction(OldMadrasRd),52.2,Moderate,partial_closure,11,11,partial_lane,deploy_at_event_start,remove_after_360_min,2,220.1477022343534
+LeprosyhospitalJunc,64.54,High,full_barricading,14,14,full_road,deploy_at_event_start,remove_after_360_min,2,244.97567164308
+JakkurCrossJunction,42.29,Moderate,partial_closure,9,9,partial_lane,deploy_at_event_start,remove_after_360_min,2,197.39401517762036
+Shivajinagar(BRV)Junction,38.5,Moderate,partial_closure,9,9,partial_lane,deploy_at_event_start,remove_after_360_min,2,180.6923068312198
+UniversityJunc(Janabharti),37.4,Moderate,partial_closure,8,8,partial_lane,deploy_at_event_start,remove_after_360_min,1,127.5939699219376
+IndianExpressJunction,59.33,Moderate,partial_closure,13,13,partial_lane,deploy_at_event_start,remove_after_360_min,2,202.5408097175664
+KatriguppeJunction,30.9,Moderate,partial_closure,7,7,partial_lane,deploy_at_event_start,remove_after_360_min,1,160.48502359807222
+KogilluCrossJunc,42.67,Moderate,partial_closure,9,9,partial_lane,deploy_at_event_start,remove_after_360_min,2,190.8352622586663
+NaganathapuraJunction,37.0,Moderate,partial_closure,8,8,partial_lane,deploy_at_event_start,remove_after_360_min,1,145.32846384323
+UlsoorGateJunc,37.79,Moderate,partial_closure,8,8,partial_lane,deploy_at_event_start,remove_after_360_min,1,111.75120787357734
+SiddalingaiahCircle,43.1,Moderate,partial_closure,10,10,partial_lane,deploy_at_event_start,remove_after_360_min,2,118.08738955905422
+SarjapurRd-St JohnsRdJunc,28.61,Low,none,7,7,none,deploy_at_event_start,remove_after_360_min,1,132.82537686383006
+SirsiCircle,35.81,Moderate,partial_closure,8,8,partial_lane,deploy_at_event_start,remove_after_360_min,1,94.80474653520452
+Devasandra(k r puram),62.72,High,full_barricading,14,14,full_road,deploy_at_event_start,remove_after_360_min,2,125.96611636845788
+KodigehalliCross,42.84,Moderate,partial_closure,9,9,partial_lane,deploy_at_event_start,remove_after_360_min,2,124.69620772314852
+BilekahalliJunc,29.5,Low,none,7,7,none,deploy_at_event_start,remove_after_360_min,1,195.48612157835248
+PoliceTimmaiahCircle(GPO),43.72,Moderate,partial_closure,10,10,partial_lane,deploy_at_event_start,remove_after_360_min,2,174.58783586579807
+N R SquareJunc,31.65,Moderate,partial_closure,7,7,partial_lane,deploy_at_event_start,remove_after_360_min,1,105.99983188000256
+MaratahalliBridgeJunc,41.44,Moderate,partial_closure,9,9,partial_lane,deploy_at_event_start,remove_after_360_min,2,226.6924669045345
+Nagavara-ORR Junction,42.27,Moderate,partial_closure,9,9,partial_lane,deploy_at_event_start,remove_after_360_min,2,415.46815502120864
+TrinityCircle,42.3,Moderate,partial_closure,9,9,partial_lane,deploy_at_event_start,remove_after_360_min,2,135.32261057487284
+MotherTeressaCircle,33.72,Moderate,partial_closure,8,8,partial_lane,deploy_at_event_start,remove_after_360_min,1,118.11212340862848
+KhodaysCircle(DV UrsCircle),47.52,Moderate,partial_closure,10,10,partial_lane,deploy_at_event_start,remove_after_360_min,2,88.37264052907224
+ArakereGateJunc,21.35,Low,none,5,5,none,deploy_at_event_start,remove_after_360_min,1,201.0375874328804
+Dr TCM RoyanRd near AmbedkarStatue,37.79,Moderate,partial_closure,8,8,partial_lane,deploy_at_event_start,remove_after_360_min,1,132.24525155574537
+QueensStatueCircle,29.41,Low,none,7,7,none,deploy_at_event_start,remove_after_360_min,1,101.72953290021051
+Kadubeesanahalli-ORR Junc,49.92,Moderate,partial_closure,11,11,partial_lane,deploy_at_event_start,remove_after_360_min,2,165.9187251607828
+K R Circle,38.22,Moderate,partial_closure,9,9,partial_lane,deploy_at_event_start,remove_after_360_min,2,128.12570225011325
+Richmond circle jn,22.32,Low,none,5,5,none,deploy_at_event_start,remove_after_360_min,1,131.95959757350042
+ItmaduJunction,32.39,Moderate,partial_closure,7,7,partial_lane,deploy_at_event_start,remove_after_360_min,1,71.41690280557634
+OldMadrasRd-Indranagar100ftRdJunc,31.49,Moderate,partial_closure,7,7,partial_lane,deploy_at_event_start,remove_after_360_min,1,109.64355463895896
+KadirenahalliJunction,36.93,Moderate,partial_closure,8,8,partial_lane,deploy_at_event_start,remove_after_360_min,1,95.1779867580897
+ShivajiTalkiesJunc,29.34,Low,none,7,7,none,deploy_at_event_start,remove_after_360_min,1,65.24652635467062
+K R MarketJunction,28.63,Low,none,7,7,none,deploy_at_event_start,remove_after_360_min,1,75.98321722109753
+HunsemarammanahalliJunction,28.46,Low,none,6,6,none,deploy_at_event_start,remove_after_360_min,1,84.56855493050152
+Sumanhalli,55.37,Moderate,partial_closure,12,12,partial_lane,deploy_at_event_start,remove_after_360_min,2,196.92633135787565
+KanakapuraRd-RingRdJunction,22.63,Low,none,5,5,none,deploy_at_event_start,remove_after_360_min,1,93.42061164926436
+Ashoknagar Junction(ShoolayCircle),23.76,Low,none,5,5,none,deploy_at_event_start,remove_after_360_min,1,73.87492094933125
+Kudlu Gate Junc,30.2,Moderate,partial_closure,7,7,partial_lane,deploy_at_event_start,remove_after_360_min,1,75.13567747216874
+AshirwadamCircle,28.19,Low,none,6,6,none,deploy_at_event_start,remove_after_360_min,1,71.00668756775777
+AnepalyaJunc,18.04,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,81.60406847304019
+HulimaveRd-BanneraghattaRdJunc,17.83,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,114.07545150808863
+MinskSquare(CTO Junction),27.6,Low,none,6,6,none,deploy_at_event_start,remove_after_360_min,1,101.8242321705254
+OldMadrasRd-NGEF Junc,26.78,Low,none,6,6,none,deploy_at_event_start,remove_after_360_min,1,74.34238672201172
+PES-DevegowdaCircle,22.56,Low,none,5,5,none,deploy_at_event_start,remove_after_360_min,1,48.417524040872905
+BDA Junctio-Koramangala,20.14,Low,none,5,5,none,deploy_at_event_start,remove_after_360_min,1,73.45894817565002
+MeenakshiMallJunc,16.45,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,102.86511949744778
+AnilKumbleCircle,27.82,Low,none,6,6,none,deploy_at_event_start,remove_after_360_min,1,72.69190178208848
+OldMadrasRd-80FeetRdJunc,27.8,Low,none,6,6,none,deploy_at_event_start,remove_after_360_min,1,71.89325331269475
+SadahalliGateJunc(AirportRd),25.99,Low,none,6,6,none,deploy_at_event_start,remove_after_360_min,1,76.84282982408321
+OperaHouseJunc,17.57,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,91.87452483380729
+Srigandakaval,38.32,Moderate,partial_closure,9,9,partial_lane,deploy_at_event_start,remove_after_360_min,2,183.2305381533538
+RamaiahCircle-UlsoorPoliceStation,26.25,Low,none,6,6,none,deploy_at_event_start,remove_after_360_min,1,83.26031569573055
+BiryandCircle,26.34,Low,none,6,6,none,deploy_at_event_start,remove_after_360_min,1,60.92648585821589
+Marigowda-TavarkereRdJunc,30.26,Moderate,partial_closure,7,7,partial_lane,deploy_at_event_start,remove_after_360_min,1,108.04667333656394
+JP Nagar 15th cross junction,17.42,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,95.84168607307274
+JayadevaHospitalJunc,14.89,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,89.32928308441386
+SadashivnagarJunc,31.5,Moderate,partial_closure,7,7,partial_lane,deploy_at_event_start,remove_after_360_min,1,47.03276252110128
+CashPharmacyJunction,16.5,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,36.18713598280348
+SagarHospitalJunc,9.63,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,60.92648585821589
+Deverabeesanahalli-ORR Junc,23.01,Low,none,5,5,none,deploy_at_event_start,remove_after_360_min,1,178.73389195216436
+FTI Junction(KanteeravaStudio),33.28,Moderate,partial_closure,7,7,partial_lane,deploy_at_event_start,remove_after_360_min,1,44.66171091242997
+HennurRoad-ORR Junc,28.33,Low,none,6,6,none,deploy_at_event_start,remove_after_360_min,1,193.9481933167798
+A S CharStreet-MysoreRdJunc,17.5,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,54.822056436119055
+KamrajRdJunction,23.79,Low,none,5,5,none,deploy_at_event_start,remove_after_360_min,1,55.51757464642407
+OldPoliceStation-Ashoknagar,29.54,Low,none,7,7,none,deploy_at_event_start,remove_after_360_min,1,50.88861193767272
+CMH Rd-AdarshTheaterJunc,11.74,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,53.61530755522998
+MayohallJunction,29.72,Low,none,7,7,none,deploy_at_event_start,remove_after_360_min,1,53.45399521827407
+GarebhavipalyaJunc,19.64,Low,none,5,5,none,deploy_at_event_start,remove_after_360_min,1,49.95971840373703
+KundanahalliGateJunc,36.26,Moderate,partial_closure,8,8,partial_lane,deploy_at_event_start,remove_after_360_min,1,136.05757055677003
+MysoreRd--MadhuPetrolBunkJunction,17.39,Low,none,6,6,none,deploy_at_event_start,remove_after_360_min,1,36.60693856782195
+WebbsCircle,16.55,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,32.108689841331014
+DairyCircle,11.05,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,50.190773699528975
+OldMadrasRd-DoubleRdJunc,16.79,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,20.814557033553207
+Rajajinagar19thMainJunc,25.82,Low,none,6,6,none,deploy_at_event_start,remove_after_360_min,1,73.11178302985907
+CoffeeBoardJunc,21.04,Low,none,5,5,none,deploy_at_event_start,remove_after_360_min,1,132.1248090195431
+AnjaneyaTempleJunc,16.27,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,25.589124060450672
+OldMadrasRd-SuddaguntepalyaRdJunc,10.28,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,25.589124060450672
+UttarahalliJunction,24.33,Low,none,6,6,none,deploy_at_event_start,remove_after_360_min,1,96.71417871629414
+ManipalCentreJunc,16.18,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,19.537373251150637
+IbblurJunction',26.78,Low,none,6,6,none,deploy_at_event_start,remove_after_360_min,1,184.4253215242703
+SandeepUnnikrishnan-Yelhanka,31.77,Moderate,partial_closure,7,7,partial_lane,deploy_at_event_start,remove_after_360_min,1,29.005180360431662
+Arts&CraftsCircle,16.1,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,15.495594968429822
+BloodBankCircle,22.67,Low,none,5,5,none,deploy_at_event_start,remove_after_360_min,1,113.42935600314192
+OldMadrasRd-BMTC DepotJunc,15.99,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,9.076833923062052
+TamarikannanJunc,15.98,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,8.529708020150224
+StateBankofMysoreJunc,23.62,Low,none,5,5,none,deploy_at_event_start,remove_after_360_min,1,47.77612025697399
+DhobiGhatJunc,31.35,Moderate,partial_closure,7,7,partial_lane,deploy_at_event_start,remove_after_360_min,1,85.5251549535167
+RoyanCircle-Chamrajpete,14.14,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,7.621317042950318
+JohnsonMarket,13.28,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,38.67775582768686
+Nagarbhavi,25.38,Low,none,6,6,none,deploy_at_event_start,remove_after_360_min,1,42.00220318640979
+29thMainRdBTM LayoutJunc,20.26,Low,none,5,5,none,deploy_at_event_start,remove_after_360_min,1,33.16213017365894
+Delmia-Jayanagar,16.93,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,44.6416623905507
+HopefarmJunction,35.06,Moderate,partial_closure,8,8,partial_lane,deploy_at_event_start,remove_after_360_min,1,46.36140660773375
+KamakyaJunction,10.5,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,11.455253630991663
+MC Circle,12.34,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,70.70431876742774
+VijayanagarBusStandJunction,9.75,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,54.62365308071331
+NCERT Junction,10.32,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,14.974767419466591
+UCO Bank(Forum),10.28,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,26.502365722725
+ShantalaJunction,25.7,Low,none,6,6,none,deploy_at_event_start,remove_after_360_min,1,66.05834437272476
+AgaraJunction,15.11,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,68.33560146021472
+AdugodiJunc,9.91,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,13.75668429433104
+DevegowdaPetrolBunkJunc,10.02,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,25.792577240591758
+J D MaraJunc,6.72,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,33.64032842821376
+HoramavuJunction,17.95,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,142.53310028599412
+VeerasandraGateJunction,30.53,Moderate,partial_closure,7,7,partial_lane,deploy_at_event_start,remove_after_360_min,1,45.35738031746069
+ShivandaCircle,28.33,Low,none,6,6,none,deploy_at_event_start,remove_after_360_min,1,46.7358470202285
+GangammagudiJunc,19.76,Low,none,5,5,none,deploy_at_event_start,remove_after_360_min,1,21.281806109558104
+SwagathMainRd-EastEndRdJunc,11.02,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,14.943822600827476
+KrishnaFlourMill,19.75,Low,none,5,5,none,deploy_at_event_start,remove_after_360_min,1,64.58049244027005
+GorappanapalyaJunction,0.0,Low,none,0,0,none,deploy_at_event_start,remove_after_360_min,0,7.643722409212817
+Ring road-Near Kengunte Junction,17.75,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,30.08215801795969
+NavarangTheatreJunction,9.52,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,48.74118868657271
+Srinivagilu(Ejipura)Junc,5.91,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,51.68809780039498
+LRDE Junction,19.24,Low,none,5,5,none,deploy_at_event_start,remove_after_360_min,1,108.2860195987214
+MahalaxmiLayoutEntranceJunc,9.8,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,57.04859354227724
+SonyworldJunction,10.86,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,35.64534037393527
+5thMainRPC Layout-Vijayanagar,6.8,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,30.590153858937168
+RamamurthyNagarJunction,19.06,Low,none,5,5,none,deploy_at_event_start,remove_after_360_min,1,100.69899976157213
+Jaipuria-Adugodi,5.19,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,56.48380777410003
+HSR14thMainJunc,18.91,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,28.3916738734558
+RingRoad-UllalJunction,12.78,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,30.84904270252157
+CholurpalyaJunction(MagadiRd),6.22,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,20.024433972404864
+ModiBridgeJunction,12.4,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,40.45558695473127
+ShivanahalliJunctionWOC,18.38,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,39.75033652638003
+Krupanidhi College,17.39,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,20.73667481322472
+AnandRaoJunction,16.6,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,28.180586503915396
+MargosaRd-18thCrossJunc,17.26,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,24.35317362142644
+AttiguppeCircleJunction,5.97,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,7.921157311968372
+SubbannaJunction,15.97,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,45.85078434858849
+BTM16thMain-ORR Junc,20.69,Low,none,5,5,none,deploy_at_event_start,remove_after_360_min,1,19.86688585158437
+Rajajinagagr1stBlockJunction,6.04,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,24.37059434328636
+BucheryJunction,14.59,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,50.818811050843536
+BM ShriJunc(CMH-100FtRd)Junc,9.92,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,32.581983841625245
+Fire Force Junction,5.69,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,17.14687357876901
+CID-CarltonHouseJunc,12.72,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,39.09807851550019
+RajarajeshwariKalyanaMantapaJunc,11.66,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,12.185297171643178
+ModiHospital,5.59,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,13.22923867366166
+"PriyadarshiniHotel,Jayamahal,RT Nagar",15.09,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,24.924279358245972
+Indiranasgar13thMainJunc,3.74,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,25.140934500351463
+PrasannaJunction,24.03,Low,none,6,6,none,deploy_at_event_start,remove_after_360_min,1,64.27164792631336
+JaiMuniRaoCircle,24.0,Low,none,6,6,none,deploy_at_event_start,remove_after_360_min,1,62.59571780849247
+Arbindo Circle,22.36,Low,none,5,5,none,deploy_at_event_start,remove_after_360_min,1,41.72708530631042
+WilsonGarden12thCrossJunc,16.0,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,28.9200748049728
+"Bellandur Junction, Outer ring road",13.81,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,22.098221141717413
+MillCornerRd-SampigeRdJunc,15.3,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,37.62085927276643
+WiproJunc-Koramangala,13.72,Low,none,5,5,none,deploy_at_event_start,remove_after_360_min,1,5.376773689039262
+17th Mn 1st Crs Aishwarya Stores Jn,13.75,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,4.0392231910248
+BasaweshwaraCircle,16.05,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,61.01697984688758
+K H Road-SiddaiahRdJunc(BMTC-BigBazaar),12.39,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,26.78668080373684
+PlatformRdJunction,10.64,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,24.12739112561477
+BanashankariBusStandJunc,25.75,Low,none,6,6,none,deploy_at_event_start,remove_after_360_min,1,55.78474677439081
+SindhiColonyJunction,19.19,Low,none,5,5,none,deploy_at_event_start,remove_after_360_min,1,58.56669414995475
+BigBazaar(Whitefield)Junc,17.4,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,34.7960634279562
+PurnimaTheaterJunc,10.94,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,32.494125791048475
+ElectronicCityGate-2Junc,17.28,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,22.432458195498405
+TyagiHengalvarayaJunc(DickensonRd),30.24,Moderate,partial_closure,7,7,partial_lane,deploy_at_event_start,remove_after_360_min,1,60.82879691642817
+LalbaghMainGateJunc,12.23,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,24.41304702279214
+5thMainHSR,4.58,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,36.04693594983725
+Kammanahalli-RingRoadJunction,12.01,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,43.442178695439104
+CIL CrossJunction-JayamahalRd,8.87,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,16.247062895524238
+BMTCJunction-K H Road,11.08,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,38.10169734270811
+SagarTheatreJunc,8.17,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,22.602800735010668
+BagalakunteCrossJunction,12.36,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,9.509374180163974
+KarnatakaBhavanJunction,10.09,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,33.63254348363455
+UrvashiJunction,11.01,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,27.54810346249108
+DomlurWaterTank,37.94,Moderate,partial_closure,8,8,partial_lane,deploy_at_event_start,remove_after_360_min,1,104.67085894800591
+ChaudrayaCircle/UdayaTVCircle(CantonmentJunc),9.71,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,33.33126442267435
+BhashyamCircle-SadashivNagar,12.24,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,14.53386726735369
+Malleswaram18thCrossRd-SampigeRdJunc,6.44,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,19.842955523158565
+Shivashankara circle,10.46,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,21.23655194900358
+MintoJunction,10.44,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,21.885857888683105
+BhashyamCircle,14.0,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,20.0882033351172
+SiddapuraJunction,16.43,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,21.089457720147763
+JP Nagar 9th cross-24th main jn,10.43,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,20.993118649919488
+PotteryCircle,15.81,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,21.835417496355117
+BinnyMillJunction,15.09,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,33.62021930703921
+28thMainJayanagarJunc,4.1,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,35.877975692186915
+DevangaHostelJunction,10.11,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,35.24535318328342
+ASC Junction,9.87,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,12.335926864630904
+Dr RajkumarRd-10thCrossRdJunc,5.22,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,36.00638352039352
+SubedarChatramRd near SheshadripuramPS,7.97,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,36.14935513662373
+WilsonGarden10thCrossJunc,8.85,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,24.082433558168805
+KuvempuCircle,13.6,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,39.95972485849284
+ISRO Junction-Airport rd,58.46,Moderate,partial_closure,13,13,partial_lane,deploy_at_event_start,remove_after_360_min,2,119.06922020337164
+GopalGowdaJUnc,9.0,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,12.29860985389628
+HainsJunc,26.18,Low,none,6,6,none,deploy_at_event_start,remove_after_360_min,1,26.15605703860356
+RajajinagarEntranceJunction,8.48,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,16.718877384173936
+NandiCross(RaniCross),11.72,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,11.353828998634324
+HennurRd-DavisRdJunction,15.38,Low,none,5,5,none,deploy_at_event_start,remove_after_360_min,1,70.10597376193141
+KHB Junction,17.07,Low,none,6,6,none,deploy_at_event_start,remove_after_360_min,1,12.185297171643178
+EliteJunc,8.05,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,22.94449185128904
+PuttammaChoultryNagarbhavi,4.16,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,15.02853317835992
+KonanakunteJunction(KanakapurarRd),13.54,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,23.33388048318085
+MICO Bande,7.1,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,23.618053144912118
+Peenya14thCrossJunc,11.4,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,4.061765723881059
+HoodiJunction,6.23,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,26.12838686331468
+CommandoHospitalJunc,7.47,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,23.30063243733017
+South end circle,13.82,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,11.078117742026793
+VetenaryHospitalJunc-Shivajinagar,7.55,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,16.247062895524238
+VishweswaraiahJunctio(Uttamsagar),11.28,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,4.061765723881059
+RRR(Okalipuram)Junction,6.93,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,21.8612247459796
+BegumMahalJunc,11.26,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,33.29332311409473
+Peenya2ndStageBusStand,5.23,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,12.028793872221616
+DoddaballapuraCrossJunc,4.98,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,13.02343779419267
+HalliThindi,4.95,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,13.035609972417085
+NIMHANS Junction,5.82,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,24.63032535168297
+ChandrikaJunction,4.86,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,7.404924008429772
+KalyanNagar-ORR Junc,5.68,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,48.61933571485628
+Devanahalli new bus stand,4.83,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,2.843236006716741
+LinkRoadMalleswaramJunc,4.72,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,9.754787681839826
+DevanahalliCrossJunc,4.73,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,8.123531447762119
+Geethanjali jn,4.74,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,4.061765723881059
+LalbaghWestGate,4.7,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,4.061765723881059
+ChandraLayoutJunc-nearWaterTank,4.06,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,26.226571407286126
+TC Palya-OM RoadJunc,4.82,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,17.224961863031343
+GovindapuraCross,4.57,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,4.061765723881059
+NGV RearGateJunc,4.5,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,10.295262908860002
+D'SouzaCircle,4.71,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,18.263631989400544
+Minerva Circle,4.46,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,6.370862975003506
+"Trilight Circle,Race course Road",10.43,Low,none,4,4,none,deploy_at_event_start,remove_after_360_min,1,8.226115169629434
+Basappa Circle Junction,4.74,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,12.245724121673362
+UpparpetJunction,4.4,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,8.91840189226469
+LowerAgaram(IndiaGarage)Junc,10.39,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,9.106652571585553
+HosmatJunction,4.57,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,12.185297171643178
+ShankarMuttCircle,4.56,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,11.357440692579338
+Bamboobazar(Shivajinagar),4.32,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,9.78487777292734
+"Jayanagar 4th main,36th cross",4.3,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,9.567808976840697
+SafinaPlazaJunc,6.32,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,12.546837052395531
+BasavamantapaJunc-Dr RajkumarRd,4.26,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,9.431264207821773
+NTTF JunctionPeenya,4.25,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,8.472345179845922
+NavarangBarJunc-Dr RajkumarRd,4.24,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,9.919610067032664
+KCG HospitalJunction,4.23,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,9.614995196369373
+ISRO Junction-NewBEL Rd,4.26,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,0.0
+MaharajaJunction,10.2,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,6.383558335161812
+ColesParkJunc,4.23,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,4.061765723881059
+NagaTheaterJunc-Ulsoor,4.19,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,5.416422819377365
+ThomasCafe-New,4.21,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,4.061765723881059
+DMRoadJunc(Basavangudi),10.21,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,4.061765723881059
+DickensonRd-AdigasJunc,10.21,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,4.061765723881059
+KensingtonOvalJunc,10.21,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,4.061765723881059
+MSRamaiahHospitalJunc,4.21,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,4.061765723881059
+K G Junction,4.21,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,4.061765723881059
+YediyurMeternityHospital,4.21,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,3.9891056928687663
+KR Road-14thCross Junc,4.17,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,4.824388322532902
+27th Cross Jayanagar(Ganapathi Temple),4.17,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,4.789605049702893
+BHEL Gate,4.2,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,3.470274839349371
+TVS CrossJunction,4.16,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,4.328178397839116
+Geeta Circle,4.16,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,4.266224553209622
+MarenahalliRd-18thMainRdJunc,10.19,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,3.19161018169386
+GowdanapalyaJunction,4.19,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,2.997921078870964
+Basveshwarnagar 8th main Junction,4.19,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,2.843236006716741
+BrigadeMillenium,4.19,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,2.843236006716741
+ESI(k r puram),10.19,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,2.843236006716741
+NationalCollege,10.19,Low,none,3,3,none,deploy_at_event_start,remove_after_360_min,1,2.843236006716741
+BEML GateJunc(SuranjandasRd),4.17,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,1.295174537829047
+BhadrappaLayout,5.48,Low,none,2,2,none,deploy_at_event_start,remove_after_360_min,1,28.10027919314524
+Yemalur cross junc,35.79,Moderate,partial_closure,8,8,partial_lane,deploy_at_event_start,remove_after_360_min,1,59.317188303165565
+"KuvempuCircleJunc,HAL MainGate",28.04,Low,none,6,6,none,deploy_at_event_start,remove_after_360_min,1,5.768355884952951
+"Narayanapura cross, Hegde nagar",3.35,Low,none,1,1,none,deploy_at_event_start,remove_after_360_min,1,32.90030236343658

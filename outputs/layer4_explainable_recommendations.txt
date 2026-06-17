@@ -1,0 +1,620 @@
+
+DEPLOYMENT RECOMMENDATION -- procession at West of Chord Road
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RETRIEVAL METHOD: Two-Stage (Stage: stage1_only)
+  Similarity: Gower (40%) + Domain-Weighted Hybrid (60%)
+  Hybrid weights: Cause=0.35, Corridor=0.25, Closure=0.15, Priority=0.10, Time=0.10, Month=0.05
+
+RETRIEVAL QUALITY:
+  Confidence: High (score=0.763)
+  Institutional Memory Score: 2.96 (206 meaningful matches)
+  Diversity: Low diversity -- retrieved events strongly agree; predictions reliable
+
+BEST HISTORICAL MATCH (rank 1):
+  Event: procession at Magadi Road
+  Final similarity: 0.793 (Gower=0.865, Hybrid=0.746)
+  Feature contributions: event=0.350 | corridor=0.000 | closure=0.150 | priority=0.100 | hour=0.096 | month=0.050
+
+PREDICTED OUTCOMES:
+  Duration: 64 min (P50) / 120 min (P80)
+  Road closure probability: 100%
+  Congestion: 4.0x normal
+  Impact Score: 62/100 -- High
+
+KNOWLEDGE GRAPH CONTEXT:
+  Graph-prior closure probability: 0.16
+  Final blended closure probability: 0.75
+
+RESOURCE RECOMMENDATION (evidence blend: 70% historical / 30% rules):
+  Officers: 2 | Supervisors: 1 | Barricades: 0
+  Tow vehicles: 0 | QRU: 0
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DEPLOYMENT RECOMMENDATION -- protest at Non-corridor
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RETRIEVAL METHOD: Two-Stage (Stage: stage1_only)
+  Similarity: Gower (40%) + Domain-Weighted Hybrid (60%)
+  Hybrid weights: Cause=0.35, Corridor=0.25, Closure=0.15, Priority=0.10, Time=0.10, Month=0.05
+
+RETRIEVAL QUALITY:
+  Confidence: High (score=0.775)
+  Institutional Memory Score: 4.90 (2876 meaningful matches)
+  Diversity: Low diversity -- retrieved events strongly agree; predictions reliable
+
+BEST HISTORICAL MATCH (rank 1):
+  Event: protest at Non-corridor
+  Final similarity: 0.908 (Gower=0.809, Hybrid=0.974)
+  Feature contributions: event=0.350 | corridor=0.250 | closure=0.150 | priority=0.100 | hour=0.074 | month=0.050
+
+PREDICTED OUTCOMES:
+  Duration: 1440 min (P50) / 1440 min (P80)
+  Road closure probability: 0%
+  Congestion: 1.0x normal
+  Impact Score: 48/100 -- Moderate
+
+KNOWLEDGE GRAPH CONTEXT:
+  Graph-prior closure probability: 0.30
+  Final blended closure probability: 0.09
+
+RESOURCE RECOMMENDATION (evidence blend: 70% historical / 30% rules):
+  Officers: 2 | Supervisors: 1 | Barricades: 0
+  Tow vehicles: 0 | QRU: 0
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DEPLOYMENT RECOMMENDATION -- vip_movement at Non-corridor
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RETRIEVAL METHOD: Two-Stage (Stage: stage1_only)
+  Similarity: Gower (40%) + Domain-Weighted Hybrid (60%)
+  Hybrid weights: Cause=0.35, Corridor=0.25, Closure=0.15, Priority=0.10, Time=0.10, Month=0.05
+
+RETRIEVAL QUALITY:
+  Confidence: High (score=0.784)
+  Institutional Memory Score: 4.90 (2879 meaningful matches)
+  Diversity: Low diversity -- retrieved events strongly agree; predictions reliable
+
+BEST HISTORICAL MATCH (rank 1):
+  Event: vip_movement at Non-corridor
+  Final similarity: 0.953 (Gower=0.915, Hybrid=0.978)
+  Feature contributions: event=0.350 | corridor=0.250 | closure=0.150 | priority=0.100 | hour=0.083 | month=0.045
+
+PREDICTED OUTCOMES:
+  Duration: 1440 min (P50) / 1440 min (P80)
+  Road closure probability: 0%
+  Congestion: 1.0x normal
+  Impact Score: 48/100 -- Moderate
+
+KNOWLEDGE GRAPH CONTEXT:
+  Graph-prior closure probability: 0.45
+  Final blended closure probability: 0.14
+
+RESOURCE RECOMMENDATION (evidence blend: 70% historical / 30% rules):
+  Officers: 2 | Supervisors: 1 | Barricades: 0
+  Tow vehicles: 0 | QRU: 0
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DEPLOYMENT RECOMMENDATION -- procession at Mysore Road
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RETRIEVAL METHOD: Two-Stage (Stage: stage1_only)
+  Similarity: Gower (40%) + Domain-Weighted Hybrid (60%)
+  Hybrid weights: Cause=0.35, Corridor=0.25, Closure=0.15, Priority=0.10, Time=0.10, Month=0.05
+
+RETRIEVAL QUALITY:
+  Confidence: High (score=0.807)
+  Institutional Memory Score: 3.79 (819 meaningful matches)
+  Diversity: Low diversity -- retrieved events strongly agree; predictions reliable
+
+BEST HISTORICAL MATCH (rank 1):
+  Event: procession at Mysore Road
+  Final similarity: 1.000 (Gower=1.000, Hybrid=1.000)
+  Feature contributions: event=0.350 | corridor=0.250 | closure=0.150 | priority=0.100 | hour=0.100 | month=0.050
+
+PREDICTED OUTCOMES:
+  Duration: 68 min (P50) / 68 min (P80)
+  Road closure probability: 80%
+  Congestion: 4.0x normal
+  Impact Score: 47/100 -- Moderate
+
+KNOWLEDGE GRAPH CONTEXT:
+  Graph-prior closure probability: 0.16
+  Final blended closure probability: 0.61
+
+RESOURCE RECOMMENDATION (evidence blend: 70% historical / 30% rules):
+  Officers: 4 | Supervisors: 1 | Barricades: 6
+  Tow vehicles: 1 | QRU: 0
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DEPLOYMENT RECOMMENDATION -- procession at Bellary Road 2
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RETRIEVAL METHOD: Two-Stage (Stage: stage1_only)
+  Similarity: Gower (40%) + Domain-Weighted Hybrid (60%)
+  Hybrid weights: Cause=0.35, Corridor=0.25, Closure=0.15, Priority=0.10, Time=0.10, Month=0.05
+
+RETRIEVAL QUALITY:
+  Confidence: High (score=0.748)
+  Institutional Memory Score: 3.17 (313 meaningful matches)
+  Diversity: Low diversity -- retrieved events strongly agree; predictions reliable
+
+BEST HISTORICAL MATCH (rank 1):
+  Event: procession at Magadi Road
+  Final similarity: 0.787 (Gower=0.843, Hybrid=0.750)
+  Feature contributions: event=0.350 | corridor=0.000 | closure=0.150 | priority=0.100 | hour=0.100 | month=0.050
+
+PREDICTED OUTCOMES:
+  Duration: 63 min (P50) / 76 min (P80)
+  Road closure probability: 100%
+  Congestion: 4.0x normal
+  Impact Score: 44/100 -- Moderate
+
+KNOWLEDGE GRAPH CONTEXT:
+  Graph-prior closure probability: 0.16
+  Final blended closure probability: 0.75
+
+RESOURCE RECOMMENDATION (evidence blend: 70% historical / 30% rules):
+  Officers: 2 | Supervisors: 1 | Barricades: 0
+  Tow vehicles: 0 | QRU: 0
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DEPLOYMENT RECOMMENDATION -- public_event at Hennur Main Road
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RETRIEVAL METHOD: Two-Stage (Stage: stage1_only)
+  Similarity: Gower (40%) + Domain-Weighted Hybrid (60%)
+  Hybrid weights: Cause=0.35, Corridor=0.25, Closure=0.15, Priority=0.10, Time=0.10, Month=0.05
+
+RETRIEVAL QUALITY:
+  Confidence: High (score=0.806)
+  Institutional Memory Score: 3.21 (276 meaningful matches)
+  Diversity: Low diversity -- retrieved events strongly agree; predictions reliable
+
+BEST HISTORICAL MATCH (rank 1):
+  Event: public_event at Old Madras Road
+  Final similarity: 0.806 (Gower=0.889, Hybrid=0.750)
+  Feature contributions: event=0.350 | corridor=0.000 | closure=0.150 | priority=0.100 | hour=0.100 | month=0.050
+
+PREDICTED OUTCOMES:
+  Duration: 68 min (P50) / 68 min (P80)
+  Road closure probability: 100%
+  Congestion: 4.0x normal
+  Impact Score: 44/100 -- Moderate
+
+KNOWLEDGE GRAPH CONTEXT:
+  Graph-prior closure probability: 0.23
+  Final blended closure probability: 0.77
+
+RESOURCE RECOMMENDATION (evidence blend: 70% historical / 30% rules):
+  Officers: 2 | Supervisors: 1 | Barricades: 0
+  Tow vehicles: 0 | QRU: 0
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DEPLOYMENT RECOMMENDATION -- procession at Mysore Road
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RETRIEVAL METHOD: Two-Stage (Stage: stage1_only)
+  Similarity: Gower (40%) + Domain-Weighted Hybrid (60%)
+  Hybrid weights: Cause=0.35, Corridor=0.25, Closure=0.15, Priority=0.10, Time=0.10, Month=0.05
+
+RETRIEVAL QUALITY:
+  Confidence: High (score=0.807)
+  Institutional Memory Score: 3.79 (819 meaningful matches)
+  Diversity: Low diversity -- retrieved events strongly agree; predictions reliable
+
+BEST HISTORICAL MATCH (rank 1):
+  Event: procession at Mysore Road
+  Final similarity: 1.000 (Gower=1.000, Hybrid=1.000)
+  Feature contributions: event=0.350 | corridor=0.250 | closure=0.150 | priority=0.100 | hour=0.100 | month=0.050
+
+PREDICTED OUTCOMES:
+  Duration: 68 min (P50) / 68 min (P80)
+  Road closure probability: 80%
+  Congestion: 4.0x normal
+  Impact Score: 43/100 -- Moderate
+
+KNOWLEDGE GRAPH CONTEXT:
+  Graph-prior closure probability: 0.16
+  Final blended closure probability: 0.61
+
+RESOURCE RECOMMENDATION (evidence blend: 70% historical / 30% rules):
+  Officers: 4 | Supervisors: 1 | Barricades: 6
+  Tow vehicles: 1 | QRU: 0
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DEPLOYMENT RECOMMENDATION -- public_event at Non-corridor
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RETRIEVAL METHOD: Two-Stage (Stage: stage1_only)
+  Similarity: Gower (40%) + Domain-Weighted Hybrid (60%)
+  Hybrid weights: Cause=0.35, Corridor=0.25, Closure=0.15, Priority=0.10, Time=0.10, Month=0.05
+
+RETRIEVAL QUALITY:
+  Confidence: Very High (score=0.865)
+  Institutional Memory Score: 3.91 (1056 meaningful matches)
+  Diversity: Low diversity -- retrieved events strongly agree; predictions reliable
+
+BEST HISTORICAL MATCH (rank 1):
+  Event: public_event at Non-corridor
+  Final similarity: 0.921 (Gower=0.884, Hybrid=0.946)
+  Feature contributions: event=0.350 | corridor=0.250 | closure=0.150 | priority=0.100 | hour=0.096 | month=0.000
+
+PREDICTED OUTCOMES:
+  Duration: 163 min (P50) / 1440 min (P80)
+  Road closure probability: 100%
+  Congestion: 1.0x normal
+  Impact Score: 42/100 -- Moderate
+
+KNOWLEDGE GRAPH CONTEXT:
+  Graph-prior closure probability: 0.23
+  Final blended closure probability: 0.77
+
+RESOURCE RECOMMENDATION (evidence blend: 70% historical / 30% rules):
+  Officers: 2 | Supervisors: 1 | Barricades: 0
+  Tow vehicles: 0 | QRU: 0
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DEPLOYMENT RECOMMENDATION -- public_event at Non-corridor
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RETRIEVAL METHOD: Two-Stage (Stage: stage1_only)
+  Similarity: Gower (40%) + Domain-Weighted Hybrid (60%)
+  Hybrid weights: Cause=0.35, Corridor=0.25, Closure=0.15, Priority=0.10, Time=0.10, Month=0.05
+
+RETRIEVAL QUALITY:
+  Confidence: Very High (score=0.922)
+  Institutional Memory Score: 4.02 (1267 meaningful matches)
+  Diversity: Low diversity -- retrieved events strongly agree; predictions reliable
+
+BEST HISTORICAL MATCH (rank 1):
+  Event: public_event at Non-corridor
+  Final similarity: 0.954 (Gower=0.898, Hybrid=0.991)
+  Feature contributions: event=0.350 | corridor=0.250 | closure=0.150 | priority=0.100 | hour=0.091 | month=0.050
+
+PREDICTED OUTCOMES:
+  Duration: 156 min (P50) / 1439 min (P80)
+  Road closure probability: 100%
+  Congestion: 1.0x normal
+  Impact Score: 42/100 -- Moderate
+
+KNOWLEDGE GRAPH CONTEXT:
+  Graph-prior closure probability: 0.23
+  Final blended closure probability: 0.77
+
+RESOURCE RECOMMENDATION (evidence blend: 70% historical / 30% rules):
+  Officers: 2 | Supervisors: 1 | Barricades: 0
+  Tow vehicles: 0 | QRU: 0
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DEPLOYMENT RECOMMENDATION -- public_event at Non-corridor
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RETRIEVAL METHOD: Two-Stage (Stage: stage1_only)
+  Similarity: Gower (40%) + Domain-Weighted Hybrid (60%)
+  Hybrid weights: Cause=0.35, Corridor=0.25, Closure=0.15, Priority=0.10, Time=0.10, Month=0.05
+
+RETRIEVAL QUALITY:
+  Confidence: Very High (score=1.000)
+  Institutional Memory Score: 4.56 (2806 meaningful matches)
+  Diversity: Low diversity -- retrieved events strongly agree; predictions reliable
+
+BEST HISTORICAL MATCH (rank 1):
+  Event: public_event at Non-corridor
+  Final similarity: 1.000 (Gower=1.000, Hybrid=1.000)
+  Feature contributions: event=0.350 | corridor=0.250 | closure=0.150 | priority=0.100 | hour=0.100 | month=0.050
+
+PREDICTED OUTCOMES:
+  Duration: 68 min (P50) / 68 min (P80)
+  Road closure probability: 100%
+  Congestion: 1.0x normal
+  Impact Score: 41/100 -- Moderate
+
+KNOWLEDGE GRAPH CONTEXT:
+  Graph-prior closure probability: 0.23
+  Final blended closure probability: 0.77
+
+RESOURCE RECOMMENDATION (evidence blend: 70% historical / 30% rules):
+  Officers: 2 | Supervisors: 1 | Barricades: 2
+  Tow vehicles: 1 | QRU: 0
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DEPLOYMENT RECOMMENDATION -- public_event at Non-corridor
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RETRIEVAL METHOD: Two-Stage (Stage: stage1_only)
+  Similarity: Gower (40%) + Domain-Weighted Hybrid (60%)
+  Hybrid weights: Cause=0.35, Corridor=0.25, Closure=0.15, Priority=0.10, Time=0.10, Month=0.05
+
+RETRIEVAL QUALITY:
+  Confidence: Very High (score=1.000)
+  Institutional Memory Score: 4.56 (2806 meaningful matches)
+  Diversity: Low diversity -- retrieved events strongly agree; predictions reliable
+
+BEST HISTORICAL MATCH (rank 1):
+  Event: public_event at Non-corridor
+  Final similarity: 1.000 (Gower=1.000, Hybrid=1.000)
+  Feature contributions: event=0.350 | corridor=0.250 | closure=0.150 | priority=0.100 | hour=0.100 | month=0.050
+
+PREDICTED OUTCOMES:
+  Duration: 68 min (P50) / 68 min (P80)
+  Road closure probability: 100%
+  Congestion: 1.0x normal
+  Impact Score: 41/100 -- Moderate
+
+KNOWLEDGE GRAPH CONTEXT:
+  Graph-prior closure probability: 0.23
+  Final blended closure probability: 0.77
+
+RESOURCE RECOMMENDATION (evidence blend: 70% historical / 30% rules):
+  Officers: 2 | Supervisors: 1 | Barricades: 2
+  Tow vehicles: 1 | QRU: 0
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DEPLOYMENT RECOMMENDATION -- vip_movement at Non-corridor
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RETRIEVAL METHOD: Two-Stage (Stage: stage1_only)
+  Similarity: Gower (40%) + Domain-Weighted Hybrid (60%)
+  Hybrid weights: Cause=0.35, Corridor=0.25, Closure=0.15, Priority=0.10, Time=0.10, Month=0.05
+
+RETRIEVAL QUALITY:
+  Confidence: High (score=0.783)
+  Institutional Memory Score: 4.92 (2890 meaningful matches)
+  Diversity: Low diversity -- retrieved events strongly agree; predictions reliable
+
+BEST HISTORICAL MATCH (rank 1):
+  Event: vip_movement at Non-corridor
+  Final similarity: 0.953 (Gower=0.915, Hybrid=0.978)
+  Feature contributions: event=0.350 | corridor=0.250 | closure=0.150 | priority=0.100 | hour=0.083 | month=0.045
+
+PREDICTED OUTCOMES:
+  Duration: 763 min (P50) / 1440 min (P80)
+  Road closure probability: 38%
+  Congestion: 1.0x normal
+  Impact Score: 41/100 -- Moderate
+
+KNOWLEDGE GRAPH CONTEXT:
+  Graph-prior closure probability: 0.45
+  Final blended closure probability: 0.40
+
+RESOURCE RECOMMENDATION (evidence blend: 70% historical / 30% rules):
+  Officers: 2 | Supervisors: 1 | Barricades: 0
+  Tow vehicles: 0 | QRU: 0
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DEPLOYMENT RECOMMENDATION -- protest at CBD 2
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RETRIEVAL METHOD: Two-Stage (Stage: stage1_only)
+  Similarity: Gower (40%) + Domain-Weighted Hybrid (60%)
+  Hybrid weights: Cause=0.35, Corridor=0.25, Closure=0.15, Priority=0.10, Time=0.10, Month=0.05
+
+RETRIEVAL QUALITY:
+  Confidence: Moderate (score=0.635)
+  Institutional Memory Score: 2.85 (194 meaningful matches)
+  Diversity: Low diversity -- retrieved events strongly agree; predictions reliable
+
+BEST HISTORICAL MATCH (rank 1):
+  Event: protest at Mysore Road
+  Final similarity: 0.649 (Gower=0.742, Hybrid=0.587)
+  Feature contributions: event=0.350 | corridor=0.000 | closure=0.000 | priority=0.100 | hour=0.087 | month=0.050
+
+PREDICTED OUTCOMES:
+  Duration: 2 min (P50) / 31 min (P80)
+  Road closure probability: 59%
+  Congestion: 2.2x normal
+  Impact Score: 40/100 -- Moderate
+
+KNOWLEDGE GRAPH CONTEXT:
+  Graph-prior closure probability: 0.30
+  Final blended closure probability: 0.51
+
+RESOURCE RECOMMENDATION (evidence blend: 70% historical / 30% rules):
+  Officers: 2 | Supervisors: 1 | Barricades: 0
+  Tow vehicles: 0 | QRU: 0
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DEPLOYMENT RECOMMENDATION -- procession at Non-corridor
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RETRIEVAL METHOD: Two-Stage (Stage: stage1_only)
+  Similarity: Gower (40%) + Domain-Weighted Hybrid (60%)
+  Hybrid weights: Cause=0.35, Corridor=0.25, Closure=0.15, Priority=0.10, Time=0.10, Month=0.05
+
+RETRIEVAL QUALITY:
+  Confidence: Very High (score=0.959)
+  Institutional Memory Score: 4.55 (2798 meaningful matches)
+  Diversity: Low diversity -- retrieved events strongly agree; predictions reliable
+
+BEST HISTORICAL MATCH (rank 1):
+  Event: procession at Non-corridor
+  Final similarity: 1.000 (Gower=1.000, Hybrid=1.000)
+  Feature contributions: event=0.350 | corridor=0.250 | closure=0.150 | priority=0.100 | hour=0.100 | month=0.050
+
+PREDICTED OUTCOMES:
+  Duration: 68 min (P50) / 168 min (P80)
+  Road closure probability: 100%
+  Congestion: 1.0x normal
+  Impact Score: 40/100 -- Moderate
+
+KNOWLEDGE GRAPH CONTEXT:
+  Graph-prior closure probability: 0.16
+  Final blended closure probability: 0.75
+
+RESOURCE RECOMMENDATION (evidence blend: 70% historical / 30% rules):
+  Officers: 2 | Supervisors: 1 | Barricades: 3
+  Tow vehicles: 1 | QRU: 0
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DEPLOYMENT RECOMMENDATION -- public_event at Non-corridor
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RETRIEVAL METHOD: Two-Stage (Stage: stage1_only)
+  Similarity: Gower (40%) + Domain-Weighted Hybrid (60%)
+  Hybrid weights: Cause=0.35, Corridor=0.25, Closure=0.15, Priority=0.10, Time=0.10, Month=0.05
+
+RETRIEVAL QUALITY:
+  Confidence: Very High (score=1.000)
+  Institutional Memory Score: 4.56 (2806 meaningful matches)
+  Diversity: Low diversity -- retrieved events strongly agree; predictions reliable
+
+BEST HISTORICAL MATCH (rank 1):
+  Event: public_event at Non-corridor
+  Final similarity: 1.000 (Gower=1.000, Hybrid=1.000)
+  Feature contributions: event=0.350 | corridor=0.250 | closure=0.150 | priority=0.100 | hour=0.100 | month=0.050
+
+PREDICTED OUTCOMES:
+  Duration: 68 min (P50) / 68 min (P80)
+  Road closure probability: 100%
+  Congestion: 1.0x normal
+  Impact Score: 39/100 -- Moderate
+
+KNOWLEDGE GRAPH CONTEXT:
+  Graph-prior closure probability: 0.23
+  Final blended closure probability: 0.77
+
+RESOURCE RECOMMENDATION (evidence blend: 70% historical / 30% rules):
+  Officers: 2 | Supervisors: 1 | Barricades: 0
+  Tow vehicles: 0 | QRU: 0
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DEPLOYMENT RECOMMENDATION -- public_event at Non-corridor
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RETRIEVAL METHOD: Two-Stage (Stage: stage1_only)
+  Similarity: Gower (40%) + Domain-Weighted Hybrid (60%)
+  Hybrid weights: Cause=0.35, Corridor=0.25, Closure=0.15, Priority=0.10, Time=0.10, Month=0.05
+
+RETRIEVAL QUALITY:
+  Confidence: Very High (score=1.000)
+  Institutional Memory Score: 4.56 (2806 meaningful matches)
+  Diversity: Low diversity -- retrieved events strongly agree; predictions reliable
+
+BEST HISTORICAL MATCH (rank 1):
+  Event: public_event at Non-corridor
+  Final similarity: 1.000 (Gower=1.000, Hybrid=1.000)
+  Feature contributions: event=0.350 | corridor=0.250 | closure=0.150 | priority=0.100 | hour=0.100 | month=0.050
+
+PREDICTED OUTCOMES:
+  Duration: 68 min (P50) / 68 min (P80)
+  Road closure probability: 100%
+  Congestion: 1.0x normal
+  Impact Score: 39/100 -- Moderate
+
+KNOWLEDGE GRAPH CONTEXT:
+  Graph-prior closure probability: 0.23
+  Final blended closure probability: 0.77
+
+RESOURCE RECOMMENDATION (evidence blend: 70% historical / 30% rules):
+  Officers: 2 | Supervisors: 1 | Barricades: 0
+  Tow vehicles: 0 | QRU: 0
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DEPLOYMENT RECOMMENDATION -- procession at Non-corridor
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RETRIEVAL METHOD: Two-Stage (Stage: stage1_only)
+  Similarity: Gower (40%) + Domain-Weighted Hybrid (60%)
+  Hybrid weights: Cause=0.35, Corridor=0.25, Closure=0.15, Priority=0.10, Time=0.10, Month=0.05
+
+RETRIEVAL QUALITY:
+  Confidence: Very High (score=0.958)
+  Institutional Memory Score: 4.36 (2315 meaningful matches)
+  Diversity: Low diversity -- retrieved events strongly agree; predictions reliable
+
+BEST HISTORICAL MATCH (rank 1):
+  Event: procession at Non-corridor
+  Final similarity: 0.988 (Gower=0.977, Hybrid=0.995)
+  Feature contributions: event=0.350 | corridor=0.250 | closure=0.150 | priority=0.100 | hour=0.100 | month=0.045
+
+PREDICTED OUTCOMES:
+  Duration: 68 min (P50) / 71 min (P80)
+  Road closure probability: 100%
+  Congestion: 1.0x normal
+  Impact Score: 39/100 -- Moderate
+
+KNOWLEDGE GRAPH CONTEXT:
+  Graph-prior closure probability: 0.16
+  Final blended closure probability: 0.75
+
+RESOURCE RECOMMENDATION (evidence blend: 70% historical / 30% rules):
+  Officers: 2 | Supervisors: 1 | Barricades: 0
+  Tow vehicles: 0 | QRU: 0
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DEPLOYMENT RECOMMENDATION -- public_event at ORR East 1
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RETRIEVAL METHOD: Two-Stage (Stage: stage1_only)
+  Similarity: Gower (40%) + Domain-Weighted Hybrid (60%)
+  Hybrid weights: Cause=0.35, Corridor=0.25, Closure=0.15, Priority=0.10, Time=0.10, Month=0.05
+
+RETRIEVAL QUALITY:
+  Confidence: High (score=0.795)
+  Institutional Memory Score: 3.32 (355 meaningful matches)
+  Diversity: Low diversity -- retrieved events strongly agree; predictions reliable
+
+BEST HISTORICAL MATCH (rank 1):
+  Event: public_event at Bannerghata Road
+  Final similarity: 0.806 (Gower=0.889, Hybrid=0.750)
+  Feature contributions: event=0.350 | corridor=0.000 | closure=0.150 | priority=0.100 | hour=0.100 | month=0.050
+
+PREDICTED OUTCOMES:
+  Duration: 68 min (P50) / 68 min (P80)
+  Road closure probability: 100%
+  Congestion: 4.0x normal
+  Impact Score: 39/100 -- Moderate
+
+KNOWLEDGE GRAPH CONTEXT:
+  Graph-prior closure probability: 0.23
+  Final blended closure probability: 0.77
+
+RESOURCE RECOMMENDATION (evidence blend: 70% historical / 30% rules):
+  Officers: 2 | Supervisors: 1 | Barricades: 0
+  Tow vehicles: 0 | QRU: 0
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DEPLOYMENT RECOMMENDATION -- public_event at Non-corridor
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RETRIEVAL METHOD: Two-Stage (Stage: stage1_only)
+  Similarity: Gower (40%) + Domain-Weighted Hybrid (60%)
+  Hybrid weights: Cause=0.35, Corridor=0.25, Closure=0.15, Priority=0.10, Time=0.10, Month=0.05
+
+RETRIEVAL QUALITY:
+  Confidence: Very High (score=1.000)
+  Institutional Memory Score: 4.56 (2806 meaningful matches)
+  Diversity: Low diversity -- retrieved events strongly agree; predictions reliable
+
+BEST HISTORICAL MATCH (rank 1):
+  Event: public_event at Non-corridor
+  Final similarity: 1.000 (Gower=1.000, Hybrid=1.000)
+  Feature contributions: event=0.350 | corridor=0.250 | closure=0.150 | priority=0.100 | hour=0.100 | month=0.050
+
+PREDICTED OUTCOMES:
+  Duration: 68 min (P50) / 68 min (P80)
+  Road closure probability: 100%
+  Congestion: 1.0x normal
+  Impact Score: 39/100 -- Moderate
+
+KNOWLEDGE GRAPH CONTEXT:
+  Graph-prior closure probability: 0.23
+  Final blended closure probability: 0.77
+
+RESOURCE RECOMMENDATION (evidence blend: 70% historical / 30% rules):
+  Officers: 2 | Supervisors: 1 | Barricades: 2
+  Tow vehicles: 1 | QRU: 0
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DEPLOYMENT RECOMMENDATION -- public_event at Non-corridor
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RETRIEVAL METHOD: Two-Stage (Stage: stage1_only)
+  Similarity: Gower (40%) + Domain-Weighted Hybrid (60%)
+  Hybrid weights: Cause=0.35, Corridor=0.25, Closure=0.15, Priority=0.10, Time=0.10, Month=0.05
+
+RETRIEVAL QUALITY:
+  Confidence: Very High (score=1.000)
+  Institutional Memory Score: 4.56 (2806 meaningful matches)
+  Diversity: Low diversity -- retrieved events strongly agree; predictions reliable
+
+BEST HISTORICAL MATCH (rank 1):
+  Event: public_event at Non-corridor
+  Final similarity: 1.000 (Gower=1.000, Hybrid=1.000)
+  Feature contributions: event=0.350 | corridor=0.250 | closure=0.150 | priority=0.100 | hour=0.100 | month=0.050
+
+PREDICTED OUTCOMES:
+  Duration: 68 min (P50) / 68 min (P80)
+  Road closure probability: 100%
+  Congestion: 1.0x normal
+  Impact Score: 39/100 -- Moderate
+
+KNOWLEDGE GRAPH CONTEXT:
+  Graph-prior closure probability: 0.23
+  Final blended closure probability: 0.77
+
+RESOURCE RECOMMENDATION (evidence blend: 70% historical / 30% rules):
+  Officers: 2 | Supervisors: 1 | Barricades: 0
+  Tow vehicles: 0 | QRU: 0
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

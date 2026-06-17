@@ -1,0 +1,192 @@
+event_id,event_cause,corridor,evidence_officers,evidence_tow,evidence_barricades,l3_officers,l3_tow,l3_barricades,final_officers,final_tow,final_barricades,evidence_weight,ims_score,confidence_level,impact_level
+FKID000008,public_event,CBD 2,0.0,0.0,0.0,5,2,7,2,1,2,0.7,4.0722,Very High,Low
+FKID000241,vip_movement,Mysore Road,10.0,4.0,16.0,10,4,16,10,4,16,0.7,4.3709,High,Moderate
+FKID000361,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.3367,Very High,Low
+FKID000378,protest,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.5285,Very High,Moderate
+FKID000433,public_event,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.5551,Very High,Moderate
+FKID000437,public_event,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.5551,Very High,Moderate
+FKID000439,public_event,CBD 2,0.0,0.0,0.0,5,2,7,2,1,2,0.7,4.0722,Very High,Low
+FKID000468,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.3603,Very High,Moderate
+FKID000478,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.2821,Very High,Low
+FKID000502,public_event,ORR East 1,0.0,0.0,0.0,0,0,0,2,0,0,0.7,3.322,High,Moderate
+FKID000717,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.2898,Very High,Low
+FKID000737,public_event,Non-corridor,2.0,1.0,3.0,0,0,0,2,1,2,0.7,4.5551,Very High,Moderate
+FKID000878,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.3225,Very High,Low
+FKID000920,protest,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.4511,Very High,Moderate
+FKID000921,protest,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.4383,High,Moderate
+FKID000922,protest,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.4384,High,Moderate
+FKID000946,public_event,CBD 2,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.0722,Very High,Low
+FKID000949,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.2576,Very High,Low
+FKID000952,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.2526,Very High,Low
+FKID000956,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.2222,Very High,Low
+FKID000994,public_event,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.5551,Very High,Moderate
+FKID001047,procession,Hosur Road,4.0,2.0,5.0,0,0,0,3,1,4,0.7,4.1488,High,Low
+FKID001064,public_event,Bellary Road 1,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.3689,Very High,Low
+FKID001104,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.2542,Very High,Low
+FKID001167,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.5547,Very High,Moderate
+FKID001198,protest,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.5048,High,Moderate
+FKID001481,public_event,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.5551,Very High,Moderate
+FKID001492,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.329,Very High,Low
+FKID001569,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.2807,Very High,Low
+FKID001573,public_event,Old Madras Road,0.0,0.0,0.0,0,0,0,2,0,0,0.7,3.4002,Very High,Moderate
+FKID001578,public_event,Old Madras Road,0.0,0.0,0.0,0,0,0,2,0,0,0.7,3.4002,Very High,Moderate
+FKID001581,public_event,Old Madras Road,0.0,0.0,0.0,0,0,0,2,0,0,0.7,3.4002,Very High,Moderate
+FKID001641,vip_movement,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.4547,Very High,Moderate
+FKID001647,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.2841,Very High,Low
+FKID001648,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.276,Very High,Low
+FKID001676,vip_movement,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.4547,Very High,Moderate
+FKID001680,public_event,CBD 2,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.0722,Very High,Low
+FKID001683,public_event,CBD 2,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.0722,Very High,Low
+FKID001685,vip_movement,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.4547,Very High,Moderate
+FKID001687,vip_movement,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.5278,Very High,Moderate
+FKID001691,public_event,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.4426,Very High,Moderate
+FKID001734,public_event,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.5551,Very High,Moderate
+FKID001801,public_event,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.4838,Very High,Moderate
+FKID001857,vip_movement,Old Airport Road,10.0,4.0,16.0,0,0,0,7,3,11,0.7,2.9505,High,Moderate
+FKID001865,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.2659,Very High,Low
+FKID001896,vip_movement,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.4547,Very High,Moderate
+FKID001925,vip_movement,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.5278,Very High,Moderate
+FKID001934,vip_movement,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.4547,Very High,Moderate
+FKID001970,vip_movement,Mysore Road,10.0,4.0,16.0,10,4,16,10,4,16,0.7,3.6835,Very High,Moderate
+FKID001979,vip_movement,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.4547,Very High,Moderate
+FKID001980,procession,Magadi Road,0.0,0.0,0.0,0,0,0,2,0,0,0.7,3.971,High,Low
+FKID001988,public_event,CBD 2,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.0722,Very High,Low
+FKID002005,protest,Tumkur Road,0.0,0.0,0.0,14,5,21,4,2,6,0.7,3.8174,Moderate,Low
+FKID002008,vip_movement,Mysore Road,10.0,4.0,16.0,10,4,16,10,4,16,0.7,3.6835,Very High,Moderate
+FKID002015,vip_movement,Mysore Road,10.0,4.0,16.0,10,4,16,10,4,16,0.7,3.6835,Very High,Moderate
+FKID002017,vip_movement,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.4547,Very High,Moderate
+FKID002051,vip_movement,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.4547,Very High,Moderate
+FKID002054,vip_movement,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.4547,Very High,Moderate
+FKID002057,vip_movement,Mysore Road,10.0,4.0,16.0,10,4,16,10,4,16,0.7,3.6835,Very High,Moderate
+FKID002071,procession,Mysore Road,0.0,0.0,0.0,10,4,16,3,1,5,0.7,4.2981,High,Low
+FKID002110,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.3674,Very High,Low
+FKID002212,procession,Bannerghata Road,0.0,0.0,0.0,5,2,7,2,1,2,0.7,4.1226,High,Low
+FKID002254,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.4694,Very High,Moderate
+FKID002282,procession,Hennur Main Road,4.0,2.0,5.0,0,0,0,3,1,4,0.7,4.0715,High,Low
+FKID002292,procession,Magadi Road,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.1327,High,Low
+FKID002408,public_event,Old Airport Road,0.0,0.0,0.0,0,0,0,2,0,0,0.7,3.2725,Very High,Moderate
+FKID002409,public_event,Old Airport Road,0.0,0.0,0.0,0,0,0,2,0,0,0.7,3.2733,Very High,Moderate
+FKID002410,public_event,Old Airport Road,0.0,0.0,0.0,0,0,0,2,0,0,0.7,3.2706,Very High,Moderate
+FKID002411,public_event,Old Airport Road,0.0,0.0,0.0,0,0,0,2,0,0,0.7,3.2054,Very High,Moderate
+FKID002416,public_event,Old Airport Road,0.0,0.0,0.0,0,0,0,2,0,0,0.7,3.2766,Very High,Moderate
+FKID002440,public_event,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.2299,Very High,Low
+FKID002445,public_event,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.3633,Very High,Low
+FKID002483,public_event,Old Madras Road,0.0,0.0,0.0,0,0,0,2,0,0,0.7,3.4002,Very High,Moderate
+FKID002602,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.3845,Very High,Low
+FKID002639,protest,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.3519,Very High,Moderate
+FKID002684,procession,Hosur Road,4.0,2.0,5.0,0,0,0,3,1,4,0.7,4.1706,High,Low
+FKID002883,public_event,Hennur Main Road,4.0,2.0,6.0,0,0,0,3,1,4,0.7,3.2008,High,Low
+FKID003127,public_event,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.3622,Very High,Moderate
+FKID003153,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.2835,Very High,Low
+FKID003180,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.3029,Very High,Moderate
+FKID003577,public_event,Mysore Road,5.0,2.0,7.0,10,4,16,6,3,10,0.7,4.3826,High,Low
+FKID003704,public_event,Mysore Road,3.0,1.0,4.0,10,4,16,5,2,8,0.7,3.841,High,Moderate
+FKID003731,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.0034,Very High,Low
+FKID003755,public_event,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.5551,Very High,Moderate
+FKID003758,public_event,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.5551,Very High,Moderate
+FKID003763,public_event,ORR West 1,0.0,0.0,0.0,0,0,0,2,0,0,0.7,3.3144,High,Moderate
+FKID003783,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.3812,Very High,Low
+FKID004092,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.2601,Very High,Low
+FKID004127,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.2375,Very High,Low
+FKID004161,protest,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.2085,High,Moderate
+FKID004165,protest,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.8952,High,Moderate
+FKID004184,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.1285,Very High,Moderate
+FKID004386,public_event,Magadi Road,4.0,2.0,6.0,0,0,0,3,1,4,0.7,3.8305,Very High,Low
+FKID004418,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.1763,Very High,Low
+FKID004426,public_event,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.4838,Very High,Moderate
+FKID004430,public_event,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.9943,Very High,Low
+FKID004449,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.2854,Very High,Low
+FKID004467,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.2248,Very High,Moderate
+FKID004471,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.1989,Very High,Low
+FKID004485,procession,Magadi Road,0.0,0.0,0.0,0,0,0,2,0,0,0.7,3.7842,Very High,Moderate
+FKID004486,public_event,Bellary Road 1,0.0,0.0,0.0,0,0,0,2,0,0,0.7,3.7063,High,Moderate
+FKID004488,procession,Hennur Main Road,4.0,2.0,5.0,0,0,0,3,1,4,0.7,3.8428,High,Low
+FKID004505,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.2362,Very High,Low
+FKID004509,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.3667,Very High,Moderate
+FKID004527,public_event,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.9173,Very High,Low
+FKID004535,protest,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.2265,High,Moderate
+FKID004609,public_event,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.2037,Very High,Low
+FKID004629,public_event,Magadi Road,4.0,2.0,6.0,0,0,0,3,1,4,0.7,3.9126,Very High,Low
+FKID004632,public_event,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.4838,Very High,Moderate
+FKID004641,public_event,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.0147,Very High,Moderate
+FKID004671,procession,Magadi Road,0.0,0.0,0.0,0,0,0,2,0,0,0.7,3.7585,High,Moderate
+FKID004700,public_event,West of Chord Road,4.0,2.0,6.0,0,0,0,3,1,4,0.7,3.7574,High,Low
+FKID004703,procession,Magadi Road,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.1579,High,Low
+FKID004707,public_event,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.5551,Very High,Moderate
+FKID004711,public_event,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,3.91,Very High,Moderate
+FKID004721,vip_movement,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.8966,High,Moderate
+FKID004738,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.1577,Very High,Low
+FKID004747,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.169,Very High,Low
+FKID004750,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.2123,Very High,Moderate
+FKID004753,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.1717,Very High,Low
+FKID004771,public_event,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.5551,Very High,Moderate
+FKID004792,public_event,ORR North 1,0.0,0.0,0.0,0,0,0,2,0,0,0.7,3.3772,High,Moderate
+FKID004801,procession,Magadi Road,0.0,0.0,0.0,0,0,0,2,0,0,0.7,3.944,Very High,Moderate
+FKID004884,public_event,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.0567,Very High,Low
+FKID004885,public_event,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.0577,Very High,Low
+FKID004887,public_event,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.0567,Very High,Low
+FKID004901,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.1944,Very High,Low
+FKID004902,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.1797,Very High,Low
+FKID004906,public_event,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.1437,Very High,Low
+FKID005098,public_event,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.1918,Very High,Low
+FKID005099,public_event,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.1922,Very High,Low
+FKID005127,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.1595,Very High,Low
+FKID005136,public_event,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.0174,Very High,Moderate
+FKID005167,public_event,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.8056,Very High,Low
+FKID005248,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.9243,Very High,Low
+FKID005271,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.1566,Very High,Low
+FKID005273,public_event,Magadi Road,4.0,2.0,6.0,0,0,0,3,1,4,0.7,3.8302,Very High,Low
+FKID005291,public_event,Non-corridor,2.0,1.0,2.0,0,0,0,2,1,1,0.7,4.9434,Very High,Low
+FKID005292,vip_movement,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.9228,High,Moderate
+FKID005353,procession,Non-corridor,1.0,1.0,1.0,0,0,0,2,1,1,0.7,4.2995,Very High,Moderate
+FKID005354,procession,Non-corridor,0.0,0.0,0.0,0,0,0,2,0,0,0.7,5.1545,Very High,Low
+FKID005473,public_event,Bannerghata Road,0.0,0.0,0.0,5,2,7,2,1,2,0.7,3.239,High,Moderate
+FKID005634,public_event,Mysore Road,0.0,0.0,0.0,10,4,16,3,1,5,0.7,3.7888,High,Moderate
+FKID005659,procession,Hennur Main Road,4.0,2.0,5.0,0,0,0,3,1,4,0.7,3.8263,High,Low
+FKID005754,public_event,Bellary Road 1,0.0,0.0,0.0,0,0,0,2,0,0,0.7,4.3689,Very High,Low
+FKID005805,public_event,Non-corridor,0.0,0.0,0.0,4,2,6,2,1,2,0.7,4.5551,Very High,Moderate
+FKID005806,public_event,Non-corridor,0.0,0.0,0.0,4,2,6,2,1,2,0.7,4.5551,Very High,Moderate
+FKID005956,procession,Non-corridor,0.0,0.0,0.0,5,2,7,2,1,2,0.7,5.2864,Very High,Low
+FKID006105,public_event,Non-corridor,2.0,1.0,2.0,5,2,7,3,1,4,0.7,5.2245,Very High,Low
+FKID006248,public_event,Bellary Road 2,4.0,2.0,6.0,4,2,6,4,2,6,0.7,3.9383,Very High,Low
+FKID006283,public_event,Hosur Road,0.0,0.0,0.0,3,1,4,2,0,1,0.7,3.4277,High,Moderate
+FKID006314,procession,Mysore Road,6.0,2.0,8.0,0,0,0,4,1,6,0.7,3.7948,High,Moderate
+FKID006315,procession,Non-corridor,0.0,0.0,0.0,6,3,9,2,1,3,0.7,4.5547,Very High,Moderate
+FKID006401,public_event,Old Airport Road,0.0,0.0,0.0,6,2,8,2,1,2,0.7,2.8575,High,Low
+FKID006473,procession,Bellary Road 2,0.0,0.0,0.0,0,0,0,2,0,0,0.7,3.166,High,Moderate
+FKID006547,public_event,Non-corridor,2.0,1.0,2.0,5,2,7,3,1,4,0.7,5.2226,Very High,Low
+FKID006581,public_event,Non-corridor,2.0,1.0,2.0,5,2,7,3,1,4,0.7,5.1937,Very High,Low
+FKID006633,public_event,Bellary Road 2,4.0,2.0,6.0,4,2,6,4,2,6,0.7,4.081,Very High,Low
+FKID006635,public_event,Bellary Road 2,4.0,2.0,6.0,4,2,6,4,2,6,0.7,3.9299,Very High,Low
+FKID006638,public_event,Bellary Road 2,4.0,2.0,6.0,4,2,6,4,2,6,0.7,4.081,Very High,Low
+FKID006639,public_event,Bellary Road 2,4.0,2.0,6.0,4,2,6,4,2,6,0.7,3.7246,Very High,Low
+FKID006650,public_event,Non-corridor,5.0,2.0,7.0,2,1,2,4,2,6,0.7,5.2173,Very High,Low
+FKID006666,public_event,Mysore Road,4.0,2.0,6.0,5,2,7,4,2,6,0.7,4.2827,High,Low
+FKID006703,procession,Hosur Road,0.0,0.0,0.0,0,0,0,2,0,0,0.7,3.8863,High,Moderate
+FKID006806,public_event,Non-corridor,0.0,0.0,0.0,2,1,3,2,0,1,0.7,5.3633,Very High,Low
+FKID006807,protest,Mysore Road,4.0,2.0,5.0,0,0,0,3,1,4,0.7,4.0279,High,Low
+FKID006838,procession,Non-corridor,0.0,0.0,0.0,2,1,3,2,0,1,0.7,5.187,Very High,Low
+FKID007012,public_event,West of Chord Road,4.0,2.0,6.0,2,1,3,3,2,5,0.7,3.8408,Very High,Low
+FKID007013,public_event,West of Chord Road,4.0,2.0,6.0,2,1,3,3,2,5,0.7,3.8387,Very High,Low
+FKID007161,procession,Magadi Road,0.0,0.0,0.0,0,0,0,2,0,0,0.7,3.915,High,Moderate
+FKID007173,public_event,Non-corridor,0.0,0.0,0.0,2,1,3,2,0,1,0.7,4.5551,Very High,Moderate
+FKID007186,procession,West of Chord Road,0.0,0.0,0.0,0,0,0,2,0,0,0.7,2.9633,High,High
+FKID007191,procession,Airport New South Road,4.0,2.0,6.0,4,2,5,4,2,6,0.7,4.0358,High,Low
+FKID007213,procession,Magadi Road,0.0,0.0,0.0,0,0,0,2,0,0,0.7,3.1153,Very High,Moderate
+FKID007215,procession,Non-corridor,0.0,0.0,0.0,1,1,1,2,0,0,0.7,4.3554,Very High,Moderate
+FKID007248,procession,Magadi Road,0.0,0.0,0.0,0,0,0,2,0,0,0.7,3.1074,Very High,Moderate
+FKID007249,procession,Magadi Road,0.0,0.0,0.0,0,0,0,2,0,0,0.7,3.0555,Very High,Moderate
+FKID007303,protest,Old Airport Road,4.0,2.0,5.0,6,2,8,5,2,6,0.7,3.771,High,Low
+FKID007408,procession,Non-corridor,0.0,0.0,0.0,1,1,1,2,0,0,0.7,5.3085,Very High,Low
+FKID007416,protest,CBD 2,0.0,0.0,0.0,0,0,0,2,0,0,0.7,2.8504,Moderate,Moderate
+FKID007450,protest,Mysore Road,6.0,2.0,8.0,5,2,8,6,2,8,0.7,4.3063,High,Low
+FKID007487,public_event,Non-corridor,0.0,0.0,0.0,3,1,4,2,0,1,0.7,4.4938,Very High,Moderate
+FKID007575,procession,Non-corridor,0.0,0.0,0.0,5,2,7,2,1,2,0.7,5.1682,Very High,Low
+FKID007686,procession,Mysore Road,6.0,2.0,8.0,0,0,0,4,1,6,0.7,3.7948,High,Moderate
+FKID007787,procession,Non-corridor,0.0,0.0,0.0,1,1,1,2,0,0,0.7,4.4255,Very High,Moderate
+FKID007967,vip_movement,Mysore Road,10.0,4.0,16.0,3,1,4,8,3,12,0.7,4.2815,High,Moderate
+FKID007991,public_event,Non-corridor,0.0,0.0,0.0,3,2,5,2,1,2,0.7,4.4504,Very High,Moderate
+FKID008054,public_event,ORR West 1,0.0,0.0,0.0,4,2,5,2,1,2,0.7,3.3144,High,Moderate
+FKID008080,protest,Mysore Road,6.0,2.0,8.0,4,2,5,5,2,7,0.7,4.3959,High,Low
+FKID008130,public_event,Non-corridor,0.0,0.0,0.0,3,1,4,2,0,1,0.7,4.5551,Very High,Moderate
+FKID008131,public_event,Hennur Main Road,0.0,0.0,0.0,0,0,0,2,0,0,0.7,3.2056,High,Moderate

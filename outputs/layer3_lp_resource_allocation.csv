@@ -1,0 +1,51 @@
+junction,dis_score,recommended_officers,recommended_tow,recommended_barricades,allocated_officers,allocated_tow,allocated_barricades,allocated_supervisors,allocation_fraction,fully_allocated
+JalahalliCross(SM Circle),100.0,14,5,21,14,5,21,3,1.0,True
+SatteliteBusStandJunc,91.57,13,5,20,10,4,16,2,0.8,False
+BagalurCrossJunc,85.82,13,5,19,0,0,0,0,0.0,False
+KIMCO Junction,84.21,12,5,18,0,0,0,0,0.0,False
+HebbalFlyoverJunc,83.06,12,5,18,0,0,0,0,0.0,False
+TownhallJunction,82.99,12,5,18,0,0,0,0,0.0,False
+GokuldasImagesJunc,81.95,12,5,18,0,0,0,0,0.0,False
+MekhriCircle,80.3,12,5,17,0,0,0,0,0.0,False
+toll gate mysore road,78.72,12,5,17,0,0,0,0,0.0,False
+YeshwanthpuraCircle,77.14,11,5,17,0,0,0,0,0.0,False
+HesaraghattaJunction,72.59,11,4,16,0,0,0,0,0.0,False
+BangaloreBodyBuildersJunc,71.39,10,4,15,0,0,0,0,0.0,False
+GoruguntepalyaJunc,69.62,10,4,15,0,0,0,0,0.0,False
+YelhankaCircle,69.52,10,4,15,0,0,0,0,0.0,False
+SantheCircle,69.43,10,4,15,0,0,0,0,0.0,False
+SilkBoardJunc,66.37,10,4,14,0,0,0,0,0.0,False
+SRS Peenya Junc,65.27,10,4,14,0,0,0,0,0.0,False
+LeprosyhospitalJunc,64.54,10,4,14,0,0,0,0,0.0,False
+CMP GateJunc,64.49,10,4,14,0,0,0,0,0.0,False
+YelhankaBypass,63.32,9,4,14,0,0,0,0,0.0,False
+Devasandra(k r puram),62.72,9,4,14,0,0,0,0,0.0,False
+AyyappaTempleJunc,60.46,9,4,13,0,0,0,0,0.0,False
+HudsonCircle,59.8,9,4,13,0,0,0,0,0.0,False
+IndianExpressJunction,59.33,9,4,13,0,0,0,0,0.0,False
+Bommanahalli,59.14,9,4,13,0,0,0,0,0.0,False
+MysoreRd-RingRdJunc(Nayandanahallii),58.61,9,4,13,0,0,0,0,0.0,False
+ISRO Junction-Airport rd,58.46,9,4,13,0,0,0,0,0.0,False
+BEL Circle,57.96,9,4,13,0,0,0,0,0.0,False
+RajeshwariJunc,57.84,9,4,13,0,0,0,0,0.0,False
+Sumanhalli,55.37,8,3,12,8,3,12,2,1.0,True
+Chokasandra (Tumkur road),55.13,8,3,12,8,3,12,2,1.0,True
+BigBazaarJunction(OldMadrasRd),52.2,8,3,11,0,0,0,0,0.0,False
+MS RamaiahJunc(TollGate),51.05,8,3,11,0,0,0,0,0.0,False
+PoliceCornerJunc,50.58,8,3,11,0,0,0,0,0.0,False
+Kadubeesanahalli-ORR Junc,49.92,7,3,11,0,0,0,0,0.0,False
+TumkurRdMarappanapalyaJunc,49.13,7,3,11,0,0,0,0,0.0,False
+KhodaysCircle(DV UrsCircle),47.52,7,3,10,0,0,0,0,0.0,False
+TataInstituteCircle,45.48,7,3,10,0,0,0,0,0.0,False
+"VeerannapalyaJunction(BEL,HO)",44.69,7,3,10,0,0,0,0,0.0,False
+PoliceTimmaiahCircle(GPO),43.72,7,3,10,0,0,0,0,0.0,False
+SiddalingaiahCircle,43.1,7,3,10,0,0,0,0,0.0,False
+KodigehalliCross,42.84,6,3,9,0,0,0,0,0.0,False
+KogilluCrossJunc,42.67,6,3,9,0,0,0,0,0.0,False
+PeenyaPoliceStation,42.45,6,3,9,0,0,0,0,0.0,False
+Batrayanapura(Amrutahalli)Junction,42.3,6,3,9,0,0,0,0,0.0,False
+TrinityCircle,42.3,6,3,9,0,0,0,0,0.0,False
+JakkurCrossJunction,42.29,6,3,9,0,0,0,0,0.0,False
+Nagavara-ORR Junction,42.27,6,3,9,0,0,0,0,0.0,False
+MaratahalliBridgeJunc,41.44,6,3,9,0,0,0,0,0.0,False
+KoramangalaWaterTankJunc,41.19,6,3,9,0,0,0,0,0.0,False

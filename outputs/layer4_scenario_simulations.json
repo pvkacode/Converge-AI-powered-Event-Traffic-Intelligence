@@ -1,0 +1,733 @@
+[
+  {
+    "scenario_name": "political rally_Silk Board",
+    "inputs": {
+      "event_type": "political rally",
+      "corridor": "Silk Board",
+      "day_of_week": 5,
+      "hour_of_day": 17,
+      "expected_crowd_size": 20000,
+      "requires_closure": true
+    },
+    "baseline": {
+      "label": "baseline",
+      "matched_cause": "accident",
+      "matched_corridor": "Airport New South Road",
+      "retrieval_stage": "stage1_only",
+      "confidence": "Moderate",
+      "mean_top_k_sim": 0.6336,
+      "ims_score": 3.1675,
+      "predicted_duration_p50": 143.5,
+      "predicted_duration_p80": 1185.5,
+      "closure_probability": 0.95,
+      "graph_prior_closure": 0.4349162303664922,
+      "final_closure_probability": 0.7955,
+      "crowd_factor": 1.609,
+      "final_officers": 8,
+      "final_tow": 2,
+      "final_barricades": 6,
+      "estimated_clearance_min": 116.4,
+      "retrieved_events": [
+        {
+          "rank": 1,
+          "event_id": "FKID006645",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.6572
+        },
+        {
+          "rank": 2,
+          "event_id": "FKID006763",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.6572
+        },
+        {
+          "rank": 3,
+          "event_id": "FKID005185",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.6501
+        },
+        {
+          "rank": 4,
+          "event_id": "FKID004947",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.6099
+        },
+        {
+          "rank": 5,
+          "event_id": "FKID006894",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.5934
+        }
+      ]
+    }
+  },
+  {
+    "scenario_name": "festival_MG Road",
+    "inputs": {
+      "event_type": "festival",
+      "corridor": "MG Road",
+      "day_of_week": 6,
+      "hour_of_day": 19,
+      "expected_crowd_size": 50000,
+      "requires_closure": true
+    },
+    "baseline": {
+      "label": "baseline",
+      "matched_cause": "accident",
+      "matched_corridor": "Airport New South Road",
+      "retrieval_stage": "stage1_only",
+      "confidence": "Moderate",
+      "mean_top_k_sim": 0.617,
+      "ims_score": 3.0543,
+      "predicted_duration_p50": 178.4,
+      "predicted_duration_p80": 1472.7,
+      "closure_probability": 0.95,
+      "graph_prior_closure": 0.4349162303664922,
+      "final_closure_probability": 0.7955,
+      "crowd_factor": 2.0,
+      "final_officers": 8,
+      "final_tow": 2,
+      "final_barricades": 6,
+      "estimated_clearance_min": 144.7,
+      "retrieved_events": [
+        {
+          "rank": 1,
+          "event_id": "FKID006763",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.6399
+        },
+        {
+          "rank": 2,
+          "event_id": "FKID006645",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.6399
+        },
+        {
+          "rank": 3,
+          "event_id": "FKID005185",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.6335
+        },
+        {
+          "rank": 4,
+          "event_id": "FKID004947",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.5942
+        },
+        {
+          "rank": 5,
+          "event_id": "FKID006894",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.5777
+        }
+      ]
+    }
+  },
+  {
+    "scenario_name": "vehicle breakdown_Hebbal",
+    "inputs": {
+      "event_type": "vehicle breakdown",
+      "corridor": "Hebbal",
+      "day_of_week": 1,
+      "hour_of_day": 8,
+      "expected_crowd_size": 0,
+      "requires_closure": false
+    },
+    "baseline": {
+      "label": "baseline",
+      "matched_cause": "vehicle_breakdown",
+      "matched_corridor": "Airport New South Road",
+      "retrieval_stage": "stage1_only",
+      "confidence": "Moderate",
+      "mean_top_k_sim": 0.6842,
+      "ims_score": 5.8313,
+      "predicted_duration_p50": 3.9,
+      "predicted_duration_p80": 67.6,
+      "closure_probability": 0.05,
+      "graph_prior_closure": 0.4349162303664922,
+      "final_closure_probability": 0.1655,
+      "crowd_factor": 1.0,
+      "final_officers": 8,
+      "final_tow": 2,
+      "final_barricades": 6,
+      "estimated_clearance_min": 3.2,
+      "retrieved_events": [
+        {
+          "rank": 1,
+          "event_id": "FKID007191",
+          "cause": "procession",
+          "corridor": "Airport New South Road",
+          "sim": 0.6993
+        },
+        {
+          "rank": 2,
+          "event_id": "FKID005469",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.6993
+        },
+        {
+          "rank": 3,
+          "event_id": "FKID005979",
+          "cause": "vehicle_breakdown",
+          "corridor": "Old Airport Road",
+          "sim": 0.6867
+        },
+        {
+          "rank": 4,
+          "event_id": "FKID002608",
+          "cause": "vehicle_breakdown",
+          "corridor": "Non-corridor",
+          "sim": 0.6738
+        },
+        {
+          "rank": 5,
+          "event_id": "FKID005164",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.6619
+        }
+      ]
+    }
+  },
+  {
+    "scenario_name": "construction_Outer Ring Road",
+    "inputs": {
+      "event_type": "construction",
+      "corridor": "Outer Ring Road",
+      "day_of_week": 2,
+      "hour_of_day": 10,
+      "expected_crowd_size": 0,
+      "requires_closure": true
+    },
+    "baseline": {
+      "label": "baseline",
+      "matched_cause": "construction",
+      "matched_corridor": "Airport New South Road",
+      "retrieval_stage": "stage1_only",
+      "confidence": "Very High",
+      "mean_top_k_sim": 0.916,
+      "ims_score": 3.7067,
+      "predicted_duration_p50": 89.8,
+      "predicted_duration_p80": 736.9,
+      "closure_probability": 0.95,
+      "graph_prior_closure": 0.4349162303664922,
+      "final_closure_probability": 0.7955,
+      "crowd_factor": 1.0,
+      "final_officers": 8,
+      "final_tow": 2,
+      "final_barricades": 6,
+      "estimated_clearance_min": 72.9,
+      "retrieved_events": [
+        {
+          "rank": 1,
+          "event_id": "FKID006645",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.9521
+        },
+        {
+          "rank": 2,
+          "event_id": "FKID006763",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.9521
+        },
+        {
+          "rank": 3,
+          "event_id": "FKID004947",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.9171
+        },
+        {
+          "rank": 4,
+          "event_id": "FKID005185",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.9028
+        },
+        {
+          "rank": 5,
+          "event_id": "FKID006894",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.8561
+        }
+      ]
+    }
+  },
+  {
+    "scenario_name": "sports event_Kanteerava",
+    "inputs": {
+      "event_type": "sports event",
+      "corridor": "Kanteerava",
+      "day_of_week": 5,
+      "hour_of_day": 15,
+      "expected_crowd_size": 30000,
+      "requires_closure": false
+    },
+    "baseline": {
+      "label": "baseline",
+      "matched_cause": "public_event",
+      "matched_corridor": "Airport New South Road",
+      "retrieval_stage": "stage1_only",
+      "confidence": "High",
+      "mean_top_k_sim": 0.7619,
+      "ims_score": 3.5404,
+      "predicted_duration_p50": 787.8,
+      "predicted_duration_p80": 798.4,
+      "closure_probability": 0.05,
+      "graph_prior_closure": 0.2262,
+      "final_closure_probability": 0.1029,
+      "crowd_factor": 1.946,
+      "final_officers": 8,
+      "final_tow": 2,
+      "final_barricades": 6,
+      "estimated_clearance_min": 638.8,
+      "retrieved_events": [
+        {
+          "rank": 1,
+          "event_id": "FKID002416",
+          "cause": "public_event",
+          "corridor": "Old Airport Road",
+          "sim": 0.7629
+        },
+        {
+          "rank": 2,
+          "event_id": "FKID002409",
+          "cause": "public_event",
+          "corridor": "Old Airport Road",
+          "sim": 0.7626
+        },
+        {
+          "rank": 3,
+          "event_id": "FKID002408",
+          "cause": "public_event",
+          "corridor": "Old Airport Road",
+          "sim": 0.7626
+        },
+        {
+          "rank": 4,
+          "event_id": "FKID002410",
+          "cause": "public_event",
+          "corridor": "Old Airport Road",
+          "sim": 0.7625
+        },
+        {
+          "rank": 5,
+          "event_id": "FKID002411",
+          "cause": "public_event",
+          "corridor": "Old Airport Road",
+          "sim": 0.7588
+        }
+      ]
+    }
+  },
+  {
+    "scenario_name": "political rally_Silk Board",
+    "inputs": {
+      "event_type": "political rally",
+      "corridor": "Silk Board",
+      "day_of_week": 5,
+      "hour_of_day": 17,
+      "expected_crowd_size": 20000,
+      "requires_closure": true
+    },
+    "baseline": {
+      "label": "baseline",
+      "matched_cause": "accident",
+      "matched_corridor": "Airport New South Road",
+      "retrieval_stage": "stage1_only",
+      "confidence": "Moderate",
+      "mean_top_k_sim": 0.6336,
+      "ims_score": 3.1675,
+      "predicted_duration_p50": 143.5,
+      "predicted_duration_p80": 1185.5,
+      "closure_probability": 0.95,
+      "graph_prior_closure": 0.4349162303664922,
+      "final_closure_probability": 0.7955,
+      "crowd_factor": 1.609,
+      "final_officers": 8,
+      "final_tow": 2,
+      "final_barricades": 6,
+      "estimated_clearance_min": 116.4,
+      "retrieved_events": [
+        {
+          "rank": 1,
+          "event_id": "FKID006645",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.6572
+        },
+        {
+          "rank": 2,
+          "event_id": "FKID006763",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.6572
+        },
+        {
+          "rank": 3,
+          "event_id": "FKID005185",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.6501
+        },
+        {
+          "rank": 4,
+          "event_id": "FKID004947",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.6099
+        },
+        {
+          "rank": 5,
+          "event_id": "FKID006894",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.5934
+        }
+      ]
+    },
+    "counterfactual_inputs": {
+      "expected_crowd_size": 40000
+    },
+    "counterfactual": {
+      "label": "counterfactual",
+      "matched_cause": "accident",
+      "matched_corridor": "Airport New South Road",
+      "retrieval_stage": "stage1_only",
+      "confidence": "Moderate",
+      "mean_top_k_sim": 0.6335,
+      "ims_score": 3.1635,
+      "predicted_duration_p50": 178.6,
+      "predicted_duration_p80": 1475.1,
+      "closure_probability": 0.95,
+      "graph_prior_closure": 0.4349162303664922,
+      "final_closure_probability": 0.7955,
+      "crowd_factor": 2.0,
+      "final_officers": 8,
+      "final_tow": 2,
+      "final_barricades": 6,
+      "estimated_clearance_min": 144.8,
+      "retrieved_events": [
+        {
+          "rank": 1,
+          "event_id": "FKID006645",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.6564
+        },
+        {
+          "rank": 2,
+          "event_id": "FKID006763",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.6564
+        },
+        {
+          "rank": 3,
+          "event_id": "FKID005185",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.65
+        },
+        {
+          "rank": 4,
+          "event_id": "FKID004947",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.6107
+        },
+        {
+          "rank": 5,
+          "event_id": "FKID006894",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.5942
+        }
+      ]
+    },
+    "counterfactual_comparison": {
+      "delta_duration_p50": 35.1,
+      "delta_closure_prob": 0.0,
+      "delta_officers": 0,
+      "delta_clearance_min": 28.4
+    }
+  },
+  {
+    "scenario_name": "festival_MG Road",
+    "inputs": {
+      "event_type": "festival",
+      "corridor": "MG Road",
+      "day_of_week": 6,
+      "hour_of_day": 19,
+      "expected_crowd_size": 50000,
+      "requires_closure": true
+    },
+    "baseline": {
+      "label": "baseline",
+      "matched_cause": "accident",
+      "matched_corridor": "Airport New South Road",
+      "retrieval_stage": "stage1_only",
+      "confidence": "Moderate",
+      "mean_top_k_sim": 0.617,
+      "ims_score": 3.0543,
+      "predicted_duration_p50": 178.4,
+      "predicted_duration_p80": 1472.7,
+      "closure_probability": 0.95,
+      "graph_prior_closure": 0.4349162303664922,
+      "final_closure_probability": 0.7955,
+      "crowd_factor": 2.0,
+      "final_officers": 8,
+      "final_tow": 2,
+      "final_barricades": 6,
+      "estimated_clearance_min": 144.7,
+      "retrieved_events": [
+        {
+          "rank": 1,
+          "event_id": "FKID006763",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.6399
+        },
+        {
+          "rank": 2,
+          "event_id": "FKID006645",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.6399
+        },
+        {
+          "rank": 3,
+          "event_id": "FKID005185",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.6335
+        },
+        {
+          "rank": 4,
+          "event_id": "FKID004947",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.5942
+        },
+        {
+          "rank": 5,
+          "event_id": "FKID006894",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.5777
+        }
+      ]
+    },
+    "counterfactual_inputs": {
+      "requires_closure": false
+    },
+    "counterfactual": {
+      "label": "counterfactual",
+      "matched_cause": "accident",
+      "matched_corridor": "Airport New South Road",
+      "retrieval_stage": "stage1_only",
+      "confidence": "Moderate",
+      "mean_top_k_sim": 0.6008,
+      "ims_score": 3.8275,
+      "predicted_duration_p50": 7.9,
+      "predicted_duration_p80": 135.2,
+      "closure_probability": 0.05,
+      "graph_prior_closure": 0.4349162303664922,
+      "final_closure_probability": 0.1655,
+      "crowd_factor": 2.0,
+      "final_officers": 8,
+      "final_tow": 2,
+      "final_barricades": 6,
+      "estimated_clearance_min": 6.4,
+      "retrieved_events": [
+        {
+          "rank": 1,
+          "event_id": "FKID007191",
+          "cause": "procession",
+          "corridor": "Airport New South Road",
+          "sim": 0.6399
+        },
+        {
+          "rank": 2,
+          "event_id": "FKID005469",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.6399
+        },
+        {
+          "rank": 3,
+          "event_id": "FKID005587",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.5782
+        },
+        {
+          "rank": 4,
+          "event_id": "FKID005040",
+          "cause": "others",
+          "corridor": "Airport New South Road",
+          "sim": 0.5735
+        },
+        {
+          "rank": 5,
+          "event_id": "FKID005164",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.5728
+        }
+      ]
+    },
+    "counterfactual_comparison": {
+      "delta_duration_p50": -170.5,
+      "delta_closure_prob": -0.9,
+      "delta_officers": 0,
+      "delta_clearance_min": -138.3
+    }
+  },
+  {
+    "scenario_name": "construction_Outer Ring Road",
+    "inputs": {
+      "event_type": "construction",
+      "corridor": "Outer Ring Road",
+      "day_of_week": 2,
+      "hour_of_day": 10,
+      "expected_crowd_size": 0,
+      "requires_closure": true
+    },
+    "baseline": {
+      "label": "baseline",
+      "matched_cause": "construction",
+      "matched_corridor": "Airport New South Road",
+      "retrieval_stage": "stage1_only",
+      "confidence": "Very High",
+      "mean_top_k_sim": 0.916,
+      "ims_score": 3.7067,
+      "predicted_duration_p50": 89.8,
+      "predicted_duration_p80": 736.9,
+      "closure_probability": 0.95,
+      "graph_prior_closure": 0.4349162303664922,
+      "final_closure_probability": 0.7955,
+      "crowd_factor": 1.0,
+      "final_officers": 8,
+      "final_tow": 2,
+      "final_barricades": 6,
+      "estimated_clearance_min": 72.9,
+      "retrieved_events": [
+        {
+          "rank": 1,
+          "event_id": "FKID006645",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.9521
+        },
+        {
+          "rank": 2,
+          "event_id": "FKID006763",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.9521
+        },
+        {
+          "rank": 3,
+          "event_id": "FKID004947",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.9171
+        },
+        {
+          "rank": 4,
+          "event_id": "FKID005185",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.9028
+        },
+        {
+          "rank": 5,
+          "event_id": "FKID006894",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.8561
+        }
+      ]
+    },
+    "counterfactual_inputs": {
+      "hour_of_day": 7
+    },
+    "counterfactual": {
+      "label": "counterfactual",
+      "matched_cause": "construction",
+      "matched_corridor": "Airport New South Road",
+      "retrieval_stage": "stage1_only",
+      "confidence": "Very High",
+      "mean_top_k_sim": 0.917,
+      "ims_score": 3.7438,
+      "predicted_duration_p50": 88.7,
+      "predicted_duration_p80": 738.9,
+      "closure_probability": 0.95,
+      "graph_prior_closure": 0.4349162303664922,
+      "final_closure_probability": 0.7955,
+      "crowd_factor": 1.0,
+      "final_officers": 8,
+      "final_tow": 2,
+      "final_barricades": 6,
+      "estimated_clearance_min": 72.0,
+      "retrieved_events": [
+        {
+          "rank": 1,
+          "event_id": "FKID006645",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.9657
+        },
+        {
+          "rank": 2,
+          "event_id": "FKID006763",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.9657
+        },
+        {
+          "rank": 3,
+          "event_id": "FKID004947",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.9035
+        },
+        {
+          "rank": 4,
+          "event_id": "FKID005185",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.8892
+        },
+        {
+          "rank": 5,
+          "event_id": "FKID006894",
+          "cause": "construction",
+          "corridor": "Airport New South Road",
+          "sim": 0.8606
+        }
+      ]
+    },
+    "counterfactual_comparison": {
+      "delta_duration_p50": -1.1,
+      "delta_closure_prob": 0.0,
+      "delta_officers": 0,
+      "delta_clearance_min": -0.9
+    }
+  }
+]

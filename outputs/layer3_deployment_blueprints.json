@@ -1,0 +1,222 @@
+[
+  {
+    "junction": "JalahalliCross(SM Circle)",
+    "event_type": null,
+    "dis_score": 100.0,
+    "risk_level": "Critical",
+    "ods_score": 420.0,
+    "pca_loadings": {
+      "obi": 0.617438,
+      "hawkes": 0.0,
+      "future": 0.615665,
+      "rmst": -0.290193,
+      "persistence": 0.394354
+    },
+    "allocated_officers": 14,
+    "allocated_supervisors": 3,
+    "allocated_tow": 5,
+    "allocated_barricades": 21,
+    "qru_units": 1,
+    "patrol_vehicles": 4,
+    "barricade_strategy": "emergency_closure",
+    "closure_type": "full_road",
+    "diversion_routes": [
+      {
+        "route_rank": 1,
+        "route_label": "Route A (best)",
+        "path": "YeshwanthpuraCircle|KHB Junction",
+        "estimated_time_min": 6.4
+      },
+      {
+        "route_rank": 2,
+        "route_label": "Route B",
+        "path": "YeshwanthpuraCircle|QueensStatueCircle",
+        "estimated_time_min": 7.6
+      },
+      {
+        "route_rank": 3,
+        "route_label": "Route C",
+        "path": "YeshwanthpuraCircle|KodigehalliCross",
+        "estimated_time_min": 8.4
+      }
+    ],
+    "tow_unit_assigned": "TOW-002",
+    "efficiency_note": "+20% officers (14\u219217) saves ~10 min clearance"
+  },
+  {
+    "junction": "SatteliteBusStandJunc",
+    "event_type": null,
+    "dis_score": 91.57,
+    "risk_level": "Critical",
+    "ods_score": 384.59,
+    "pca_loadings": {
+      "obi": 0.617438,
+      "hawkes": 0.0,
+      "future": 0.615665,
+      "rmst": -0.290193,
+      "persistence": 0.394354
+    },
+    "allocated_officers": 10,
+    "allocated_supervisors": 2,
+    "allocated_tow": 4,
+    "allocated_barricades": 16,
+    "qru_units": 1,
+    "patrol_vehicles": 4,
+    "barricade_strategy": "emergency_closure",
+    "closure_type": "full_road",
+    "diversion_routes": [
+      {
+        "route_rank": 1,
+        "route_label": "Route A (best)",
+        "path": "toll gate mysore road|TownhallJunction",
+        "estimated_time_min": 10.1
+      },
+      {
+        "route_rank": 2,
+        "route_label": "Route B",
+        "path": "toll gate mysore road|TownhallJunction|PoliceCornerJunc",
+        "estimated_time_min": 18.9
+      },
+      {
+        "route_rank": 3,
+        "route_label": "Route C",
+        "path": "toll gate mysore road|TownhallJunction|PoliceCornerJunc|TC Palya-OM RoadJunc",
+        "estimated_time_min": 24.2
+      }
+    ],
+    "tow_unit_assigned": "TOW-004",
+    "efficiency_note": "+20% officers (10\u219212) saves ~10 min clearance"
+  },
+  {
+    "junction": "BagalurCrossJunc",
+    "event_type": null,
+    "dis_score": 85.82,
+    "risk_level": "Critical",
+    "ods_score": 360.44,
+    "pca_loadings": {
+      "obi": 0.617438,
+      "hawkes": 0.0,
+      "future": 0.615665,
+      "rmst": -0.290193,
+      "persistence": 0.394354
+    },
+    "allocated_officers": 0,
+    "allocated_supervisors": 0,
+    "allocated_tow": 0,
+    "allocated_barricades": 0,
+    "qru_units": 1,
+    "patrol_vehicles": 4,
+    "barricade_strategy": "emergency_closure",
+    "closure_type": "full_road",
+    "diversion_routes": [
+      {
+        "route_rank": 1,
+        "route_label": "Route A (best)",
+        "path": "YelhankaCircle|LowerAgaram(IndiaGarage)Junc",
+        "estimated_time_min": 6.3
+      },
+      {
+        "route_rank": 2,
+        "route_label": "Route B",
+        "path": "YelhankaCircle|Basappa Circle Junction",
+        "estimated_time_min": 6.4
+      },
+      {
+        "route_rank": 3,
+        "route_label": "Route C",
+        "path": "YelhankaCircle|ChandraLayoutJunc-nearWaterTank",
+        "estimated_time_min": 6.4
+      }
+    ],
+    "tow_unit_assigned": "TOW-005",
+    "efficiency_note": "+20% officers (0\u21920) saves ~0 min clearance"
+  },
+  {
+    "junction": "KIMCO Junction",
+    "event_type": null,
+    "dis_score": 84.21,
+    "risk_level": "Critical",
+    "ods_score": 353.68,
+    "pca_loadings": {
+      "obi": 0.617438,
+      "hawkes": 0.0,
+      "future": 0.615665,
+      "rmst": -0.290193,
+      "persistence": 0.394354
+    },
+    "allocated_officers": 0,
+    "allocated_supervisors": 0,
+    "allocated_tow": 0,
+    "allocated_barricades": 0,
+    "qru_units": 1,
+    "patrol_vehicles": 3,
+    "barricade_strategy": "emergency_closure",
+    "closure_type": "full_road",
+    "diversion_routes": [
+      {
+        "route_rank": 1,
+        "route_label": "Route A (best)",
+        "path": "DhobiGhatJunc|VijayanagarBusStandJunction",
+        "estimated_time_min": 4.6
+      },
+      {
+        "route_rank": 2,
+        "route_label": "Route B",
+        "path": "UlsoorGateJunc|UniversityJunc(Janabharti)",
+        "estimated_time_min": 6.2
+      },
+      {
+        "route_rank": 3,
+        "route_label": "Route C",
+        "path": "HudsonCircle|BangaloreBodyBuildersJunc",
+        "estimated_time_min": 8.6
+      }
+    ],
+    "tow_unit_assigned": "TOW-003",
+    "efficiency_note": "+20% officers (0\u21920) saves ~0 min clearance"
+  },
+  {
+    "junction": "HebbalFlyoverJunc",
+    "event_type": null,
+    "dis_score": 83.06,
+    "risk_level": "Critical",
+    "ods_score": 348.85,
+    "pca_loadings": {
+      "obi": 0.617438,
+      "hawkes": 0.0,
+      "future": 0.615665,
+      "rmst": -0.290193,
+      "persistence": 0.394354
+    },
+    "allocated_officers": 0,
+    "allocated_supervisors": 0,
+    "allocated_tow": 0,
+    "allocated_barricades": 0,
+    "qru_units": 1,
+    "patrol_vehicles": 3,
+    "barricade_strategy": "emergency_closure",
+    "closure_type": "full_road",
+    "diversion_routes": [
+      {
+        "route_rank": 1,
+        "route_label": "Route A (best)",
+        "path": "HennurRoad-ORR Junc|HennurRd-DavisRdJunction",
+        "estimated_time_min": 4.7
+      },
+      {
+        "route_rank": 2,
+        "route_label": "Route B",
+        "path": "HennurRoad-ORR Junc|Kammanahalli-RingRoadJunction",
+        "estimated_time_min": 4.8
+      },
+      {
+        "route_rank": 3,
+        "route_label": "Route C",
+        "path": "LRDE Junction|KodigehalliCross",
+        "estimated_time_min": 5.8
+      }
+    ],
+    "tow_unit_assigned": "TOW-001",
+    "efficiency_note": "+20% officers (0\u21920) saves ~0 min clearance"
+  }
+]

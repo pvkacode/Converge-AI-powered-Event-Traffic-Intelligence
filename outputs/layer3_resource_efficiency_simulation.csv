@@ -1,0 +1,121 @@
+junction,dis_score,officer_multiplier,n_officers,predicted_clearance_min,marginal_gain_min,base_clearance_min
+JalahalliCross(SM Circle),100.0,1.0,14,263.0,97.0,360.0
+JalahalliCross(SM Circle),100.0,1.1,16,256.0,6.9,360.0
+JalahalliCross(SM Circle),100.0,1.2,17,253.0,3.1,360.0
+JalahalliCross(SM Circle),100.0,1.3,19,247.5,5.5,360.0
+JalahalliCross(SM Circle),100.0,1.5,21,242.8,4.7,360.0
+JalahalliCross(SM Circle),100.0,2.0,28,231.3,11.5,360.0
+SatteliteBusStandJunc,91.57,1.0,10,280.7,79.3,360.0
+SatteliteBusStandJunc,91.57,1.1,11,275.7,5.0,360.0
+SatteliteBusStandJunc,91.57,1.2,12,271.1,4.6,360.0
+SatteliteBusStandJunc,91.57,1.3,13,266.9,4.2,360.0
+SatteliteBusStandJunc,91.57,1.5,15,259.4,7.5,360.0
+SatteliteBusStandJunc,91.57,2.0,20,245.1,14.3,360.0
+BagalurCrossJunc,85.82,1.0,0,360.0,0.0,360.0
+BagalurCrossJunc,85.82,1.1,0,360.0,0.0,360.0
+BagalurCrossJunc,85.82,1.2,0,360.0,0.0,360.0
+BagalurCrossJunc,85.82,1.3,0,360.0,0.0,360.0
+BagalurCrossJunc,85.82,1.5,0,360.0,0.0,360.0
+BagalurCrossJunc,85.82,2.0,0,360.0,0.0,360.0
+KIMCO Junction,84.21,1.0,0,360.0,0.0,360.0
+KIMCO Junction,84.21,1.1,0,360.0,0.0,360.0
+KIMCO Junction,84.21,1.2,0,360.0,0.0,360.0
+KIMCO Junction,84.21,1.3,0,360.0,0.0,360.0
+KIMCO Junction,84.21,1.5,0,360.0,0.0,360.0
+KIMCO Junction,84.21,2.0,0,360.0,0.0,360.0
+HebbalFlyoverJunc,83.06,1.0,0,360.0,0.0,360.0
+HebbalFlyoverJunc,83.06,1.1,0,360.0,0.0,360.0
+HebbalFlyoverJunc,83.06,1.2,0,360.0,0.0,360.0
+HebbalFlyoverJunc,83.06,1.3,0,360.0,0.0,360.0
+HebbalFlyoverJunc,83.06,1.5,0,360.0,0.0,360.0
+HebbalFlyoverJunc,83.06,2.0,0,360.0,0.0,360.0
+TownhallJunction,82.99,1.0,0,360.0,0.0,360.0
+TownhallJunction,82.99,1.1,0,360.0,0.0,360.0
+TownhallJunction,82.99,1.2,0,360.0,0.0,360.0
+TownhallJunction,82.99,1.3,0,360.0,0.0,360.0
+TownhallJunction,82.99,1.5,0,360.0,0.0,360.0
+TownhallJunction,82.99,2.0,0,360.0,0.0,360.0
+GokuldasImagesJunc,81.95,1.0,0,360.0,0.0,360.0
+GokuldasImagesJunc,81.95,1.1,0,360.0,0.0,360.0
+GokuldasImagesJunc,81.95,1.2,0,360.0,0.0,360.0
+GokuldasImagesJunc,81.95,1.3,0,360.0,0.0,360.0
+GokuldasImagesJunc,81.95,1.5,0,360.0,0.0,360.0
+GokuldasImagesJunc,81.95,2.0,0,360.0,0.0,360.0
+MekhriCircle,80.3,1.0,0,360.0,0.0,360.0
+MekhriCircle,80.3,1.1,0,360.0,0.0,360.0
+MekhriCircle,80.3,1.2,0,360.0,0.0,360.0
+MekhriCircle,80.3,1.3,0,360.0,0.0,360.0
+MekhriCircle,80.3,1.5,0,360.0,0.0,360.0
+MekhriCircle,80.3,2.0,0,360.0,0.0,360.0
+toll gate mysore road,78.72,1.0,0,360.0,0.0,360.0
+toll gate mysore road,78.72,1.1,0,360.0,0.0,360.0
+toll gate mysore road,78.72,1.2,0,360.0,0.0,360.0
+toll gate mysore road,78.72,1.3,0,360.0,0.0,360.0
+toll gate mysore road,78.72,1.5,0,360.0,0.0,360.0
+toll gate mysore road,78.72,2.0,0,360.0,0.0,360.0
+YeshwanthpuraCircle,77.14,1.0,0,360.0,0.0,360.0
+YeshwanthpuraCircle,77.14,1.1,0,360.0,0.0,360.0
+YeshwanthpuraCircle,77.14,1.2,0,360.0,0.0,360.0
+YeshwanthpuraCircle,77.14,1.3,0,360.0,0.0,360.0
+YeshwanthpuraCircle,77.14,1.5,0,360.0,0.0,360.0
+YeshwanthpuraCircle,77.14,2.0,0,360.0,0.0,360.0
+HesaraghattaJunction,72.59,1.0,0,360.0,0.0,360.0
+HesaraghattaJunction,72.59,1.1,0,360.0,0.0,360.0
+HesaraghattaJunction,72.59,1.2,0,360.0,0.0,360.0
+HesaraghattaJunction,72.59,1.3,0,360.0,0.0,360.0
+HesaraghattaJunction,72.59,1.5,0,360.0,0.0,360.0
+HesaraghattaJunction,72.59,2.0,0,360.0,0.0,360.0
+BangaloreBodyBuildersJunc,71.39,1.0,0,360.0,0.0,360.0
+BangaloreBodyBuildersJunc,71.39,1.1,0,360.0,0.0,360.0
+BangaloreBodyBuildersJunc,71.39,1.2,0,360.0,0.0,360.0
+BangaloreBodyBuildersJunc,71.39,1.3,0,360.0,0.0,360.0
+BangaloreBodyBuildersJunc,71.39,1.5,0,360.0,0.0,360.0
+BangaloreBodyBuildersJunc,71.39,2.0,0,360.0,0.0,360.0
+GoruguntepalyaJunc,69.62,1.0,0,360.0,0.0,360.0
+GoruguntepalyaJunc,69.62,1.1,0,360.0,0.0,360.0
+GoruguntepalyaJunc,69.62,1.2,0,360.0,0.0,360.0
+GoruguntepalyaJunc,69.62,1.3,0,360.0,0.0,360.0
+GoruguntepalyaJunc,69.62,1.5,0,360.0,0.0,360.0
+GoruguntepalyaJunc,69.62,2.0,0,360.0,0.0,360.0
+YelhankaCircle,69.52,1.0,0,360.0,0.0,360.0
+YelhankaCircle,69.52,1.1,0,360.0,0.0,360.0
+YelhankaCircle,69.52,1.2,0,360.0,0.0,360.0
+YelhankaCircle,69.52,1.3,0,360.0,0.0,360.0
+YelhankaCircle,69.52,1.5,0,360.0,0.0,360.0
+YelhankaCircle,69.52,2.0,0,360.0,0.0,360.0
+SantheCircle,69.43,1.0,0,360.0,0.0,360.0
+SantheCircle,69.43,1.1,0,360.0,0.0,360.0
+SantheCircle,69.43,1.2,0,360.0,0.0,360.0
+SantheCircle,69.43,1.3,0,360.0,0.0,360.0
+SantheCircle,69.43,1.5,0,360.0,0.0,360.0
+SantheCircle,69.43,2.0,0,360.0,0.0,360.0
+SilkBoardJunc,66.37,1.0,0,360.0,0.0,360.0
+SilkBoardJunc,66.37,1.1,0,360.0,0.0,360.0
+SilkBoardJunc,66.37,1.2,0,360.0,0.0,360.0
+SilkBoardJunc,66.37,1.3,0,360.0,0.0,360.0
+SilkBoardJunc,66.37,1.5,0,360.0,0.0,360.0
+SilkBoardJunc,66.37,2.0,0,360.0,0.0,360.0
+SRS Peenya Junc,65.27,1.0,0,360.0,0.0,360.0
+SRS Peenya Junc,65.27,1.1,0,360.0,0.0,360.0
+SRS Peenya Junc,65.27,1.2,0,360.0,0.0,360.0
+SRS Peenya Junc,65.27,1.3,0,360.0,0.0,360.0
+SRS Peenya Junc,65.27,1.5,0,360.0,0.0,360.0
+SRS Peenya Junc,65.27,2.0,0,360.0,0.0,360.0
+LeprosyhospitalJunc,64.54,1.0,0,360.0,0.0,360.0
+LeprosyhospitalJunc,64.54,1.1,0,360.0,0.0,360.0
+LeprosyhospitalJunc,64.54,1.2,0,360.0,0.0,360.0
+LeprosyhospitalJunc,64.54,1.3,0,360.0,0.0,360.0
+LeprosyhospitalJunc,64.54,1.5,0,360.0,0.0,360.0
+LeprosyhospitalJunc,64.54,2.0,0,360.0,0.0,360.0
+CMP GateJunc,64.49,1.0,0,360.0,0.0,360.0
+CMP GateJunc,64.49,1.1,0,360.0,0.0,360.0
+CMP GateJunc,64.49,1.2,0,360.0,0.0,360.0
+CMP GateJunc,64.49,1.3,0,360.0,0.0,360.0
+CMP GateJunc,64.49,1.5,0,360.0,0.0,360.0
+CMP GateJunc,64.49,2.0,0,360.0,0.0,360.0
+YelhankaBypass,63.32,1.0,0,360.0,0.0,360.0
+YelhankaBypass,63.32,1.1,0,360.0,0.0,360.0
+YelhankaBypass,63.32,1.2,0,360.0,0.0,360.0
+YelhankaBypass,63.32,1.3,0,360.0,0.0,360.0
+YelhankaBypass,63.32,1.5,0,360.0,0.0,360.0
+YelhankaBypass,63.32,2.0,0,360.0,0.0,360.0

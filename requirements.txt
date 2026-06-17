@@ -13,3 +13,4 @@ xgboost>=2.0
 umap-learn>=0.5
 hdbscan>=0.8
 shap>=0.44
+faiss-cpu>=1.7        # Layer 4 similarity index (falls back to sklearn if absent)

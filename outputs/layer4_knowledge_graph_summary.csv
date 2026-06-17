@@ -1,0 +1,53 @@
+source_node,source_type,target_node,target_type,edge_weight,edge_label
+High_Closure_Probability,outcome,Officers_2_Tow_0_Barricades_0,resource_plan,4.1158,outcome_to_plan
+Low_Closure_Probability,outcome,Officers_2_Tow_0_Barricades_0,resource_plan,4.6283,outcome_to_plan
+Long_Duration,outcome,Officers_2_Tow_0_Barricades_0,resource_plan,4.1964,outcome_to_plan
+Short_Duration,outcome,Officers_2_Tow_0_Barricades_0,resource_plan,4.7086,outcome_to_plan
+CBD 2,corridor,public_event,event_type,6.0,corridor_to_cause
+CBD 2,corridor,protest,event_type,1.0,corridor_to_cause
+public_event,event_type,High_Closure_Probability,outcome,0.4524,cause_to_outcome
+public_event,event_type,Low_Closure_Probability,outcome,0.5476,cause_to_outcome
+public_event,event_type,Long_Duration,outcome,0.9405,cause_to_outcome
+public_event,event_type,Short_Duration,outcome,0.0595,cause_to_outcome
+Mysore Road,corridor,vip_movement,event_type,6.0,corridor_to_cause
+Mysore Road,corridor,procession,event_type,3.0,corridor_to_cause
+Mysore Road,corridor,public_event,event_type,4.0,corridor_to_cause
+Mysore Road,corridor,protest,event_type,3.0,corridor_to_cause
+vip_movement,event_type,High_Closure_Probability,outcome,0.9,cause_to_outcome
+vip_movement,event_type,Low_Closure_Probability,outcome,0.1,cause_to_outcome
+vip_movement,event_type,Long_Duration,outcome,0.8,cause_to_outcome
+vip_movement,event_type,Short_Duration,outcome,0.2,cause_to_outcome
+Non-corridor,corridor,procession,event_type,49.0,corridor_to_cause
+Non-corridor,corridor,protest,event_type,9.0,corridor_to_cause
+Non-corridor,corridor,public_event,event_type,42.0,corridor_to_cause
+Non-corridor,corridor,vip_movement,event_type,13.0,corridor_to_cause
+procession,event_type,High_Closure_Probability,outcome,0.3194,cause_to_outcome
+procession,event_type,Low_Closure_Probability,outcome,0.6806,cause_to_outcome
+procession,event_type,Long_Duration,outcome,0.2778,cause_to_outcome
+procession,event_type,Short_Duration,outcome,0.7222,cause_to_outcome
+protest,event_type,High_Closure_Probability,outcome,0.6,cause_to_outcome
+protest,event_type,Low_Closure_Probability,outcome,0.4,cause_to_outcome
+protest,event_type,Long_Duration,outcome,0.2,cause_to_outcome
+protest,event_type,Short_Duration,outcome,0.8,cause_to_outcome
+ORR East 1,corridor,public_event,event_type,1.0,corridor_to_cause
+Hosur Road,corridor,procession,event_type,3.0,corridor_to_cause
+Hosur Road,corridor,public_event,event_type,1.0,corridor_to_cause
+Bellary Road 1,corridor,public_event,event_type,3.0,corridor_to_cause
+Old Madras Road,corridor,public_event,event_type,4.0,corridor_to_cause
+Old Airport Road,corridor,vip_movement,event_type,1.0,corridor_to_cause
+Old Airport Road,corridor,public_event,event_type,6.0,corridor_to_cause
+Old Airport Road,corridor,protest,event_type,1.0,corridor_to_cause
+Magadi Road,corridor,procession,event_type,10.0,corridor_to_cause
+Magadi Road,corridor,public_event,event_type,3.0,corridor_to_cause
+Tumkur Road,corridor,protest,event_type,1.0,corridor_to_cause
+Bannerghata Road,corridor,procession,event_type,1.0,corridor_to_cause
+Bannerghata Road,corridor,public_event,event_type,1.0,corridor_to_cause
+Hennur Main Road,corridor,procession,event_type,3.0,corridor_to_cause
+Hennur Main Road,corridor,public_event,event_type,2.0,corridor_to_cause
+ORR West 1,corridor,public_event,event_type,2.0,corridor_to_cause
+West of Chord Road,corridor,public_event,event_type,3.0,corridor_to_cause
+West of Chord Road,corridor,procession,event_type,1.0,corridor_to_cause
+ORR North 1,corridor,public_event,event_type,1.0,corridor_to_cause
+Bellary Road 2,corridor,public_event,event_type,5.0,corridor_to_cause
+Bellary Road 2,corridor,procession,event_type,1.0,corridor_to_cause
+Airport New South Road,corridor,procession,event_type,1.0,corridor_to_cause

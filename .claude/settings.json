@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell($env:PYTHONIOENCODING = \"utf-8\"; cd \"c:\\\\Users\\\\Dell\\\\Desktop\\\\converge\\\\Converge-AI-powered-Event-Traffic-Intelligence\"; python src/layer4_event_intelligence.py 2>&1)",
+      "PowerShell($env:PYTHONIOENCODING = \"utf-8\"; cd \"c:\\\\Users\\\\Dell\\\\Desktop\\\\converge\\\\Converge-AI-powered-Event-Traffic-Intelligence\"; python src/validate_consistency.py 2>&1)",
+      "PowerShell($env:PYTHONIOENCODING = \"utf-8\"; cd \"C:\\\\Users\\\\Dell\\\\Desktop\\\\converge\\\\Converge-AI-powered-Event-Traffic-Intelligence\"; python src/layer4_event_intelligence.py 2>&1)",
+      "PowerShell($env:PYTHONIOENCODING = \"utf-8\"; cd \"C:\\\\Users\\\\Dell\\\\Desktop\\\\converge\\\\Converge-AI-powered-Event-Traffic-Intelligence\"; python src/validate_consistency.py 2>&1)",
+      "PowerShell($env:PYTHONIOENCODING = \"utf-8\"; cd \"C:\\\\Users\\\\Dell\\\\Desktop\\\\converge\\\\Converge-AI-powered-Event-Traffic-Intelligence\"; python audit2.py 2>&1)",
+      "PowerShell($env:PYTHONIOENCODING = \"utf-8\"; cd \"C:\\\\Users\\\\Dell\\\\Desktop\\\\converge\\\\Converge-AI-powered-Event-Traffic-Intelligence\"; python audit3.py 2>&1)",
+      "PowerShell($env:PYTHONIOENCODING = \"utf-8\"; cd \"C:\\\\Users\\\\Dell\\\\Desktop\\\\converge\\\\Converge-AI-powered-Event-Traffic-Intelligence\"; python src/layer3_corridor_fragility.py 2>&1)",
+      "PowerShell($env:PYTHONIOENCODING = \"utf-8\"; cd \"C:\\\\Users\\\\Dell\\\\Desktop\\\\converge\\\\Converge-AI-powered-Event-Traffic-Intelligence\"; python src/layer4_planned_event_retrieval.py 2>&1)",
+      "PowerShell(cd \"C:\\\\Users\\\\Dell\\\\Desktop\\\\converge\\\\Converge-AI-powered-Event-Traffic-Intelligence\"; Get-ChildItem outputs/layer3_corridor_fragility.csv, outputs/layer3_fragility_validation.csv, outputs/layer3_zone_fragility_summary.csv, outputs/layer4_planned_event_retrieval.csv, outputs/layer4_planned_event_prototypes.csv | Select-Object Name, @{N='KB';E={[math]::Round\\($_.Length/1KB,1\\)}})",
+      "PowerShell($env:PYTHONIOENCODING = \"utf-8\"; cd \"C:\\\\Users\\\\Dell\\\\Desktop\\\\converge\\\\Converge-AI-powered-Event-Traffic-Intelligence\"; python src/layer3_resource_optimization.py 2>&1 | Select-Object -Last 30)",
+      "PowerShell($env:PYTHONIOENCODING = \"utf-8\"; cd \"C:\\\\Users\\\\Dell\\\\Desktop\\\\converge\\\\Converge-AI-powered-Event-Traffic-Intelligence\"; python src/layer4_event_intelligence.py 2>&1 | Select-Object -Last 30)",
+      "PowerShell($env:PYTHONIOENCODING = \"utf-8\"; cd \"C:\\\\Users\\\\Dell\\\\Desktop\\\\converge\\\\Converge-AI-powered-Event-Traffic-Intelligence\"; python src/layer3_corridor_fragility.py 2>&1 | Select-Object -Last 20)",
+      "PowerShell($env:PYTHONIOENCODING = \"utf-8\"; cd \"C:\\\\Users\\\\Dell\\\\Desktop\\\\converge\\\\Converge-AI-powered-Event-Traffic-Intelligence\"; python src/layer4_planned_event_retrieval.py 2>&1 | Select-Object -Last 20)"
+    ]
+  }
+}

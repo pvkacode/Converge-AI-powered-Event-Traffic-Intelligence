@@ -1,0 +1,99 @@
+tow_unit_id,assigned_junction,tow_priority_score,recommended_shift
+TOW-001,HebbalFlyoverJunc,0.9299,all_day
+TOW-002,JalahalliCross(SM Circle),0.82,morning_peak
+TOW-003,KIMCO Junction,0.8147,all_day
+TOW-004,SatteliteBusStandJunc,0.7851,all_day
+TOW-005,BagalurCrossJunc,0.7613,morning_peak
+TOW-006,GokuldasImagesJunc,0.7453,all_day
+TOW-007,ISRO Junction-Airport rd,0.6931,all_day
+TOW-008,TownhallJunction,0.6896,all_day
+TOW-009,BangaloreBodyBuildersJunc,0.6866,all_day
+TOW-010,toll gate mysore road,0.6719,all_day
+TOW-011,Devasandra(k r puram),0.6507,all_day
+TOW-012,IndianExpressJunction,0.6367,all_day
+TOW-013,SantheCircle,0.6185,all_day
+TOW-014,MekhriCircle,0.6185,all_day
+TOW-015,SilkBoardJunc,0.6058,all_day
+TOW-016,YeshwanthpuraCircle,0.6054,all_day
+TOW-017,CMP GateJunc,0.598,all_day
+TOW-018,HudsonCircle,0.5786,all_day
+TOW-019,Bommanahalli,0.5759,all_day
+TOW-020,MysoreRd-RingRdJunc(Nayandanahallii),0.5737,all_day
+TOW-021,HesaraghattaJunction,0.5716,morning_peak
+TOW-022,GoruguntepalyaJunc,0.5593,all_day
+TOW-023,SRS Peenya Junc,0.5413,morning_peak
+TOW-024,LeprosyhospitalJunc,0.5382,all_day
+TOW-025,YelhankaBypass,0.5332,morning_peak
+TOW-026,BigBazaarJunction(OldMadrasRd),0.5322,all_day
+TOW-027,Kadubeesanahalli-ORR Junc,0.5227,morning_peak
+TOW-028,AyyappaTempleJunc,0.5214,all_day
+TOW-029,BEL Circle,0.511,all_day
+TOW-030,YelhankaCircle,0.4989,all_day
+TOW-031,TrinityCircle,0.4912,morning_peak
+TOW-032,Sumanhalli,0.4853,all_day
+TOW-033,Chokasandra (Tumkur road),0.4843,morning_peak
+TOW-034,MS RamaiahJunc(TollGate),0.4674,all_day
+TOW-035,RajeshwariJunc,0.4505,all_day
+TOW-036,SiddalingaiahCircle,0.4345,all_day
+TOW-037,KhodaysCircle(DV UrsCircle),0.3928,all_day
+TOW-038,TataInstituteCircle,0.3844,morning_peak
+TOW-039,"VeerannapalyaJunction(BEL,HO)",0.3811,all_day
+TOW-040,PoliceTimmaiahCircle(GPO),0.3771,all_day
+TOW-041,KodigehalliCross,0.3734,morning_peak
+TOW-042,KogilluCrossJunc,0.3727,all_day
+TOW-043,JakkurCrossJunction,0.3712,all_day
+TOW-044,Nagavara-ORR Junction,0.3711,all_day
+TOW-045,DhobiGhatJunc,0.3709,all_day
+TOW-046,KoramangalaWaterTankJunc,0.3666,all_day
+TOW-047,TyagiHengalvarayaJunc(DickensonRd),0.3663,all_day
+TOW-048,MayohallJunction,0.3641,morning_peak
+TOW-049,Shivajinagar(BRV)Junction,0.3555,morning_peak
+TOW-050,HainsJunc,0.3495,all_day
+TOW-051,PoliceCornerJunc,0.3455,all_day
+TOW-052,TumkurRdMarappanapalyaJunc,0.3395,all_day
+TOW-053,DomlurWaterTank,0.3382,all_day
+TOW-054,Dr TCM RoyanRd near AmbedkarStatue,0.3375,morning_peak
+TOW-055,KadirenahalliJunction,0.334,morning_peak
+TOW-056,Yemalur cross junc,0.3293,all_day
+TOW-057,HopefarmJunction,0.3262,all_day
+TOW-058,FTI Junction(KanteeravaStudio),0.3189,all_day
+TOW-059,ItmaduJunction,0.3152,all_day
+TOW-060,SandeepUnnikrishnan-Yelhanka,0.3126,all_day
+TOW-061,PeenyaPoliceStation,0.3118,morning_peak
+TOW-062,OldMadrasRd-Indranagar100ftRdJunc,0.3115,all_day
+TOW-063,Batrayanapura(Amrutahalli)Junction,0.3112,all_day
+TOW-064,MaratahalliBridgeJunc,0.3076,all_day
+TOW-065,VeerasandraGateJunction,0.3075,all_day
+TOW-066,Kudlu Gate Junc,0.3061,all_day
+TOW-067,OldPoliceStation-Ashoknagar,0.3034,all_day
+TOW-068,BilekahalliJunc,0.3032,all_day
+TOW-069,AnilKumbleCircle,0.2963,morning_peak
+TOW-070,OldMadrasRd-80FeetRdJunc,0.2962,all_day
+TOW-071,Srigandakaval,0.2947,all_day
+TOW-072,K R Circle,0.2943,all_day
+TOW-073,OldMadrasRd-NGEF Junc,0.292,all_day
+TOW-074,IbblurJunction',0.292,all_day
+TOW-075,RamaiahCircle-UlsoorPoliceStation,0.2898,all_day
+TOW-076,Rajajinagar19thMainJunc,0.288,all_day
+TOW-077,BanashankariBusStandJunc,0.2877,all_day
+TOW-078,KamrajRdJunction,0.2796,morning_peak
+TOW-079,UlsoorGateJunc,0.2775,morning_peak
+TOW-080,UniversityJunc(Janabharti),0.2759,morning_peak
+TOW-081,NaganathapuraJunction,0.2743,all_day
+TOW-082,KundanahalliGateJunc,0.2712,all_day
+TOW-083,SirsiCircle,0.2693,all_day
+TOW-084,BTM16thMain-ORR Junc,0.2668,all_day
+TOW-085,MotherTeressaCircle,0.2607,all_day
+TOW-086,SadashivnagarJunc,0.2515,all_day
+TOW-087,QueensStatueCircle,0.2429,morning_peak
+TOW-088,ShivajiTalkiesJunc,0.2426,morning_peak
+TOW-089,K R MarketJunction,0.2396,all_day
+TOW-090,SarjapurRd-St JohnsRdJunc,0.2395,morning_peak
+TOW-091,ShivandaCircle,0.2384,all_day
+TOW-092,AshirwadamCircle,0.2378,morning_peak
+TOW-093,"KuvempuCircleJunc,HAL MainGate",0.2372,all_day
+TOW-094,BiryandCircle,0.2301,morning_peak
+TOW-095,ShantalaJunction,0.2275,all_day
+TOW-096,Nagarbhavi,0.2262,all_day
+TOW-097,Deverabeesanahalli-ORR Junc,0.2164,morning_peak
+TOW-098,PES-DevegowdaCircle,0.2145,morning_peak
