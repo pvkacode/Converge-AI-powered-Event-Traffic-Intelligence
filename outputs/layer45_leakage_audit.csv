@@ -1,0 +1,59 @@
+feature_name,feature_group,leakage_status,availability,used_in_training,notes
+asof_p50_duration,duration,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+asof_p80_duration,duration,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+asof_p95_duration,duration,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+asof_surv_prob_60,duration,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+asof_surv_prob_120,duration,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+asof_surv_prob_180,duration,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+asof_rmst_180,duration,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+asof_quantile_fallback_level,duration,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+asof_corridor_burden,spatial,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+asof_junction_burden,spatial,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+asof_obi_proxy,spatial,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+asof_corridor_event_rate,spatial,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+asof_nbr_mean_burden,spatial,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+asof_nbr_mean_duration,spatial,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+asof_fragility_proxy,fragility,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+asof_hawkes_intensity,fragility,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+asof_burstiness,fragility,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+asof_branching_ratio_proxy,fragility,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+asof_retrieval_confidence,retrieval,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+asof_retrieval_n_eff,retrieval,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+asof_retrieval_mean_sim,retrieval,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+asof_retrieval_max_sim,retrieval,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+asof_planned_support,retrieval,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+asof_ims_proxy,retrieval,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+obi_x_fragility,interaction,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+retrieval_x_risk,interaction,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+fragility_x_duration,interaction,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+trust_x_confidence,interaction,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+hotspot_x_duration,interaction,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+hawkes_x_obi,interaction,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+nbr_mean_obi,graph,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+nbr_mean_fragility,graph,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+nbr_mean_duration,graph,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+nbr_mean_severity,graph,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+event_cause,base,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+corridor,base,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+zone,base,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+junction,base,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+priority,base,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+requires_road_closure,base,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+event_type,base,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+hour_local,base,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+dow_local,base,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+month,base,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+is_weekend,base,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+trust_score,base,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+geo_valid,base,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+duration_anomaly,base,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+iso_flagged,base,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+mnar_predicted_prob,base,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+is_true_planned_event,base,asof_safe,prediction_time,True,Point-in-time as-of snapshot feature
+layer1_survival_risk_score,layer1_output,blocked,full_dataset_leakage,False,Blocked — computed on full Nov–Apr batch
+layer2_operational_burden_index,layer2_output,blocked,full_dataset_leakage,False,Blocked — computed on full Nov–Apr batch
+layer3_dis_score,layer3_output,blocked,full_dataset_leakage,False,Blocked — computed on full Nov–Apr batch
+layer4_retrieval_confidence_full,layer4_output,blocked,full_dataset_leakage,False,Blocked — computed on full Nov–Apr batch
+duration_min,target,training_only,label,False,Blocked — computed on full Nov–Apr batch
+duration_min,target,training_only,label,False,Supervised target only
+high_impact,target,training_only,label,False,Supervised target only

@@ -1,0 +1,466 @@
+[
+  {
+    "feature_name": "asof_p50_duration",
+    "feature_group": "duration",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "asof_p80_duration",
+    "feature_group": "duration",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "asof_p95_duration",
+    "feature_group": "duration",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "asof_surv_prob_60",
+    "feature_group": "duration",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "asof_surv_prob_120",
+    "feature_group": "duration",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "asof_surv_prob_180",
+    "feature_group": "duration",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "asof_rmst_180",
+    "feature_group": "duration",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "asof_quantile_fallback_level",
+    "feature_group": "duration",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "asof_corridor_burden",
+    "feature_group": "spatial",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "asof_junction_burden",
+    "feature_group": "spatial",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "asof_obi_proxy",
+    "feature_group": "spatial",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "asof_corridor_event_rate",
+    "feature_group": "spatial",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "asof_nbr_mean_burden",
+    "feature_group": "spatial",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "asof_nbr_mean_duration",
+    "feature_group": "spatial",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "asof_fragility_proxy",
+    "feature_group": "fragility",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "asof_hawkes_intensity",
+    "feature_group": "fragility",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "asof_burstiness",
+    "feature_group": "fragility",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "asof_branching_ratio_proxy",
+    "feature_group": "fragility",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "asof_retrieval_confidence",
+    "feature_group": "retrieval",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "asof_retrieval_n_eff",
+    "feature_group": "retrieval",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "asof_retrieval_mean_sim",
+    "feature_group": "retrieval",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "asof_retrieval_max_sim",
+    "feature_group": "retrieval",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "asof_planned_support",
+    "feature_group": "retrieval",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "asof_ims_proxy",
+    "feature_group": "retrieval",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "obi_x_fragility",
+    "feature_group": "interaction",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "retrieval_x_risk",
+    "feature_group": "interaction",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "fragility_x_duration",
+    "feature_group": "interaction",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "trust_x_confidence",
+    "feature_group": "interaction",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "hotspot_x_duration",
+    "feature_group": "interaction",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "hawkes_x_obi",
+    "feature_group": "interaction",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "nbr_mean_obi",
+    "feature_group": "graph",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "nbr_mean_fragility",
+    "feature_group": "graph",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "nbr_mean_duration",
+    "feature_group": "graph",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "nbr_mean_severity",
+    "feature_group": "graph",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "event_cause",
+    "feature_group": "base",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "corridor",
+    "feature_group": "base",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "zone",
+    "feature_group": "base",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "junction",
+    "feature_group": "base",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "priority",
+    "feature_group": "base",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "requires_road_closure",
+    "feature_group": "base",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "event_type",
+    "feature_group": "base",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "hour_local",
+    "feature_group": "base",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "dow_local",
+    "feature_group": "base",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "month",
+    "feature_group": "base",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "is_weekend",
+    "feature_group": "base",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "trust_score",
+    "feature_group": "base",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "geo_valid",
+    "feature_group": "base",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "duration_anomaly",
+    "feature_group": "base",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "iso_flagged",
+    "feature_group": "base",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "mnar_predicted_prob",
+    "feature_group": "base",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "is_true_planned_event",
+    "feature_group": "base",
+    "leakage_status": "asof_safe",
+    "availability": "prediction_time",
+    "used_in_training": true,
+    "notes": "Point-in-time as-of snapshot feature"
+  },
+  {
+    "feature_name": "layer1_survival_risk_score",
+    "feature_group": "layer1_output",
+    "leakage_status": "blocked",
+    "availability": "full_dataset_leakage",
+    "used_in_training": false,
+    "notes": "Blocked \u2014 computed on full Nov\u2013Apr batch"
+  },
+  {
+    "feature_name": "layer2_operational_burden_index",
+    "feature_group": "layer2_output",
+    "leakage_status": "blocked",
+    "availability": "full_dataset_leakage",
+    "used_in_training": false,
+    "notes": "Blocked \u2014 computed on full Nov\u2013Apr batch"
+  },
+  {
+    "feature_name": "layer3_dis_score",
+    "feature_group": "layer3_output",
+    "leakage_status": "blocked",
+    "availability": "full_dataset_leakage",
+    "used_in_training": false,
+    "notes": "Blocked \u2014 computed on full Nov\u2013Apr batch"
+  },
+  {
+    "feature_name": "layer4_retrieval_confidence_full",
+    "feature_group": "layer4_output",
+    "leakage_status": "blocked",
+    "availability": "full_dataset_leakage",
+    "used_in_training": false,
+    "notes": "Blocked \u2014 computed on full Nov\u2013Apr batch"
+  },
+  {
+    "feature_name": "duration_min",
+    "feature_group": "target",
+    "leakage_status": "training_only",
+    "availability": "label",
+    "used_in_training": false,
+    "notes": "Blocked \u2014 computed on full Nov\u2013Apr batch"
+  },
+  {
+    "feature_name": "duration_min",
+    "feature_group": "target",
+    "leakage_status": "training_only",
+    "availability": "label",
+    "used_in_training": false,
+    "notes": "Supervised target only"
+  },
+  {
+    "feature_name": "high_impact",
+    "feature_group": "target",
+    "leakage_status": "training_only",
+    "availability": "label",
+    "used_in_training": false,
+    "notes": "Supervised target only"
+  }
+]

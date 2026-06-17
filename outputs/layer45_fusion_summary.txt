@@ -1,0 +1,17 @@
+Layer 4.5 Predictive Fusion — Backtest Summary
+================================================
+Train end: 2024-02-29 23:59:59+05:30
+Holdout start: 2024-03-01 00:00:00+05:30
+High-impact: cause-specific tau_c = P75(duration | cause) on train; global fallback = 432.4 min
+Duration regression: trained on log1p(duration_min), predictions expm1-transformed
+Holdout RMSE (minutes): 6834.58
+Holdout MAE (minutes): 2560.52
+Holdout Median AE: 85.00
+Holdout RMSLE: 1.7419
+Holdout ROC-AUC (high-impact): 0.819195755225167
+Holdout ECE: 0.0000
+Conformal 90% coverage: 0.724
+Novelty rate (holdout): 0.076
+
+JOSV exports: layer45_operational_state_vector.csv (raw) + _normalized.csv (robust z)
+As-of features built from raw history only (no full-dataset L1–L4 joins).

@@ -144,6 +144,7 @@ python src/layer4_planned_event_retrieval.py  # additive: prototype retrieval
 python src/layer3_methodology_upgrades.py   # PCA stability + log fragility (additive)
 python src/layer4_methodology_upgrades.py   # leakage-free retrieval + K-Medoids (additive)
 python src/layer4_operational_upgrades.py   # evidence tiers + quantiles + L3 fallback (final L4)
+python src/layer45_predictive_fusion.py     # leak-free predictive fusion → JOSV (additive)
 python src/frontend_exports.py              # dashboard-ready copies → outputs/frontend/
 python src/validate_consistency.py
 ```
@@ -264,6 +265,57 @@ Copies canonical outputs to `outputs/frontend/` — **the only path the dashboar
 
 `duration_lookup.csv`, `risk_scores.csv`, `hotspot_rankings.csv`, `operational_burden.csv`, `top25_locations.csv`, `corridor_fragility.csv`, `planned_event_recommendations.csv`
 
+### Layer 4.5 — Predictive Decision Intelligence (`layer45_predictive_fusion.py`)
+
+**Additive only** — Layers 1–4 are unchanged. Layer 4.5 is the bridge between analytical intelligence (L1–L4) and optimization (L5).
+
+#### Why not use full-dataset Layer 1–4 CSVs as training features?
+
+Layers 1–4 were fit on the **entire** Nov 2023–Apr 2024 batch at once. Joining those outputs onto past rows would leak future information (e.g. hotspot scores, fragility parameters, retrieval confidence, quantiles computed with incidents that had not yet occurred). Layer 4.5 therefore builds **surrogate as-of features** from `events_clean.parquet` using prefix-only / rolling history.
+
+#### Design principles
+
+| Principle | Implementation |
+|-----------|----------------|
+| **Point-in-time safety** | For row \(i\) at time \(t_i\), every feature uses only incidents with `start_local < t_i` |
+| **Snapshot cadence** | Daily recomputation (~150 snapshots); all rows on day \(D\) share state from data before \(D\) 00:00 |
+| **Single chronological backtest** | Train Nov 2023–Feb 2024; holdout Mar–Apr 2024 — **not** five expensive full L1–L4 refits |
+| **Train-only parameters** | Hawkes \((\mu,\alpha,\beta)\), decay \(\lambda\), high-impact threshold \(\tau\), calibration — estimated on training window only |
+| **Fallback chains** | cause×corridor → cause → corridor → global; logged per row (`layer45_coverage_summary.csv`) |
+
+#### Joint Operational State Vector (JOSV)
+
+Not a synthetic target — a structured predictive summary per event for Layer 5:
+
+- Duration median + quantiles (p50/p80/p95) + conformal intervals
+- Calibrated high-impact probability (\(\tau\) = training p75 duration)
+- As-of retrieval confidence / IMS proxies
+- Novelty + drift flags (Isolation Forest + Mahalanobis)
+- Trust, fragility, and OBI surrogate signals
+
+#### Modules
+
+| File | Role |
+|------|------|
+| `layer45_time_split.py` | `build_time_split()` — chronological train/holdout |
+| `layer45_asof_features.py` | `build_asof_feature_matrix()` — daily snapshots, fallbacks, Hawkes/retrieval surrogates |
+| `layer45_feature_registry.py` | `layer45_feature_registry.json` + `layer45_leakage_audit.csv` |
+| `layer45_predictive_fusion.py` | CatBoost models, conformal intervals, isotonic calibration, SHAP, deployment mode |
+
+#### Run
+
+```bash
+python src/layer45_predictive_fusion.py
+```
+
+Backtest mode trains on the early window and evaluates Mar–Apr 2024. Deployment mode (same script, end of run) refits on all history and writes `layer45_deployment_*.csv`.
+
+#### Key outputs
+
+`layer45_asof_feature_matrix.csv`, `layer45_operational_state_vector.csv` (raw JOSV), `layer45_operational_state_vector_normalized.csv` (robust z-scores for Layer 5), `layer45_cause_tau_thresholds.csv`, `layer45_metrics.csv` (includes RMSLE + typical-incident slice), `layer45_model_artifacts/`
+
+Duration regression trains on `log1p(duration_min)`; high-impact uses cause-specific \(\tau_c = P_{75}(\text{duration} \mid \text{cause})\) from the training window only.
+
 ### Computational complexity (approximate, n=8k incidents)
 
 | Module | Complexity | Runtime (local) |
@@ -275,6 +327,8 @@ Copies canonical outputs to `outputs/frontend/` — **the only path the dashboar
 | Network Gi* | O(j²) shortest paths | ~30 s |
 | Hawkes (40 junctions) | O(n²) per junction MLE | ~30 s |
 | OBI composite | O(junctions) | instant |
+| Layer 4.5 as-of features | O(days × n) daily snapshots | ~1–2 min |
+| Layer 4.5 CatBoost (5 models) | O(n·trees) | ~2 min |
 
 ### Operational use cases
 
@@ -640,6 +694,11 @@ converge/
 │   ├── layer4_retrieval_feature_weights.json # IG-shrinkage feature weights
 │   ├── layer4_example_retrievals.json      # 5 annotated examples
 │   └── layer4_simulation_demos.json        # 3 demo simulations
+│   ├── layer45_asof_feature_matrix.csv     # leak-free training features
+│   ├── layer45_operational_state_vector.csv # JOSV for Layer 5
+│   ├── layer45_metrics.csv                 # backtest metrics
+│   ├── layer45_feature_registry.json       # feature leakage audit
+│   └── layer45_model_artifacts/            # CatBoost + calibrator
 ├── src/
 │   ├── data_pipeline.py
 │   ├── layer1_survival.py              # baseline + advanced survival
@@ -652,6 +711,10 @@ converge/
 │   ├── layer4_planned_event_retrieval.py # prototype retrieval (legacy KMeans)
 │   ├── layer4_methodology_upgrades.py    # leakage-free Gower + K-Medoids + confidence
 │   ├── layer4_operational_upgrades.py    # evidence tiers, quantiles, L3 fallback
+│   ├── layer45_predictive_fusion.py      # leak-free predictive fusion → JOSV
+│   ├── layer45_asof_features.py          # daily as-of surrogate features
+│   ├── layer45_time_split.py             # chronological backtest split
+│   ├── layer45_feature_registry.py       # leakage audit + feature registry
 │   ├── layer3_methodology_upgrades.py  # PCA bootstrap + log fragility
 │   ├── frontend_exports.py             # dashboard export layer
 │   └── validate_consistency.py
@@ -662,4 +725,5 @@ converge/
 
 ## Next layers (planned)
 
+- Layer 5: Optimization engine consuming JOSV from Layer 4.5
 - Layer 6: Bayesian post-event learning loop (updates priors after each incident closes)
