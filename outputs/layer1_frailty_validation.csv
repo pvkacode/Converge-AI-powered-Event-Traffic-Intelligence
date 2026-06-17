@@ -1,0 +1,2 @@
+cox_loglik,frailty_loglik,lr_statistic,degrees_freedom,p_value,frailty_supported
+-30182.634608847424,16704.208955122165,1016.2961242834899,1,0.0,True

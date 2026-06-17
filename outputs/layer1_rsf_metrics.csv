@@ -1,0 +1,8 @@
+metric,value
+oob_cindex,0.5892798215333894
+cv_cindex_mean,0.5783653883036355
+cv_cindex_std,0.018345841482046658
+train_cindex,0.6195758228843304
+best_n_estimators,500.0
+best_max_depth,5.0
+best_min_samples_leaf,20.0

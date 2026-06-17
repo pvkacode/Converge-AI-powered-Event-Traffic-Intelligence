@@ -1,0 +1,8 @@
+outputs/
+data/
+*.csv
+*.parquet
+*.feather
+models/
+results/
+.venv/

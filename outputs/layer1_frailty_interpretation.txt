@@ -1,0 +1,17 @@
+=== Gamma Frailty Model Validation ===
+
+Cox partial log-likelihood:     -30182.63  (20 parameters)
+Frailty marginal log-likelihood: 16704.21  (21 parameters)
+Cox nested marginal (θ→∞):      16196.06
+Likelihood-ratio statistic:      1016.296  (df=1, frailty vs nested Cox)
+p-value:                       0.000000
+Frailty supported (p<0.05):    True
+
+Estimated theta (frailty variance): 0.0309
+ICC proxy theta/(1+theta):          0.0300
+Corridor frailty effect variance:   0.0200
+
+Interpretation:
+- Shared gamma frailty significantly improves fit over standard Cox PH.
+- Corridor-level heterogeneity explains material variation (ICC≈0.030).
+- theta=0.031: larger values imply stronger unobserved corridor-level clustering.

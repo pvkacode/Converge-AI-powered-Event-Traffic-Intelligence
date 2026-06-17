@@ -1,20 +1,17 @@
 === Cox Proportional Hazards Summary ===
-Concordance index: 0.560
-(0.5 = random, 1.0 = perfect; values near 0.5 mean weak covariate signal)
+Concordance index: 0.550
 
 Hazard ratios (exp(coef)):
-  priority_high: HR=0.795, p=0.3855
-  closure_int: HR=0.904, p=0.1144
-  hour_sin: HR=1.089, p=0.0360
-  hour_cos: HR=0.961, p=0.0895
-  is_weekend: HR=0.960, p=0.2826
-  corridor_Bellary Road 2: HR=0.934, p=0.5173
-  corridor_Hosur Road: HR=0.817, p=0.0799
-  corridor_Magadi Road: HR=0.962, p=0.7310
-  corridor_Mysore Road: HR=1.120, p=0.1861
-  corridor_Non-corridor: HR=0.634, p=0.0955
-  corridor_ORR East 2: HR=0.652, p=0.0002
-  corridor_Other: HR=0.820, p=0.0088
-  corridor_Tumkur Road: HR=1.354, p=0.0013
-
-INTERPRETATION: corridor and cause (via KM stratification) typically explain duration better than priority/time-of-day/closure-flag alone.
+  priority_high: HR=0.542, p=0.1792
+  closure_int: HR=1.418, p=0.0000
+  hour_sin: HR=1.118, p=0.0037
+  hour_cos: HR=0.933, p=0.0027
+  is_weekend: HR=0.951, p=0.1885
+  corridor_Bellary Road 2: HR=1.064, p=0.5574
+  corridor_Hosur Road: HR=0.990, p=0.9277
+  corridor_Mysore Road: HR=1.360, p=0.0003
+  corridor_Non-corridor: HR=0.591, p=0.2536
+  corridor_ORR North 1: HR=1.064, p=0.6135
+  corridor_Old Madras Road: HR=0.939, p=0.6364
+  corridor_Other: HR=1.155, p=0.0532
+  corridor_Tumkur Road: HR=1.492, p=0.0000

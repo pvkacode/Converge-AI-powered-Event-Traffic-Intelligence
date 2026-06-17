@@ -1,0 +1,1 @@
+RSF remained the best-performing duration model (highest C-index). Ensemble stacking did not improve discrimination, suggesting that the additional survival models capture largely overlapping signal.

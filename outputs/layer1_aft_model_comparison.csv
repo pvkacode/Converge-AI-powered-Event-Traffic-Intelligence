@@ -1,0 +1,3 @@
+model,AIC,selected
+Weibull,38232.127919464976,False
+LogNormal,37294.605821023055,True

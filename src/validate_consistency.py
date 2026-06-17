@@ -20,7 +20,6 @@ def main() -> None:
     errors: list[str] = []
     notes: list[str] = []
 
-    # --- data_pipeline checks ---
     if "is_true_planned_event" not in df.columns:
         errors.append("Missing column: is_true_planned_event")
     else:
@@ -43,7 +42,6 @@ def main() -> None:
     if "trust_score" not in df.columns:
         errors.append("Missing trust_score column")
 
-    # Censored rows must have null duration_min (original design)
     censored_with_dur = df["is_censored"] & df["duration_min"].notna()
     if censored_with_dur.any():
         errors.append(
@@ -51,32 +49,29 @@ def main() -> None:
             "(should be impossible with end-marker logic)"
         )
 
-    # --- layer1 survival design checks (mirrors build_survival_table) ---
-    surv = df[df["duration_min"].notna() & (df["duration_min"] >= 0)].copy()
-    surv["E"] = (~surv["is_censored"]).astype(int)
+    study_end = df["start_datetime"].max()
+    exact = (
+        (~df["is_censored"])
+        & df["duration_min"].notna()
+        & (df["duration_min"] >= 0)
+        & df["start_datetime"].notna()
+    )
+    censored = df["is_censored"].fillna(False) & df["start_datetime"].notna()
+    notes.append(f"Interval-censored survival rows: {int(exact.sum() + censored.sum()):,}")
+    notes.append(f"  exact events (E=1): {int(exact.sum()):,}")
+    notes.append(f"  right-censored [L, inf): {int(censored.sum()):,}")
+    notes.append(
+        "  Censored rows contribute lower bound L = study_end - start "
+        f"(study_end={study_end})"
+    )
 
-    notes.append(f"Survival-modelable rows: {len(surv):,}")
-    notes.append(f"  events observed (E=1): {int(surv['E'].sum()):,}")
-    notes.append(f"  censored in survival table (E=0): {int((1 - surv['E']).sum()):,}")
+    turnbull = ROOT / "outputs" / "layer1_turnbull_quantiles.csv"
+    if turnbull.exists():
+        tb = pd.read_csv(turnbull)
+        notes.append(f"  Turnbull strata exported: {len(tb)}")
 
-    if (1 - surv["E"]).sum() != 0:
-        notes.append(
-            "  NOTE: E=0 count is 0 by design — censored rows lack duration_min "
-            "and are excluded from KM quantiles (same as original v1). Their "
-            "impact is via trust_score + missingness test, not KM censoring time."
-        )
-
-    # Original v1 used hard 1440-min cap; upgraded pipeline uses MAD + trust instead
-    if (surv["duration_min"] > 1440).any():
-        notes.append(
-            f"  Rows with duration > 1440 min retained: "
-            f"{(surv['duration_min'] > 1440).sum()} "
-            "(intentional — stratified MAD + trust_score replaces global cutoff)"
-        )
-
-    # Weights available for Layer 1
-    if "trust_score" in surv.columns and surv["trust_score"].isna().any():
-        errors.append("trust_score has NaNs in survival-modelable rows")
+    if "trust_score" in df.columns and df["trust_score"].isna().any():
+        errors.append("trust_score has NaNs in clean data")
 
     print("=== CONSISTENCY VALIDATION ===\n")
     for line in notes:

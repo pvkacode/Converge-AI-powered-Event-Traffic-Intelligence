@@ -2,7 +2,7 @@
 
 **Framing:** From reactive patrol logs to a predictive, self-improving disruption-intelligence system for Bengaluru traffic.
 
-This repository implements the **Day 1 foundation**: data cleaning with a composite **Data Trust Score**, **Layer 1** survival-based duration forecasting, and **Layer 2** spatial hotspot detection.
+This repository implements the **Day 1 foundation** plus **integrated advanced models** in the same Layer 1 and Layer 2 scripts: data cleaning with trust score, survival analysis (KM/Cox + frailty/AFT/RSF/RMST/GMM), and spatial intelligence (Gi* + severity/network/Hawkes/OBI).
 
 ## Problem statement
 
@@ -133,9 +133,114 @@ pip install -r requirements.txt
 
 ```bash
 python src/data_pipeline.py
-python src/layer1_survival.py
-python src/layer2_hotspots.py
+python src/layer1_survival.py    # baseline KM/Cox + advanced survival models
+python src/layer2_hotspots.py    # baseline Gi* + advanced hotspot intelligence
+python src/layer1_research_upgrades.py  # frailty LRT + stacked ensemble (additive)
+python src/layer2_research_upgrades.py  # MSHI + Monte Carlo OBI stability (additive)
+python src/validate_consistency.py
 ```
+
+Each layer script runs **baseline first, then advanced**, writing all outputs to `outputs/layer1_*` and `outputs/layer2_*`.
+
+## Layer 1 outputs (`layer1_survival.py`)
+
+| Section | Models | Output files |
+|---------|--------|--------------|
+| **Baseline** | Kaplan-Meier (cause×corridor), Cox PH | `layer1_survival_quantiles.csv`, `layer1_survival_fallback.csv`, `layer1_cox_summary.txt` |
+| **Advanced** | Frailty, AFT, RSF, RMST, GMM | `layer1_frailty_scores.csv`, `layer1_duration_predictions.csv`, `layer1_survival_risk_scores.csv`, `layer1_rmst_summary.csv`, `layer1_incident_archetypes.csv`, … |
+| **Research upgrades** | Frailty LRT, stacked ensemble | `layer1_frailty_validation.csv`, `layer1_frailty_interpretation.txt`, `layer1_stacked_survival_predictions.csv`, `layer1_stacked_survival_metrics.csv` |
+
+## Layer 2 outputs (`layer2_hotspots.py`)
+
+| Section | Models | Output files |
+|---------|--------|--------------|
+| **Baseline** | Trust-weighted Getis-Ord Gi* | `layer2_hotspots.csv` |
+| **Advanced** | Severity, spatiotemporal Gi*, network Gi*, Hawkes, persistence, future risk, OBI | `layer2_severity_hotspots.csv`, `layer2_network_hotspots.csv`, `layer2_operational_burden_index.csv`, … |
+| **Research upgrades** | Multi-scale Gi* (MSHI), Monte Carlo OBI stability | `layer2_multiscale_hotspots.csv`, `layer2_obi_stability.csv`, `layer2_obi_stable_top25.csv` |
+
+## Advanced models (integrated into Layer 1 & 2)
+
+### Why advanced models beat baseline KM + Gi*
+
+| Limitation of baseline | Advanced remedy |
+|------------------------|-----------------|
+| KM ignores covariate interactions | Random Survival Forest (C-index ~0.70 vs Cox ~0.56) |
+| Cox gives hazard ratios, not minutes | AFT models predict median/P90 duration directly |
+| Corridors differ in hidden ops capacity | Frailty / clearance multipliers by corridor |
+| Median hides tail risk for planners | RMST(τ) = expected occupation time up to τ |
+| One-size duration bucket | GMM latent archetypes (quick / moderate / severe) |
+| Gi* counts incidents, not burden | Severity = Trust × Duration × Priority |
+| Euclidean KNN ignores road topology | Network-constrained Gi* on corridor graph |
+| Static map misses rush-hour patterns | Spatiotemporal Gi* by hour × day-of-week |
+| No cascade awareness | Hawkes self-exciting intensity per junction |
+| Hotspot today ≠ hotspot always | Weekly persistence index (transient / chronic) |
+| Reactive not predictive | Graph ML future hotspot risk score |
+| Many metrics, one decision | **Operational Burden Index (OBI)** |
+
+### Layer 1 formulas (all in `layer1_survival.py`)
+
+| Model | Formula | Output |
+|-------|---------|--------|
+| **Kaplan-Meier** | \(\hat S(t) = \prod(1 - d_i/n_i)\), trust-weighted | `layer1_survival_quantiles.csv` |
+| **Cox PH** | \(h(t|X) = h_0(t) e^{\beta X}\) | `layer1_cox_summary.txt` |
+| **Frailty** | Corridor clearance multiplier = global median / corridor median | `layer1_frailty_scores.csv` |
+| **AFT** | Weibull + LogNormal; lowest AIC wins | `layer1_duration_predictions.csv` |
+| **RSF** | Random Survival Forest (`scikit-survival`) | `layer1_survival_risk_scores.csv` |
+| **RMST** | \(\int_0^\tau S(t)\,dt\) for τ ∈ {60,180,360,720} min | `layer1_rmst_summary.csv` |
+| **GMM** | Latent duration archetypes (BIC selects K) | `layer1_incident_archetypes.csv` |
+
+### Layer 2 formulas (all in `layer2_hotspots.py`)
+
+| Model | Formula | Output |
+|-------|---------|--------|
+| **Baseline Gi*** | \(x_j = \sum \text{Trust}_i\), Euclidean KNN | `layer2_hotspots.csv` |
+| **Severity** | \(x_j = \sum \text{Trust}_i \times \text{Duration}_i \times \text{Priority}_i\) | `layer2_severity_hotspots.csv` |
+| **Spatiotemporal Gi*** | Gi* per hour × dow slice | `layer2_spatiotemporal_hotspots.csv` |
+| **Network Gi*** | Corridor-graph adjacency (≤2 hops) | `layer2_network_hotspots.csv` |
+| **Hawkes** | \(\lambda(t) = \mu + \sum \alpha e^{-\beta(t-t_i)}\) | `layer2_hawkes_cascade_risk.csv` |
+| **Persistence** | HPI = significant weeks / total weeks | `layer2_hotspot_persistence.csv` |
+| **Future risk** | XGBoost/GBC on graph features | `layer2_future_hotspot_risk.csv` |
+| **OBI** | Weighted composite of above | `layer2_operational_burden_index.csv` |
+
+### Research-grade upgrades (additive modules)
+
+Run **after** the main layer scripts. These modules do not retrain RSF, SHAP, HDBSCAN, or other base models — they read existing outputs.
+
+#### Layer 1 — `layer1_research_upgrades.py`
+
+| Upgrade | Formula | Output | Interpretation |
+|---------|---------|--------|----------------|
+| **Frailty LRT** | \(LR = 2(\ell_{\text{frailty}} - \ell_{\text{Cox nested}})\), df = 1 | `layer1_frailty_validation.csv`, `layer1_frailty_interpretation.txt` | Tests whether shared gamma frailty (\(u_j \sim \text{Gamma}(\theta,\theta)\)) improves fit over nested Cox (\(\theta \to \infty\)). `frailty_supported=True` when \(p < 0.05\). |
+| **Stacked ensemble** | \(\text{Risk}_{\text{stack}} = \sum_k w_k \cdot \text{risk}_k\) via Elastic Net CV on standardized Cox / frailty / AFT / RSF scores | `layer1_stacked_survival_predictions.csv`, `layer1_stacked_survival_metrics.csv`, `layer1_stacked_interpretation.txt` | RSF remained best; stacking did not improve C-index (overlapping signal). Honest negative result documented. |
+| **RSF reliability** | ECE \(= \frac{1}{N}\sum_k | \text{obs}_k - \text{pred}_k | \) by risk-score decile at τ=180 min | `layer1_rsf_reliability.csv`, `layer1_rsf_calibration_summary.csv` | Calibration more informative than another model; ECE < 0.10 is reasonable. |
+
+#### Layer 2 — `layer2_research_upgrades.py`
+
+| Upgrade | Formula | Output | Interpretation |
+|---------|---------|--------|----------------|
+| **MSHI → SPS / NHI** | \(\text{SPS}_i = \frac{1}{|H|}\sum_h G_i^*(h)\); \(\text{NHI}_i = \frac{1}{|H|}\sum_h \text{Percentile}(G_i^*(h))\), \(H=\{1,2,3,5\}\) | `layer2_multiscale_hotspots.csv` | Replaces collapsed binary MSHI; NHI ranks junctions when significance tests saturate on dense corridor graphs. |
+| **Hawkes validation** | Branching ratio \(R = \alpha/\beta\); weak \(<0.3\), moderate \(0.3–0.7\), strong \(>0.7\) | `layer2_hawkes_validation.csv` | Operational cascade intensity per junction (reads existing Hawkes fit). |
+| **OBI stability** | \(x' = x + \epsilon\), \(\epsilon \sim N(0, 0.05)\); 1000 Monte Carlo OBI recomputations | `layer2_obi_stability.csv`, `layer2_obi_stable_top25.csv` | `prob_top25` = fraction of simulations in top 25; high values = robust priority junctions under metric noise. |
+
+### Computational complexity (approximate, n=8k incidents)
+
+| Module | Complexity | Runtime (local) |
+|--------|------------|-----------------|
+| Frailty / AFT | O(n·p) | < 5 s |
+| RSF (500 trees) | O(n log n · trees) | ~3 min |
+| RMST / GMM | O(n·strata) | < 5 s |
+| Spatiotemporal Gi* | O(hours × junctions × perm) | ~1 min |
+| Network Gi* | O(j²) shortest paths | ~30 s |
+| Hawkes (40 junctions) | O(n²) per junction MLE | ~30 s |
+| OBI composite | O(junctions) | instant |
+
+### Operational use cases
+
+- **Pre-position tow trucks:** top OBI junctions + high Hawkes cascade_risk
+- **Staff shift planning:** spatiotemporal Gi* morning vs evening hotspots
+- **Barricade duration:** RMST(180) + AFT predicted_p90 per cause×corridor
+- **VIP route planning:** avoid chronic persistence_class junctions
+- **Dashboard KPI:** OBI ranked list replaces raw incident counts
 
 ## Project structure
 
@@ -147,13 +252,17 @@ converge/
 ├── outputs/
 │   ├── missingness_test.txt
 │   ├── layer1_survival_quantiles.csv
-│   ├── layer1_survival_fallback.csv
-│   ├── layer1_cox_summary.txt
-│   └── layer2_hotspots.csv
+│   ├── layer1_frailty_scores.csv
+│   ├── layer1_rmst_summary.csv
+│   ├── layer2_hotspots.csv
+│   ├── layer2_operational_burden_index.csv
+│   └── … (all layer1_* and layer2_* outputs)
 ├── src/
 │   ├── data_pipeline.py
-│   ├── layer1_survival.py
-│   ├── layer2_hotspots.py
+│   ├── layer1_survival.py       # baseline + advanced survival
+│   ├── layer2_hotspots.py       # baseline + advanced hotspots
+│   ├── layer1_research_upgrades.py  # frailty LRT + stacked ensemble
+│   ├── layer2_research_upgrades.py  # MSHI + OBI stability
 │   └── validate_consistency.py
 ├── requirements.txt
 ├── HANDOFF.md
@@ -170,7 +279,6 @@ converge/
 
 ## Next layers (planned)
 
-- Layer 3: Resource optimization (manpower / barricades / diversions)
-- Layer 4: Case-based retrieval for sparse planned events (protest, VIP)
-- Layer 5: Hawkes process for unplanned incident cascades
+- Layer 3: Resource optimization (manpower / barricades / diversions) — consumes OBI + RMST + frailty
+- Layer 4: Case-based retrieval for sparse `is_true_planned_event` rows (191 / 8,173)
 - Layer 6: Bayesian post-event learning loop

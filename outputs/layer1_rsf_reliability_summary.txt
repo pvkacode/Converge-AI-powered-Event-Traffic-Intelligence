@@ -1,0 +1,8 @@
+=== RSF Reliability / Calibration Summary ===
+
+Horizon τ = 180 minutes
+Expected Calibration Error (ECE) = 0.2207
+Evaluable rows: 8,007 / 8,007
+
+Interpretation: ECE is mean |predicted − observed| event rate across deciles
+of RSF risk score (rank-calibrated). Lower is better; ECE < 0.10 is reasonable.
