@@ -1,25 +1,34 @@
 {
-  "rho": 0.9502487562189055,
-  "eta": 10.0,
-  "n_planned": 191,
-  "ig_scores": {
-    "event_cause": 0.1361968670458019,
-    "corridor": 0.03444086586899311,
-    "closure_binary": 0.16694860452986746,
-    "hour_of_day": 0.054096082325092075,
-    "day_of_week": 0.06334102734783535,
-    "duration_clean": 1.0,
-    "priority_numeric": 0.05780033230433893,
-    "month": 0.1675338774556028
+  "query_features": [
+    "event_cause",
+    "corridor",
+    "closure_binary",
+    "hour_of_day",
+    "day_of_week",
+    "priority_numeric",
+    "month"
+  ],
+  "outcome_only_features": [
+    "duration_min",
+    "trust_score",
+    "OBI",
+    "severity",
+    "closure_rate"
+  ],
+  "confidence_formula": "Conf = (n_eff/(n_eff+2)) * mean_sim * max_sim",
+  "abstention": {
+    "confidence_lt": 0.4,
+    "max_similarity_lt": 0.3,
+    "n_eff_lt": 3.0
   },
+  "prototype_method": "K-Medoids on Gower distance",
   "feature_weights": {
-    "event_cause": 0.08323876072873565,
-    "corridor": 0.025695348372255837,
-    "closure_binary": 0.10062898725354825,
-    "hour_of_day": 0.03681044932363779,
-    "day_of_week": 0.0420385015024212,
-    "duration_clean": 0.5717227744434091,
-    "priority_numeric": 0.038905217018536796,
-    "month": 0.10095996135745543
+    "event_cause": 0.14285714285714285,
+    "corridor": 0.14285714285714285,
+    "closure_binary": 0.14285714285714285,
+    "hour_of_day": 0.14285714285714285,
+    "day_of_week": 0.14285714285714285,
+    "priority_numeric": 0.14285714285714285,
+    "month": 0.14285714285714285
   }
 }

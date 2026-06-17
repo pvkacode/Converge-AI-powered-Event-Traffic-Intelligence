@@ -141,6 +141,10 @@ python src/layer3_resource_optimization.py
 python src/layer4_event_intelligence.py
 python src/layer3_corridor_fragility.py    # additive: Hawkes corridor fragility
 python src/layer4_planned_event_retrieval.py  # additive: prototype retrieval
+python src/layer3_methodology_upgrades.py   # PCA stability + log fragility (additive)
+python src/layer4_methodology_upgrades.py   # leakage-free retrieval + K-Medoids (additive)
+python src/layer4_operational_upgrades.py   # evidence tiers + quantiles + L3 fallback (final L4)
+python src/frontend_exports.py              # dashboard-ready copies → outputs/frontend/
 python src/validate_consistency.py
 ```
 
@@ -225,6 +229,40 @@ Run **after** the main layer scripts. These modules do not retrain RSF, SHAP, HD
 | **MSHI → SPS / NHI** | \(\text{SPS}_i = \frac{1}{|H|}\sum_h G_i^*(h)\); \(\text{NHI}_i = \frac{1}{|H|}\sum_h \text{Percentile}(G_i^*(h))\), \(H=\{1,2,3,5\}\) | `layer2_multiscale_hotspots.csv` | Replaces collapsed binary MSHI; NHI ranks junctions when significance tests saturate on dense corridor graphs. |
 | **Hawkes validation** | Branching ratio \(R = \alpha/\beta\); weak \(<0.3\), moderate \(0.3–0.7\), strong \(>0.7\) | `layer2_hawkes_validation.csv` | Operational cascade intensity per junction (reads existing Hawkes fit). |
 | **OBI stability** | \(x' = x + \epsilon\), \(\epsilon \sim N(0, 0.05)\); 1000 Monte Carlo OBI recomputations | `layer2_obi_stability.csv`, `layer2_obi_stable_top25.csv` | `prob_top25` = fraction of simulations in top 25; high values = robust priority junctions under metric noise. |
+
+### Methodology fixes (pre-frontend — additive, no model retraining)
+
+Run **after** main Layer 3/4 scripts. These address judge-facing weaknesses without retraining Layer 1/2 models.
+
+#### Layer 3 — `layer3_methodology_upgrades.py`
+
+| Fix | Formula | Output | Rationale |
+|-----|---------|--------|-----------|
+| **PCA loading stability** | Bootstrap \(B=500\) junction resamples; 95% CI on PC1 loadings | `layer3_pca_loading_stability.csv`, `layer3_pca_stability_summary.txt` | Defends DIS = PC1: which drivers (OBI, cascade, etc.) are stable. |
+| **Log fragility** | \(\text{fragility\_log} = \log(1 + (\lambda-\mu)/(\mu+\varepsilon))\), \(\varepsilon=0.01\) | `layer3_corridor_fragility.csv` (adds `fragility_raw`, `fragility_log`) | Bounded ranking when \(\mu \to 0\); Hawkes fit unchanged. |
+
+#### Layer 4 — `layer4_methodology_upgrades.py`
+
+| Fix | Formula | Output | Rationale |
+|-----|---------|--------|-----------|
+| **Leakage-free retrieval** | Gower \(d_G(q,p)\) uses only pre-event features: cause, corridor, closure, hour, dow, priority, month | `layer4_retrieval_validation.csv` | Duration/trust/OBI never enter similarity — only outcomes after retrieval. |
+| **K-Medoids prototypes** | Medoid \(= \arg\min_{x_i}\sum_j d_G(x_i,x_j)\) on Gower matrix | `layer4_planned_event_prototypes.csv` | Real event prototypes; mixed categorical + numeric geometry. |
+| **Calibrated confidence** | \(\text{Conf} = \frac{n_{eff}}{n_{eff}+2}\cdot\bar s\cdot\max(s)\); abstain if Conf \(<0.4\) or \(\max s<0.3\) or \(n_{eff}<3\) | `layer4_retrieval_diagnostics.csv` | Principled abstention when evidence is weak (~50% on LOO evaluation). |
+
+#### Layer 4 — `layer4_operational_upgrades.py` (final pre-frontend)
+
+| Feature | Behavior | Output |
+|---------|----------|--------|
+| **Evidence bands** | HIGH (Conf≥0.70), MEDIUM (0.40–0.70), LOW (<0.40) | `confidence_band` in retrieval + diagnostics |
+| **Uncertainty** | Weighted \(Q_{50}, Q_{80}, Q_{95}\) for duration + impact from retrieved analogs | `pred_duration_p*`, `pred_impact_p*` |
+| **Fallback** | LOW → Layer 3 DIS/ODS/manpower; MEDIUM → HYBRID; HIGH → RETRIEVAL durations | `recommendation_source` |
+| **Analytics** | Band counts, confidence histogram | `layer4_retrieval_quality_summary.csv`, `layer4_confidence_distribution.csv` |
+
+#### Frontend — `frontend_exports.py`
+
+Copies canonical outputs to `outputs/frontend/` — **the only path the dashboard should read**:
+
+`duration_lookup.csv`, `risk_scores.csv`, `hotspot_rankings.csv`, `operational_burden.csv`, `top25_locations.csv`, `corridor_fragility.csv`, `planned_event_recommendations.csv`
 
 ### Computational complexity (approximate, n=8k incidents)
 
@@ -611,7 +649,11 @@ converge/
 │   ├── layer3_resource_optimization.py # DIS, manpower, barricades, diversions, tow
 │   ├── layer3_corridor_fragility.py    # marked Hawkes, zone pooling, EB shrinkage, LR test
 │   ├── layer4_event_intelligence.py    # retrieval, prediction, simulation, knowledge base
-│   ├── layer4_planned_event_retrieval.py # prototype retrieval, ESS confidence, abstention
+│   ├── layer4_planned_event_retrieval.py # prototype retrieval (legacy KMeans)
+│   ├── layer4_methodology_upgrades.py    # leakage-free Gower + K-Medoids + confidence
+│   ├── layer4_operational_upgrades.py    # evidence tiers, quantiles, L3 fallback
+│   ├── layer3_methodology_upgrades.py  # PCA bootstrap + log fragility
+│   ├── frontend_exports.py             # dashboard export layer
 │   └── validate_consistency.py
 ├── requirements.txt
 ├── HANDOFF.md

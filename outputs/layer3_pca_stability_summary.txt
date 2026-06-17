@@ -1,0 +1,12 @@
+=== DIS PCA Loading Stability (Bootstrap B=500) ===
+
+Top driver: OBI (mean loading=0.6108, 95% CI [0.5399, 0.6591])
+
+Interpretation:
+  OBI             : +0.6108 [+0.5399, +0.6591]
+  Future Risk     : +0.6096 [+0.5351, +0.6648]
+  Persistence     : +0.3974 [+0.2661, +0.5345]
+  RMST            : -0.2935 [-0.4521, -0.1823]
+  Cascade Risk    : +0.0000 [-0.0000, +0.0000]
+
+Variables whose CI excludes zero consistently drive DIS (PC1). Use this to defend PCA-based DIS in methodology reviews.

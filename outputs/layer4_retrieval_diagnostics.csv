@@ -1,192 +1,192 @@
-query_event_id,cause,corridor,confidence,effective_sample_size,mean_similarity,abstain_flag,actual_duration,predicted_duration_median,abs_error,rel_error
-FKID000008,public_event,CBD 2,0.8324,4.949,0.8324,0,67.6,67.6,0.0,0.0
-FKID000241,vip_movement,Mysore Road,0.7646,4.91,0.7646,0,21.0,53.3,32.3,1.538095238095238
-FKID000361,procession,Non-corridor,0.912,4.984,0.912,0,67.6,61.3,6.299999999999997,0.09319526627218931
-FKID000378,protest,Non-corridor,0.749,4.915,0.749,0,67.6,59.4,8.199999999999996,0.12130177514792895
-FKID000433,public_event,Non-corridor,0.7896,4.967,0.7896,0,67.6,61.4,6.199999999999996,0.09171597633136089
-FKID000437,public_event,Non-corridor,0.8295,4.965,0.8295,0,67.6,61.7,5.8999999999999915,0.08727810650887562
-FKID000439,public_event,CBD 2,0.8324,4.949,0.8324,0,67.6,67.6,0.0,0.0
-FKID000468,procession,Non-corridor,0.6203,4.999,0.6203,0,340.3,42.7,297.6,0.8745224801645607
-FKID000478,procession,Non-corridor,0.8915,4.993,0.8915,0,0.3,48.0,47.7,47.7
-FKID000502,public_event,ORR East 1,0.8528,4.967,0.8528,0,67.6,67.6,0.0,0.0
-FKID000717,procession,Non-corridor,0.9077,4.985,0.9077,0,39.3,48.1,8.800000000000004,0.22391857506361335
-FKID000737,public_event,Non-corridor,0.8295,4.965,0.8295,0,67.6,61.7,5.8999999999999915,0.08727810650887562
-FKID000878,procession,Non-corridor,0.8806,4.979,0.8806,0,67.6,49.1,18.499999999999993,0.27366863905325434
-FKID000920,protest,Non-corridor,0.6781,4.998,0.6781,0,67.6,67.6,0.0,0.0
-FKID000921,protest,Non-corridor,0.7096,4.841,0.7096,0,0.1,58.8,58.699999999999996,58.699999999999996
-FKID000922,protest,Non-corridor,0.71,4.841,0.71,0,0.7,58.8,58.099999999999994,58.099999999999994
-FKID000946,public_event,CBD 2,0.8324,4.949,0.8324,0,67.6,67.6,0.0,0.0
-FKID000949,procession,Non-corridor,0.9062,4.973,0.9062,0,67.6,61.6,5.999999999999993,0.08875739644970404
-FKID000952,procession,Non-corridor,0.8981,4.984,0.8981,0,36.5,49.3,12.799999999999997,0.35068493150684926
-FKID000956,procession,Non-corridor,0.8921,4.986,0.8921,0,29.1,49.2,20.1,0.6907216494845361
-FKID000994,public_event,Non-corridor,0.8295,4.965,0.8295,0,67.6,61.7,5.8999999999999915,0.08727810650887562
-FKID001047,procession,Hosur Road,0.8843,4.985,0.8843,0,67.6,69.1,1.5,0.022189349112426038
-FKID001064,public_event,Bellary Road 1,0.7759,4.997,0.7759,0,67.6,61.6,5.999999999999993,0.08875739644970404
-FKID001104,procession,Non-corridor,0.9113,4.987,0.9113,0,59.9,61.2,1.3000000000000043,0.021702838063439138
-FKID001167,procession,Non-corridor,0.7797,4.997,0.7797,0,67.6,67.6,0.0,0.0
-FKID001198,protest,Non-corridor,0.7215,4.903,0.7215,0,2.7,53.6,50.9,18.85185185185185
-FKID001481,public_event,Non-corridor,0.8295,4.965,0.8295,0,67.6,61.7,5.8999999999999915,0.08727810650887562
-FKID001492,procession,Non-corridor,0.9077,4.979,0.9077,0,67.6,49.6,17.999999999999993,0.26627218934911234
-FKID001569,procession,Non-corridor,0.9144,4.987,0.9144,0,67.6,61.1,6.499999999999993,0.09615384615384606
-FKID001573,public_event,Old Madras Road,0.8628,4.952,0.8628,0,67.6,67.6,0.0,0.0
-FKID001578,public_event,Old Madras Road,0.8628,4.952,0.8628,0,67.6,67.6,0.0,0.0
-FKID001581,public_event,Old Madras Road,0.8628,4.952,0.8628,0,67.6,67.6,0.0,0.0
-FKID001641,vip_movement,Non-corridor,0.7364,4.992,0.7364,0,67.6,61.0,6.599999999999994,0.09763313609467449
-FKID001647,procession,Non-corridor,0.8862,4.991,0.8862,0,67.6,48.6,18.999999999999993,0.2810650887573964
-FKID001648,procession,Non-corridor,0.9027,4.993,0.9027,0,19.3,48.4,29.099999999999998,1.5077720207253884
-FKID001676,vip_movement,Non-corridor,0.7497,4.997,0.7497,0,67.6,61.1,6.499999999999993,0.09615384615384606
-FKID001680,public_event,CBD 2,0.8324,4.949,0.8324,0,67.6,67.6,0.0,0.0
-FKID001683,public_event,CBD 2,0.8324,4.949,0.8324,0,67.6,67.6,0.0,0.0
-FKID001685,vip_movement,Non-corridor,0.7497,4.997,0.7497,0,67.6,61.1,6.499999999999993,0.09615384615384606
-FKID001687,vip_movement,Non-corridor,0.7497,4.997,0.7497,0,67.6,61.1,6.499999999999993,0.09615384615384606
-FKID001691,public_event,Non-corridor,0.7233,4.969,0.7233,0,234.2,61.6,172.6,0.7369769427839453
-FKID001734,public_event,Non-corridor,0.8295,4.965,0.8295,0,67.6,61.7,5.8999999999999915,0.08727810650887562
-FKID001801,public_event,Non-corridor,0.8295,4.965,0.8295,0,67.6,61.7,5.8999999999999915,0.08727810650887562
-FKID001857,vip_movement,Old Airport Road,0.7471,4.984,0.7471,0,67.6,67.6,0.0,0.0
-FKID001865,procession,Non-corridor,0.8626,4.993,0.8626,0,15.7,54.2,38.5,2.4522292993630574
-FKID001896,vip_movement,Non-corridor,0.7497,4.997,0.7497,0,67.6,61.1,6.499999999999993,0.09615384615384606
-FKID001925,vip_movement,Non-corridor,0.7497,4.997,0.7497,0,67.6,61.1,6.499999999999993,0.09615384615384606
-FKID001934,vip_movement,Non-corridor,0.7497,4.997,0.7497,0,67.6,61.1,6.499999999999993,0.09615384615384606
-FKID001970,vip_movement,Mysore Road,0.7518,4.98,0.7518,0,67.6,57.0,10.599999999999994,0.1568047337278106
-FKID001979,vip_movement,Non-corridor,0.7497,4.997,0.7497,0,67.6,61.1,6.499999999999993,0.09615384615384606
-FKID001980,procession,Magadi Road,0.8632,4.991,0.8632,0,67.6,74.7,7.1000000000000085,0.1050295857988167
-FKID001988,public_event,CBD 2,0.8324,4.949,0.8324,0,67.6,67.6,0.0,0.0
-FKID002005,protest,Tumkur Road,0.4825,4.957,0.4825,0,1440.0,1421.0,19.0,0.013194444444444444
-FKID002008,vip_movement,Mysore Road,0.7671,4.991,0.7671,0,67.6,57.2,10.399999999999991,0.15384615384615374
-FKID002015,vip_movement,Mysore Road,0.7671,4.991,0.7671,0,67.6,57.2,10.399999999999991,0.15384615384615374
-FKID002017,vip_movement,Non-corridor,0.7497,4.997,0.7497,0,67.6,61.1,6.499999999999993,0.09615384615384606
-FKID002051,vip_movement,Non-corridor,0.7497,4.997,0.7497,0,67.6,61.1,6.499999999999993,0.09615384615384606
-FKID002054,vip_movement,Non-corridor,0.7497,4.997,0.7497,0,67.6,61.1,6.499999999999993,0.09615384615384606
-FKID002057,vip_movement,Mysore Road,0.7671,4.991,0.7671,0,67.6,57.2,10.399999999999991,0.15384615384615374
-FKID002071,procession,Mysore Road,0.8515,4.99,0.8515,0,120.2,69.4,50.8,0.42262895174708814
-FKID002110,procession,Non-corridor,0.8817,4.992,0.8817,0,0.0,61.0,61.0,61.0
-FKID002212,procession,Bannerghata Road,0.8275,4.993,0.8275,0,0.6,74.9,74.30000000000001,74.30000000000001
-FKID002254,procession,Non-corridor,0.7613,4.999,0.7613,0,6.6,42.3,35.699999999999996,5.409090909090909
-FKID002282,procession,Hennur Main Road,0.8638,4.987,0.8638,0,67.6,69.2,1.6000000000000085,0.023668639053254566
-FKID002292,procession,Magadi Road,0.8491,4.994,0.8491,0,67.6,74.9,7.300000000000011,0.10798816568047355
-FKID002408,public_event,Old Airport Road,0.6916,4.748,0.6916,0,410.3,181.5,228.8,0.5576407506702413
-FKID002409,public_event,Old Airport Road,0.6923,4.748,0.6923,0,409.2,181.5,227.7,0.5564516129032258
-FKID002410,public_event,Old Airport Road,0.6897,4.748,0.6897,0,413.9,181.5,232.39999999999998,0.5614882821937666
-FKID002411,public_event,Old Airport Road,0.6958,4.785,0.6958,0,384.9,179.0,205.89999999999998,0.5349441413354118
-FKID002416,public_event,Old Airport Road,0.6077,4.968,0.6077,0,400.5,85.1,315.4,0.7875156054931335
-FKID002440,public_event,Non-corridor,0.78,4.997,0.78,0,0.2,58.3,58.099999999999994,58.099999999999994
-FKID002445,public_event,Non-corridor,0.8219,4.993,0.8219,0,67.6,64.7,2.8999999999999915,0.04289940828402355
-FKID002483,public_event,Old Madras Road,0.8628,4.952,0.8628,0,67.6,67.6,0.0,0.0
-FKID002602,procession,Non-corridor,0.9013,4.998,0.9013,0,3.0,47.7,44.7,14.9
-FKID002639,protest,Non-corridor,0.765,4.996,0.765,0,67.6,54.7,12.899999999999991,0.1908284023668638
-FKID002684,procession,Hosur Road,0.8783,4.977,0.8783,0,67.6,68.7,1.1000000000000085,0.016272189349112554
-FKID002883,public_event,Hennur Main Road,0.506,4.988,0.506,0,1440.0,1350.7,89.29999999999995,0.062013888888888855
-FKID003127,public_event,Non-corridor,0.7876,4.973,0.7876,0,2.5,61.5,59.0,23.6
-FKID003153,procession,Non-corridor,0.7211,4.993,0.7211,0,376.5,61.2,315.3,0.8374501992031873
-FKID003180,procession,Non-corridor,0.7095,4.999,0.7095,0,165.0,67.6,97.4,0.5903030303030303
-FKID003577,public_event,Mysore Road,0.7863,4.987,0.7863,0,0.6,37.0,36.4,36.4
-FKID003704,public_event,Mysore Road,0.8528,4.967,0.8528,0,67.6,67.6,0.0,0.0
-FKID003731,procession,Non-corridor,0.4915,4.998,0.4915,0,1440.0,1418.2,21.799999999999955,0.015138888888888858
-FKID003755,public_event,Non-corridor,0.8295,4.965,0.8295,0,67.6,61.7,5.8999999999999915,0.08727810650887562
-FKID003758,public_event,Non-corridor,0.8295,4.965,0.8295,0,67.6,61.7,5.8999999999999915,0.08727810650887562
-FKID003763,public_event,ORR West 1,0.8116,4.972,0.8116,0,67.6,67.6,0.0,0.0
-FKID003783,procession,Non-corridor,0.9015,4.99,0.9015,0,67.6,61.4,6.199999999999996,0.09171597633136089
-FKID004092,procession,Non-corridor,0.8852,4.992,0.8852,0,91.6,60.9,30.699999999999996,0.3351528384279476
-FKID004127,procession,Non-corridor,0.9053,4.978,0.9053,0,67.6,62.7,4.8999999999999915,0.0724852071005916
-FKID004161,protest,Non-corridor,0.8082,4.996,0.8082,0,67.6,75.1,7.5,0.11094674556213019
-FKID004165,protest,Non-corridor,0.5197,4.939,0.5197,0,1440.0,1440.0,0.0,0.0
-FKID004184,procession,Non-corridor,0.7744,4.993,0.7744,0,38.4,56.0,17.6,0.45833333333333337
-FKID004386,public_event,Magadi Road,0.7384,4.999,0.7384,0,239.8,52.5,187.3,0.7810675562969142
-FKID004418,procession,Non-corridor,0.9043,4.973,0.9043,0,67.6,56.9,10.699999999999996,0.158284023668639
-FKID004426,public_event,Non-corridor,0.8295,4.965,0.8295,0,67.6,61.7,5.8999999999999915,0.08727810650887562
-FKID004430,public_event,Non-corridor,0.4864,4.984,0.4864,0,1333.9,1366.6,32.69999999999982,0.02451458130294611
-FKID004449,procession,Non-corridor,0.8896,4.974,0.8896,0,67.6,61.6,5.999999999999993,0.08875739644970404
-FKID004467,procession,Non-corridor,0.7599,4.996,0.7599,0,2.6,55.7,53.1,20.423076923076923
-FKID004471,procession,Non-corridor,0.8772,4.977,0.8772,0,67.6,56.5,11.099999999999994,0.16420118343195259
-FKID004485,procession,Magadi Road,0.889,4.992,0.889,0,67.6,74.0,6.400000000000006,0.09467455621301785
-FKID004486,public_event,Bellary Road 1,0.8401,4.953,0.8401,0,67.6,67.6,0.0,0.0
-FKID004488,procession,Hennur Main Road,0.8771,4.981,0.8771,0,67.6,69.9,2.3000000000000114,0.03402366863905343
-FKID004505,procession,Non-corridor,0.8915,4.98,0.8915,0,67.6,65.2,2.3999999999999915,0.03550295857988153
-FKID004509,procession,Non-corridor,0.6937,4.998,0.6937,0,170.4,54.7,115.7,0.6789906103286385
-FKID004527,public_event,Non-corridor,0.5596,4.913,0.5596,0,1440.0,1374.2,65.79999999999995,0.04569444444444441
-FKID004535,protest,Non-corridor,0.7836,4.999,0.7836,0,18.2,62.6,44.400000000000006,2.4395604395604398
-FKID004609,public_event,Non-corridor,0.8036,4.972,0.8036,0,240.3,91.3,149.0,0.6200582605076986
-FKID004629,public_event,Magadi Road,0.8571,4.993,0.8571,0,83.0,65.4,17.599999999999994,0.21204819277108428
-FKID004632,public_event,Non-corridor,0.8295,4.965,0.8295,0,67.6,61.7,5.8999999999999915,0.08727810650887562
-FKID004641,public_event,Non-corridor,0.4695,4.998,0.4695,0,1440.0,1418.3,21.700000000000045,0.015069444444444476
-FKID004671,procession,Magadi Road,0.8648,4.983,0.8648,0,67.6,69.0,1.4000000000000057,0.020710059171597718
-FKID004700,public_event,West of Chord Road,0.8234,4.986,0.8234,0,121.2,74.4,46.8,0.3861386138613861
-FKID004703,procession,Magadi Road,0.8908,4.973,0.8908,0,67.6,74.7,7.1000000000000085,0.1050295857988167
-FKID004707,public_event,Non-corridor,0.8295,4.965,0.8295,0,67.6,61.7,5.8999999999999915,0.08727810650887562
-FKID004711,public_event,Non-corridor,0.4521,4.964,0.4521,0,1440.0,1349.9,90.09999999999991,0.06256944444444439
-FKID004721,vip_movement,Non-corridor,0.5392,4.879,0.5392,0,1440.0,1440.0,0.0,0.0
-FKID004738,procession,Non-corridor,0.9035,4.975,0.9035,0,67.6,56.8,10.799999999999997,0.15976331360946744
-FKID004747,procession,Non-corridor,0.9042,4.974,0.9042,0,67.6,62.7,4.8999999999999915,0.0724852071005916
-FKID004750,procession,Non-corridor,0.7423,4.985,0.7423,0,0.0,55.2,55.2,55.2
-FKID004753,procession,Non-corridor,0.89,4.973,0.89,0,86.8,62.6,24.199999999999996,0.2788018433179723
-FKID004771,public_event,Non-corridor,0.8295,4.965,0.8295,0,67.6,61.7,5.8999999999999915,0.08727810650887562
-FKID004792,public_event,ORR North 1,0.7721,4.969,0.7721,0,0.2,54.5,54.3,54.3
-FKID004801,procession,Magadi Road,0.8286,4.992,0.8286,0,120.5,62.8,57.7,0.47883817427385894
-FKID004884,public_event,Non-corridor,0.8312,4.973,0.8312,0,52.8,76.0,23.200000000000003,0.43939393939393945
-FKID004885,public_event,Non-corridor,0.8755,4.955,0.8755,0,60.0,76.9,16.900000000000006,0.2816666666666668
-FKID004887,public_event,Non-corridor,0.8746,4.954,0.8746,0,52.8,76.7,23.900000000000006,0.4526515151515153
-FKID004901,procession,Non-corridor,0.8754,4.98,0.8754,0,67.6,56.6,10.999999999999993,0.16272189349112418
-FKID004902,procession,Non-corridor,0.85,4.981,0.85,0,166.8,72.9,93.9,0.5629496402877697
-FKID004906,public_event,Non-corridor,0.7806,4.99,0.7806,0,241.5,91.0,150.5,0.6231884057971014
-FKID005098,public_event,Non-corridor,0.7662,4.995,0.7662,0,113.1,69.2,43.89999999999999,0.38815207780725014
-FKID005099,public_event,Non-corridor,0.7674,4.995,0.7674,0,111.2,69.2,42.0,0.3776978417266187
-FKID005127,procession,Non-corridor,0.8993,4.976,0.8993,0,58.2,62.6,4.399999999999999,0.0756013745704467
-FKID005136,public_event,Non-corridor,0.4568,4.986,0.4568,0,1440.0,1416.6,23.40000000000009,0.016250000000000063
-FKID005167,public_event,Non-corridor,0.5504,4.931,0.5504,0,1440.0,1373.3,66.70000000000005,0.046319444444444476
-FKID005248,procession,Non-corridor,0.5363,4.938,0.5363,0,1440.0,1440.0,0.0,0.0
-FKID005271,procession,Non-corridor,0.8439,4.992,0.8439,0,84.7,70.4,14.299999999999997,0.1688311688311688
-FKID005273,public_event,Magadi Road,0.7792,4.953,0.7792,0,240.6,75.7,164.89999999999998,0.6853699085619285
-FKID005291,public_event,Non-corridor,0.5544,4.949,0.5544,0,1440.0,1349.0,91.0,0.06319444444444444
-FKID005292,vip_movement,Non-corridor,0.4902,4.954,0.4902,0,1440.0,1352.9,87.09999999999991,0.060486111111111046
-FKID005353,procession,Non-corridor,0.7895,4.988,0.7895,0,67.6,56.5,11.099999999999994,0.16420118343195259
-FKID005354,procession,Non-corridor,0.8687,4.982,0.8687,0,0.3,56.7,56.400000000000006,56.400000000000006
-FKID005473,public_event,Bannerghata Road,0.8613,4.971,0.8613,0,67.6,67.6,0.0,0.0
-FKID005634,public_event,Mysore Road,0.8143,4.956,0.8143,0,67.6,67.6,0.0,0.0
-FKID005659,procession,Hennur Main Road,0.8163,4.99,0.8163,0,104.5,61.5,43.0,0.41148325358851673
-FKID005754,public_event,Bellary Road 1,0.8149,4.964,0.8149,0,67.6,61.9,5.699999999999996,0.08431952662721888
-FKID005805,public_event,Non-corridor,0.8295,4.965,0.8295,0,67.6,61.7,5.8999999999999915,0.08727810650887562
-FKID005806,public_event,Non-corridor,0.8295,4.965,0.8295,0,67.6,61.7,5.8999999999999915,0.08727810650887562
-FKID005956,procession,Non-corridor,0.8961,4.984,0.8961,0,67.6,72.4,4.800000000000011,0.07100591715976348
-FKID006105,public_event,Non-corridor,0.8549,4.993,0.8549,0,0.0,53.8,53.8,53.8
-FKID006248,public_event,Bellary Road 2,0.7897,4.991,0.7897,0,190.0,75.7,114.3,0.601578947368421
-FKID006283,public_event,Hosur Road,0.817,4.963,0.817,0,67.6,67.6,0.0,0.0
-FKID006314,procession,Mysore Road,0.8136,4.976,0.8136,0,67.6,71.9,4.300000000000011,0.06360946745562147
-FKID006315,procession,Non-corridor,0.7797,4.997,0.7797,0,67.6,67.6,0.0,0.0
-FKID006401,public_event,Old Airport Road,0.7131,4.991,0.7131,0,0.0,51.3,51.3,51.3
-FKID006473,procession,Bellary Road 2,0.7541,4.94,0.7541,0,120.6,83.3,37.3,0.3092868988391376
-FKID006547,public_event,Non-corridor,0.8128,4.981,0.8128,0,146.2,64.7,81.49999999999999,0.5574555403556771
-FKID006581,public_event,Non-corridor,0.838,4.973,0.838,0,180.2,79.5,100.69999999999999,0.5588235294117647
-FKID006633,public_event,Bellary Road 2,0.804,4.994,0.804,0,0.0,84.4,84.4,84.4
-FKID006635,public_event,Bellary Road 2,0.5554,4.984,0.5554,0,720.1,148.2,571.9000000000001,0.7941952506596307
-FKID006638,public_event,Bellary Road 2,0.8475,4.955,0.8475,0,0.0,60.3,60.3,60.3
-FKID006639,public_event,Bellary Road 2,0.549,4.959,0.549,0,1440.0,1356.3,83.70000000000005,0.05812500000000003
-FKID006650,public_event,Non-corridor,0.8498,4.987,0.8498,0,0.6,48.3,47.699999999999996,47.699999999999996
-FKID006666,public_event,Mysore Road,0.836,4.98,0.836,0,3.4,61.6,58.2,17.11764705882353
-FKID006703,procession,Hosur Road,0.8069,4.997,0.8069,0,0.0,73.5,73.5,73.5
-FKID006806,public_event,Non-corridor,0.8219,4.993,0.8219,0,67.6,64.7,2.8999999999999915,0.04289940828402355
-FKID006807,protest,Mysore Road,0.5372,4.918,0.5372,0,1440.0,1372.6,67.40000000000009,0.04680555555555562
-FKID006838,procession,Non-corridor,0.8608,4.98,0.8608,0,0.1,57.5,57.4,57.4
-FKID007012,public_event,West of Chord Road,0.794,4.984,0.794,0,5.9,75.6,69.69999999999999,11.813559322033896
-FKID007013,public_event,West of Chord Road,0.8347,4.957,0.8347,0,2.2,70.7,68.5,31.136363636363633
-FKID007161,procession,Magadi Road,0.862,4.973,0.862,0,85.8,68.5,17.299999999999997,0.2016317016317016
-FKID007173,public_event,Non-corridor,0.8295,4.965,0.8295,0,67.6,61.7,5.8999999999999915,0.08727810650887562
-FKID007186,procession,West of Chord Road,0.7549,4.95,0.7549,0,67.6,60.4,7.199999999999996,0.10650887573964492
-FKID007191,procession,Airport New South Road,0.8808,4.984,0.8808,0,67.6,74.8,7.200000000000003,0.10650887573964501
-FKID007213,procession,Magadi Road,0.7795,4.933,0.7795,0,59.5,78.7,19.200000000000003,0.3226890756302522
-FKID007215,procession,Non-corridor,0.773,4.992,0.773,0,10.7,55.7,45.0,4.205607476635515
-FKID007248,procession,Magadi Road,0.7214,4.997,0.7214,0,1.7,59.4,57.699999999999996,33.94117647058823
-FKID007249,procession,Magadi Road,0.6965,4.92,0.6965,0,259.4,79.7,179.7,0.6927525057825752
-FKID007303,protest,Old Airport Road,0.7423,4.998,0.7423,0,67.6,53.5,14.099999999999994,0.20857988165680466
-FKID007408,procession,Non-corridor,0.8825,4.996,0.8825,0,0.0,47.7,47.7,47.7
-FKID007416,protest,CBD 2,0.7422,4.969,0.7422,0,67.6,60.8,6.799999999999997,0.10059171597633133
-FKID007450,protest,Mysore Road,0.7459,4.999,0.7459,0,30.7,63.2,32.5,1.0586319218241043
-FKID007487,public_event,Non-corridor,0.7503,4.976,0.7503,0,119.5,61.0,58.5,0.4895397489539749
-FKID007575,procession,Non-corridor,0.8816,4.987,0.8816,0,32.4,48.1,15.700000000000003,0.484567901234568
-FKID007686,procession,Mysore Road,0.8136,4.976,0.8136,0,67.6,71.9,4.300000000000011,0.06360946745562147
-FKID007787,procession,Non-corridor,0.7529,4.99,0.7529,0,0.0,29.1,29.1,29.1
-FKID007967,vip_movement,Mysore Road,0.674,4.999,0.674,0,1.2,67.6,66.39999999999999,55.33333333333333
-FKID007991,public_event,Non-corridor,0.7573,4.985,0.7573,0,0.0,50.2,50.2,50.2
-FKID008054,public_event,ORR West 1,0.8528,4.967,0.8528,0,67.6,67.6,0.0,0.0
-FKID008080,protest,Mysore Road,0.7774,4.994,0.7774,0,67.6,57.0,10.599999999999994,0.1568047337278106
-FKID008130,public_event,Non-corridor,0.8295,4.965,0.8295,0,67.6,61.7,5.8999999999999915,0.08727810650887562
-FKID008131,public_event,Hennur Main Road,0.8528,4.967,0.8528,0,67.6,67.6,0.0,0.0
+event_id,confidence,mean_similarity,max_similarity,effective_sample_size,confidence_band,confidence_reason,abstain_flag,abstain_reason,recommendation_source
+FKID000008,0.2339,0.568,0.5765,5.0,LOW,"Low similarity and insufficient comparable events (mean_sim=0.57, max_sim=0.58, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID000241,0.1628,0.4565,0.4997,4.988,LOW,"Low similarity and insufficient comparable events (mean_sim=0.46, max_sim=0.50, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID000361,0.4961,0.7874,0.884,4.963,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID000378,0.4008,0.629,0.9063,4.737,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID000433,0.3878,0.7125,0.7623,4.994,LOW,"Low similarity and insufficient comparable events (mean_sim=0.71, max_sim=0.76, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID000437,0.504,0.7591,0.9333,4.93,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID000439,0.4588,0.6551,1.0,4.676,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID000468,0.362,0.6727,0.7551,4.957,LOW,"Low similarity and insufficient comparable events (mean_sim=0.67, max_sim=0.76, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID000478,0.501,0.7876,0.8932,4.948,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID000502,0.3543,0.6642,0.7515,4.894,LOW,"Low similarity and insufficient comparable events (mean_sim=0.66, max_sim=0.75, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID000717,0.4009,0.7153,0.7854,4.985,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID000737,0.504,0.7591,0.9333,4.93,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID000878,0.5485,0.8182,0.9417,4.943,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID000920,0.2511,0.5369,0.6575,4.93,LOW,"Low similarity and insufficient comparable events (mean_sim=0.54, max_sim=0.66, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID000921,0.4469,0.6411,1.0,4.603,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID000922,0.4469,0.6411,1.0,4.603,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID000946,0.4588,0.6551,1.0,4.676,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID000949,0.4832,0.7418,0.9167,4.911,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID000952,0.577,0.8135,1.0,4.881,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID000956,0.5629,0.8034,0.9877,4.881,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID000994,0.504,0.7591,0.9333,4.93,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID001047,0.2637,0.5598,0.6633,4.903,LOW,"Low similarity and insufficient comparable events (mean_sim=0.56, max_sim=0.66, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID001064,0.3236,0.6054,0.7515,4.928,LOW,"Low similarity and insufficient comparable events (mean_sim=0.61, max_sim=0.75, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID001104,0.5297,0.7874,0.9453,4.935,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID001167,0.3186,0.6367,0.7014,4.982,LOW,"Low similarity and insufficient comparable events (mean_sim=0.64, max_sim=0.70, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID001198,0.3685,0.6253,0.8342,4.814,LOW,"Low similarity and insufficient comparable events (mean_sim=0.63, max_sim=0.83, n_eff=4.8). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID001481,0.504,0.7591,0.9333,4.93,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID001492,0.4998,0.7662,0.9167,4.934,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID001569,0.4992,0.7875,0.8902,4.948,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID001573,0.3299,0.6191,0.7515,4.875,LOW,"Low similarity and insufficient comparable events (mean_sim=0.62, max_sim=0.75, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID001578,0.502,0.7139,1.0,4.739,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID001581,0.502,0.7139,1.0,4.739,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID001641,0.2976,0.596,0.7014,4.941,LOW,"Low similarity and insufficient comparable events (mean_sim=0.60, max_sim=0.70, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID001647,0.4362,0.7452,0.8205,4.977,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID001648,0.5431,0.7973,0.9571,4.935,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID001676,0.3444,0.6417,0.7545,4.926,LOW,"Low similarity and insufficient comparable events (mean_sim=0.64, max_sim=0.75, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID001680,0.4588,0.6551,1.0,4.676,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID001683,0.4588,0.6551,1.0,4.676,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID001685,0.3444,0.6417,0.7545,4.926,LOW,"Low similarity and insufficient comparable events (mean_sim=0.64, max_sim=0.75, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID001687,0.3444,0.6417,0.7545,4.926,LOW,"Low similarity and insufficient comparable events (mean_sim=0.64, max_sim=0.75, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID001691,0.4744,0.7425,0.8982,4.927,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID001734,0.504,0.7591,0.9333,4.93,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID001801,0.504,0.7591,0.9333,4.93,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID001857,0.2238,0.549,0.5711,4.988,LOW,"Low similarity and insufficient comparable events (mean_sim=0.55, max_sim=0.57, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID001865,0.5445,0.7762,0.9877,4.902,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID001896,0.3444,0.6417,0.7545,4.926,LOW,"Low similarity and insufficient comparable events (mean_sim=0.64, max_sim=0.75, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID001925,0.3444,0.6417,0.7545,4.926,LOW,"Low similarity and insufficient comparable events (mean_sim=0.64, max_sim=0.75, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID001934,0.3444,0.6417,0.7545,4.926,LOW,"Low similarity and insufficient comparable events (mean_sim=0.64, max_sim=0.75, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID001970,0.3039,0.5885,0.7264,4.92,LOW,"Low similarity and insufficient comparable events (mean_sim=0.59, max_sim=0.73, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID001979,0.3444,0.6417,0.7545,4.926,LOW,"Low similarity and insufficient comparable events (mean_sim=0.64, max_sim=0.75, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID001980,0.3641,0.6469,0.7954,4.843,LOW,"Low similarity and insufficient comparable events (mean_sim=0.65, max_sim=0.80, n_eff=4.8). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID001988,0.4588,0.6551,1.0,4.676,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID002005,0.1821,0.4857,0.5252,4.988,LOW,"Low similarity and insufficient comparable events (mean_sim=0.49, max_sim=0.53, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID002008,0.3461,0.6408,0.76,4.914,LOW,"Low similarity and insufficient comparable events (mean_sim=0.64, max_sim=0.76, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID002015,0.3461,0.6408,0.76,4.914,LOW,"Low similarity and insufficient comparable events (mean_sim=0.64, max_sim=0.76, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID002017,0.3444,0.6417,0.7545,4.926,LOW,"Low similarity and insufficient comparable events (mean_sim=0.64, max_sim=0.75, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID002051,0.3444,0.6417,0.7545,4.926,LOW,"Low similarity and insufficient comparable events (mean_sim=0.64, max_sim=0.75, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID002054,0.3444,0.6417,0.7545,4.926,LOW,"Low similarity and insufficient comparable events (mean_sim=0.64, max_sim=0.75, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID002057,0.3461,0.6408,0.76,4.914,LOW,"Low similarity and insufficient comparable events (mean_sim=0.64, max_sim=0.76, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID002071,0.2766,0.5757,0.6748,4.949,LOW,"Low similarity and insufficient comparable events (mean_sim=0.58, max_sim=0.67, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID002110,0.4943,0.8016,0.8641,4.985,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID002212,0.271,0.5604,0.681,4.9,LOW,"Low similarity and insufficient comparable events (mean_sim=0.56, max_sim=0.68, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID002254,0.3647,0.6727,0.7601,4.975,LOW,"Low similarity and insufficient comparable events (mean_sim=0.67, max_sim=0.76, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID002282,0.2623,0.5305,0.6975,4.872,LOW,"Low similarity and insufficient comparable events (mean_sim=0.53, max_sim=0.70, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID002292,0.4136,0.6535,0.8979,4.778,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID002408,0.4135,0.6041,0.9877,4.516,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID002409,0.4957,0.7146,1.0,4.527,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID002410,0.4957,0.7146,1.0,4.527,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID002411,0.4096,0.5991,0.9877,4.498,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID002416,0.4957,0.7146,1.0,4.527,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID002440,0.5111,0.7582,0.9494,4.899,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID002445,0.4325,0.7126,0.8525,4.946,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID002483,0.502,0.7139,1.0,4.739,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID002602,0.485,0.7954,0.8544,4.985,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID002639,0.3198,0.65,0.6895,4.98,LOW,"Low similarity and insufficient comparable events (mean_sim=0.65, max_sim=0.69, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID002684,0.2596,0.5572,0.6558,4.91,LOW,"Low similarity and insufficient comparable events (mean_sim=0.56, max_sim=0.66, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID002883,0.2347,0.5283,0.6253,4.905,LOW,"Low similarity and insufficient comparable events (mean_sim=0.53, max_sim=0.63, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID003127,0.4678,0.7314,0.8992,4.93,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID003153,0.4857,0.8045,0.8456,4.991,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID003180,0.3433,0.633,0.7617,4.944,LOW,"Low similarity and insufficient comparable events (mean_sim=0.63, max_sim=0.76, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID003577,0.2848,0.603,0.6629,4.958,LOW,"Low similarity and insufficient comparable events (mean_sim=0.60, max_sim=0.66, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID003704,0.3376,0.6332,0.7515,4.884,LOW,"Low similarity and insufficient comparable events (mean_sim=0.63, max_sim=0.75, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID003731,0.4948,0.7823,0.8874,4.962,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID003755,0.504,0.7591,0.9333,4.93,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID003758,0.504,0.7591,0.9333,4.93,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID003763,0.3299,0.6191,0.7515,4.875,LOW,"Low similarity and insufficient comparable events (mean_sim=0.62, max_sim=0.75, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID003783,0.4664,0.7856,0.8316,4.99,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID004092,0.5221,0.7635,0.9623,4.912,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID004127,0.4774,0.7559,0.8862,4.963,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID004161,0.327,0.642,0.715,4.952,LOW,"Low similarity and insufficient comparable events (mean_sim=0.64, max_sim=0.72, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID004165,0.4425,0.7014,0.8889,4.89,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID004184,0.2803,0.5841,0.6736,4.952,LOW,"Low similarity and insufficient comparable events (mean_sim=0.58, max_sim=0.67, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID004386,0.2956,0.5891,0.7054,4.927,LOW,"Low similarity and insufficient comparable events (mean_sim=0.59, max_sim=0.71, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID004418,0.517,0.7898,0.919,4.952,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID004426,0.504,0.7591,0.9333,4.93,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID004430,0.3461,0.6765,0.7165,4.994,LOW,"Low similarity and insufficient comparable events (mean_sim=0.68, max_sim=0.72, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID004449,0.5314,0.7972,0.9387,4.897,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID004467,0.2802,0.6054,0.6483,4.99,LOW,"Low similarity and insufficient comparable events (mean_sim=0.61, max_sim=0.65, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID004471,0.501,0.7945,0.8843,4.97,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID004485,0.333,0.6354,0.7386,4.889,LOW,"Low similarity and insufficient comparable events (mean_sim=0.64, max_sim=0.74, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID004486,0.3543,0.6642,0.7515,4.894,LOW,"Low similarity and insufficient comparable events (mean_sim=0.66, max_sim=0.75, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID004488,0.3153,0.5727,0.7802,4.794,LOW,"Low similarity and insufficient comparable events (mean_sim=0.57, max_sim=0.78, n_eff=4.8). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID004505,0.4819,0.7539,0.8979,4.939,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID004509,0.3103,0.6254,0.6959,4.966,LOW,"Low similarity and insufficient comparable events (mean_sim=0.63, max_sim=0.70, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID004527,0.5204,0.7777,0.9398,4.944,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID004535,0.3865,0.6733,0.8065,4.938,LOW,"Low similarity and insufficient comparable events (mean_sim=0.67, max_sim=0.81, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID004609,0.4712,0.7655,0.8651,4.931,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID004629,0.4364,0.6666,0.929,4.771,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID004632,0.504,0.7591,0.9333,4.93,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID004641,0.4227,0.7118,0.8345,4.938,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID004671,0.2786,0.5584,0.7054,4.83,LOW,"Low similarity and insufficient comparable events (mean_sim=0.56, max_sim=0.71, n_eff=4.8). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID004700,0.2003,0.5069,0.5544,4.96,LOW,"Low similarity and insufficient comparable events (mean_sim=0.51, max_sim=0.55, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID004703,0.2746,0.5823,0.6626,4.936,LOW,"Low similarity and insufficient comparable events (mean_sim=0.58, max_sim=0.66, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID004707,0.504,0.7591,0.9333,4.93,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID004711,0.2954,0.6095,0.6796,4.974,LOW,"Low similarity and insufficient comparable events (mean_sim=0.61, max_sim=0.68, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID004721,0.331,0.6572,0.7062,4.974,LOW,"Low similarity and insufficient comparable events (mean_sim=0.66, max_sim=0.71, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID004738,0.4966,0.7868,0.8853,4.966,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID004747,0.447,0.7301,0.8594,4.954,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID004750,0.3122,0.6116,0.7168,4.948,LOW,"Low similarity and insufficient comparable events (mean_sim=0.61, max_sim=0.72, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID004753,0.5279,0.7878,0.9421,4.927,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID004771,0.504,0.7591,0.9333,4.93,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID004792,0.2593,0.5756,0.6327,4.942,LOW,"Low similarity and insufficient comparable events (mean_sim=0.58, max_sim=0.63, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID004801,0.395,0.675,0.8249,4.883,LOW,"Low similarity and insufficient comparable events (mean_sim=0.67, max_sim=0.82, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID004884,0.3307,0.6315,0.7354,4.944,LOW,"Low similarity and insufficient comparable events (mean_sim=0.63, max_sim=0.74, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID004885,0.5054,0.7169,1.0,4.78,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID004887,0.5054,0.7169,1.0,4.78,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID004901,0.5231,0.7913,0.9294,4.926,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID004902,0.5231,0.7913,0.9294,4.926,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID004906,0.4711,0.7473,0.885,4.953,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID005098,0.3646,0.6666,0.7672,4.965,LOW,"Low similarity and insufficient comparable events (mean_sim=0.67, max_sim=0.77, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID005099,0.5281,0.7463,1.0,4.842,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID005127,0.5236,0.7816,0.9421,4.921,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID005136,0.3836,0.6646,0.813,4.896,LOW,"Low similarity and insufficient comparable events (mean_sim=0.66, max_sim=0.81, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID005167,0.4594,0.7563,0.8517,4.975,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID005248,0.5149,0.7916,0.9136,4.943,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID005271,0.503,0.7431,0.9535,4.896,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID005273,0.4814,0.6856,1.0,4.714,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID005291,0.4156,0.701,0.8342,4.912,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID005292,0.3197,0.6348,0.7064,4.966,LOW,"Low similarity and insufficient comparable events (mean_sim=0.63, max_sim=0.71, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID005353,0.3061,0.607,0.7079,4.95,LOW,"Low similarity and insufficient comparable events (mean_sim=0.61, max_sim=0.71, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID005354,0.5236,0.7816,0.9421,4.921,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID005473,0.3543,0.6642,0.7515,4.894,LOW,"Low similarity and insufficient comparable events (mean_sim=0.66, max_sim=0.75, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID005634,0.3829,0.6419,0.843,4.839,LOW,"Low similarity and insufficient comparable events (mean_sim=0.64, max_sim=0.84, n_eff=4.8). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID005659,0.3153,0.5727,0.7802,4.794,LOW,"Low similarity and insufficient comparable events (mean_sim=0.57, max_sim=0.78, n_eff=4.8). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID005754,0.3236,0.6054,0.7515,4.928,LOW,"Low similarity and insufficient comparable events (mean_sim=0.61, max_sim=0.75, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID005805,0.504,0.7591,0.9333,4.93,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID005806,0.504,0.7591,0.9333,4.93,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID005956,0.4472,0.7559,0.8306,4.952,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID006105,0.3924,0.7014,0.7842,4.98,LOW,"Low similarity and insufficient comparable events (mean_sim=0.70, max_sim=0.78, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID006248,0.266,0.5469,0.6848,4.901,LOW,"Low similarity and insufficient comparable events (mean_sim=0.55, max_sim=0.68, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID006283,0.3543,0.6642,0.7515,4.894,LOW,"Low similarity and insufficient comparable events (mean_sim=0.66, max_sim=0.75, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID006314,0.3095,0.5983,0.7264,4.943,LOW,"Low similarity and insufficient comparable events (mean_sim=0.60, max_sim=0.73, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID006315,0.4152,0.6871,0.85,4.919,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID006401,0.1833,0.4794,0.5358,4.981,LOW,"Low similarity and insufficient comparable events (mean_sim=0.48, max_sim=0.54, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID006473,0.2221,0.4586,0.6903,4.7,LOW,"Low similarity and insufficient comparable events (mean_sim=0.46, max_sim=0.69, n_eff=4.7). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID006547,0.4584,0.7466,0.8641,4.909,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID006581,0.4758,0.7491,0.8944,4.902,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID006633,0.2393,0.513,0.6569,4.902,LOW,"Low similarity and insufficient comparable events (mean_sim=0.51, max_sim=0.66, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID006635,0.4151,0.6141,0.9727,4.555,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID006638,0.4151,0.6141,0.9727,4.555,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID006639,0.4151,0.6141,0.9727,4.555,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID006650,0.4698,0.7561,0.8743,4.911,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID006666,0.286,0.5787,0.697,4.873,LOW,"Low similarity and insufficient comparable events (mean_sim=0.58, max_sim=0.70, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID006703,0.1968,0.5181,0.532,4.996,LOW,"Low similarity and insufficient comparable events (mean_sim=0.52, max_sim=0.53, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID006806,0.4895,0.7648,0.9,4.926,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID006807,0.2077,0.5131,0.5678,4.966,LOW,"Low similarity and insufficient comparable events (mean_sim=0.51, max_sim=0.57, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID006838,0.3602,0.6891,0.7322,4.991,LOW,"Low similarity and insufficient comparable events (mean_sim=0.69, max_sim=0.73, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID007012,0.2184,0.5328,0.5749,4.964,LOW,"Low similarity and insufficient comparable events (mean_sim=0.53, max_sim=0.57, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID007013,0.2184,0.5328,0.5749,4.964,LOW,"Low similarity and insufficient comparable events (mean_sim=0.53, max_sim=0.57, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID007161,0.3863,0.6421,0.8499,4.844,LOW,"Low similarity and insufficient comparable events (mean_sim=0.64, max_sim=0.85, n_eff=4.8). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID007173,0.504,0.7591,0.9333,4.93,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID007186,0.2218,0.4492,0.7077,4.617,LOW,"Low similarity and insufficient comparable events (mean_sim=0.45, max_sim=0.71, n_eff=4.6). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID007191,0.3159,0.5934,0.7515,4.861,LOW,"Low similarity and insufficient comparable events (mean_sim=0.59, max_sim=0.75, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID007213,0.1739,0.459,0.533,4.918,LOW,"Low similarity and insufficient comparable events (mean_sim=0.46, max_sim=0.53, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID007215,0.2973,0.6177,0.675,4.971,LOW,"Low similarity and insufficient comparable events (mean_sim=0.62, max_sim=0.68, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID007248,0.3808,0.5944,0.9186,4.612,LOW,"Low similarity and insufficient comparable events (mean_sim=0.59, max_sim=0.92, n_eff=4.6). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID007249,0.3787,0.5972,0.9073,4.642,LOW,"Low similarity and insufficient comparable events (mean_sim=0.60, max_sim=0.91, n_eff=4.6). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID007303,0.1706,0.4621,0.5173,4.98,LOW,"Low similarity and insufficient comparable events (mean_sim=0.46, max_sim=0.52, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID007408,0.4882,0.7761,0.883,4.953,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID007416,0.1709,0.4804,0.4987,4.982,LOW,"Low similarity and insufficient comparable events (mean_sim=0.48, max_sim=0.50, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID007450,0.3335,0.5911,0.797,4.847,LOW,"Low similarity and insufficient comparable events (mean_sim=0.59, max_sim=0.80, n_eff=4.8). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID007487,0.3045,0.6015,0.7115,4.932,LOW,"Low similarity and insufficient comparable events (mean_sim=0.60, max_sim=0.71, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID007575,0.4767,0.7334,0.9146,4.912,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID007686,0.3095,0.5983,0.7264,4.943,LOW,"Low similarity and insufficient comparable events (mean_sim=0.60, max_sim=0.73, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID007787,0.3587,0.6658,0.756,4.958,LOW,"Low similarity and insufficient comparable events (mean_sim=0.67, max_sim=0.76, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID007967,0.3181,0.5205,0.8858,4.449,LOW,"Low similarity and insufficient comparable events (mean_sim=0.52, max_sim=0.89, n_eff=4.4). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID007991,0.3825,0.6918,0.7768,4.942,LOW,"Low similarity and insufficient comparable events (mean_sim=0.69, max_sim=0.78, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID008054,0.502,0.7139,1.0,4.739,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID008080,0.2318,0.5524,0.5879,4.985,LOW,"Low similarity and insufficient comparable events (mean_sim=0.55, max_sim=0.59, n_eff=5.0). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK
+FKID008130,0.504,0.7591,0.9333,4.93,MEDIUM,Moderate similarity; evidence partially supported.,0,,HYBRID
+FKID008131,0.3543,0.6642,0.7515,4.894,LOW,"Low similarity and insufficient comparable events (mean_sim=0.66, max_sim=0.75, n_eff=4.9). Using Layer 3 DIS/ODS resource optimization as fallback.",1,retrieval_insufficient,LAYER3_FALLBACK

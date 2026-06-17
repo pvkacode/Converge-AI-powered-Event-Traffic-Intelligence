@@ -1,0 +1,14 @@
+feature_name,used_in_similarity
+event_cause,True
+corridor,True
+closure_binary,True
+hour_of_day,True
+day_of_week,True
+priority_numeric,True
+month,True
+duration_min,False
+predicted_duration,False
+closure_rate_outcome,False
+OBI_impact,False
+severity_metrics,False
+trust_score,False

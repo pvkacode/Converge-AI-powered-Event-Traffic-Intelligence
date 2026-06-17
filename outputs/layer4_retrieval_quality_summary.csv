@@ -1,0 +1,10 @@
+metric,value
+planned_events_total,191.0
+high_confidence_count,0.0
+medium_confidence_count,94.0
+low_confidence_count,97.0
+abstention_count,97.0
+mean_confidence,0.394
+mean_similarity,0.6683
+mean_effective_sample_size,4.886
+retrieval_coverage_pct,49.2
