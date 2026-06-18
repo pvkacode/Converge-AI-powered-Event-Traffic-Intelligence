@@ -15,6 +15,17 @@
   "budget_barricades": 100,
   "budget_tow": 15,
   "budget_qru": 10,
+  "budget_diversion": 15,
+  "tier_emergency_pct": 0.08,
+  "tier_critical_pct": 0.12,
+  "tier_elevated_pct": 0.2,
+  "composite_risk_weights": {
+    "tail": 0.35,
+    "fragility": 0.25,
+    "obi": 0.15,
+    "novelty": 0.15,
+    "reliability": 0.1
+  },
   "pwl_breakpoints": [
     0.0,
     1.0,
