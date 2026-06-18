@@ -1,0 +1,15 @@
+event_cause,fbeta2_threshold,global_threshold,n_support,n_positive
+accident,0.05,0.05,16,3
+congestion,0.05,0.05,8,4
+construction,0.2520408163265306,0.05,73,14
+debris,0.05,0.05,1,1
+others,0.2520408163265306,0.05,94,16
+pot_holes,0.05,0.05,55,0
+procession,0.05,0.05,8,2
+protest,0.05,0.05,1,0
+public_event,0.05,0.05,9,1
+road_conditions,0.05,0.05,21,2
+test_demo,0.05,0.05,1,0
+tree_fall,0.2887755102040816,0.05,149,39
+vehicle_breakdown,0.05,0.05,472,128
+water_logging,0.05,0.05,186,0

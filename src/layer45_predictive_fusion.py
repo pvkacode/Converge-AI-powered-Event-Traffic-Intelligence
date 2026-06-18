@@ -21,6 +21,7 @@ from sklearn.metrics import (
     average_precision_score,
     brier_score_loss,
     f1_score,
+    fbeta_score,
     mean_absolute_error,
     mean_squared_error,
     precision_score,
@@ -33,7 +34,23 @@ from layer45_asof_features import (
     FittedParams,
     build_asof_feature_matrix,
 )
+from layer45_duration_guard import (
+    apply_fallback_chain,
+    blend_with_fallback,
+    build_duration_sanity_flags,
+    build_scenario_ready_duration_bundle,
+    compute_duration_reliability,
+    sanitize_quantiles,
+)
 from layer45_feature_registry import export_feature_registry
+from layer45_tail_models import (
+    blend_tail_quantiles,
+    build_tail_proxy_quantiles,
+    calibrate_tail_classifier,
+    compute_tail_labels,
+    predict_tail_risk,
+    train_tail_classifier,
+)
 from layer45_time_split import build_time_split, split_summary
 
 warnings.filterwarnings("ignore")
@@ -99,6 +116,9 @@ JOSV_NORM_COLS = [
     "high_impact_prob", "high_impact_prob_calibrated",
     "retrieval_confidence", "novelty_score", "drift_score",
     "trust_score", "fragility_signal", "obi_signal", "ims_proxy",
+    "raw_duration_p50", "raw_duration_p80", "raw_duration_p95",
+    "safe_duration_p50", "safe_duration_p80", "safe_duration_p95",
+    "duration_reliability", "tail_risk_prob",
 ]
 
 
@@ -342,6 +362,45 @@ def _classification_metrics(y_true: np.ndarray, y_prob: np.ndarray, threshold: f
     return out
 
 
+def tune_high_impact_thresholds(
+    y_true: np.ndarray,
+    y_prob: np.ndarray,
+    causes: np.ndarray,
+    beta: float = 2.0,
+    n_thresholds: int = 50,
+) -> dict[str, float]:
+    """
+    Per-cause F-beta (beta=2) optimal decision threshold on the validation set.
+
+    Calibrated probabilities and labels must not be reused for model training —
+    this is purely a post-hoc operating-point selection step.
+
+    Returns {cause_str: threshold} with a "global" key as fallback.
+    """
+    thresholds = np.linspace(0.05, 0.95, n_thresholds)
+
+    def _best(yt: np.ndarray, yp: np.ndarray) -> float:
+        best_t, best_f = 0.5, -1.0
+        for t in thresholds:
+            yh = (yp >= t).astype(int)
+            f = float(fbeta_score(yt, yh, beta=beta, zero_division=0))
+            if f > best_f:
+                best_f, best_t = f, float(t)
+        return best_t
+
+    global_t = _best(y_true, y_prob)
+    result: dict[str, float] = {"global": global_t}
+
+    for cause in np.unique(causes):
+        mask = causes == cause
+        if mask.sum() < 20 or int(y_true[mask].sum()) < 3:
+            result[str(cause)] = global_t
+            continue
+        result[str(cause)] = _best(y_true[mask], y_prob[mask])
+
+    return result
+
+
 def _fallback_summary(fallback_log: list[dict]) -> pd.DataFrame:
     fb = pd.DataFrame(fallback_log)
     rows = []
@@ -444,6 +503,13 @@ def export_outputs(
     coverage_df: pd.DataFrame,
     summary_text: str,
     cause_tau_df: pd.DataFrame | None = None,
+    scenario_bundle: pd.DataFrame | None = None,
+    dur_raw_df: pd.DataFrame | None = None,
+    dur_sanitized_df: pd.DataFrame | None = None,
+    dur_quality_df: pd.DataFrame | None = None,
+    tail_risk_df: pd.DataFrame | None = None,
+    hi_threshold_df: pd.DataFrame | None = None,
+    leakage_audit_df: pd.DataFrame | None = None,
     out_dir: Path = OUT,
 ) -> None:
     out_dir.mkdir(exist_ok=True)
@@ -465,6 +531,21 @@ def export_outputs(
     importance_df.to_csv(out_dir / "layer45_feature_importance.csv", index=False)
     fallback_summary.to_csv(out_dir / "layer45_fallback_summary.csv", index=False)
     coverage_df.to_csv(out_dir / "layer45_coverage_summary.csv", index=False)
+    # Duration quality gate outputs
+    if dur_raw_df is not None:
+        dur_raw_df.to_csv(out_dir / "layer45_duration_raw_predictions.csv", index=False)
+    if dur_sanitized_df is not None:
+        dur_sanitized_df.to_csv(out_dir / "layer45_duration_sanitized_predictions.csv", index=False)
+    if dur_quality_df is not None:
+        dur_quality_df.to_csv(out_dir / "layer45_duration_quality.csv", index=False)
+    if tail_risk_df is not None:
+        tail_risk_df.to_csv(out_dir / "layer45_tail_risk_probabilities.csv", index=False)
+    if hi_threshold_df is not None:
+        hi_threshold_df.to_csv(out_dir / "layer45_high_impact_thresholds_by_cause.csv", index=False)
+    if scenario_bundle is not None:
+        scenario_bundle.to_csv(out_dir / "layer45_scenario_ready_duration.csv", index=False)
+    if leakage_audit_df is not None:
+        leakage_audit_df.to_csv(out_dir / "layer45_leakage_audit.csv", index=False)
     with open(out_dir / "layer45_fusion_summary.txt", "w", encoding="utf-8") as f:
         f.write(summary_text)
     export_feature_registry(out_dir)
@@ -566,7 +647,7 @@ def run_backtest() -> dict:
             for k, v in _classification_metrics(y_val_hi.values[pe], hi_cal_val[pe]).items():
                 metrics_rows.append({"subset": "holdout_planned", "task": "high_impact", "metric": k, "value": v})
 
-    metrics_df = pd.DataFrame(metrics_rows)
+    # metrics_df is finalised after the quality gate (below) so guard metrics can be included
     cal_df = _reliability_curve(y_val_hi.values, hi_cal_val)
     cal_df["ece"] = cls_m["ece"]
     cal_df["brier"] = cls_m["brier"]
@@ -592,11 +673,194 @@ def run_backtest() -> dict:
     ci_lo_all = _exp_duration(pred_all_log - resid_q_log)
     ci_hi_all = _exp_duration(pred_all_log + resid_q_log)
 
+    # ── DURATION QUALITY GATE ──────────────────────────────────────────────
+    logger.info("Duration quality gate: tail classifier, quantile sanitization, fallback blending")
+
+    # Tail labels computed from training-window thresholds (no leakage)
+    y_train_tail = compute_tail_labels(y_train_dur, train_df["event_cause"].astype(str), cause_tau, global_tau)
+    y_val_tail = compute_tail_labels(y_val_dur, val_df["event_cause"].astype(str), cause_tau, global_tau)
+
+    # Conservative tail-quantile proxies from training-window tail events only
+    tail_proxies = build_tail_proxy_quantiles(y_train_dur, y_train_tail, train_df["event_cause"].astype(str))
+
+    # Tail classifier (CatBoost; None → base-rate if sparse)
+    _tail_base_rate = float(np.mean(y_train_tail))
+    tail_model = train_tail_classifier(X_train, y_train_tail, X_val, y_val_tail, cat_idx)
+
+    # Calibrate tail probabilities on val set
+    tail_prob_val_raw = predict_tail_risk(tail_model, X_val, base_rate=_tail_base_rate)
+    if tail_model is not None and len(np.unique(y_val_tail)) > 1:
+        tail_cal_iso, tail_prob_val_cal = calibrate_tail_classifier(y_val_tail, tail_prob_val_raw)
+    else:
+        tail_cal_iso = None
+        tail_prob_val_cal = tail_prob_val_raw
+
+    # Tail probabilities for all resolved events
+    tail_prob_all_raw = predict_tail_risk(tail_model, X_all, base_rate=_tail_base_rate)
+    tail_prob_all_cal = (
+        tail_cal_iso.predict(tail_prob_all_raw) if tail_cal_iso is not None else tail_prob_all_raw
+    )
+
+    # Tail-aware mixture of quantiles
+    mix_p50_all, mix_p80_all, mix_p95_all = blend_tail_quantiles(
+        p50_all, p80_all, p95_all,
+        tail_prob_all_cal,
+        resolved_feat["event_cause"].astype(str),
+        tail_proxies,
+    )
+
+    # Monotone sanitization + safety clamp
+    mono_p50_all, mono_p80_all, safe_p95_all, clamp_flags_all, crossing_flags_all = sanitize_quantiles(
+        mix_p50_all, mix_p80_all, mix_p95_all
+    )
+
+    # Normalise reliability components using training-window stats (no leakage)
+    _neff_all = pd.to_numeric(resolved_feat["asof_retrieval_n_eff"], errors="coerce").fillna(0).values
+    _neff_train_max = max(float(_neff_all[resolved_train_mask].max()), 1.0)
+    support_norm_all = np.clip(_neff_all / _neff_train_max, 0.0, 1.0)
+
+    _nov_all = novelty_all["novelty_score"].values
+    _nov_train_finite = _nov_all[resolved_train_mask]
+    _nov_train_finite = _nov_train_finite[np.isfinite(_nov_train_finite)]
+    _nov_p95 = float(np.percentile(_nov_train_finite, 95)) if len(_nov_train_finite) else 1.0
+    nov_norm_all = np.clip(_nov_all / max(_nov_p95, 1e-6), 0.0, 1.0)
+
+    _drift_all = novelty_all["drift_score"].values
+    _drift_train_finite = _drift_all[resolved_train_mask]
+    _drift_train_finite = _drift_train_finite[np.isfinite(_drift_train_finite)]
+    _drift_p95 = float(np.percentile(_drift_train_finite, 95)) if len(_drift_train_finite) else 1.0
+    drift_norm_all = np.clip(_drift_all / max(_drift_p95, 1e-6), 0.0, 1.0)
+
+    retr_conf_all_arr = np.clip(
+        pd.to_numeric(resolved_feat["asof_retrieval_confidence"], errors="coerce").fillna(0).values,
+        0.0, 1.0,
+    )
+
+    width_all = safe_p95_all - mono_p50_all
+    _width_train = width_all[resolved_train_mask]
+    _pos_train_width = _width_train[_width_train > 0]
+    _width_p95 = float(np.percentile(_pos_train_width, 95)) if len(_pos_train_width) else 1.0
+    width_norm_all = np.clip(width_all / max(_width_p95, 1.0), 0.0, 1.0)
+
+    # Calibration quality: 1 - ECE (global, derived from val; applied uniformly)
+    cal_quality_scalar = max(0.0, 1.0 - cls_m["ece"])
+    cal_quality_arr = np.full(len(resolved_feat), cal_quality_scalar)
+
+    # Duration reliability score R ∈ [0, 1]
+    reliability_all = compute_duration_reliability(
+        cal_quality_arr, retr_conf_all_arr, nov_norm_all, drift_norm_all, support_norm_all, width_norm_all,
+    )
+
+    # Fallback quantiles from as-of feature chain (cause × corridor → cause → corridor → global)
+    _global_fb = {
+        "p50": float(y_train_dur.quantile(0.50)),
+        "p80": float(y_train_dur.quantile(0.80)),
+        "p95": float(y_train_dur.quantile(0.95)),
+    }
+    fb_p50_all, fb_p80_all, fb_p95_all = apply_fallback_chain(resolved_feat, _global_fb)
+
+    # Reliability-weighted blend: Q_final = R * Q_safe + (1-R) * Q_fallback
+    final_p50_all, final_p80_all, final_p95_all, fallback_flags_all = blend_with_fallback(
+        mono_p50_all, mono_p80_all, safe_p95_all,
+        fb_p50_all, fb_p80_all, fb_p95_all,
+        reliability_all,
+    )
+
+    # Per-row sanity flags and reason codes
+    sanity_flags_all, tail_risk_flags_all, guard_reasons_all = build_duration_sanity_flags(
+        crossing_flags_all, clamp_flags_all, fallback_flags_all, tail_prob_all_cal,
+    )
+
+    # Scenario-ready bundle (the canonical Layer 5 input)
+    scenario_bundle = build_scenario_ready_duration_bundle(
+        final_p50_all, final_p80_all, final_p95_all,
+        reliability_all, tail_prob_all_cal,
+        sanity_flags_all, guard_reasons_all,
+        resolved_feat["event_id"].values,
+    )
+
+    # ── HIGH-IMPACT THRESHOLD TUNING (F-beta=2 per cause) ─────────────────
+    cause_thresholds = tune_high_impact_thresholds(
+        y_val_hi.values, hi_cal_val, val_df["event_cause"].astype(str).values, beta=2.0,
+    )
+    hi_decision_all = np.array([
+        int(hi_cal_all[i] >= cause_thresholds.get(str(c), cause_thresholds["global"]))
+        for i, c in enumerate(resolved_feat["event_cause"].astype(str))
+    ])
+    hi_threshold_all = np.array([
+        cause_thresholds.get(str(c), cause_thresholds["global"])
+        for c in resolved_feat["event_cause"].astype(str)
+    ])
+    # ── END DURATION QUALITY GATE ──────────────────────────────────────────
+
+    # ── Quality gate metrics (appended now that all guard vars are available) ─
+    _val_res = resolved_val_mask
+    y_dur_val_res = y_all_dur.values[_val_res]
+    final_p50_val = final_p50_all[_val_res]
+    raw_p50_val = p50_all[_val_res]
+
+    for k, v in _regression_metrics(y_dur_val_res, final_p50_val).items():
+        metrics_rows.append({"subset": "holdout_sanitized", "task": "duration", "metric": k, "value": v})
+    for k, v in _regression_metrics(y_dur_val_res, raw_p50_val).items():
+        metrics_rows.append({"subset": "holdout_raw_p50", "task": "duration", "metric": k, "value": v})
+
+    _tail_gt500 = y_dur_val_res > 500
+    if _tail_gt500.sum() > 0:
+        for k, v in _regression_metrics(y_dur_val_res[_tail_gt500], final_p50_val[_tail_gt500]).items():
+            metrics_rows.append({"subset": "holdout_tail_gt500_sanitized", "task": "duration", "metric": k, "value": v})
+        for k, v in _regression_metrics(y_dur_val_res[_tail_gt500], raw_p50_val[_tail_gt500]).items():
+            metrics_rows.append({"subset": "holdout_tail_gt500_raw", "task": "duration", "metric": k, "value": v})
+
+    for _mn, _arr in [
+        ("quantile_crossing_rate", crossing_flags_all[_val_res]),
+        ("clamp_rate", clamp_flags_all[_val_res]),
+        ("fallback_blend_rate", fallback_flags_all[_val_res]),
+        ("tail_risk_flag_rate", tail_risk_flags_all[_val_res]),
+        ("sanity_pass_rate", sanity_flags_all[_val_res]),
+    ]:
+        metrics_rows.append({"subset": "holdout", "task": "duration_guard", "metric": _mn, "value": float(_arr.mean())})
+
+    if len(np.unique(y_val_tail)) > 1:
+        for k, v in _classification_metrics(y_val_tail, tail_prob_val_cal).items():
+            metrics_rows.append({"subset": "holdout", "task": "tail_risk", "metric": k, "value": v})
+
+    hi_decision_val = np.array([
+        int(hi_cal_val[i] >= cause_thresholds.get(str(c), cause_thresholds["global"]))
+        for i, c in enumerate(val_df["event_cause"].astype(str))
+    ])
+    hi_tuned_m = {
+        "precision_f2_tuned": float(precision_score(y_val_hi.values, hi_decision_val, zero_division=0)),
+        "recall_f2_tuned": float(recall_score(y_val_hi.values, hi_decision_val, zero_division=0)),
+        "f2_tuned": float(fbeta_score(y_val_hi.values, hi_decision_val, beta=2.0, zero_division=0)),
+    }
+    for k, v in hi_tuned_m.items():
+        metrics_rows.append({"subset": "holdout", "task": "high_impact_tuned", "metric": k, "value": v})
+
+    metrics_df = pd.DataFrame(metrics_rows)
+
     josv = _build_josv(
         resolved_feat, pred_all, p50_all, p80_all, p95_all,
         hi_prob_all, hi_cal_all, novelty_all, ci_lo_all, ci_hi_all,
         cause_tau, global_tau,
     )
+    # Expand JOSV: raw duration columns (explicit diagnostics) + safe columns (Layer 5 optimisation)
+    josv["raw_duration_p50"] = p50_all
+    josv["raw_duration_p80"] = p80_all
+    josv["raw_duration_p95"] = p95_all
+    josv["safe_duration_p50"] = final_p50_all
+    josv["safe_duration_p80"] = final_p80_all
+    josv["safe_duration_p95"] = final_p95_all
+    josv["duration_reliability"] = reliability_all
+    josv["tail_risk_prob"] = tail_prob_all_cal
+    josv["quantile_crossing_flag"] = crossing_flags_all
+    josv["clamp_flag"] = clamp_flags_all
+    josv["fallback_blend_flag"] = fallback_flags_all
+    josv["tail_risk_flag"] = tail_risk_flags_all
+    josv["duration_sanity_flag"] = sanity_flags_all
+    josv["duration_guard_reason"] = guard_reasons_all
+    josv["high_impact_decision"] = hi_decision_all
+    josv["high_impact_decision_threshold"] = hi_threshold_all
+
     josv_train = josv[resolved_train_mask].copy()
     josv_scaler = fit_josv_scaler(josv_train)
     josv_normalized = normalize_josv(josv, josv_scaler)
@@ -606,45 +870,151 @@ def run_backtest() -> dict:
         for c, t in sorted(cause_tau.items())
     ])
 
+    # Raw duration predictions (diagnostics only — Layer 5 must NOT use this file)
+    dur_raw_df = pd.DataFrame({
+        "event_id": resolved_feat["event_id"].values,
+        "raw_duration_p50": p50_all,
+        "raw_duration_p80": p80_all,
+        "raw_duration_p95": p95_all,
+    })
+
+    # Sanitised predictions after full quality gate
+    dur_sanitized_df = pd.DataFrame({
+        "event_id": resolved_feat["event_id"].values,
+        "safe_duration_p50": final_p50_all,
+        "safe_duration_p80": final_p80_all,
+        "safe_duration_p95": final_p95_all,
+        "duration_reliability": reliability_all,
+    })
+
+    # Per-row quality flags for auditing
+    dur_quality_df = pd.DataFrame({
+        "event_id": resolved_feat["event_id"].values,
+        "quantile_crossing_flag": crossing_flags_all,
+        "clamp_flag": clamp_flags_all,
+        "fallback_blend_flag": fallback_flags_all,
+        "tail_risk_flag": tail_risk_flags_all,
+        "duration_sanity_flag": sanity_flags_all,
+        "duration_guard_reason": guard_reasons_all,
+        "duration_reliability": reliability_all,
+    })
+
+    # Tail-risk probabilities
+    tail_risk_df = pd.DataFrame({
+        "event_id": resolved_feat["event_id"].values,
+        "tail_risk_prob_raw": tail_prob_all_raw,
+        "tail_risk_prob": tail_prob_all_cal,
+    })
+
+    # Per-cause high-impact decision thresholds (F-beta=2 tuned)
+    hi_threshold_df = pd.DataFrame([
+        {
+            "event_cause": cause,
+            "fbeta2_threshold": thr,
+            "global_threshold": cause_thresholds["global"],
+            "n_support": int((val_df["event_cause"].astype(str) == cause).sum()),
+            "n_positive": int(y_val_hi.values[(val_df["event_cause"].astype(str) == cause).values].sum()),
+        }
+        for cause, thr in cause_thresholds.items()
+        if cause != "global"
+    ])
+
+    # Leakage audit
+    leakage_audit_df = pd.DataFrame([
+        {"component": "cause_tau", "fitted_on": "train", "applied_to": "all",
+         "note": "P75 duration per cause — training window only"},
+        {"component": "asof_features", "fitted_on": "as-of", "applied_to": "each event",
+         "note": "History strictly before each event start date — no future leakage"},
+        {"component": "josv_scaler", "fitted_on": "train", "applied_to": "all",
+         "note": "Robust z-score (median/MAD) fitted on training JOSV rows"},
+        {"component": "hi_calibrator", "fitted_on": "val", "applied_to": "all",
+         "note": "Isotonic calibration on val predictions — no train labels used"},
+        {"component": "tail_calibrator", "fitted_on": "val", "applied_to": "all",
+         "note": "Isotonic calibration of tail-risk probs on val set"},
+        {"component": "hi_thresholds", "fitted_on": "val", "applied_to": "all",
+         "note": "F2-optimal decision thresholds per cause selected on val"},
+        {"component": "tail_proxies", "fitted_on": "train", "applied_to": "all",
+         "note": "Conservative tail quantiles from training-window tail events only"},
+        {"component": "global_fallback_quantiles", "fitted_on": "train", "applied_to": "fallback only",
+         "note": "Global P50/P80/P95 from training resolved events"},
+    ])
+
     fb_summary = _fallback_summary(fallback_log)
     coverage_df = pd.DataFrame(fallback_log)
 
+    _dg_cross = float(crossing_flags_all[resolved_val_mask].mean())
+    _dg_clamp = float(clamp_flags_all[resolved_val_mask].mean())
+    _dg_fb = float(fallback_flags_all[resolved_val_mask].mean())
+    _dg_sanity = float(sanity_flags_all[resolved_val_mask].mean())
+    _hi_f2 = hi_tuned_m["f2_tuned"]
     summary = f"""Layer 4.5 Predictive Fusion — Backtest Summary
 ================================================
 Train end: {split.train_end}
 Holdout start: {split.val_start}
 High-impact: cause-specific tau_c = P75(duration | cause) on train; global fallback = {global_tau:.1f} min
 Duration regression: trained on log1p(duration_min), predictions expm1-transformed
-Holdout RMSE (minutes): {reg_m['rmse']:.2f}
-Holdout MAE (minutes): {reg_m['mae']:.2f}
-Holdout Median AE: {reg_m['median_ae']:.2f}
-Holdout RMSLE: {reg_m['rmsle']:.4f}
-Holdout ROC-AUC (high-impact): {cls_m.get('roc_auc', float('nan'))}
-Holdout ECE: {cls_m['ece']:.4f}
-Conformal 90% coverage: {coverage:.3f}
-Novelty rate (holdout): {float(novelty_val['novelty_flag'].mean()):.3f}
 
-JOSV exports: layer45_operational_state_vector.csv (raw) + _normalized.csv (robust z)
+Raw duration model
+  Holdout RMSE (minutes):  {reg_m['rmse']:.2f}
+  Holdout MAE (minutes):   {reg_m['mae']:.2f}
+  Holdout Median AE:       {reg_m['median_ae']:.2f}
+  Holdout RMSLE:           {reg_m['rmsle']:.4f}
+
+Duration quality gate (additive guardrail — Layer 5 consumes sanitized outputs only)
+  Quantile crossing rate:  {_dg_cross:.3f}
+  Clamp rate (Q95):        {_dg_clamp:.3f}
+  Fallback blend rate:     {_dg_fb:.3f}
+  Sanity pass rate:        {_dg_sanity:.3f}
+
+High-impact classifier
+  Holdout ROC-AUC:         {cls_m.get('roc_auc', float('nan'))}
+  Holdout ECE:             {cls_m['ece']:.4f}
+  F2-tuned (per-cause):    {_hi_f2:.4f}
+
+Conformal 90% coverage:   {coverage:.3f}
+Novelty rate (holdout):   {float(novelty_val['novelty_flag'].mean()):.3f}
+
+Layer 5 must consume:
+  outputs/layer45_scenario_ready_duration.csv
+  outputs/layer45_operational_state_vector_normalized.csv
+NOT: layer45_duration_raw_predictions.csv
+
+JOSV exports: layer45_operational_state_vector.csv (expanded raw+safe) + _normalized.csv (robust z)
 As-of features built from raw history only (no full-dataset L1–L4 joins).
 """
 
     export_outputs(
         feat_df, josv, josv_normalized, metrics_df, shap_sum, shap_loc, novelty_all,
         fb_summary, cal_df, conformal_df, imp, coverage_df, summary, cause_tau_df,
+        scenario_bundle=scenario_bundle,
+        dur_raw_df=dur_raw_df,
+        dur_sanitized_df=dur_sanitized_df,
+        dur_quality_df=dur_quality_df,
+        tail_risk_df=tail_risk_df,
+        hi_threshold_df=hi_threshold_df,
+        leakage_audit_df=leakage_audit_df,
     )
 
     joblib.dump(params, ARTIFACTS / "fitted_params.joblib")
     joblib.dump(iso, ARTIFACTS / "calibrator.joblib")
     joblib.dump(josv_scaler, ARTIFACTS / "josv_scaler.joblib")
     joblib.dump(cause_tau, ARTIFACTS / "cause_tau.joblib")
+    joblib.dump(tail_proxies, ARTIFACTS / "tail_proxies.joblib")
+    joblib.dump(cause_thresholds, ARTIFACTS / "hi_cause_thresholds.joblib")
+    if tail_cal_iso is not None:
+        joblib.dump(tail_cal_iso, ARTIFACTS / "tail_calibrator.joblib")
     if HAS_CATBOOST:
         dur_model.save_model(str(ARTIFACTS / "duration_model.cbm"))
         q50_model.save_model(str(ARTIFACTS / "quantile_p50.cbm"))
         q80_model.save_model(str(ARTIFACTS / "quantile_p80.cbm"))
         q95_model.save_model(str(ARTIFACTS / "quantile_p95.cbm"))
         hi_model.save_model(str(ARTIFACTS / "high_impact_model.cbm"))
+        if tail_model is not None:
+            tail_model.save_model(str(ARTIFACTS / "tail_risk_model.cbm"))
     else:
         joblib.dump(dur_model, ARTIFACTS / "duration_model.joblib")
+        if tail_model is not None:
+            joblib.dump(tail_model, ARTIFACTS / "tail_risk_model.joblib")
 
     run_deployment_inference(raw, params, retrain=True, josv_scaler=josv_scaler)
 
