@@ -33,11 +33,9 @@ Kaplan-Meier survival curves answer operational questions directly:
 - **“Is this estimate trustworthy?”** → weighted by `trust_score`; sparse strata fall back or return `None`
 
 Layer 1 feeds Layer 3 resource sizing:
-
 $$
 \text{manpower\\_needed} \approx f(\text{impact\\_score},\ \text{expected\\_duration},\ \text{requires\\_road\\_closure})
 $$
-
 $$
 \text{barricade\\_window} = [\text{start},\ \text{start} + P_{80,\text{duration}}], \qquad
 \text{diversion\\_window} = \text{barricade\\_window}
@@ -48,11 +46,9 @@ $$
 Getis-Ord Gi* tests whether a junction is **anomalously hot**, not merely busy. Trust-weighted intensity (`sum(trust_score)`) prevents low-quality rows from inflating hotspots.
 
 Layer 2 feeds Layer 3 placement:
-
 $$
 \text{pre\\_position\\_manpower}(j) \propto G_i^*\ \text{significance} \times \text{weighted\\_intensity}
 $$
-
 $$
 \text{priority\\_barricade\\_points} = \text{hotspots} \cap \text{planned\\_event\\_route}, \qquad
 \text{diversion\\_candidates} = \{\text{corridors adjacent to significant hotspots}\}
@@ -84,7 +80,6 @@ $$
 ## What is `trust_score`?
 
 A single row-level confidence weight in **[0, 1]**, computed as a **noisy-OR** over four independent evidence flags:
-
 $$
 \text{trust}_i = \prod_k \bigl(1 - w_k \cdot \text{flag}_{k,i}\bigr)
 $$
@@ -193,23 +188,23 @@ Each layer script runs **baseline first, then advanced**, writing outputs to `ou
 
 | Model | Formula | Output |
 |-------|---------|--------|
-| **Kaplan-Meier** | \(\hat S(t) = \prod(1 - d_i/n_i)\), trust-weighted | `layer1_survival_quantiles.csv` |
-| **Cox PH** | \(h(t|X) = h_0(t) e^{\beta X}\) | `layer1_cox_summary.txt` |
+| **Kaplan-Meier** | $\hat S(t) = \prod(1 - d_i/n_i)$, trust-weighted | `layer1_survival_quantiles.csv` |
+| **Cox PH** | $h(t \mid X) = h_0(t)\, e^{\beta X}$ | `layer1_cox_summary.txt` |
 | **Frailty** | Corridor clearance multiplier = global median / corridor median | `layer1_frailty_scores.csv` |
 | **AFT** | Weibull + LogNormal; lowest AIC wins | `layer1_duration_predictions.csv` |
 | **RSF** | Random Survival Forest (`scikit-survival`) | `layer1_survival_risk_scores.csv` |
-| **RMST** | \(\int_0^\tau S(t)\,dt\) for τ ∈ {60,180,360,720} min | `layer1_rmst_summary.csv` |
+| **RMST** | $\int_0^\tau S(t)\,dt$ for τ ∈ {60,180,360,720} min | `layer1_rmst_summary.csv` |
 | **GMM** | Latent duration archetypes (BIC selects K) | `layer1_incident_archetypes.csv` |
 
 ### Layer 2 formulas (all in `layer2_hotspots.py`)
 
 | Model | Formula | Output |
 |-------|---------|--------|
-| **Baseline Gi*** | \(x_j = \sum \text{Trust}_i\), Euclidean KNN | `layer2_hotspots.csv` |
-| **Severity** | \(x_j = \sum \text{Trust}_i \times \text{Duration}_i \times \text{Priority}_i\) | `layer2_severity_hotspots.csv` |
+| **Baseline Gi*** | $x_j = \sum \text{Trust}_i$, Euclidean KNN | `layer2_hotspots.csv` |
+| **Severity** | $x_j = \sum \text{Trust}_i \times \text{Duration}_i \times \text{Priority}_i$ | `layer2_severity_hotspots.csv` |
 | **Spatiotemporal Gi*** | Gi* per hour × dow slice | `layer2_spatiotemporal_hotspots.csv` |
 | **Network Gi*** | Corridor-graph adjacency (≤2 hops) | `layer2_network_hotspots.csv` |
-| **Hawkes** | \(\lambda(t) = \mu + \sum \alpha e^{-\beta(t-t_i)}\) | `layer2_hawkes_cascade_risk.csv` |
+| **Hawkes** | $\lambda(t) = \mu + \sum \alpha e^{-\beta(t-t_i)}$ | `layer2_hawkes_cascade_risk.csv` |
 | **Persistence** | HPI = significant weeks / total weeks | `layer2_hotspot_persistence.csv` |
 | **Future risk** | XGBoost/GBC on graph features | `layer2_future_hotspot_risk.csv` |
 | **OBI** | Weighted composite of above | `layer2_operational_burden_index.csv` |
@@ -222,17 +217,17 @@ Run **after** the main layer scripts. These modules do not retrain RSF, SHAP, HD
 
 | Upgrade | Formula | Output | Interpretation |
 |---------|---------|--------|----------------|
-| **Frailty LRT** | \(LR = 2(\ell_{\text{frailty}} - \ell_{\text{Cox nested}})\), df = 1 | `layer1_frailty_validation.csv`, `layer1_frailty_interpretation.txt` | Tests whether shared gamma frailty (\(u_j \sim \text{Gamma}(\theta,\theta)\)) improves fit over nested Cox (\(\theta \to \infty\)). `frailty_supported=True` when \(p < 0.05\). |
-| **Stacked ensemble** | \(\text{Risk}_{\text{stack}} = \sum_k w_k \cdot \text{risk}_k\) via Elastic Net CV on standardized Cox / frailty / AFT / RSF scores | `layer1_stacked_survival_predictions.csv`, `layer1_stacked_survival_metrics.csv`, `layer1_stacked_interpretation.txt` | RSF remained best; stacking did not improve C-index (overlapping signal). Honest negative result documented. |
-| **RSF reliability** | ECE \(= \frac{1}{N}\sum_k | \text{obs}_k - \text{pred}_k | \) by risk-score decile at τ=180 min | `layer1_rsf_reliability.csv`, `layer1_rsf_calibration_summary.csv` | Calibration more informative than another model; ECE < 0.10 is reasonable. |
+| **Frailty LRT** | $LR = 2(\ell_{\text{frailty}} - \ell_{\text{Cox,nested}})$, df = 1 | `layer1_frailty_validation.csv`, `layer1_frailty_interpretation.txt` | Tests whether shared gamma frailty ($u_j \sim \text{Gamma}(\theta,\theta)$) improves fit over nested Cox ($\theta \to \infty$). `frailty_supported=True` when $p < 0.05$. |
+| **Stacked ensemble** | $\text{Risk}_{\text{stack}} = \sum_k w_k \cdot \text{risk}_k$ via Elastic Net CV | `layer1_stacked_survival_predictions.csv`, `layer1_stacked_survival_metrics.csv`, `layer1_stacked_interpretation.txt` | RSF remained best; stacking did not improve C-index. Honest negative result documented. |
+| **RSF reliability** | $\mathrm{ECE} = \frac{1}{N}\sum_k \lvert \mathrm{obs}_k - \mathrm{pred}_k \rvert$ at $\tau=180$ min | `layer1_rsf_reliability.csv`, `layer1_rsf_calibration_summary.csv` | Calibration more informative than another model; ECE &lt; 0.10 is reasonable. |
 
 #### Layer 2 — `layer2_research_upgrades.py`
 
 | Upgrade | Formula | Output | Interpretation |
 |---------|---------|--------|----------------|
-| **MSHI → SPS / NHI** | \(\text{SPS}_i = \frac{1}{|H|}\sum_h G_i^*(h)\); \(\text{NHI}_i = \frac{1}{|H|}\sum_h \text{Percentile}(G_i^*(h))\), \(H=\{1,2,3,5\}\) | `layer2_multiscale_hotspots.csv` | Replaces collapsed binary MSHI; NHI ranks junctions when significance tests saturate on dense corridor graphs. |
-| **Hawkes validation** | Branching ratio \(R = \alpha/\beta\); weak \(<0.3\), moderate \(0.3–0.7\), strong \(>0.7\) | `layer2_hawkes_validation.csv` | Operational cascade intensity per junction (reads existing Hawkes fit). |
-| **OBI stability** | \(x' = x + \epsilon\), \(\epsilon \sim N(0, 0.05)\); 1000 Monte Carlo OBI recomputations | `layer2_obi_stability.csv`, `layer2_obi_stable_top25.csv` | `prob_top25` = fraction of simulations in top 25; high values = robust priority junctions under metric noise. |
+| **MSHI → SPS / NHI** | $\text{SPS}_i = \frac{1}{\lvert H \rvert}\sum_h G_i^*(h)$; $\text{NHI}_i = \frac{1}{\lvert H \rvert}\sum_h \text{Percentile}(G_i^*(h))$, $H=\{1,2,3,5\}$ | `layer2_multiscale_hotspots.csv` | Replaces collapsed binary MSHI; NHI ranks junctions when significance tests saturate. |
+| **Hawkes validation** | Branching ratio $R = \alpha/\beta$; weak $<0.3$, moderate $0.3–0.7$, strong $>0.7$ | `layer2_hawkes_validation.csv` | Operational cascade intensity per junction (reads existing Hawkes fit). |
+| **OBI stability** | $x' = x + \epsilon$, $\epsilon \sim N(0, 0.05)$; 1000 Monte Carlo OBI recomputations | `layer2_obi_stability.csv`, `layer2_obi_stable_top25.csv` | `prob_top25` = fraction of simulations in top 25; high values = robust priority junctions under metric noise. |
 
 ### Methodology fixes (pre-frontend — additive, no model retraining)
 
@@ -242,23 +237,23 @@ Run **after** main Layer 3/4 scripts. These address judge-facing weaknesses with
 
 | Fix | Formula | Output | Rationale |
 |-----|---------|--------|-----------|
-| **PCA loading stability** | Bootstrap \(B=500\) junction resamples; 95% CI on PC1 loadings | `layer3_pca_loading_stability.csv`, `layer3_pca_stability_summary.txt` | Defends DIS = PC1: which drivers (OBI, cascade, etc.) are stable. |
-| **Log fragility** | \(\text{fragility\\_log} = \log(1 + (\lambda-\mu)/(\mu+\varepsilon))\), \(\varepsilon=0.01\) | `layer3_corridor_fragility.csv` (adds `fragility_raw`, `fragility_log`) | Bounded ranking when \(\mu \to 0\); Hawkes fit unchanged. |
+| **PCA loading stability** | Bootstrap $B=500$ junction resamples; 95% CI on PC1 loadings | `layer3_pca_loading_stability.csv`, `layer3_pca_stability_summary.txt` | Defends DIS = PC1: which drivers (OBI, cascade, etc.) are stable. |
+| **Log fragility** | $\log\!\left(1 + \frac{\lambda-\mu}{\mu+\varepsilon}\right)$ with $\varepsilon=0.01$ → column `fragility_log` | `layer3_corridor_fragility.csv` | Bounded ranking when $\mu \to 0$; Hawkes fit unchanged. |
 
 #### Layer 4 — `layer4_methodology_upgrades.py`
 
 | Fix | Formula | Output | Rationale |
 |-----|---------|--------|-----------|
-| **Leakage-free retrieval** | Gower \(d_G(q,p)\) uses only pre-event features: cause, corridor, closure, hour, dow, priority, month | `layer4_retrieval_validation.csv` | Duration/trust/OBI never enter similarity — only outcomes after retrieval. |
-| **K-Medoids prototypes** | Medoid \(= \arg\min_{x_i}\sum_j d_G(x_i,x_j)\) on Gower matrix | `layer4_planned_event_prototypes.csv` | Real event prototypes; mixed categorical + numeric geometry. |
-| **Calibrated confidence** | \(\text{Conf} = \frac{n_{eff}}{n_{eff}+2}\cdot\bar s\cdot\max(s)\); abstain if Conf \(<0.4\) or \(\max s<0.3\) or \(n_{eff}<3\) | `layer4_retrieval_diagnostics.csv` | Principled abstention when evidence is weak (~50% on LOO evaluation). |
+| **Leakage-free retrieval** | Gower $d_G(q,p)$ uses only pre-event features: cause, corridor, closure, hour, dow, priority, month | `layer4_retrieval_validation.csv` | Duration/trust/OBI never enter similarity — only outcomes after retrieval. |
+| **K-Medoids prototypes** | Medoid $= \arg\min_{x_i}\sum_j d_G(x_i,x_j)$ on Gower matrix | `layer4_planned_event_prototypes.csv` | Real event prototypes; mixed categorical + numeric geometry. |
+| **Calibrated confidence** | $\text{Conf} = \frac{n_{\mathrm{eff}}}{n_{\mathrm{eff}}+2}\cdot\bar s\cdot\max(s)$; abstain if Conf $&lt;0.4$ | `layer4_retrieval_diagnostics.csv` | Principled abstention when evidence is weak (~50% on LOO evaluation). |
 
 #### Layer 4 — `layer4_operational_upgrades.py` (final pre-frontend)
 
 | Feature | Behavior | Output |
 |---------|----------|--------|
 | **Evidence bands** | HIGH (Conf≥0.70), MEDIUM (0.40–0.70), LOW (<0.40) | `confidence_band` in retrieval + diagnostics |
-| **Uncertainty** | Weighted \(Q_{50}, Q_{80}, Q_{95}\) for duration + impact from retrieved analogs | `pred_duration_p*`, `pred_impact_p*` |
+| **Uncertainty** | Weighted $Q_{50}, Q_{80}, Q_{95}$ for duration + impact from retrieved analogs | `pred_duration_p*`, `pred_impact_p*` |
 | **Fallback** | LOW → Layer 3 DIS/ODS/manpower; MEDIUM → HYBRID; HIGH → RETRIEVAL durations | `recommendation_source` |
 | **Analytics** | Band counts, confidence histogram | `layer4_retrieval_quality_summary.csv`, `layer4_confidence_distribution.csv` |
 
@@ -280,10 +275,10 @@ Layers 1–4 were fit on the **entire** Nov 2023–Apr 2024 batch at once. Joini
 
 | Principle | Implementation |
 |-----------|----------------|
-| **Point-in-time safety** | For row \(i\) at time \(t_i\), every feature uses only incidents with `start_local < t_i` |
-| **Snapshot cadence** | Daily recomputation (~150 snapshots); all rows on day \(D\) share state from data before \(D\) 00:00 |
+| **Point-in-time safety** | For row $i$ at time $t_i$, every feature uses only incidents with `start_local < t_i` |
+| **Snapshot cadence** | Daily recomputation (~150 snapshots); all rows on day $D$ share state from data before $D$ 00:00 |
 | **Single chronological backtest** | Train Nov 2023–Feb 2024; holdout Mar–Apr 2024 — **not** five expensive full L1–L4 refits |
-| **Train-only parameters** | Hawkes \((\mu,\alpha,\beta)\), decay \(\lambda\), high-impact threshold \(\tau\), calibration — estimated on training window only |
+| **Train-only parameters** | Hawkes $(\mu,\alpha,\beta)$, decay $\lambda$, high-impact threshold $\tau$, calibration — estimated on training window only |
 | **Fallback chains** | cause×corridor → cause → corridor → global; logged per row (`layer45_coverage_summary.csv`) |
 
 #### Joint Operational State Vector (JOSV)
@@ -319,7 +314,7 @@ Backtest mode trains on the early window and evaluates Mar–Apr 2024. Deploymen
 
 `layer45_asof_feature_matrix.csv`, `layer45_operational_state_vector.csv` (raw JOSV), `layer45_operational_state_vector_normalized.csv` (robust z-scores for Layer 5), `layer45_cause_tau_thresholds.csv`, `layer45_metrics.csv` (includes RMSLE + typical-incident slice), `layer45_model_artifacts/`
 
-Duration regression trains on `log1p(duration_min)`; high-impact uses cause-specific \(\tau_c = P_{75}(\text{duration} \mid \text{cause})\) from the training window only.
+Duration regression trains on `log1p(duration_min)`; high-impact uses cause-specific $\tau_c = P_{75}(\text{duration} \mid \text{cause})$ from the training window only.
 
 #### Layer 4.5 Duration Quality Gate (additive patch — `layer45_duration_guard.py`, `layer45_tail_models.py`)
 
@@ -331,8 +326,8 @@ The CatBoost quantile regressors can produce inversions (p50 > p80) when the tra
 | Phase | What happens |
 |-------|-------------|
 | **A. Raw prediction** | Existing CatBoost quantile regressors produce raw $Q_{50}, Q_{80}, Q_{95}$ (log-space, back-transformed). Saved to `layer45_duration_raw_predictions.csv` for diagnostics. |
-| **B. Tail-risk model** | A separate CatBoostClassifier trained on $y_{\text{tail}} = \mathbf{1}[\text{duration} > \tau_{\text{cause}}]$ (training window only) produces `tail_risk_prob` per event. |
-| **C. Tail-aware mixture** | $Q_{\text{mix}} = (1 - \pi)\,Q_{\text{typ}} + \pi\,Q_{\text{tail}}$ where $\pi = \text{tail\\_risk\\_prob}$ and $Q_{\text{tail}}$ comes from training-window tail quantile proxies. |
+| **B. Tail-risk model** | CatBoostClassifier on $y_{\text{tail}} = \mathbf{1}\{\text{duration} > \tau_{\text{cause}}\}$; outputs `tail_risk_prob` |
+| **C. Tail-aware mixture** | $Q_{\text{mix}} = (1 - \pi)\,Q_{\text{typ}} + \pi\,Q_{\text{tail}}$, $\pi =$ `tail_risk_prob` |
 | **D. Monotone sanitization** | Sort $(Q_{50}, Q_{80}, Q_{95})$ row-wise, then clamp $Q_{95,\text{safe}} = \min\!\bigl(Q_{95},\ \max(10 \cdot Q_{50},\ 1440)\bigr)$. Re-sort if needed. |
 | **E. Duration reliability** | $R = 0.25\,\text{Cal} + 0.20\,\text{Retrieval} + 0.20\,(1-\text{Novelty}) + 0.15\,(1-\text{Drift}) + 0.10\,\text{Support} + 0.10\,(1-\text{Width})$ — all components in $[0,1]$. |
 | **F. Reliability logging only** | `duration_reliability`, `fallback_blend_flag`, and `fallback_blend_rate` are logged for transparency; no blending is applied to final quantiles. |
@@ -344,11 +339,9 @@ Row-wise sort of the quantile triple is deterministic and always produces $Q_{50
 
 **How the tail-risk mixture works.**
 Tail probability $\pi$ is isotonic-calibrated on the validation window:
-
 $$
 Q_{\text{mix}} = (1 - \pi)\,Q_{\text{typ}} + \pi\,Q_{\text{tail}}
 $$
-
 Events with $\pi \approx 0$ stay in the typical regime; events with $\pi \approx 1$ shift toward observed tail quantiles.
 
 **Fallback blending: removed after validation.**
@@ -399,51 +392,41 @@ The scenario-ready bundle (`layer45_scenario_ready_duration.csv`) is the only ac
 3. **Low-reliability rows** need explicit inflation rather than distorted point estimates.
 
 Layer 5 also applies a second-pass defensive sanity clamp to the already-sanitized quantiles before scenario generation:
-
-\[
+$$
 Q^{\text{sc}}_{95,r} = \min\left(Q^{\text{safe}}_{95,r},\ \max\!\left(10 \cdot Q^{\text{safe}}_{50,r},\ 1440\right)\right)
-\]
-
+$$
 This ensures no scenario is generated from a p95 that is more than 10× the median or more than 24 hours.
 
 #### Uncertainty inflation
 
 Low-reliability events from Layer 4.5 are handled by inflating scenario spread rather than distorting the point estimate. For each site *r*:
-
-\[
+$$
 \sigma_r^{\text{adj}} = \sigma_r \cdot \bigl(1 + \kappa\,(1 - R_r)\bigr)
-\]
-
-where \(\sigma_r = (\log Q_{0.95,r} - \log Q_{0.50,r}) / 1.645\) is the log-space dispersion estimated from the sanitized quantile pair, \(R_r \in [0,1]\) is the Layer 4.5 `duration_reliability` score, and \(\kappa = 0.50\) is a configurable hyperparameter. Events flagged with `duration_sanity_flag = 0` use \(\kappa \times 1.5\). This increases tail scenario spread without moving the median, making the optimization conservatively protective of uncertain events without fabricating artificially long expected durations.
+$$
+where $\sigma_r = (\log Q_{0.95,r} - \log Q_{0.50,r}) / 1.645$ is the log-space dispersion estimated from the sanitized quantile pair, $R_r \in [0,1]$ is the Layer 4.5 `duration_reliability` score, and $\kappa = 0.50$ is a configurable hyperparameter. Events flagged with `duration_sanity_flag = 0` use $\kappa \times 1.5$. This increases tail scenario spread without moving the median, making the optimization conservatively protective of uncertain events without fabricating artificially long expected durations.
 
 #### Scenario generation and reduction
 
 For each active disruption site *r*, Layer 5 fits a lognormal surrogate from the sanitized quantile bundle:
-
-\[
+$$
 \mu_r = \log Q_{0.50,r}, \qquad
 \sigma_r = \frac{\log Q_{0.95,r} - \log Q_{0.50,r}}{1.645}
-\]
-
+$$
 After reliability inflation, S=200 initial scenarios are sampled:
-
-\[
+$$
 \log T_{r,s} \sim \mathcal{N}\!\left(\mu_r,\, \left(\sigma_r^{\text{adj}}\right)^2\right)
-\]
-
+$$
 To keep the MILP tractable, scenarios are reduced to S=50 representative scenarios using k-means clustering on scenario vectors (each scenario is a vector of *R* site durations). **The five scenarios with the highest mean duration are preserved explicitly** before clustering and are never dropped — this prevents the reduction step from erasing the tail region, which would understate CVaR.
 
-Scenario weights \(w_s = 1/S\) are uniform. The final scenario matrix \(T[R \times S]\) (site durations in minutes) is passed to the MILP.
+Scenario weights $w_s = 1/S$ are uniform. The final scenario matrix $T[R \times S]$ (site durations in minutes) is passed to the MILP.
 
 #### Site selection and risk weights
 
 Layer 5 selects the top-N active sites (N ≤ 50) by a composite risk-importance score. Each site is weighted by a sigmoid-squashed linear combination of Layer 4.5 normalized signals:
-
-\[
+$$
 w_r = \sigma\!\bigl(a_1 \cdot \text{fragility}_r + a_2 \cdot \text{OBI}_r + a_3 \cdot \text{novelty}_r + a_4 \cdot \text{tail\\_risk}_r\bigr)
-\]
-
-with \((a_1, a_2, a_3, a_4) = (1.5, 1.2, 0.8, 1.0)\). The risk weight multiplies both the delay objective and the CVaR tail terms, so the optimizer allocates disproportionately more resources to high-fragility, high-OBI, or high-novelty sites.
+$$
+with $(a_1, a_2, a_3, a_4) = (1.5, 1.2, 0.8, 1.0)$. The risk weight multiplies both the delay objective and the CVaR tail terms, so the optimizer allocates disproportionately more resources to high-fragility, high-OBI, or high-novelty sites.
 
 #### Two-stage stochastic MILP formulation
 
@@ -451,91 +434,73 @@ The core optimization is a mixed-integer linear program (MILP) solved by `scipy.
 
 | Variable | Type | Range | Meaning |
 |----------|------|-------|---------|
-| \(p_r\) | integer | \([0, 12]\) | police officers |
-| \(b_r\) | integer | \([0, 20]\) | barricades |
-| \(t_r\) | integer | \([0, 4]\) | tow trucks |
-| \(q_r\) | integer | \([0, 3]\) | QRUs |
-| \(d_r\) | binary | \(\{0,1\}\) | diversion activation |
-| \(e_r\) | continuous | \([0, 0.90]\) | effectiveness fraction |
+| $p_r$ | integer | $[0, 12]$ | police officers |
+| $b_r$ | integer | $[0, 20]$ | barricades |
+| $t_r$ | integer | $[0, 4]$ | tow trucks |
+| $q_r$ | integer | $[0, 3]$ | QRUs |
+| $d_r$ | binary | $\{0,1\}$ | diversion activation |
+| $e_r$ | continuous | $[0, 0.90]$ | effectiveness fraction |
 
-Plus auxiliary CVaR variables \(z\) (VaR level) and \(\xi_s \geq 0\) for each scenario \(s\).
+Plus auxiliary CVaR variables $z$ (VaR level) and $\xi_s \geq 0$ for each scenario $s$.
 
 **Objective** (weighted priority):
-
-\[
+$$
 \min_{x}\ \lambda_2 z + \frac{\lambda_2}{(1-\alpha)S}\sum_{s=1}^{S}\xi_s - \lambda_3 \sum_r \bar{w}_r e_r + \lambda_4 \sum_r \mathrm{cost}_r + \lambda_5 \sum_r d_r
-\]
-
-where \(\bar{w}_r = w_r \cdot \mathbb{E}[T_r]\) is the mean weighted site duration (fixed parameter from scenarios), and cost includes per-resource deployment cost coefficients. The \(-\lambda_3 \bar{w}_r e_r\) term makes increasing effectiveness reduce the objective (maximize delay reduction). Weights are \(\lambda_2 = 2.0\), \(\lambda_3 = 1.0\), \(\lambda_4 = 0.15\), \(\lambda_5 = 0.10\).
+$$
+where $\bar{w}_r = w_r \cdot \mathbb{E}[T_r]$ is the mean weighted site duration (fixed parameter from scenarios), and cost includes per-resource deployment cost coefficients. The $-\lambda_3 \bar{w}_r e_r$ term makes increasing effectiveness reduce the objective (maximize delay reduction). Weights are $\lambda_2 = 2.0$, $\lambda_3 = 1.0$, $\lambda_4 = 0.15$, $\lambda_5 = 0.10$.
 
 #### CVaR formulation (Rockafellar–Uryasev)
 
 Total delay under scenario *s* with the optimal allocation:
-
-\[
+$$
 D_s(x) = \sum_r w_r \cdot T_{r,s} \cdot (1 - e_r)
-\]
-
-Since \(T_{r,s}\) is a fixed scenario parameter, this is linear in \(e_r\). CVaR linearization:
-
-\[
+$$
+Since $T_{r,s}$ is a fixed scenario parameter, this is linear in $e_r$. CVaR linearization:
+$$
 \mathrm{CVaR}_\alpha(D) = z + \frac{1}{(1-\alpha)S}\sum_{s=1}^{S}\xi_s
-\]
-
-subject to \(\xi_s \geq D_s(x) - z\) and \(\xi_s \geq 0\). Expanding the slack constraint:
-
-\[
+$$
+subject to $\xi_s \geq D_s(x) - z$ and $\xi_s \geq 0$. Expanding the slack constraint:
+$$
 \xi_s + z + \sum_r w_r T_{r,s}\, e_r \;\geq\; \sum_r w_r T_{r,s} \qquad \forall\, s
-\]
-
-This is fully linear in the decision variables. The CVaR level is \(\alpha = 0.90\).
+$$
+This is fully linear in the decision variables. The CVaR level is $\alpha = 0.90$.
 
 #### Chance constraints
 
 For critical sites (*r* flagged as `high_impact_decision = 1` or `tail_risk_prob > 0.40`), the optimizer enforces a minimum service constraint:
-
-\[
+$$
 p_r + b_r + t_r + q_r \;\geq\; m_r
-\]
-
-where \(m_r = \max(2,\ \lceil 4 \cdot \text{tail\\_risk}_r \cdot w_r \rceil)\). This prevents the optimizer from starving critical sites to reduce aggregate cost. Scenario-level chance-constraint satisfaction (fraction of scenarios where site delay is below \(3 \times Q_{50,r}\)) is reported in the output but not enforced as hard MILP constraints to keep the problem tractable.
+$$
+where $m_r = \max(2,\ \lceil 4 \cdot \text{tail\\_risk}_r \cdot w_r \rceil)$. This prevents the optimizer from starving critical sites to reduce aggregate cost. Scenario-level chance-constraint satisfaction (fraction of scenarios where site delay is below $3 \times Q_{50,r}$) is reported in the output but not enforced as hard MILP constraints to keep the problem tractable.
 
 #### Resource effectiveness model (parametric, not learned)
 
 No deployment labels exist to train an effectiveness model. Instead, a fixed diminishing-returns function is used:
-
-\[
+$$
 E_r(u_r) = 1 - \exp\!\left(-(\gamma_p p_r + \gamma_b b_r + \gamma_t t_r + \gamma_q q_r)\right)
-\]
+$$
+with fixed hyperparameters $\gamma_p = 0.18,\ \gamma_b = 0.10,\ \gamma_t = 0.25,\ \gamma_q = 0.30$. These are not learned — they represent the relative operational effectiveness of each resource type and can be tuned via sensitivity analysis.
 
-with fixed hyperparameters \(\gamma_p = 0.18,\ \gamma_b = 0.10,\ \gamma_t = 0.25,\ \gamma_q = 0.30\). These are not learned — they represent the relative operational effectiveness of each resource type and can be tuned via sensitivity analysis.
-
-Because the exponential effectiveness function is nonlinear, Layer 5 uses an **outer linearization** (tangent-line approximation at breakpoints \(\{0, 1, 2, 4, 6, 8, 10\}\)) to approximate it within the MILP. For concave \(f(u) = 1 - e^{-u}\), the tangent at breakpoint \(u_k\) gives:
-
-\[
+Because the exponential effectiveness function is nonlinear, Layer 5 uses an **outer linearization** (tangent-line approximation at breakpoints $\{0, 1, 2, 4, 6, 8, 10\}$) to approximate it within the MILP. For concave $f(u) = 1 - e^{-u}$, the tangent at breakpoint $u_k$ gives:
+$$
 e_r \;\leq\; f(u_k) + e^{-u_k}\!\cdot\!\left(\gamma_p p_r + \gamma_b b_r + \gamma_t t_r + \gamma_q q_r - u_k\right)
-\]
-
-The intersection of these 7 tangent constraints is the tightest piecewise-linear upper bound on the true concave curve, accurate to within ~2% across the operating range. An additional hard cap \(e_r \leq 0.90\) prevents the optimizer from claiming unrealistic effectiveness.
+$$
+The intersection of these 7 tangent constraints is the tightest piecewise-linear upper bound on the true concave curve, accurate to within ~2% across the operating range. An additional hard cap $e_r \leq 0.90$ prevents the optimizer from claiming unrealistic effectiveness.
 
 #### Budget constraints
 
 Global resource budgets (configurable):
-
-\[
+$$
 \sum_r p_r \leq 120, \quad \sum_r b_r \leq 100, \quad \sum_r t_r \leq 15, \quad \sum_r q_r \leq 10
-\]
-
-Per-site caps: \(p_r \leq 12\), \(b_r \leq 20\), \(t_r \leq 4\), \(q_r \leq 3\).
+$$
+Per-site caps: $p_r \leq 12$, $b_r \leq 20$, $t_r \leq 4$, $q_r \leq 3$.
 
 #### Diversion routing
 
 Diversion decisions are linked to Layer 3's Dijkstra corridor graph. A `networkx.DiGraph` is reconstructed from `layer3_disruption_impact_scores.csv` (node attributes: DIS, OBI, fragility) and the pre-computed diversion paths in `layer3_diversion_recommendations.csv` (edge weights). For each site where `d_r = 1` is optimal, the best 3 diversion routes by path cost are reported. Edge cost:
-
-\[
+$$
 c_e = c^{\text{base}}_e + 0.40 \cdot \text{risk}_e + 0.25 \cdot \text{fragility}_e + 0.25 \cdot \text{OBI}_e
-\]
-
+$$
 When the networkx graph is unavailable, a greedy fallback assigns the lowest-DIS junction as the diversion target.
 
 #### Robust fallback mode
@@ -553,7 +518,7 @@ This produces four shadow prices: one per resource type. A positive shadow price
 
 #### Pareto frontier (tail risk vs. cost)
 
-Layer 5 sweeps six \((\lambda_{\text{CVaR}}, \lambda_{\text{cost}})\) weight pairs from cost-dominated to risk-dominated. Each pair evaluates the CVaR-90% and deployment cost of the base MILP solution under that objective weighting (post-hoc, using the same allocation). This documents how the composite objective value changes under different risk-vs-cost priority settings. The output in `layer5_pareto_front.csv` is a λ-sensitivity analysis: it shows the trade-off between tail-risk and cost emphasis, not six separate optimal allocations (which would require six full MILP re-solves with different objectives).
+Layer 5 sweeps six $(\lambda_{\text{CVaR}}, \lambda_{\text{cost}})$ weight pairs from cost-dominated to risk-dominated. Each pair evaluates the CVaR-90% and deployment cost of the base MILP solution under that objective weighting (post-hoc, using the same allocation). This documents how the composite objective value changes under different risk-vs-cost priority settings. The output in `layer5_pareto_front.csv` is a λ-sensitivity analysis: it shows the trade-off between tail-risk and cost emphasis, not six separate optimal allocations (which would require six full MILP re-solves with different objectives).
 
 #### Sensitivity analysis
 
@@ -634,16 +599,13 @@ Implemented in `src/layer3_resource_optimization.py`. Consumes Layer 1 and Layer
 ### Learned DIS via PCA
 
 DIS is no longer a fixed-weight sum. A `sklearn.PCA` is fitted on the standardised 5-component matrix $[\text{OBI}, \text{cascade\\_risk}, \text{future\\_risk}, \text{RMST\\_mean}, \text{persistence}]$ for all 294 junctions. PC1 (55.7% of variance) is used as the DIS axis; its sign is corrected so that DIS correlates positively with OBI.
-
 $$
 \mathbf{X}_{\text{scaled}} \in \mathbb{R}^{294 \times 5} = \text{StandardScaler}\bigl([\text{OBI}, \text{cascade}, \text{future}, \text{RMST}, \text{persistence}]\bigr)
 $$
-
 $$
 \text{DIS}_{\text{raw}} = \mathbf{X}_{\text{scaled}} \cdot \mathbf{w}_{\text{PC1}}, \qquad
 \text{DIS} = 100 \cdot \frac{\text{DIS}_{\text{raw}} - \min(\text{DIS}_{\text{raw}})}{\max(\text{DIS}_{\text{raw}}) - \min(\text{DIS}_{\text{raw}})}
 $$
-
 The fitted PCA is saved to `outputs/layer3_pca_model.pkl` for reproducibility.
 
 Risk tiers: **Low** (0–30) · **Moderate** (30–60) · **High** (60–80) · **Critical** (80–100)
@@ -651,42 +613,33 @@ Risk tiers: **Low** (0–30) · **Moderate** (30–60) · **High** (60–80) · 
 ### Operational Demand Score (ODS)
 
 ODS is a multiplicative demand signal that drives continuous resource sizing:
-
 $$
 \text{ODS} = \text{DIS} \times \text{DurationFactor} \times \text{ClosureFactor} \times \text{CascadeFactor}
 $$
-
 $$
 \text{DurationFactor} = 1 + \frac{P_{80,\text{capped}}}{120}, \quad
 \text{ClosureFactor} = \begin{cases} 1.5 & \text{if requires\\_road\\_closure} \\ 1.0 & \text{otherwise} \end{cases}, \quad
 \text{CascadeFactor} = 1 + R
 $$
-
 where $P_{80,\text{capped}}$ is capped at 360 min and $R$ is the Hawkes branching ratio.
 
 Resource quantities derived continuously from ODS:
-
 $$
 \text{officers} = \min\!\left(25,\ \lceil \text{ODS}/30 \rceil\right), \quad
 \text{barricades} = \min\!\left(40,\ \lceil \text{ODS}/20 \rceil\right), \quad
 \text{tow\\_units} = \min\!\left(5,\ \lceil \text{ODS}/80 \rceil\right)
 $$
-
 $$
 \text{supervisors} = \lceil \text{officers}/6 \rceil, \qquad
 \text{qru\\_units} = \begin{cases} 1 & \text{if DIS} \geq 70 \\ 0 & \text{otherwise} \end{cases}
 $$
-
 ### Linear Programming resource allocation
 
 `scipy.optimize.linprog` (HiGHS) maximises total DIS served subject to city-wide budget constraints across top-50 junctions with $\text{DIS} \geq 30$:
-
 $$
 \max_{\mathbf{x}} \sum_i \text{DIS}_i \cdot x_i
 $$
-
 subject to
-
 $$
 \sum_i \text{officers}_i \cdot x_i \leq 120, \quad
 \sum_i \text{tow}_i \cdot x_i \leq 15, \quad
@@ -694,30 +647,24 @@ $$
 \sum_i \text{supervisors}_i \cdot x_i \leq 20, \quad
 0 \leq x_i \leq 1
 $$
-
 `allocation_fraction` = LP solution. Junctions outside the LP budget keep `x_i = 1` (recommended = allocated).
 
 ### Dijkstra diversion routing
 
 A `networkx.DiGraph` is built from all events-clean corridor-junction pairs. Edge weight:
-
 $$
 w(u,v) = 0.5 \cdot \bigl(\text{node\\_cost}(u) + \text{node\\_cost}(v)\bigr)
 $$
-
 $$
 \text{node\\_cost}(j) = 0.4\,\operatorname{norm}(\text{OBI}_j) + 0.3\,\operatorname{norm}(\text{FutureRisk}_j) + 0.2\,\operatorname{norm}(\text{Hawkes}_j) + 0.1\,\operatorname{norm}(\text{RMST}_j) + 0.01
 $$
-
 For each of the top-30 DIS junctions, the blocked junction is removed, and `nx.single_source_dijkstra` finds the 3 lowest-cost diversion targets. Zone-based fallback is used only when the graph is disconnected.
 
 ### Resource efficiency simulation
-
 $$
 \text{clearance\\_predicted} = \text{base\\_clearance} \times (1 - \text{reduction}), \qquad
 \text{reduction} = \bigl(1 - e^{-0.08 \cdot N_{\text{officers}}}\bigr) \times 0.40
 $$
-
 Simulated for $N_{\text{officers}}$ multipliers $\{1.0, 1.1, 1.2, 1.3, 1.5, 2.0\}$ across the top-20 junctions.
 
 ### Barricading strategy (ODS-driven)
@@ -763,12 +710,10 @@ Implemented in `src/layer4_event_intelligence.py`. Focuses on the 191 true plann
 ### Gower similarity (mixed-type, 191 × 8,173)
 
 Categorical features use exact-match similarity (0 or 1). Continuous features use:
-
 $$
 \text{sim}_{\text{cont}}(x_i, x_j) = 1 - \frac{|x_i - x_j|}{\text{range}}, \qquad
 \text{Gower}(x_i, x_j) = \frac{\sum \text{sim}_{\text{cat}} + \sum \text{sim}_{\text{cont}}}{n_{\text{features}}}
 $$
-
 Features: `event_cause` (cat), `corridor` (cat), `requires_road_closure` (cat), `hour_local` (cont), `dow_local` (cont), `duration_min_filled` (cont), `priority_code` (cont), `trust_score` (cont), `month` (cont).
 
 ### Hybrid similarity
@@ -785,11 +730,9 @@ Operationally-weighted categorical + continuous blend:
 | priority | 0.05 |
 
 Final blended similarity:
-
 $$
 \text{SIM} = 0.6 \cdot \text{Hybrid} + 0.4 \cdot \text{Gower}
 $$
-
 ### Retrieval confidence tiers
 
 Mean of top-k blended scores per planned event:
@@ -801,31 +744,24 @@ Mean of top-k blended scores per planned event:
 | Weak | < 0.60 |
 
 ### Institutional Memory Score (IMS)
-
 $$
 n_{\text{meaningful}} = \bigl|\{j : \text{SIM}(\text{query}, j) \geq 0.60\}\bigr|, \qquad
 \text{mean\\_sim} = \text{mean of SIM scores above threshold}
 $$
-
 $$
 \text{IMS} = \log(1 + n_{\text{meaningful}}) \times \text{mean\\_sim}
 $$
-
 Higher IMS → more reliable historical evidence → stronger weight on history vs Layer 3 rules.
 
 ### Evidence-based resource recommendation
-
 $$
 \text{evidence\\_weight} = \min\!\left(1,\ \frac{\text{IMS}}{\max(\text{IMS})}\right), \qquad
 \text{blended\\_officers} = \text{evidence\\_weight} \cdot \text{historical\\_est} + (1 - \text{evidence\\_weight}) \cdot \text{l3\\_rule\\_est}
 $$
-
 ### Impact forecast
-
 $$
 \text{impact\\_score} = \Bigl(0.35\,\operatorname{norm}(\text{L3\\_DIS}) + 0.25\,\operatorname{norm}(\text{pred\\_duration}) + 0.20\,\text{closure\\_prob} + 0.20\,\operatorname{norm}(\text{IMS})\Bigr) \times \text{trust\\_score} \times 100
 $$
-
 ### Public API
 
 ```python
@@ -871,23 +807,18 @@ ims_df        # layer4_institutional_memory_scores.csv
 New additive module (`src/layer3_corridor_fragility.py`). Fits a marked Hawkes process per corridor with zone-level pooling and empirical Bayes shrinkage.
 
 **Model:**
-
 $$
 \lambda_c(t) = \mu_c + \sum_{t_i < t} \alpha_{z(c)} \cdot m_i \cdot \exp\!\bigl(-\beta_{z(c)} \cdot (t - t_i)\bigr)
 $$
-
 $$
 m_i = \text{trust}_i \times (1 + 0.5 \cdot \text{closure}_i) \times \frac{\text{priority}_i}{\max(\text{priority})}
 $$
-
 **Zone pooling** (first token of corridor name): ORR North 1/2 + ORR East 1/2 + ORR West 1 → zone ORR; Bellary Road 1/2 → zone BELLARY; etc.
 
 **Shrinkage** (for sparse corridors with $n < 20$):
-
 $$
 \theta_c = \frac{n}{n + \kappa}\,\hat{\theta}_c + \frac{\kappa}{n + \kappa}\,\theta_{z(c)}
 $$
-
 **Key outputs:**
 | Metric | Interpretation |
 |--------|---------------|
@@ -907,12 +838,10 @@ $$
 New additive module (`src/layer4_planned_event_retrieval.py`). Trust-weighted Gower similarity retrieval with prototype compression and principled abstention for sparse planned events (n = 191).
 
 **Design decisions:**
-
 $$
 s(q,p) = \exp\!\left(-\frac{d_G(q,p)}{h}\right) \cdot \tau_p, \qquad
 \text{Conf} = \min\!\left(1,\ \frac{n_{\text{eff}}}{k_0}\right) \cdot \bar{s}
 $$
-
 | Component | Choice | Rationale |
 |-----------|--------|-----------|
 | Prototype compression | KMeans → 47 clusters | Prevents degenerate retrieval; one prototype can't dominate |
