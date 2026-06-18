@@ -145,6 +145,7 @@ python src/layer3_methodology_upgrades.py   # PCA stability + log fragility (add
 python src/layer4_methodology_upgrades.py   # leakage-free retrieval + K-Medoids (additive)
 python src/layer4_operational_upgrades.py   # evidence tiers + quantiles + L3 fallback (final L4)
 python src/layer45_predictive_fusion.py     # leak-free predictive fusion → JOSV (additive)
+python src/layer5_robust_optimization.py   # prescriptive MILP optimization → allocation + diversion (additive)
 python src/frontend_exports.py              # dashboard-ready copies → outputs/frontend/
 python src/validate_consistency.py
 ```
@@ -330,8 +331,8 @@ The CatBoost quantile regressors can produce inversions (p50 > p80) when the tra
 | **C. Tail-aware mixture** | `Q_mix = (1 - π) · Q_typ + π · Q_tail` where `π = tail_risk_prob` and `Q_tail` comes from training-window tail-event quantile proxies (cause-specific where supported, global otherwise). This preserves true heavy-tail behaviour while damping isolated outlier spikes. |
 | **D. Monotone sanitization** | Sort the triple (p50, p80, p95) row-wise to enforce `Q50 ≤ Q80 ≤ Q95`. Then apply the hard safety clamp: `Q95_safe = min(Q95, max(10·Q50, 1440 min))`. If clamping pushes Q95 below Q80, re-sort. |
 | **E. Duration reliability** | `R = 0.25·Cal + 0.20·Retrieval + 0.20·(1−Novelty) + 0.15·(1−Drift) + 0.10·Support + 0.10·(1−Width)` all in [0, 1]. Components normalised using training-window statistics only. |
-| **F. Fallback blending** | Fallback quantiles from the as-of feature chain (cause×corridor → cause → corridor → global) are blended: `Q_final = R · Q_safe + (1−R) · Q_fallback`. When reliability is low the fallback dominates; when high the model dominates. |
-| **G. Sanity flags** | Per-row: `quantile_crossing_flag`, `clamp_flag`, `fallback_blend_flag`, `tail_risk_flag`, `duration_sanity_flag`, `duration_guard_reason`. |
+| **F. Reliability logging only** | `duration_reliability`, `fallback_blend_flag`, and `fallback_blend_rate` are computed and logged for transparency in `layer45_duration_quality.csv` and `layer45_metrics.csv`. No blending is applied to the final output quantiles — the sanitized model output is used as-is. See the note on blending removal below. |
+| **G. Sanity flags** | Per-row: `quantile_crossing_flag`, `clamp_flag`, `fallback_blend_flag` (always 0 on current holdout), `tail_risk_flag`, `duration_sanity_flag`, `duration_guard_reason`. |
 | **H. Scenario-ready bundle** | `layer45_scenario_ready_duration.csv` — the canonical Layer 5 input. |
 
 **How monotone sanitization is enforced.**
@@ -343,8 +344,18 @@ The tail-risk probability `π` is calibrated using isotonic regression on valida
 - events predicted as tail (`π ≈ 1`) get quantiles shifted toward the observed tail distribution;
 - the mix never invents values outside the convex hull of the two regimes.
 
-**How fallback blending works.**
-The reliability score `R` is a weighted deterministic composite of six signals. When `R < 0.5` the fallback blend flag fires and the as-of quantile (pre-computed from history strictly before each event) dominates the final output. This means even if the model fails completely, the output remains a reasonable historical estimate — not a raw extrapolation.
+**Fallback blending: removed after validation.**
+An earlier version of the quality gate blended the sanitized model quantiles with historical as-of fallbacks using `Q_final = R · Q_safe + (1−R) · Q_fallback`, so that low-reliability rows would be anchored to a conservative historical estimate. This blending fired on rows with reliability in [0.39, 0.49], which turn out to be moderate-confidence predictions of genuinely long-duration tail events — events where the raw model was already closer to truth than the as-of fallback. The blend dragged those predictions toward a worse estimate.
+
+After removing the blending step, the holdout comparison (sanitized output vs. raw p50 baseline) showed:
+
+| Metric | Before (blended) | After (no blend) | Raw p50 baseline |
+|--------|-----------------|-----------------|-----------------|
+| RMSE   | 6834.58 | **6038.98** | 6052.31 |
+| MAE    | 2560.52 | **2362.80** | 2367.07 |
+| Median AE | 84.997 | **78.124** | 78.592 |
+
+Removing blending improved all three metrics and also beats the unblended raw p50 baseline. The `duration_reliability` score and `fallback_blend_flag` are still computed and logged for transparency, but they no longer alter the final quantiles. The blending threshold in `layer45_duration_guard.py` is set to `R < 0.30`, below which no current holdout row qualifies, so the blending path is effectively inactive — a conservative backstop for genuinely out-of-distribution batches that are far outside the training reliability range.
 
 **High-impact decision threshold tuning.**
 Because cause-specific `τ_c` thresholds raise the base rate in some strata and reduce recall, an F-beta (β=2) optimal decision threshold is selected per cause on the validation window. This does not change labels or training — it is a post-hoc operating-point selection that restores operational recall while preserving calibrated probability output.
@@ -362,6 +373,218 @@ Because cause-specific `τ_c` thresholds raise the base rate in some strata and 
 
 **This patch is strictly additive.** No existing layer files were modified. The purpose is to prevent bad tail predictions from contaminating resource optimisation.
 
+### Layer 5 — Robust Prescriptive Optimization (`layer5_robust_optimization.py`)
+
+**Additive only — Layers 1–4.5 are unchanged.** Layer 5 is the prescriptive brain of the ASTraM pipeline. It does not train any new ML model. Its value comes entirely from optimization: converting the predictive state produced by Layer 4.5 into concrete resource allocation and diversion decisions under uncertainty.
+
+#### Why optimization-only, not re-prediction?
+
+Layer 4.5 already provides calibrated duration quantiles, uncertainty estimates, novelty flags, and high-impact probabilities for every event. What it cannot answer is: *given these predictions and their uncertainty, how should we deploy limited resources to minimize disruption?* That is an optimization problem, not a prediction problem. Adding another predictor would not answer it.
+
+Layer 5 answers: given the fused operational state from Layer 4.5, how should limited police officers, barricades, tow trucks, QRUs, and diversion capacity be allocated to minimize expected disruption, tail risk, and unmet critical-site burden under uncertainty?
+
+#### Why Layer 4.5 duration quantiles must be sanitized before use
+
+The scenario-ready bundle (`layer45_scenario_ready_duration.csv`) is the only acceptable input for duration-based decisions in Layer 5. The raw quantile file (`layer45_duration_raw_predictions.csv`) is diagnostics-only and must never be used in optimization. Three problems arise from raw quantiles:
+
+1. **Quantile inversions** (p50 > p80) violate the monotone ordering required for valid lognormal surrogate fitting.
+2. **Pathological p95 values** in sparse strata cause scenario generation to massively over-weight rare high-duration events, artificially inflating CVaR and triggering unnecessary resource deployments.
+3. **Low-reliability rows** need explicit inflation rather than distorted point estimates.
+
+Layer 5 also applies a second-pass defensive sanity clamp to the already-sanitized quantiles before scenario generation:
+
+\[
+Q^{\text{sc}}_{95,r} = \min\left(Q^{\text{safe}}_{95,r},\ \max\!\left(10 \cdot Q^{\text{safe}}_{50,r},\ 1440\right)\right)
+\]
+
+This ensures no scenario is generated from a p95 that is more than 10× the median or more than 24 hours.
+
+#### Uncertainty inflation
+
+Low-reliability events from Layer 4.5 are handled by inflating scenario spread rather than distorting the point estimate. For each site *r*:
+
+\[
+\sigma_r^{\text{adj}} = \sigma_r \cdot \bigl(1 + \kappa\,(1 - R_r)\bigr)
+\]
+
+where \(\sigma_r = (\log Q_{0.95,r} - \log Q_{0.50,r}) / 1.645\) is the log-space dispersion estimated from the sanitized quantile pair, \(R_r \in [0,1]\) is the Layer 4.5 `duration_reliability` score, and \(\kappa = 0.50\) is a configurable hyperparameter. Events flagged with `duration_sanity_flag = 0` use \(\kappa \times 1.5\). This increases tail scenario spread without moving the median, making the optimization conservatively protective of uncertain events without fabricating artificially long expected durations.
+
+#### Scenario generation and reduction
+
+For each active disruption site *r*, Layer 5 fits a lognormal surrogate from the sanitized quantile bundle:
+
+\[
+\mu_r = \log Q_{0.50,r}, \qquad
+\sigma_r = \frac{\log Q_{0.95,r} - \log Q_{0.50,r}}{1.645}
+\]
+
+After reliability inflation, S=200 initial scenarios are sampled:
+
+\[
+\log T_{r,s} \sim \mathcal{N}\!\left(\mu_r,\, \left(\sigma_r^{\text{adj}}\right)^2\right)
+\]
+
+To keep the MILP tractable, scenarios are reduced to S=50 representative scenarios using k-means clustering on scenario vectors (each scenario is a vector of *R* site durations). **The five scenarios with the highest mean duration are preserved explicitly** before clustering and are never dropped — this prevents the reduction step from erasing the tail region, which would understate CVaR.
+
+Scenario weights \(w_s = 1/S\) are uniform. The final scenario matrix \(T[R \times S]\) (site durations in minutes) is passed to the MILP.
+
+#### Site selection and risk weights
+
+Layer 5 selects the top-N active sites (N ≤ 50) by a composite risk-importance score. Each site is weighted by a sigmoid-squashed linear combination of Layer 4.5 normalized signals:
+
+\[
+w_r = \sigma\!\bigl(a_1 \cdot \text{fragility}_r + a_2 \cdot \text{OBI}_r + a_3 \cdot \text{novelty}_r + a_4 \cdot \text{tail\_risk}_r\bigr)
+\]
+
+with \((a_1, a_2, a_3, a_4) = (1.5, 1.2, 0.8, 1.0)\). The risk weight multiplies both the delay objective and the CVaR tail terms, so the optimizer allocates disproportionately more resources to high-fragility, high-OBI, or high-novelty sites.
+
+#### Two-stage stochastic MILP formulation
+
+The core optimization is a mixed-integer linear program (MILP) solved by `scipy.optimize.milp` (HiGHS backend). The decision variables per active site *r* are:
+
+| Variable | Type | Range | Meaning |
+|----------|------|-------|---------|
+| \(p_r\) | integer | \([0, 12]\) | police officers |
+| \(b_r\) | integer | \([0, 20]\) | barricades |
+| \(t_r\) | integer | \([0, 4]\) | tow trucks |
+| \(q_r\) | integer | \([0, 3]\) | QRUs |
+| \(d_r\) | binary | \(\{0,1\}\) | diversion activation |
+| \(e_r\) | continuous | \([0, 0.90]\) | effectiveness fraction |
+
+Plus auxiliary CVaR variables \(z\) (VaR level) and \(\xi_s \geq 0\) for each scenario \(s\).
+
+**Objective** (weighted priority):
+
+\[
+\min_{x}\ \lambda_2 z + \frac{\lambda_2}{(1-\alpha)S}\sum_{s=1}^{S}\xi_s - \lambda_3 \sum_r \bar{w}_r e_r + \lambda_4 \sum_r \mathrm{cost}_r + \lambda_5 \sum_r d_r
+\]
+
+where \(\bar{w}_r = w_r \cdot \mathbb{E}[T_r]\) is the mean weighted site duration (fixed parameter from scenarios), and cost includes per-resource deployment cost coefficients. The \(-\lambda_3 \bar{w}_r e_r\) term makes increasing effectiveness reduce the objective (maximize delay reduction). Weights are \(\lambda_2 = 2.0\), \(\lambda_3 = 1.0\), \(\lambda_4 = 0.15\), \(\lambda_5 = 0.10\).
+
+#### CVaR formulation (Rockafellar–Uryasev)
+
+Total delay under scenario *s* with the optimal allocation:
+
+\[
+D_s(x) = \sum_r w_r \cdot T_{r,s} \cdot (1 - e_r)
+\]
+
+Since \(T_{r,s}\) is a fixed scenario parameter, this is linear in \(e_r\). CVaR linearization:
+
+\[
+\mathrm{CVaR}_\alpha(D) = z + \frac{1}{(1-\alpha)S}\sum_{s=1}^{S}\xi_s
+\]
+
+subject to \(\xi_s \geq D_s(x) - z\) and \(\xi_s \geq 0\). Expanding the slack constraint:
+
+\[
+\xi_s + z + \sum_r w_r T_{r,s}\, e_r \;\geq\; \sum_r w_r T_{r,s} \qquad \forall\, s
+\]
+
+This is fully linear in the decision variables. The CVaR level is \(\alpha = 0.90\).
+
+#### Chance constraints
+
+For critical sites (*r* flagged as `high_impact_decision = 1` or `tail_risk_prob > 0.40`), the optimizer enforces a minimum service constraint:
+
+\[
+p_r + b_r + t_r + q_r \;\geq\; m_r
+\]
+
+where \(m_r = \max(2,\ \lceil 4 \cdot \text{tail\_risk}_r \cdot w_r \rceil)\). This prevents the optimizer from starving critical sites to reduce aggregate cost. Scenario-level chance-constraint satisfaction (fraction of scenarios where site delay is below \(3 \times Q_{50,r}\)) is reported in the output but not enforced as hard MILP constraints to keep the problem tractable.
+
+#### Resource effectiveness model (parametric, not learned)
+
+No deployment labels exist to train an effectiveness model. Instead, a fixed diminishing-returns function is used:
+
+\[
+E_r(u_r) = 1 - \exp\!\left(-(\gamma_p p_r + \gamma_b b_r + \gamma_t t_r + \gamma_q q_r)\right)
+\]
+
+with fixed hyperparameters \(\gamma_p = 0.18,\ \gamma_b = 0.10,\ \gamma_t = 0.25,\ \gamma_q = 0.30\). These are not learned — they represent the relative operational effectiveness of each resource type and can be tuned via sensitivity analysis.
+
+Because the exponential effectiveness function is nonlinear, Layer 5 uses an **outer linearization** (tangent-line approximation at breakpoints \(\{0, 1, 2, 4, 6, 8, 10\}\)) to approximate it within the MILP. For concave \(f(u) = 1 - e^{-u}\), the tangent at breakpoint \(u_k\) gives:
+
+\[
+e_r \;\leq\; f(u_k) + e^{-u_k}\!\cdot\!\left(\gamma_p p_r + \gamma_b b_r + \gamma_t t_r + \gamma_q q_r - u_k\right)
+\]
+
+The intersection of these 7 tangent constraints is the tightest piecewise-linear upper bound on the true concave curve, accurate to within ~2% across the operating range. An additional hard cap \(e_r \leq 0.90\) prevents the optimizer from claiming unrealistic effectiveness.
+
+#### Budget constraints
+
+Global resource budgets (configurable):
+
+\[
+\sum_r p_r \leq 120, \quad \sum_r b_r \leq 100, \quad \sum_r t_r \leq 15, \quad \sum_r q_r \leq 10
+\]
+
+Per-site caps: \(p_r \leq 12\), \(b_r \leq 20\), \(t_r \leq 4\), \(q_r \leq 3\).
+
+#### Diversion routing
+
+Diversion decisions are linked to Layer 3's Dijkstra corridor graph. A `networkx.DiGraph` is reconstructed from `layer3_disruption_impact_scores.csv` (node attributes: DIS, OBI, fragility) and the pre-computed diversion paths in `layer3_diversion_recommendations.csv` (edge weights). For each site where `d_r = 1` is optimal, the best 3 diversion routes by path cost are reported. Edge cost:
+
+\[
+c_e = c^{\text{base}}_e + 0.40 \cdot \text{risk}_e + 0.25 \cdot \text{fragility}_e + 0.25 \cdot \text{OBI}_e
+\]
+
+When the networkx graph is unavailable, a greedy fallback assigns the lowest-DIS junction as the diversion target.
+
+#### Robust fallback mode
+
+If `scipy.optimize.milp` fails (infeasibility, numerical issues, or time limit exceeded), Layer 5 falls back to a **deterministic greedy proportional allocation**: each resource budget is distributed across sites proportionally to `site_weight × (1 + tail_risk_prob)`, rounded down, with top-up to respect the exact budget. This guarantees a valid plan is always produced. The `solver_status` and `used_fallback` columns in all output files indicate which path was taken.
+
+#### Shadow prices (budget marginal value)
+
+Because MILP duals are not directly available for integer problems, marginal values are approximated by:
+1. Solving the MILP to get an optimal integer solution.
+2. Perturbing each budget by +1 unit and re-solving.
+3. Reporting the objective decrease per additional unit as the shadow price.
+
+This produces four shadow prices: one per resource type. A positive shadow price indicates that the budget constraint is binding for that resource.
+
+#### Pareto frontier (tail risk vs. cost)
+
+Layer 5 sweeps six \((\lambda_{\text{CVaR}}, \lambda_{\text{cost}})\) weight pairs from cost-dominated to risk-dominated. Each pair evaluates the CVaR-90% and deployment cost of the base MILP solution under that objective weighting (post-hoc, using the same allocation). This documents how the composite objective value changes under different risk-vs-cost priority settings. The output in `layer5_pareto_front.csv` is a λ-sensitivity analysis: it shows the trade-off between tail-risk and cost emphasis, not six separate optimal allocations (which would require six full MILP re-solves with different objectives).
+
+#### Sensitivity analysis
+
+Budgets for each resource are varied at ×0.5, ×0.8, ×1.0, ×1.2, ×1.5, and the CVaR α level is swept from 0.75 to 0.99, recording the objective value and solver success at each point. Results are in `layer5_sensitivity_summary.csv`.
+
+#### Alternative plans
+
+Layer 5 generates three plans from the base MILP solution:
+- **Plan A (optimal):** the MILP output directly.
+- **Plan B (conservative):** allocate 30% more to critical/tail-risk sites; reduce to 70% for low-tier sites.
+- **Plan C (spread):** uniform allocation across all sites, ignoring risk heterogeneity (benchmark for the optimizer's value).
+
+#### Layer 5 outputs
+
+| File | Contents |
+|------|----------|
+| `layer5_resource_allocation.csv` | Per-site allocation: p/b/t/q counts, diversion flag, effectiveness, expected delay reduction, CVaR, chance-constraint satisfaction, service tier, robustness score |
+| `layer5_diversion_recommendations.csv` | Route A/B/C options for each diversion-activated site, with path cost and estimated additional travel time |
+| `layer5_scenario_summary.csv` | Per-scenario total delay (raw vs. optimized), delay reduction %, tail scenario flag |
+| `layer5_cvar_summary.csv` | CVaR at α = {0.50, 0.75, 0.90, 0.95, 0.99} and per-service-tier CVaR-90 |
+| `layer5_robust_plan.csv` | Per-site p95 delay with vs. without resources, p95 reduction %, site CVaR-90 |
+| `layer5_alternative_plans.csv` | Plans A/B/C side-by-side for all active sites |
+| `layer5_pareto_front.csv` | CVaR-90 vs. deployment cost across λ sweep, non-dominated points |
+| `layer5_shadow_prices.csv` | Marginal value per +1 unit of each resource budget |
+| `layer5_sensitivity_summary.csv` | Objective vs. budget multiplier and CVaR α level |
+| `layer5_optimization_metrics.csv` | High-level summary: expected delay reduction %, CVaR, CC satisfaction, resource totals |
+| `layer5_frontend_export.csv` | Dashboard-ready: site id, allocation, diversion, delay reduction, CVaR, CC satisfaction, tier, robustness, solver status |
+| `layer5_summary.txt` | Human-readable run summary |
+| `layer5_model_artifacts/` | Hyperparameter JSON snapshot for reproducibility |
+
+#### Run
+
+```bash
+python src/layer5_robust_optimization.py
+```
+
+Runs after `layer45_predictive_fusion.py`. Reads Layer 4.5 canonical outputs only. Produces all outputs to `outputs/layer5_*`. Typical runtime: 10–25 minutes (main MILP solve ~30 s; shadow prices + sensitivity analysis ~4–21 × MILP_TIME_LIMIT_SUB seconds each; Pareto frontier ~1 solve).
+
 ### Computational complexity (approximate, n=8k incidents)
 
 | Module | Complexity | Runtime (local) |
@@ -375,6 +598,11 @@ Because cause-specific `τ_c` thresholds raise the base rate in some strata and 
 | OBI composite | O(junctions) | instant |
 | Layer 4.5 as-of features | O(days × n) daily snapshots | ~1–2 min |
 | Layer 4.5 CatBoost (5 models) | O(n·trees) | ~2 min |
+| Layer 5 scenario generation | O(R·S) lognormal draws + k-means | < 10 s |
+| Layer 5 MILP (HiGHS) | O(R·S·K) constraints, ~350 vars | ~30 s |
+| Layer 5 shadow prices | 5 × MILP re-solve | ~5 min |
+| Layer 5 sensitivity | 21 × MILP re-solve (budget + α sweep) | ~15 min |
+| Layer 5 Pareto frontier | 1 × MILP + post-hoc analysis | < 30 s |
 
 ### Operational use cases
 

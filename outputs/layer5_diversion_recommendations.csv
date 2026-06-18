@@ -1,0 +1,151 @@
+event_id,event_cause,service_tier,diversion_activated,route_rank,route_label,diversion_corridor,diversion_path,path_cost,estimated_additional_time_min,routing_method
+FKID004401,road_conditions,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID004401,road_conditions,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID004401,road_conditions,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID000002,others,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID000002,others,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID000002,others,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID004492,pot_holes,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID004492,pot_holes,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID004492,pot_holes,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID001592,pot_holes,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID001592,pot_holes,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID001592,pot_holes,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID004531,construction,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID004531,construction,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID004531,construction,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID005996,tree_fall,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID005996,tree_fall,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID005996,tree_fall,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID006015,pot_holes,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID006015,pot_holes,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID006015,pot_holes,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID003897,debris,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID003897,debris,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID003897,debris,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID004806,others,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID004806,others,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID004806,others,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID004829,road_conditions,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID004829,road_conditions,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID004829,road_conditions,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID005244,construction,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID005244,construction,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID005244,construction,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID000923,pot_holes,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID000923,pot_holes,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID000923,pot_holes,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID006340,others,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID006340,others,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID006340,others,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID006361,others,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID006361,others,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID006361,others,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID006514,tree_fall,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID006514,tree_fall,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID006514,tree_fall,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID000316,pot_holes,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID000316,pot_holes,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID000316,pot_holes,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID003911,pot_holes,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID003911,pot_holes,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID003911,pot_holes,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID004711,public_event,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID004711,public_event,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID004711,public_event,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID001133,pot_holes,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID001133,pot_holes,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID001133,pot_holes,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID005079,road_conditions,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID005079,road_conditions,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID005079,road_conditions,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID000944,water_logging,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID000944,water_logging,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID000944,water_logging,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID006955,others,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID006955,others,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID006955,others,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID005137,pot_holes,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID005137,pot_holes,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID005137,pot_holes,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID004125,others,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID004125,others,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID004125,others,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID001125,water_logging,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID001125,water_logging,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID001125,water_logging,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID007137,construction,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID007137,construction,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID007137,construction,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID007189,tree_fall,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID007189,tree_fall,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID007189,tree_fall,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID001646,pot_holes,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID001646,pot_holes,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID001646,pot_holes,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID005593,water_logging,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID005593,water_logging,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID005593,water_logging,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID000129,others,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID000129,others,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID000129,others,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID005194,pot_holes,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID005194,pot_holes,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID005194,pot_holes,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID001288,water_logging,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID001288,water_logging,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID001288,water_logging,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID001693,others,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID001693,others,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID001693,others,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID000022,pot_holes,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID000022,pot_holes,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID000022,pot_holes,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID004519,road_conditions,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID004519,road_conditions,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID004519,road_conditions,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID007660,construction,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID007660,construction,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID007660,construction,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID004408,pot_holes,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID004408,pot_holes,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID004408,pot_holes,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID000842,others,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID000842,others,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID000842,others,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID004694,pot_holes,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID004694,pot_holes,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID004694,pot_holes,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID004967,pot_holes,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID004967,pot_holes,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID004967,pot_holes,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID008103,water_logging,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID008103,water_logging,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID008103,water_logging,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID000164,pot_holes,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID000164,pot_holes,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID000164,pot_holes,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID000346,water_logging,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID000346,water_logging,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID000346,water_logging,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID003103,pot_holes,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID003103,pot_holes,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID003103,pot_holes,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID001931,construction,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID001931,construction,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID001931,construction,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID001932,construction,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID001932,construction,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID001932,construction,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID000528,tree_fall,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID000528,tree_fall,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID000528,tree_fall,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID000968,tree_fall,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID000968,tree_fall,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID000968,tree_fall,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID001489,construction,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID001489,construction,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID001489,construction,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph
+FKID003235,tree_fall,critical,1,1,Route A (best),KHB Junction,YeshwanthpuraCircle|KHB Junction,0.4241,6.4,layer3_graph
+FKID003235,tree_fall,critical,1,2,Route B,QueensStatueCircle,YeshwanthpuraCircle|QueensStatueCircle,0.507,7.6,layer3_graph
+FKID003235,tree_fall,critical,1,3,Route C,KodigehalliCross,YeshwanthpuraCircle|KodigehalliCross,0.5581,8.4,layer3_graph

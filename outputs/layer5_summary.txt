@@ -1,0 +1,58 @@
+======================================================================
+LAYER 5 — ROBUST PRESCRIPTIVE OPTIMIZATION SUMMARY
+======================================================================
+
+Active disruption sites  : 50
+Scenarios generated      : 50
+CVaR alpha level         : 0.90
+Uncertainty inflation k  : 0.50
+
+RESOURCE DEPLOYMENT
+----------------------------------------
+  Officers deployed      : 120 / 120
+  Barricades deployed    : 100 / 100
+  Tow trucks deployed    : 15 / 15
+  QRUs deployed          : 10 / 10
+  Diversions activated   : 50
+  Critical sites         : 50
+
+OPTIMIZATION QUALITY
+----------------------------------------
+  Expected delay (raw)   : 7108268.5 min (weighted)
+  Expected delay (opt.)  : 2252110.1 min (weighted)
+  Delay reduction        : 68.3%
+  CVaR 90%               : 6929193.9 min
+  CC satisfaction (mean) : 0.968
+  Mean effectiveness     : 0.531
+  Mean robustness score  : 0.400
+  Used fallback?         : No
+
+SHADOW PRICES (marginal value per +1 unit)
+----------------------------------------
+  police      : 56097.1754
+  barricades  : 37853.2492
+  tow         : 78489.1696
+  qru         : 93495.0924
+
+INPUTS (Layer 4.5 canonical)
+----------------------------------------
+  layer45_scenario_ready_duration.csv
+  layer45_operational_state_vector_normalized.csv
+  layer45_duration_quality.csv
+  layer45_cause_tau_thresholds.csv
+
+OUTPUTS
+----------------------------------------
+  layer5_resource_allocation.csv
+  layer5_diversion_recommendations.csv
+  layer5_scenario_summary.csv
+  layer5_cvar_summary.csv
+  layer5_robust_plan.csv
+  layer5_alternative_plans.csv
+  layer5_pareto_front.csv
+  layer5_shadow_prices.csv
+  layer5_sensitivity_summary.csv
+  layer5_optimization_metrics.csv
+  layer5_frontend_export.csv
+  layer5_summary.txt
+======================================================================

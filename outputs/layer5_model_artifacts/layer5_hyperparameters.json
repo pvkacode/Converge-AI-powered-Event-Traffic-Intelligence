@@ -1,0 +1,28 @@
+{
+  "kappa": 0.5,
+  "alpha_cvar": 0.9,
+  "n_scenarios": 50,
+  "n_active_max": 50,
+  "gamma_p": 0.18,
+  "gamma_b": 0.1,
+  "gamma_t": 0.25,
+  "gamma_q": 0.3,
+  "lambda_cvar": 2.0,
+  "lambda_ed": 1.0,
+  "lambda_cost": 0.15,
+  "lambda_div": 0.1,
+  "budget_police": 120,
+  "budget_barricades": 100,
+  "budget_tow": 15,
+  "budget_qru": 10,
+  "pwl_breakpoints": [
+    0.0,
+    1.0,
+    2.0,
+    4.0,
+    6.0,
+    8.0,
+    10.0
+  ],
+  "e_max": 0.9
+}
