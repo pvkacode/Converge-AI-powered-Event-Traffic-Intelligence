@@ -103,6 +103,18 @@ A_TAIL_RISK = 1.0
 CC_EPSILON = 0.20       # P(delay ≤ target) ≥ 1 - ε = 0.80
 CC_TARGET_MULT = 3.0    # target = CC_TARGET_MULT * p50
 
+# Diversion budget: max simultaneous activations city-wide
+BUDGET_DIVERSION = 20
+
+# Tier-level chance-constraint tolerances ε (P(delay ≤ target) ≥ 1-ε)
+TIER_EPSILON = {"emergency": 0.05, "critical": 0.10, "elevated": 0.20, "normal": 0.20}
+
+# Tier-dependent diversion objective weight multiplier (negative = reward)
+TIER_DIV_WEIGHT = {"emergency": -2.0, "critical": -0.5, "elevated": 0.5, "normal": 1.0}
+
+# Tier minimum service levels (total resource units across all types)
+TIER_MIN_SVC = {"emergency": 4, "critical": 2, "elevated": 1, "normal": 0}
+
 # PWL breakpoints for 1 - exp(-u)
 PWL_BREAKPOINTS = np.array([0.0, 1.0, 2.0, 4.0, 6.0, 8.0, 10.0])
 
@@ -425,6 +437,70 @@ PWL_SLOPES, PWL_INTERCEPTS = _pwl_tangent_lines(PWL_BREAKPOINTS)
 E_MAX = 0.90  # hard cap on effectiveness
 
 
+# ── Entropy-weighted criticality tiers ───────────────────────────────────────
+
+def compute_entropy_tiers(
+    site_df: pd.DataFrame,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """
+    Assign rank-based criticality tiers using entropy-weighted composite risk.
+
+    Returns (tier_labels, risk_scores, entropy_weights).
+
+    Features: tail_risk_prob, fragility_signal, obi_signal, novelty_score,
+              inverted duration_reliability (low reliability = higher risk).
+
+    Entropy weights are computed from the active batch only — no training labels.
+    Tier counts: emergency=top 8%, critical=next 12%, elevated=next 20%, normal=rest.
+    """
+    R = len(site_df)
+
+    def _normed(col: str) -> np.ndarray:
+        if col in site_df.columns:
+            v = site_df[col].values.astype(float)
+            v = np.nan_to_num(v, nan=0.0)
+            rng = v.max() - v.min() + 1e-9
+            return (v - v.min()) / rng
+        return np.zeros(R)
+
+    features = np.column_stack([
+        _normed("tail_risk_prob"),
+        _normed("fragility_signal"),
+        _normed("obi_signal"),
+        _normed("novelty_score"),
+        1.0 - _normed("duration_reliability"),  # low reliability = higher risk
+    ])  # (R, 5)
+
+    col_sums = features.sum(axis=0) + 1e-12
+    P = features / col_sums[None, :]
+    ln_n = math.log(R) if R > 1 else 1.0
+    with np.errstate(divide="ignore", invalid="ignore"):
+        log_P = np.where(P > 0, np.log(P), 0.0)
+    E_j = -(1.0 / ln_n) * (P * log_P).sum(axis=0)
+    d_j = 1.0 - E_j
+    w_j = d_j / (d_j.sum() + 1e-12)
+
+    risk_scores = features @ w_j  # (R,)
+
+    n_emergency = max(1, math.ceil(0.08 * R))
+    n_critical = max(1, math.ceil(0.12 * R))
+    n_elevated = max(1, math.ceil(0.20 * R))
+
+    sorted_idx = np.argsort(risk_scores)[::-1]
+    tier_labels = np.full(R, "normal", dtype=object)
+    tier_labels[sorted_idx[:n_emergency]] = "emergency"
+    tier_labels[sorted_idx[n_emergency:n_emergency + n_critical]] = "critical"
+    tier_labels[sorted_idx[n_emergency + n_critical:n_emergency + n_critical + n_elevated]] = "elevated"
+
+    logger.info(
+        "Entropy tiers — emergency:%d critical:%d elevated:%d normal:%d  weights=%s",
+        (tier_labels == "emergency").sum(), (tier_labels == "critical").sum(),
+        (tier_labels == "elevated").sum(), (tier_labels == "normal").sum(),
+        np.round(w_j, 3).tolist(),
+    )
+    return tier_labels, risk_scores, w_j
+
+
 # ── MILP construction ─────────────────────────────────────────────────────────
 
 def build_and_solve_milp(
@@ -432,6 +508,7 @@ def build_and_solve_milp(
     site_weights: np.ndarray,
     T_scenarios: np.ndarray,
     w_s: np.ndarray,
+    tier_labels: np.ndarray | None = None,
     budgets: dict | None = None,
     time_limit: float | None = None,
 ) -> dict:
@@ -498,11 +575,11 @@ def build_and_solve_milp(
     c[i_t] = LAMBDA_COST * COST_T
     c[i_q] = LAMBDA_COST * COST_Q
 
-    # Diversion: small fixed cost penalty per activation.
-    # Critical sites are forced to d_r = 1 via Block D constraints below.
-    # Non-critical sites may activate diversion only if a high-tail-risk site is
-    # adjacent (this is modelled through the diversion graph post-solve).
-    c[i_d] = LAMBDA_DIV * COST_DIV
+    # Diversion: tier-dependent objective weight.
+    # Negative weight = reward for high-risk tiers; the optimizer freely chooses d_r.
+    _tier_arr = tier_labels if tier_labels is not None else np.full(R, "normal", dtype=object)
+    for _r in range(R):
+        c[i_d[_r]] = LAMBDA_DIV * COST_DIV * TIER_DIV_WEIGHT.get(_tier_arr[_r], 1.0)
 
     # ── Variable bounds ───────────────────────────────────────────────────────
     lb = np.zeros(n_vars)
@@ -575,23 +652,18 @@ def build_and_solve_milp(
         rhs = float(wT_s.sum())
         _add_row(cols, vals, rhs, np.inf)
 
-    # Block D: Minimum service and mandatory diversion for critical sites
-    # A site is "critical" if high_impact_decision=1 or tail_risk_prob > 0.4
-    is_critical = np.zeros(R, dtype=bool)
-    if "high_impact_decision" in site_df.columns:
-        is_critical |= site_df["high_impact_decision"].fillna(0).astype(bool).values
-    is_critical |= site_df["tail_risk_prob"].values > 0.40
-
-    critical_risk = site_df["tail_risk_prob"].values * site_weights
+    # Block D: Tier-based minimum service floors.
+    # Diversion is a free optimizer decision — no d_r equality constraint.
     for r in range(R):
-        if is_critical[r]:
-            # Minimum resource service level
-            min_svc = max(MIN_SERVICE_RHO, int(np.ceil(critical_risk[r] * 4)))
-            cols = [i_p[r], i_b[r], i_t[r], i_q[r]]
-            vals = [1.0, 1.0, 1.0, 1.0]
-            _add_row(cols, vals, float(min_svc), np.inf)
-            # Mandatory diversion for critical sites: d_r >= 1
-            _add_row([i_d[r]], [1.0], 1.0, 1.0)
+        min_svc = TIER_MIN_SVC.get(_tier_arr[r], 0)
+        if min_svc > 0:
+            _add_row([i_p[r], i_b[r], i_t[r], i_q[r]], [1.0, 1.0, 1.0, 1.0],
+                     float(min_svc), np.inf)
+
+    # Diversion budget: total activations ≤ D_budget
+    D_bud = (budgets.get("diversion", BUDGET_DIVERSION)
+             if budgets else BUDGET_DIVERSION)
+    _add_row(i_d.tolist(), [1.0] * R, -np.inf, float(D_bud))
 
     # Assemble sparse matrix
     n_constraints = row_idx
@@ -616,7 +688,7 @@ def build_and_solve_milp(
         "S": S,
         "i_p": i_p, "i_b": i_b, "i_t": i_t, "i_q": i_q,
         "i_d": i_d, "i_e": i_e, "i_z": i_z, "i_xi": i_xi,
-        "is_critical": is_critical,
+        "tier_labels": _tier_arr,
         "mean_wT": mean_wT,
         "T_scenarios": T_scenarios,
         "site_weights": site_weights,
@@ -670,16 +742,33 @@ def greedy_fallback_allocation(
     return alloc
 
 
+def compute_baseline_cvar(
+    T_scenarios: np.ndarray,
+    site_weights: np.ndarray,
+) -> dict:
+    """CVaR of total delay with zero resources (baseline). Uses same scenario realizations."""
+    raw_delay_s = (T_scenarios * site_weights[:, None]).sum(axis=0)
+    cvar_val, var_val = _cvar(raw_delay_s, ALPHA_CVAR)
+    return {
+        "baseline_cvar": float(cvar_val),
+        "baseline_var": float(var_val),
+        "baseline_expected_delay": float(raw_delay_s.mean()),
+        "baseline_worst_delay": float(raw_delay_s.max()),
+    }
+
+
 def extract_milp_solution(
     milp_out: dict,
     site_df: pd.DataFrame,
     T_scenarios: np.ndarray,
     w_s: np.ndarray,
-) -> pd.DataFrame:
+    tier_labels: np.ndarray | None = None,
+) -> tuple:
     """
     Parse MILP result into a per-site allocation DataFrame.
 
     Falls back to greedy allocation on solver failure or infeasibility.
+    Returns (alloc_df, z_val, xi_vals, total_delay_s, violations_df).
     """
     result = milp_out["result"]
     R = milp_out["R"]
@@ -687,7 +776,8 @@ def extract_milp_solution(
     i_p, i_b, i_t, i_q = milp_out["i_p"], milp_out["i_b"], milp_out["i_t"], milp_out["i_q"]
     i_d, i_e = milp_out["i_d"], milp_out["i_e"]
     i_z, i_xi = milp_out["i_z"], milp_out["i_xi"]
-    is_critical = milp_out["is_critical"]
+    _tier_labels = (tier_labels if tier_labels is not None
+                    else milp_out.get("tier_labels", np.full(milp_out["R"], "normal", dtype=object)))
     site_weights = milp_out["site_weights"]
 
     solver_ok = result.success and result.x is not None
@@ -712,7 +802,9 @@ def extract_milp_solution(
         b_vals = greedy[:, 1]
         t_vals = greedy[:, 2]
         q_vals = greedy[:, 3]
-        d_vals = (site_weights > np.percentile(site_weights, 60)).astype(int)
+        d_vals = np.where(
+            (_tier_labels == "emergency") | (_tier_labels == "critical"), 1, 0
+        )
         eff_input = GAMMA_P * p_vals + GAMMA_B * b_vals + GAMMA_T * t_vals + GAMMA_Q * q_vals
         e_vals = np.minimum(1.0 - np.exp(-eff_input), E_MAX)
         z_val = 0.0
@@ -731,23 +823,95 @@ def extract_milp_solution(
     # CVaR
     cvar_val, var_val = _cvar(total_delay_s, ALPHA_CVAR)
 
-    # Chance constraint satisfaction
+    # Chance constraint satisfaction (per site)
     cc_target = site_df["safe_duration_p50"].values * CC_TARGET_MULT
     cc_sat = np.array([
-        (delay_scenarios[r, :] / site_weights[r] <= cc_target[r]).mean()
+        (delay_scenarios[r, :] / (site_weights[r] + 1e-9) <= cc_target[r]).mean()
         for r in range(R)
     ])
 
-    # Robustness score: fraction of scenarios where effective reduction > 50%
-    rob_score = np.array([
-        (e_vals[r] > 0.5 * E_MAX) for r in range(R)
-    ]).astype(float)
+    # Tier-specific epsilon and required probabilities
+    tier_eps_arr = np.array([TIER_EPSILON.get(_tier_labels[r], 0.20) for r in range(R)])
+    required_prob = 1.0 - tier_eps_arr
 
-    # Service tier
-    tier = np.where(
-        is_critical, "critical",
-        np.where(site_weights > np.percentile(site_weights, 75), "high",
-                 np.where(site_weights > np.percentile(site_weights, 40), "moderate", "low"))
+    # Chance constraint violation detection
+    violation_flag = (cc_sat < required_prob).astype(int)
+    violation_margin = cc_sat - required_prob
+    _violations = []
+    for r in range(R):
+        if violation_flag[r]:
+            logger.warning(
+                "CC VIOLATION event=%s tier=%s eps=%.2f realized=%.3f required=%.3f",
+                site_df["event_id"].values[r], _tier_labels[r],
+                tier_eps_arr[r], cc_sat[r], required_prob[r],
+            )
+            _violations.append({
+                "event_id": site_df["event_id"].values[r],
+                "service_tier": _tier_labels[r],
+                "required_epsilon": tier_eps_arr[r],
+                "required_prob": required_prob[r],
+                "realized_satisfaction_rate": cc_sat[r],
+                "violation_margin": violation_margin[r],
+                "violation_flag": 1,
+            })
+    violations_df = pd.DataFrame(_violations) if _violations else pd.DataFrame(columns=[
+        "event_id", "service_tier", "required_epsilon", "required_prob",
+        "realized_satisfaction_rate", "violation_margin", "violation_flag",
+    ])
+
+    # ── Continuous robustness score (5 components, each in [0,1]) ──────────────
+    # 1. Chance margin: how far above the required probability we are
+    chance_margin = np.clip(cc_sat - required_prob, 0.0, 1.0)
+
+    # 2. CVaR normalized: highest-CVaR site = 1.0 (worse) → 1 - normalized = better
+    site_cvar = np.array([
+        _cvar(delay_scenarios[r, :] / (site_weights[r] + 1e-9), 0.90)[0] for r in range(R)
+    ])
+    max_site_cvar = site_cvar.max() + 1e-9
+    cvar_normalized = site_cvar / max_site_cvar
+
+    # 3. Resource tightness: fraction of per-site maximum allocated
+    max_per_site = float(MAX_P + MAX_B + MAX_T + MAX_Q)
+    allocated_total = (p_vals + b_vals + t_vals + q_vals).astype(float)
+    resource_tightness = np.clip(allocated_total / max_per_site, 0.0, 1.0)
+
+    # 4. Scenario stability proxy: closeness of allocation to proportional budget share
+    total_budget_units = float(BUDGET_POLICE + BUDGET_BARRICADES + BUDGET_TOW + BUDGET_QRU)
+    budget_share = site_weights / (site_weights.sum() + 1e-12) * total_budget_units
+    ratio = allocated_total / np.maximum(budget_share, 1.0)
+    scenario_stability = 1.0 - np.clip(np.abs(ratio - 1.0), 0.0, 1.0)
+
+    # 5. Novelty / drift penalty from Layer 4.5 JOSV
+    def _normed_col(col: str) -> np.ndarray:
+        if col in site_df.columns:
+            v = site_df[col].values[:R].astype(float)
+            v = np.nan_to_num(v, nan=0.0)
+            rng = v.max() - v.min() + 1e-9
+            return (v - v.min()) / rng
+        return np.zeros(R)
+
+    novelty_penalty = _normed_col("novelty_score")
+    if "drift_score" in site_df.columns:
+        novelty_penalty = np.maximum(novelty_penalty, _normed_col("drift_score"))
+
+    rob_score = np.clip(
+        0.30 * chance_margin
+        + 0.25 * (1.0 - cvar_normalized)
+        + 0.20 * (1.0 - resource_tightness)
+        + 0.15 * scenario_stability
+        + 0.10 * (1.0 - novelty_penalty),
+        0.0, 1.0,
+    )
+
+    # Service tier and criticality from entropy-weighted rank
+    tier = _tier_labels
+    is_critical = (tier == "emergency") | (tier == "critical")
+
+    # Diversion reason annotation
+    diversion_reason = np.where(
+        d_vals == 0, "not_activated",
+        np.where(tier == "emergency", "emergency_tier",
+                 np.where(tier == "critical", "critical_tier", "optimizer_selected"))
     )
 
     alloc_df = pd.DataFrame({
@@ -760,12 +924,16 @@ def extract_milp_solution(
         "tow_trucks_allocated": t_vals,
         "qru_allocated": q_vals,
         "diversion_activated": d_vals,
+        "diversion_reason": diversion_reason,
         "effectiveness": e_vals,
         "expected_delay_reduction_min": expected_delay_reduction,
         "cvar_contribution": delay_scenarios.mean(axis=1),
         "total_cvar": cvar_val,
         "var_level": var_val,
         "chance_constraint_satisfaction": cc_sat,
+        "required_epsilon": tier_eps_arr,
+        "violation_flag": violation_flag,
+        "violation_margin": violation_margin,
         "service_tier": tier,
         "robustness_score": rob_score,
         "is_critical": is_critical.astype(int),
@@ -778,7 +946,7 @@ def extract_milp_solution(
         "tail_risk_prob": site_df["tail_risk_prob"].values,
         "duration_sanity_flag": site_df["duration_sanity_flag"].values,
     })
-    return alloc_df, z_val, xi_vals, total_delay_s
+    return alloc_df, z_val, xi_vals, total_delay_s, violations_df
 
 
 def _cvar(losses: np.ndarray, alpha: float) -> tuple[float, float]:
@@ -835,6 +1003,69 @@ def compute_cvar_summary(
         })
 
     return pd.DataFrame(rows)
+
+
+def build_pre_post_cvar_comparison(
+    baseline_info: dict,
+    alloc_df: pd.DataFrame,
+    T_scenarios: np.ndarray,
+    site_weights: np.ndarray,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """
+    Compute baseline CVaR summary across α levels and a pre/post comparison.
+
+    Uses the same scenario realizations — no resampling.
+    """
+    raw_delay_s = (T_scenarios * site_weights[:, None]).sum(axis=0)
+
+    alphas = [0.50, 0.75, 0.90, 0.95, 0.99]
+    baseline_rows = []
+    for alpha in alphas:
+        cv, vv = _cvar(raw_delay_s, alpha)
+        baseline_rows.append({
+            "alpha": alpha,
+            "baseline_cvar": float(cv),
+            "baseline_var": float(vv),
+            "baseline_expected_delay": float(raw_delay_s.mean()),
+            "baseline_worst_delay": float(raw_delay_s.max()),
+        })
+    baseline_df = pd.DataFrame(baseline_rows)
+
+    R = len(alloc_df)
+    e_vals = alloc_df["effectiveness"].values[:R]
+    opt_delay_s = (T_scenarios * (1.0 - e_vals[:, None]) * site_weights[:, None]).sum(axis=0)
+    opt_cvar, _ = _cvar(opt_delay_s, ALPHA_CVAR)
+    base_cvar = baseline_info["baseline_cvar"]
+
+    comparison_rows = [{
+        "scope": "all_sites",
+        "alpha": ALPHA_CVAR,
+        "baseline_cvar": base_cvar,
+        "optimized_cvar": float(opt_cvar),
+        "absolute_reduction": float(base_cvar - opt_cvar),
+        "percentage_reduction": float(100.0 * (base_cvar - opt_cvar) / (base_cvar + 1e-9)),
+    }]
+
+    for tier in alloc_df["service_tier"].unique():
+        mask = alloc_df["service_tier"] == tier
+        tier_idx = np.where(mask)[0]
+        if len(tier_idx) == 0:
+            continue
+        base_t = (T_scenarios[tier_idx, :] * site_weights[tier_idx, None]).sum(axis=0)
+        opt_t = (T_scenarios[tier_idx, :] * (1.0 - e_vals[tier_idx, None])
+                 * site_weights[tier_idx, None]).sum(axis=0)
+        b_cv, _ = _cvar(base_t, ALPHA_CVAR)
+        o_cv, _ = _cvar(opt_t, ALPHA_CVAR)
+        comparison_rows.append({
+            "scope": tier,
+            "alpha": ALPHA_CVAR,
+            "baseline_cvar": float(b_cv),
+            "optimized_cvar": float(o_cv),
+            "absolute_reduction": float(b_cv - o_cv),
+            "percentage_reduction": float(100.0 * (b_cv - o_cv) / (b_cv + 1e-9)),
+        })
+
+    return baseline_df, pd.DataFrame(comparison_rows)
 
 
 # ── Diversion routing ─────────────────────────────────────────────────────────
@@ -985,6 +1216,7 @@ def compute_shadow_prices(
     T_scenarios: np.ndarray,
     site_weights: np.ndarray,
     w_s: np.ndarray,
+    tier_labels: np.ndarray | None = None,
     budgets: dict | None = None,
     delta: int = 1,
 ) -> pd.DataFrame:
@@ -1007,7 +1239,8 @@ def compute_shadow_prices(
 
     def _solve_milp_obj(bud: dict) -> float:
         """MILP objective with longer time limit for accurate shadow approximation."""
-        milp_out_base = build_and_solve_milp(site_df, site_weights, T_scenarios, w_s, bud,
+        milp_out_base = build_and_solve_milp(site_df, site_weights, T_scenarios, w_s,
+                                             tier_labels=tier_labels, budgets=bud,
                                              time_limit=MILP_TIME_LIMIT_SHADOW)
         r = milp_out_base["result"]
         if r.success and r.fun is not None:
@@ -1047,6 +1280,7 @@ def run_sensitivity(
     T_scenarios: np.ndarray,
     site_weights: np.ndarray,
     w_s: np.ndarray,
+    tier_labels: np.ndarray | None = None,
     budgets: dict | None = None,
 ) -> pd.DataFrame:
     """
@@ -1069,8 +1303,9 @@ def run_sensitivity(
         for mult in multipliers:
             perturbed = dict(base_budgets)
             perturbed[rname] = int(base_val * mult)
-            milp_out = build_and_solve_milp(site_df, site_weights, T_scenarios, w_s, perturbed,
-                                           time_limit=MILP_TIME_LIMIT_SUB)
+            milp_out = build_and_solve_milp(site_df, site_weights, T_scenarios, w_s,
+                                            tier_labels=tier_labels, budgets=perturbed,
+                                            time_limit=MILP_TIME_LIMIT_SUB)
             result = milp_out["result"]
             obj = float(result.fun) if result.success and result.fun is not None else np.nan
             rows.append({
@@ -1085,7 +1320,8 @@ def run_sensitivity(
     # CVaR α sweep: solve ONCE with base budgets, then evaluate CVaR at each α level
     # from the same scenario delay vector (avoids 6 redundant MILP solves).
     alpha_base_milp = build_and_solve_milp(site_df, site_weights, T_scenarios, w_s,
-                                           base_budgets, time_limit=MILP_TIME_LIMIT_SUB)
+                                           tier_labels=tier_labels, budgets=base_budgets,
+                                           time_limit=MILP_TIME_LIMIT_SUB)
     alpha_result = alpha_base_milp["result"]
     if alpha_result.success and alpha_result.x is not None:
         i_e_alpha = alpha_base_milp["i_e"]
@@ -1122,6 +1358,7 @@ def compute_pareto_front(
     site_weights: np.ndarray,
     T_scenarios: np.ndarray,
     w_s: np.ndarray,
+    tier_labels: np.ndarray | None = None,
     budgets: dict | None = None,
 ) -> pd.DataFrame:
     """
@@ -1143,7 +1380,8 @@ def compute_pareto_front(
     rows = []
 
     # Get base solution once (use shadow time limit for accuracy)
-    base_milp = build_and_solve_milp(site_df, site_weights, T_scenarios, w_s, budgets,
+    base_milp = build_and_solve_milp(site_df, site_weights, T_scenarios, w_s,
+                                     tier_labels=tier_labels, budgets=budgets,
                                      time_limit=MILP_TIME_LIMIT_SHADOW)
     base_result = base_milp["result"]
     if not base_result.success or base_result.x is None:
@@ -1376,6 +1614,9 @@ def export_outputs(
     sensitivity_df: pd.DataFrame,
     metrics_df: pd.DataFrame,
     summary_txt: str,
+    baseline_cvar_df: pd.DataFrame | None = None,
+    pre_post_cvar_df: pd.DataFrame | None = None,
+    violations_df: pd.DataFrame | None = None,
 ) -> None:
     """Write all Layer 5 output files."""
     OUT.mkdir(parents=True, exist_ok=True)
@@ -1404,18 +1645,39 @@ def export_outputs(
     sensitivity_df.to_csv(OUT / "layer5_sensitivity_summary.csv", index=False)
     metrics_df.to_csv(OUT / "layer5_optimization_metrics.csv", index=False)
 
+    # New: baseline CVaR, pre/post comparison, chance-constraint violations
+    if baseline_cvar_df is not None:
+        baseline_cvar_df.to_csv(OUT / "layer5_baseline_cvar_summary.csv", index=False)
+        logger.info("Wrote layer5_baseline_cvar_summary.csv")
+    if pre_post_cvar_df is not None:
+        pre_post_cvar_df.to_csv(OUT / "layer5_pre_post_cvar_comparison.csv", index=False)
+        logger.info("Wrote layer5_pre_post_cvar_comparison.csv")
+    if violations_df is not None:
+        violations_df.to_csv(OUT / "layer5_chance_constraint_violations.csv", index=False)
+        logger.info("Wrote layer5_chance_constraint_violations.csv (%d violations)", len(violations_df))
+
     # Dashboard-ready frontend export
+    baseline_cvar_scalar = (
+        pre_post_cvar_df.loc[pre_post_cvar_df["scope"] == "all_sites", "baseline_cvar"].values[0]
+        if pre_post_cvar_df is not None and len(pre_post_cvar_df) > 0 else float("nan")
+    )
     frontend_cols = [
         "event_id", "event_cause", "service_tier", "is_critical",
         "officers_allocated", "barricades_allocated", "tow_trucks_allocated", "qru_allocated",
-        "diversion_activated", "effectiveness", "expected_delay_reduction_min",
-        "cvar_contribution", "total_cvar", "var_level", "chance_constraint_satisfaction",
+        "diversion_activated", "diversion_reason", "effectiveness",
+        "expected_delay_reduction_min",
+        "cvar_contribution", "total_cvar", "var_level",
+        "chance_constraint_satisfaction", "required_epsilon",
+        "violation_flag", "violation_margin",
         "robustness_score", "duration_reliability", "tail_risk_prob",
         "safe_duration_p50", "safe_duration_p80", "safe_duration_p95",
         "duration_sanity_flag", "solver_status", "used_fallback",
     ]
     fe_cols_present = [c for c in frontend_cols if c in alloc_df.columns]
-    alloc_df[fe_cols_present].to_csv(OUT / "layer5_frontend_export.csv", index=False)
+    fe_df = alloc_df[fe_cols_present].copy()
+    fe_df["baseline_cvar"] = baseline_cvar_scalar
+    fe_df["optimized_cvar"] = alloc_df["total_cvar"].values
+    fe_df.to_csv(OUT / "layer5_frontend_export.csv", index=False)
     logger.info("Wrote layer5_frontend_export.csv")
 
     # Model artifacts: hyperparameters
@@ -1447,6 +1709,7 @@ def _build_summary(
     metrics_df: pd.DataFrame,
     cvar_df: pd.DataFrame,
     shadow_df: pd.DataFrame,
+    pre_post_df: pd.DataFrame | None = None,
 ) -> str:
     """Build human-readable summary text."""
     def _m(name):
@@ -1492,6 +1755,44 @@ def _build_summary(
     for _, srow in shadow_df.iterrows():
         lines.append(f"  {srow['resource']:<12}: {srow['marginal_value']:.4f}")
 
+    # Tier distribution
+    tier_counts = alloc_df["service_tier"].value_counts().to_dict()
+    lines += [
+        "",
+        "TIER DISTRIBUTION (entropy-weighted rank)",
+        "-" * 40,
+        f"  emergency : {tier_counts.get('emergency', 0)}",
+        f"  critical  : {tier_counts.get('critical', 0)}",
+        f"  elevated  : {tier_counts.get('elevated', 0)}",
+        f"  normal    : {tier_counts.get('normal', 0)}",
+    ]
+
+    # Pre/post CVaR comparison
+    if pre_post_df is not None and len(pre_post_df) > 0:
+        all_row = pre_post_df[pre_post_df["scope"] == "all_sites"]
+        if len(all_row) > 0:
+            r0 = all_row.iloc[0]
+            lines += [
+                "",
+                f"PRE/POST CVaR COMPARISON (alpha={ALPHA_CVAR:.2f})",
+                "-" * 40,
+                f"  Baseline CVaR (no resources) : {r0['baseline_cvar']:.1f} min",
+                f"  Optimized CVaR               : {r0['optimized_cvar']:.1f} min",
+                f"  Absolute reduction           : {r0['absolute_reduction']:.1f} min",
+                f"  Percentage reduction         : {r0['percentage_reduction']:.1f}%",
+            ]
+
+    # Violation summary
+    n_violations = int(alloc_df.get("violation_flag", pd.Series([0])).sum()) \
+        if "violation_flag" in alloc_df.columns else 0
+    lines += [
+        "",
+        "CHANCE CONSTRAINT STATUS",
+        "-" * 40,
+        f"  Sites with violations : {n_violations}",
+        f"  (details in layer5_chance_constraint_violations.csv)",
+    ]
+
     lines += [
         "",
         "INPUTS (Layer 4.5 canonical)",
@@ -1507,6 +1808,9 @@ def _build_summary(
         "  layer5_diversion_recommendations.csv",
         "  layer5_scenario_summary.csv",
         "  layer5_cvar_summary.csv",
+        "  layer5_baseline_cvar_summary.csv",
+        "  layer5_pre_post_cvar_comparison.csv",
+        "  layer5_chance_constraint_violations.csv",
         "  layer5_robust_plan.csv",
         "  layer5_alternative_plans.csv",
         "  layer5_pareto_front.csv",
@@ -1543,53 +1847,93 @@ def main() -> None:
     )
     R = len(site_df)
 
-    # 3. Generate scenarios
+    # 3. Entropy-weighted tier assignment (rank-based, no absolute thresholds)
+    tier_labels, risk_scores, entropy_weights = compute_entropy_tiers(site_df)
+
+    # 4. Generate scenarios
     T_scenarios, w_s = build_scenarios(site_df, n_initial=S_INITIAL, n_reduced=S_SCENARIOS)
     logger.info("Scenario matrix: %d sites × %d scenarios", T_scenarios.shape[0], T_scenarios.shape[1])
 
-    # 4. Solve MILP
-    milp_out = build_and_solve_milp(site_df, site_weights, T_scenarios, w_s)
-    alloc_df, z_val, xi_vals, total_delay_s = extract_milp_solution(
-        milp_out, site_df, T_scenarios, w_s
+    # 5. Baseline CVaR — zero resources, same scenario realizations (no resample)
+    baseline_info = compute_baseline_cvar(T_scenarios, site_weights)
+    logger.info("Baseline CVaR (alpha=%.2f, no resources): %.2f min",
+                ALPHA_CVAR, baseline_info["baseline_cvar"])
+
+    # 6. Solve MILP (diversion free decision variable, tier-based service floors)
+    milp_out = build_and_solve_milp(
+        site_df, site_weights, T_scenarios, w_s, tier_labels=tier_labels
+    )
+    alloc_df, z_val, xi_vals, total_delay_s, violations_df = extract_milp_solution(
+        milp_out, site_df, T_scenarios, w_s, tier_labels=tier_labels
     )
     logger.info("Allocation extracted: %d sites", len(alloc_df))
 
-    # 5. CVaR and scenario summaries
+    # 7. Violation reporting
+    if len(violations_df) > 0:
+        logger.warning(
+            "%d chance constraint violation(s) detected — see layer5_chance_constraint_violations.csv",
+            len(violations_df),
+        )
+    else:
+        logger.info("No chance constraint violations detected.")
+
+    # 8. CVaR and scenario summaries
     cvar_df = compute_cvar_summary(total_delay_s, alloc_df, T_scenarios, site_weights, w_s)
     scenario_summary_df = build_scenario_summary(T_scenarios, w_s, alloc_df, site_weights)
 
-    # 6. Diversion routing
+    # 9. Pre/post CVaR comparison (same scenarios, no resample)
+    baseline_cvar_df, pre_post_cvar_df = build_pre_post_cvar_comparison(
+        baseline_info, alloc_df, T_scenarios, site_weights
+    )
+    all_sites_row = pre_post_cvar_df[pre_post_cvar_df["scope"] == "all_sites"]
+    if len(all_sites_row) > 0:
+        r0 = all_sites_row.iloc[0]
+        logger.info(
+            "CVaR reduction: baseline=%.2f opt=%.2f (%.1f%%)",
+            r0["baseline_cvar"], r0["optimized_cvar"], r0["percentage_reduction"],
+        )
+
+    # 10. Diversion routing
     diversion_df = generate_diversions(alloc_df, site_df)
     logger.info("Diversion routes: %d recommendations", len(diversion_df))
 
-    # 7. Shadow prices (LP relaxation perturbation)
+    # 11. Shadow prices
     logger.info("Computing shadow prices...")
-    shadow_df = compute_shadow_prices(site_df, alloc_df, T_scenarios, site_weights, w_s)
+    shadow_df = compute_shadow_prices(
+        site_df, alloc_df, T_scenarios, site_weights, w_s, tier_labels=tier_labels
+    )
 
-    # 8. Sensitivity analysis
+    # 12. Sensitivity analysis
     logger.info("Running sensitivity analysis...")
-    sensitivity_df = run_sensitivity(site_df, alloc_df, T_scenarios, site_weights, w_s)
+    sensitivity_df = run_sensitivity(
+        site_df, alloc_df, T_scenarios, site_weights, w_s, tier_labels=tier_labels
+    )
 
-    # 9. Pareto frontier
+    # 13. Pareto frontier
     logger.info("Computing Pareto frontier...")
-    pareto_df = compute_pareto_front(site_df, site_weights, T_scenarios, w_s)
+    pareto_df = compute_pareto_front(
+        site_df, site_weights, T_scenarios, w_s, tier_labels=tier_labels
+    )
 
-    # 10. Alternative plans and robust plan
+    # 14. Alternative plans and robust plan
     alt_plans_df = build_alternative_plans(alloc_df, T_scenarios, site_weights)
     robust_plan_df = build_robust_plan(alloc_df, T_scenarios, site_weights)
 
-    # 11. Optimization metrics
+    # 15. Optimization metrics
     metrics_df = build_optimization_metrics(alloc_df, cvar_df, T_scenarios, site_weights)
 
-    # 12. Summary text
-    summary_txt = _build_summary(alloc_df, metrics_df, cvar_df, shadow_df)
+    # 16. Summary text
+    summary_txt = _build_summary(alloc_df, metrics_df, cvar_df, shadow_df, pre_post_cvar_df)
     print(summary_txt)
 
-    # 13. Export all outputs
+    # 17. Export all outputs
     export_outputs(
         alloc_df, diversion_df, scenario_summary_df, cvar_df,
         robust_plan_df, alt_plans_df, pareto_df, shadow_df,
         sensitivity_df, metrics_df, summary_txt,
+        baseline_cvar_df=baseline_cvar_df,
+        pre_post_cvar_df=pre_post_cvar_df,
+        violations_df=violations_df,
     )
     logger.info("Layer 5 complete.")
 
