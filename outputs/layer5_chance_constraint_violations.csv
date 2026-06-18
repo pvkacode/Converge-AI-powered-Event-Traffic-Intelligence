@@ -1,0 +1,2 @@
+event_id,service_tier,required_epsilon,required_prob,realized_satisfaction_rate,violation_margin,violation_flag
+FKID006955,critical,0.1,0.9,0.76,-0.14,1
