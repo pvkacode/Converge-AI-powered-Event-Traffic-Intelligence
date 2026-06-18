@@ -656,7 +656,7 @@ $$
 w(u,v) = 0.5 \cdot \bigl(\text{node\\_cost}(u) + \text{node\\_cost}(v)\bigr)
 $$
 $$
-\text{node\\_cost}(j) = 0.4\,\operatorname{norm}(\text{OBI}_j) + 0.3\,\operatorname{norm}(\text{FutureRisk}_j) + 0.2\,\operatorname{norm}(\text{Hawkes}_j) + 0.1\,\operatorname{norm}(\text{RMST}_j) + 0.01
+\text{node\\_cost}(j) = 0.4\,\text{norm}(\text{OBI}_j) + 0.3\,\text{norm}(\text{FutureRisk}_j) + 0.2\,\text{norm}(\text{Hawkes}_j) + 0.1\,\text{norm}(\text{RMST}_j) + 0.01
 $$
 For each of the top-30 DIS junctions, the blocked junction is removed, and `nx.single_source_dijkstra` finds the 3 lowest-cost diversion targets. Zone-based fallback is used only when the graph is disconnected.
 
@@ -760,7 +760,7 @@ $$
 $$
 ### Impact forecast
 $$
-\text{impact\\_score} = \Bigl(0.35\,\operatorname{norm}(\text{L3\\_DIS}) + 0.25\,\operatorname{norm}(\text{pred\\_duration}) + 0.20\,\text{closure\\_prob} + 0.20\,\operatorname{norm}(\text{IMS})\Bigr) \times \text{trust\\_score} \times 100
+\text{impact\\_score} = \Bigl(0.35\,\text{norm}(\text{L3\\_DIS}) + 0.25\,\text{norm}(\text{pred\\_duration}) + 0.20\,\text{closure\\_prob} + 0.20\,\text{norm}(\text{IMS})\Bigr) \times \text{trust\\_score} \times 100
 $$
 ### Public API
 
