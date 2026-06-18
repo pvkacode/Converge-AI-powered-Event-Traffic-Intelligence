@@ -35,12 +35,12 @@ Kaplan-Meier survival curves answer operational questions directly:
 Layer 1 feeds Layer 3 resource sizing:
 
 $$
-\text{manpower\_needed} \approx f(\text{impact\_score},\ \text{expected\_duration},\ \text{requires\_road\_closure})
+\text{manpower\\_needed} \approx f(\text{impact\\_score},\ \text{expected\\_duration},\ \text{requires\\_road\\_closure})
 $$
 
 $$
-\text{barricade\_window} = [\text{start},\ \text{start} + P_{80,\text{duration}}], \qquad
-\text{diversion\_window} = \text{barricade\_window}
+\text{barricade\\_window} = [\text{start},\ \text{start} + P_{80,\text{duration}}], \qquad
+\text{diversion\\_window} = \text{barricade\\_window}
 $$
 
 ### Layer 2 — spatial dimension (“where should we pre-position resources?”)
@@ -50,12 +50,12 @@ Getis-Ord Gi* tests whether a junction is **anomalously hot**, not merely busy. 
 Layer 2 feeds Layer 3 placement:
 
 $$
-\text{pre\_position\_manpower}(j) \propto G_i^*\ \text{significance} \times \text{weighted\_intensity}
+\text{pre\\_position\\_manpower}(j) \propto G_i^*\ \text{significance} \times \text{weighted\\_intensity}
 $$
 
 $$
-\text{priority\_barricade\_points} = \text{hotspots} \cap \text{planned\_event\_route}, \qquad
-\text{diversion\_candidates} = \{\text{corridors adjacent to significant hotspots}\}
+\text{priority\\_barricade\\_points} = \text{hotspots} \cap \text{planned\\_event\\_route}, \qquad
+\text{diversion\\_candidates} = \{\text{corridors adjacent to significant hotspots}\}
 $$
 
 ### Worked example — breakdown at a known hotspot
@@ -243,7 +243,7 @@ Run **after** main Layer 3/4 scripts. These address judge-facing weaknesses with
 | Fix | Formula | Output | Rationale |
 |-----|---------|--------|-----------|
 | **PCA loading stability** | Bootstrap \(B=500\) junction resamples; 95% CI on PC1 loadings | `layer3_pca_loading_stability.csv`, `layer3_pca_stability_summary.txt` | Defends DIS = PC1: which drivers (OBI, cascade, etc.) are stable. |
-| **Log fragility** | \(\text{fragility\_log} = \log(1 + (\lambda-\mu)/(\mu+\varepsilon))\), \(\varepsilon=0.01\) | `layer3_corridor_fragility.csv` (adds `fragility_raw`, `fragility_log`) | Bounded ranking when \(\mu \to 0\); Hawkes fit unchanged. |
+| **Log fragility** | \(\text{fragility\\_log} = \log(1 + (\lambda-\mu)/(\mu+\varepsilon))\), \(\varepsilon=0.01\) | `layer3_corridor_fragility.csv` (adds `fragility_raw`, `fragility_log`) | Bounded ranking when \(\mu \to 0\); Hawkes fit unchanged. |
 
 #### Layer 4 — `layer4_methodology_upgrades.py`
 
@@ -332,7 +332,7 @@ The CatBoost quantile regressors can produce inversions (p50 > p80) when the tra
 |-------|-------------|
 | **A. Raw prediction** | Existing CatBoost quantile regressors produce raw $Q_{50}, Q_{80}, Q_{95}$ (log-space, back-transformed). Saved to `layer45_duration_raw_predictions.csv` for diagnostics. |
 | **B. Tail-risk model** | A separate CatBoostClassifier trained on $y_{\text{tail}} = \mathbf{1}[\text{duration} > \tau_{\text{cause}}]$ (training window only) produces `tail_risk_prob` per event. |
-| **C. Tail-aware mixture** | $Q_{\text{mix}} = (1 - \pi)\,Q_{\text{typ}} + \pi\,Q_{\text{tail}}$ where $\pi = \text{tail\_risk\_prob}$ and $Q_{\text{tail}}$ comes from training-window tail quantile proxies. |
+| **C. Tail-aware mixture** | $Q_{\text{mix}} = (1 - \pi)\,Q_{\text{typ}} + \pi\,Q_{\text{tail}}$ where $\pi = \text{tail\\_risk\\_prob}$ and $Q_{\text{tail}}$ comes from training-window tail quantile proxies. |
 | **D. Monotone sanitization** | Sort $(Q_{50}, Q_{80}, Q_{95})$ row-wise, then clamp $Q_{95,\text{safe}} = \min\!\bigl(Q_{95},\ \max(10 \cdot Q_{50},\ 1440)\bigr)$. Re-sort if needed. |
 | **E. Duration reliability** | $R = 0.25\,\text{Cal} + 0.20\,\text{Retrieval} + 0.20\,(1-\text{Novelty}) + 0.15\,(1-\text{Drift}) + 0.10\,\text{Support} + 0.10\,(1-\text{Width})$ — all components in $[0,1]$. |
 | **F. Reliability logging only** | `duration_reliability`, `fallback_blend_flag`, and `fallback_blend_rate` are logged for transparency; no blending is applied to final quantiles. |
@@ -440,7 +440,7 @@ Scenario weights \(w_s = 1/S\) are uniform. The final scenario matrix \(T[R \tim
 Layer 5 selects the top-N active sites (N ≤ 50) by a composite risk-importance score. Each site is weighted by a sigmoid-squashed linear combination of Layer 4.5 normalized signals:
 
 \[
-w_r = \sigma\!\bigl(a_1 \cdot \text{fragility}_r + a_2 \cdot \text{OBI}_r + a_3 \cdot \text{novelty}_r + a_4 \cdot \text{tail\_risk}_r\bigr)
+w_r = \sigma\!\bigl(a_1 \cdot \text{fragility}_r + a_2 \cdot \text{OBI}_r + a_3 \cdot \text{novelty}_r + a_4 \cdot \text{tail\\_risk}_r\bigr)
 \]
 
 with \((a_1, a_2, a_3, a_4) = (1.5, 1.2, 0.8, 1.0)\). The risk weight multiplies both the delay objective and the CVaR tail terms, so the optimizer allocates disproportionately more resources to high-fragility, high-OBI, or high-novelty sites.
@@ -498,7 +498,7 @@ For critical sites (*r* flagged as `high_impact_decision = 1` or `tail_risk_prob
 p_r + b_r + t_r + q_r \;\geq\; m_r
 \]
 
-where \(m_r = \max(2,\ \lceil 4 \cdot \text{tail\_risk}_r \cdot w_r \rceil)\). This prevents the optimizer from starving critical sites to reduce aggregate cost. Scenario-level chance-constraint satisfaction (fraction of scenarios where site delay is below \(3 \times Q_{50,r}\)) is reported in the output but not enforced as hard MILP constraints to keep the problem tractable.
+where \(m_r = \max(2,\ \lceil 4 \cdot \text{tail\\_risk}_r \cdot w_r \rceil)\). This prevents the optimizer from starving critical sites to reduce aggregate cost. Scenario-level chance-constraint satisfaction (fraction of scenarios where site delay is below \(3 \times Q_{50,r}\)) is reported in the output but not enforced as hard MILP constraints to keep the problem tractable.
 
 #### Resource effectiveness model (parametric, not learned)
 
@@ -633,7 +633,7 @@ Implemented in `src/layer3_resource_optimization.py`. Consumes Layer 1 and Layer
 
 ### Learned DIS via PCA
 
-DIS is no longer a fixed-weight sum. A `sklearn.PCA` is fitted on the standardised 5-component matrix $[\text{OBI}, \text{cascade\_risk}, \text{future\_risk}, \text{RMST\_mean}, \text{persistence}]$ for all 294 junctions. PC1 (55.7% of variance) is used as the DIS axis; its sign is corrected so that DIS correlates positively with OBI.
+DIS is no longer a fixed-weight sum. A `sklearn.PCA` is fitted on the standardised 5-component matrix $[\text{OBI}, \text{cascade\\_risk}, \text{future\\_risk}, \text{RMST\\_mean}, \text{persistence}]$ for all 294 junctions. PC1 (55.7% of variance) is used as the DIS axis; its sign is corrected so that DIS correlates positively with OBI.
 
 $$
 \mathbf{X}_{\text{scaled}} \in \mathbb{R}^{294 \times 5} = \text{StandardScaler}\bigl([\text{OBI}, \text{cascade}, \text{future}, \text{RMST}, \text{persistence}]\bigr)
@@ -658,7 +658,7 @@ $$
 
 $$
 \text{DurationFactor} = 1 + \frac{P_{80,\text{capped}}}{120}, \quad
-\text{ClosureFactor} = \begin{cases} 1.5 & \text{if requires\_road\_closure} \\ 1.0 & \text{otherwise} \end{cases}, \quad
+\text{ClosureFactor} = \begin{cases} 1.5 & \text{if requires\\_road\\_closure} \\ 1.0 & \text{otherwise} \end{cases}, \quad
 \text{CascadeFactor} = 1 + R
 $$
 
@@ -669,12 +669,12 @@ Resource quantities derived continuously from ODS:
 $$
 \text{officers} = \min\!\left(25,\ \lceil \text{ODS}/30 \rceil\right), \quad
 \text{barricades} = \min\!\left(40,\ \lceil \text{ODS}/20 \rceil\right), \quad
-\text{tow\_units} = \min\!\left(5,\ \lceil \text{ODS}/80 \rceil\right)
+\text{tow\\_units} = \min\!\left(5,\ \lceil \text{ODS}/80 \rceil\right)
 $$
 
 $$
 \text{supervisors} = \lceil \text{officers}/6 \rceil, \qquad
-\text{qru\_units} = \begin{cases} 1 & \text{if DIS} \geq 70 \\ 0 & \text{otherwise} \end{cases}
+\text{qru\\_units} = \begin{cases} 1 & \text{if DIS} \geq 70 \\ 0 & \text{otherwise} \end{cases}
 $$
 
 ### Linear Programming resource allocation
@@ -702,11 +702,11 @@ $$
 A `networkx.DiGraph` is built from all events-clean corridor-junction pairs. Edge weight:
 
 $$
-w(u,v) = 0.5 \cdot \bigl(\text{node\_cost}(u) + \text{node\_cost}(v)\bigr)
+w(u,v) = 0.5 \cdot \bigl(\text{node\\_cost}(u) + \text{node\\_cost}(v)\bigr)
 $$
 
 $$
-\text{node\_cost}(j) = 0.4\,\operatorname{norm}(\text{OBI}_j) + 0.3\,\operatorname{norm}(\text{FutureRisk}_j) + 0.2\,\operatorname{norm}(\text{Hawkes}_j) + 0.1\,\operatorname{norm}(\text{RMST}_j) + 0.01
+\text{node\\_cost}(j) = 0.4\,\operatorname{norm}(\text{OBI}_j) + 0.3\,\operatorname{norm}(\text{FutureRisk}_j) + 0.2\,\operatorname{norm}(\text{Hawkes}_j) + 0.1\,\operatorname{norm}(\text{RMST}_j) + 0.01
 $$
 
 For each of the top-30 DIS junctions, the blocked junction is removed, and `nx.single_source_dijkstra` finds the 3 lowest-cost diversion targets. Zone-based fallback is used only when the graph is disconnected.
@@ -714,7 +714,7 @@ For each of the top-30 DIS junctions, the blocked junction is removed, and `nx.s
 ### Resource efficiency simulation
 
 $$
-\text{clearance\_predicted} = \text{base\_clearance} \times (1 - \text{reduction}), \qquad
+\text{clearance\\_predicted} = \text{base\\_clearance} \times (1 - \text{reduction}), \qquad
 \text{reduction} = \bigl(1 - e^{-0.08 \cdot N_{\text{officers}}}\bigr) \times 0.40
 $$
 
@@ -804,11 +804,11 @@ Mean of top-k blended scores per planned event:
 
 $$
 n_{\text{meaningful}} = \bigl|\{j : \text{SIM}(\text{query}, j) \geq 0.60\}\bigr|, \qquad
-\text{mean\_sim} = \text{mean of SIM scores above threshold}
+\text{mean\\_sim} = \text{mean of SIM scores above threshold}
 $$
 
 $$
-\text{IMS} = \log(1 + n_{\text{meaningful}}) \times \text{mean\_sim}
+\text{IMS} = \log(1 + n_{\text{meaningful}}) \times \text{mean\\_sim}
 $$
 
 Higher IMS → more reliable historical evidence → stronger weight on history vs Layer 3 rules.
@@ -816,14 +816,14 @@ Higher IMS → more reliable historical evidence → stronger weight on history 
 ### Evidence-based resource recommendation
 
 $$
-\text{evidence\_weight} = \min\!\left(1,\ \frac{\text{IMS}}{\max(\text{IMS})}\right), \qquad
-\text{blended\_officers} = \text{evidence\_weight} \cdot \text{historical\_est} + (1 - \text{evidence\_weight}) \cdot \text{l3\_rule\_est}
+\text{evidence\\_weight} = \min\!\left(1,\ \frac{\text{IMS}}{\max(\text{IMS})}\right), \qquad
+\text{blended\\_officers} = \text{evidence\\_weight} \cdot \text{historical\\_est} + (1 - \text{evidence\\_weight}) \cdot \text{l3\\_rule\\_est}
 $$
 
 ### Impact forecast
 
 $$
-\text{impact\_score} = \Bigl(0.35\,\operatorname{norm}(\text{L3\_DIS}) + 0.25\,\operatorname{norm}(\text{pred\_duration}) + 0.20\,\text{closure\_prob} + 0.20\,\operatorname{norm}(\text{IMS})\Bigr) \times \text{trust\_score} \times 100
+\text{impact\\_score} = \Bigl(0.35\,\operatorname{norm}(\text{L3\\_DIS}) + 0.25\,\operatorname{norm}(\text{pred\\_duration}) + 0.20\,\text{closure\\_prob} + 0.20\,\operatorname{norm}(\text{IMS})\Bigr) \times \text{trust\\_score} \times 100
 $$
 
 ### Public API
