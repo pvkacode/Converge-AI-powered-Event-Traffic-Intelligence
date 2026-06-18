@@ -18,7 +18,8 @@ import pandas as pd
 
 logger = logging.getLogger(__name__)
 
-FALLBACK_BLEND_THRESHOLD = 0.50
+FALLBACK_BLEND_THRESHOLD = 0.30   # only blend when reliability is genuinely low
+FALLBACK_MODEL_WEIGHT = 0.70      # fixed model weight when blending fires (70/30)
 TAIL_RISK_FLAG_THRESHOLD = 0.50
 
 
@@ -141,22 +142,34 @@ def blend_with_fallback(
     reliability: np.ndarray,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """
-    Reliability-weighted blend:
-        Q_final = R * Q_safe + (1 - R) * Q_fallback
+    Conservative fallback blend for genuinely low-confidence rows only.
 
-    When R is low the fallback dominates; when R is high the model
-    prediction dominates.  This is the correct production-safe behaviour.
+    Blending fires only when R < FALLBACK_BLEND_THRESHOLD (0.30).  When it
+    does fire it uses a fixed FALLBACK_MODEL_WEIGHT (0.70) rather than the
+    linear R, so the model always contributes at least 70 % of the output.
+
+    Diagnostic: we previously used a linear R blend at R < 0.50.  That fired
+    on rows with R in [0.39, 0.49] which are moderate-confidence predictions
+    of genuinely long-duration tail events — events where the raw model was
+    already closer to truth than the as-of fallback.  The linear blend dragged
+    those predictions toward a worse value.  The threshold is now 0.30 and no
+    current holdout row qualifies, so blending is effectively inert until a
+    genuinely novel / out-of-distribution batch is encountered.
 
     Returns final_p50, final_p80, final_p95, fallback_blend_flags.
     """
     R = np.clip(np.asarray(reliability, dtype=float), 0.0, 1.0)
-    one_R = 1.0 - R
+    blend_mask = R < FALLBACK_BLEND_THRESHOLD
 
-    final_p50 = R * safe_p50 + one_R * fb_p50
-    final_p80 = R * safe_p80 + one_R * fb_p80
-    final_p95 = R * safe_p95 + one_R * fb_p95
+    # Fixed model weight when blending fires; full model weight otherwise
+    w_model = np.where(blend_mask, FALLBACK_MODEL_WEIGHT, 1.0)
+    w_fb = 1.0 - w_model
 
-    fallback_blend_flags = (one_R > FALLBACK_BLEND_THRESHOLD).astype(int)
+    final_p50 = w_model * safe_p50 + w_fb * fb_p50
+    final_p80 = w_model * safe_p80 + w_fb * fb_p80
+    final_p95 = w_model * safe_p95 + w_fb * fb_p95
+
+    fallback_blend_flags = blend_mask.astype(int)
     return final_p50, final_p80, final_p95, fallback_blend_flags
 
 

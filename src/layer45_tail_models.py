@@ -173,12 +173,18 @@ def blend_tail_quantiles(
     tail_proxies: dict,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """
-    Tail-aware mixture of quantiles:
-        Q_mix_p = (1 - pi) * Q_typ_p  +  pi * Q_tail_p
+    Tail-aware mixture applied to p80 and p95 only.
 
-    Uses cause-specific tail proxies where available (>= 5 tail events in
-    training), global training-tail proxy otherwise.  Logs the global-fallback
-    count so the user can gauge proxy quality.
+    p50 is intentionally left unchanged.  Mixing tail-regime proxies (which are
+    large by definition — they are quantiles of events that exceeded tau_cause)
+    into the p50 estimate drags the typical-case prediction far above the true
+    value for ordinary events, even when tail_risk_prob is small.  The p50
+    should represent the most likely outcome; tail risk is properly expressed in
+    p80/p95 and in tail_risk_prob itself.
+
+        mix_p50 = typ_p50                                   (unchanged)
+        mix_p80 = (1 - pi) * typ_p80 + pi * tail_p80
+        mix_p95 = (1 - pi) * typ_p95 + pi * tail_p95
     """
     pi = np.clip(np.asarray(tail_probs, dtype=float), 0.0, 1.0)
     global_p = tail_proxies.get("global", {"p50": 120.0, "p80": 240.0, "p95": 480.0})
@@ -186,7 +192,6 @@ def blend_tail_quantiles(
 
     causes_arr = np.asarray(causes, dtype=str)
     n = len(causes_arr)
-    tail_p50 = np.empty(n)
     tail_p80 = np.empty(n)
     tail_p95 = np.empty(n)
 
@@ -196,7 +201,6 @@ def blend_tail_quantiles(
         if proxy is None:
             proxy = global_p
             global_cnt += 1
-        tail_p50[i] = proxy["p50"]
         tail_p80[i] = proxy["p80"]
         tail_p95[i] = proxy["p95"]
 
@@ -206,7 +210,7 @@ def blend_tail_quantiles(
             global_cnt, n,
         )
 
-    mix_p50 = (1.0 - pi) * typ_p50 + pi * tail_p50
+    mix_p50 = np.array(typ_p50, dtype=float)          # p50 is not tail-mixed
     mix_p80 = (1.0 - pi) * typ_p80 + pi * tail_p80
     mix_p95 = (1.0 - pi) * typ_p95 + pi * tail_p95
 
