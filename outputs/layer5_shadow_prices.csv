@@ -1,0 +1,5 @@
+resource,base_budget,perturbed_budget,base_objective,perturbed_objective,marginal_value,interpretation
+police,120,121,9002272.98864702,8946175.813209066,56097.17543795332,One extra police unit reduces objective by 56097.1754
+barricades,100,101,9002272.98864702,8964419.739398122,37853.24924889766,One extra barricades unit reduces objective by 37853.2492
+tow,15,16,9002272.98864702,8923783.819084983,78489.16956203617,One extra tow unit reduces objective by 78489.1696
+qru,10,11,9002272.98864702,8908777.896249063,93495.09239795618,One extra qru unit reduces objective by 93495.0924
