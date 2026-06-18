@@ -445,9 +445,9 @@ Plus auxiliary CVaR variables $z$ (VaR level) and $\xi_s \geq 0$ for each scenar
 
 **Objective** (weighted priority):
 $$
-\min_{x}\ \lambda_2 z + \frac{\lambda_2}{(1-\alpha)S}\sum_{s=1}^{S}\xi_s - \lambda_3 \sum_r \bar{w}_r e_r + \lambda_4 \sum_r \mathrm{cost}_r + \lambda_5 \sum_r d_r
+\min_{x}\ \lambda_2 z + \frac{\lambda_2}{(1-\alpha)S}\sum_{s=1}^{S}\xi_s - \lambda_3 \sum_r \bar{w}_r e_r + \lambda_4 \sum_r \mathrm{cost}_r + \sum_r \lambda_5\, c^{\mathrm{div}}_r\, d_r
 $$
-where $\bar{w}_r = w_r \cdot \mathbb{E}[T_r]$ is the mean weighted site duration (fixed parameter from scenarios), and cost includes per-resource deployment cost coefficients. The $-\lambda_3 \bar{w}_r e_r$ term makes increasing effectiveness reduce the objective (maximize delay reduction). Weights are $\lambda_2 = 2.0$, $\lambda_3 = 1.0$, $\lambda_4 = 0.15$, $\lambda_5 = 0.10$.
+where $\bar{w}_r = w_r \cdot \mathbb{E}[T_r]$ is the mean weighted site duration (fixed parameter from scenarios), and cost includes per-resource deployment cost coefficients. The $-\lambda_3 \bar{w}_r e_r$ term makes increasing effectiveness reduce the objective (maximize delay reduction). The diversion coefficient $c^{\mathrm{div}}_r$ is tier-dependent: $-2.0$ for emergency (reward), $-0.5$ for critical (mild reward), $+0.5$ for elevated (mild cost), $+1.0$ for normal (full cost) — the optimizer freely chooses each $d_r$, no tier forces it to 1. Weights are $\lambda_2 = 2.0$, $\lambda_3 = 1.0$, $\lambda_4 = 0.15$, $\lambda_5 = 0.10$.
 
 #### CVaR formulation (Rockafellar–Uryasev)
 
@@ -465,13 +465,30 @@ $$
 $$
 This is fully linear in the decision variables. The CVaR level is $\alpha = 0.90$.
 
-#### Chance constraints
+#### Criticality tiers (entropy-weighted, rank-based)
 
-For critical sites (*r* flagged as `high_impact_decision = 1` or `tail_risk_prob > 0.40`), the optimizer enforces a minimum service constraint:
+Sites are classified into four tiers by `compute_entropy_tiers()`. No absolute threshold (e.g. `tail_risk_prob > 0.40`) is used. Five features are min-max normalized across the current active batch: `tail_risk_prob`, `fragility_signal`, `obi_signal`, `novelty_score`, and inverted `duration_reliability`. Shannon entropy weights are derived from the batch distribution of each feature:
+
 $$
-p_r + b_r + t_r + q_r \;\geq\; m_r
+p_{ij} = \frac{x_{ij}}{\sum_i x_{ij}}, \qquad
+E_j = -\frac{1}{\ln n}\sum_i p_{ij} \ln p_{ij}, \qquad
+w_j = \frac{1 - E_j}{\sum_j (1 - E_j)}
 $$
-where $m_r = \max(2,\ \lceil 4 \cdot \text{tail\\_risk}_r \cdot w_r \rceil)$. This prevents the optimizer from starving critical sites to reduce aggregate cost. Scenario-level chance-constraint satisfaction (fraction of scenarios where site delay is below $3 \times Q_{50,r}$) is reported in the output but not enforced as hard MILP constraints to keep the problem tractable.
+
+Composite risk score: $\text{risk}_r = \sum_j w_j\, x_{rj}$. Sites are ranked by risk and assigned tiers by count (never by fixed threshold):
+
+| Tier | Size | Min service $m_r$ |
+|------|------|-------------------|
+| emergency | top 8% (≥ 1 site) | 4 |
+| critical | next 12% (≥ 1 site) | 2 |
+| elevated | next 20% (≥ 1 site) | 1 |
+| normal | remainder | 0 |
+
+Minimum service constraint for non-normal tiers: $p_r + b_r + t_r + q_r \geq m_r$.
+
+#### Chance constraints and violation reporting
+
+Scenario-level chance-constraint satisfaction per site: $\hat{P}_r = \text{fraction of scenarios where per-site delay} \leq 3 Q_{50,r}$. Required probability is tier-specific: $1 - \varepsilon_r$ where $\varepsilon_r \in \{0.05,\, 0.10,\, 0.20,\, 0.20\}$ for emergency / critical / elevated / normal. A site is a **violation** when $\hat{P}_r < 1 - \varepsilon_r$. Every violation is logged as a WARNING (site ID, tier, required and realized probability, margin) and written to `layer5_chance_constraint_violations.csv`. Violations are never silently accepted.
 
 #### Resource effectiveness model (parametric, not learned)
 
@@ -497,7 +514,9 @@ Per-site caps: $p_r \leq 12$, $b_r \leq 20$, $t_r \leq 4$, $q_r \leq 3$.
 
 #### Diversion routing
 
-Diversion decisions are linked to Layer 3's Dijkstra corridor graph. A `networkx.DiGraph` is reconstructed from `layer3_disruption_impact_scores.csv` (node attributes: DIS, OBI, fragility) and the pre-computed diversion paths in `layer3_diversion_recommendations.csv` (edge weights). For each site where `d_r = 1` is optimal, the best 3 diversion routes by path cost are reported. Edge cost:
+`d_r \in \{0,1\}$ is a genuine free optimizer decision variable — it is never forced to 1 for any tier. A city-wide diversion budget constraint $\sum_r d_r \leq 20$ caps total simultaneous activations. The tier-dependent objective coefficient (see Objective section) incentivizes diversion at high-risk sites without mandating it; the optimizer trades diversion cost against CVaR reduction for each site independently.
+
+Diversion routing is linked to Layer 3's Dijkstra corridor graph. A `networkx.DiGraph` is reconstructed from `layer3_disruption_impact_scores.csv` (node attributes: DIS, OBI, fragility) and the pre-computed diversion paths in `layer3_diversion_recommendations.csv` (edge weights). For each site where `d_r = 1` is chosen by the optimizer, the best 3 diversion routes by path cost are reported. Edge cost:
 $$
 c_e = c^{\text{base}}_e + 0.40 \cdot \text{risk}_e + 0.25 \cdot \text{fragility}_e + 0.25 \cdot \text{OBI}_e
 $$
@@ -524,6 +543,26 @@ Layer 5 sweeps six $(\lambda_{\text{CVaR}}, \lambda_{\text{cost}})$ weight pairs
 
 Budgets for each resource are varied at ×0.5, ×0.8, ×1.0, ×1.2, ×1.5, and the CVaR α level is swept from 0.75 to 0.99, recording the objective value and solver success at each point. Results are in `layer5_sensitivity_summary.csv`.
 
+#### Robustness score (continuous, five components)
+
+`robustness_score` is a continuous value in $[0,1]$ computed per site from five components — it never collapses to a binary flag:
+
+| Component | Formula | Weight |
+|-----------|---------|--------|
+| Chance margin | $\max(0,\, \hat{P}_r - (1-\varepsilon_r))$, clipped to $[0,1]$ | 0.30 |
+| CVaR quality | $1 - \text{site\_CVaR}_r / \max_r(\text{site\_CVaR})$ | 0.25 |
+| Resource tightness | $1 - (p_r+b_r+t_r+q_r)/(P_{\max}+B_{\max}+T_{\max}+Q_{\max})$ | 0.20 |
+| Scenario stability | $1 - \lvert \text{ratio}_r - 1 \rvert$, where $\text{ratio}_r = \text{allocated}_r / \text{budget\_share}_r$ | 0.15 |
+| Novelty penalty | $1 - \text{normalized novelty/drift from Layer 4.5 JOSV}$ | 0.10 |
+
+$$
+\text{robustness}_r = 0.30\,c_1 + 0.25\,c_2 + 0.20\,c_3 + 0.15\,c_4 + 0.10\,c_5
+$$
+
+#### Baseline vs. optimized CVaR
+
+Before the MILP is solved, Layer 5 computes a **baseline CVaR** using the same scenario realizations with zero resources allocated ($e_r = 0$ for all $r$). After optimization, the **optimized CVaR** is computed from the solved allocation. Both are reported at $\alpha \in \{0.50, 0.75, 0.90, 0.95, 0.99\}$ and compared in `layer5_pre_post_cvar_comparison.csv` (all-sites and per-tier). The same scenario matrix is used for both — no resampling occurs. This allows the optimizer's tail-risk reduction to be directly quantified.
+
 #### Alternative plans
 
 Layer 5 generates three plans from the base MILP solution:
@@ -535,18 +574,21 @@ Layer 5 generates three plans from the base MILP solution:
 
 | File | Contents |
 |------|----------|
-| `layer5_resource_allocation.csv` | Per-site allocation: p/b/t/q counts, diversion flag, effectiveness, expected delay reduction, CVaR, chance-constraint satisfaction, service tier, robustness score |
-| `layer5_diversion_recommendations.csv` | Route A/B/C options for each diversion-activated site, with path cost and estimated additional travel time |
+| `layer5_resource_allocation.csv` | Per-site allocation: p/b/t/q counts, diversion flag, diversion reason, effectiveness, expected delay reduction, CVaR, chance-constraint satisfaction, required epsilon, violation flag, service tier, robustness score |
+| `layer5_diversion_recommendations.csv` | Route A/B/C options for each optimizer-selected diversion site, with path cost and estimated additional travel time |
 | `layer5_scenario_summary.csv` | Per-scenario total delay (raw vs. optimized), delay reduction %, tail scenario flag |
 | `layer5_cvar_summary.csv` | CVaR at α = {0.50, 0.75, 0.90, 0.95, 0.99} and per-service-tier CVaR-90 |
+| `layer5_baseline_cvar_summary.csv` | CVaR at all α levels with **zero resources** (same scenarios, no resample) — pre-optimization baseline |
+| `layer5_pre_post_cvar_comparison.csv` | Baseline vs. optimized CVaR: absolute and percentage reduction, all-sites and per-tier breakdown |
+| `layer5_chance_constraint_violations.csv` | One row per violation: site ID, tier, required ε, required probability, realized satisfaction rate, margin |
 | `layer5_robust_plan.csv` | Per-site p95 delay with vs. without resources, p95 reduction %, site CVaR-90 |
 | `layer5_alternative_plans.csv` | Plans A/B/C side-by-side for all active sites |
 | `layer5_pareto_front.csv` | CVaR-90 vs. deployment cost across λ sweep, non-dominated points |
 | `layer5_shadow_prices.csv` | Marginal value per +1 unit of each resource budget |
 | `layer5_sensitivity_summary.csv` | Objective vs. budget multiplier and CVaR α level |
 | `layer5_optimization_metrics.csv` | High-level summary: expected delay reduction %, CVaR, CC satisfaction, resource totals |
-| `layer5_frontend_export.csv` | Dashboard-ready: site id, allocation, diversion, delay reduction, CVaR, CC satisfaction, tier, robustness, solver status |
-| `layer5_summary.txt` | Human-readable run summary |
+| `layer5_frontend_export.csv` | Dashboard-ready: site id, allocation, diversion, diversion reason, delay reduction, baseline CVaR, optimized CVaR, CC satisfaction, tier, continuous robustness score, violation flags, solver status |
+| `layer5_summary.txt` | Human-readable run summary including tier distribution and pre/post CVaR comparison |
 | `layer5_model_artifacts/` | Hyperparameter JSON snapshot for reproducibility |
 
 #### Run
@@ -952,11 +994,14 @@ converge/
 
 | File | Purpose |
 |------|---------|
-| `layer5_resource_allocation.csv` | Per-site officers / barricades / tow / QRU + diversion |
-| `layer5_diversion_recommendations.csv` | Route A/B/C per diverted site |
+| `layer5_resource_allocation.csv` | Per-site officers / barricades / tow / QRU + optimizer-chosen diversion + continuous robustness score |
+| `layer5_diversion_recommendations.csv` | Route A/B/C per optimizer-selected diversion site |
 | `layer5_cvar_summary.csv` | Tail-risk summary at multiple $\alpha$ levels |
+| `layer5_baseline_cvar_summary.csv` | Pre-optimization CVaR (zero resources, same scenarios) |
+| `layer5_pre_post_cvar_comparison.csv` | Baseline vs. optimized CVaR reduction, all-sites and per-tier |
+| `layer5_chance_constraint_violations.csv` | Explicit violation report: site, tier, required vs. realized probability |
 | `layer5_shadow_prices.csv` | Marginal value of +1 unit per resource |
-| `layer5_frontend_export.csv` | Dashboard-ready allocation summary |
+| `layer5_frontend_export.csv` | Dashboard-ready allocation summary with baseline CVaR, optimized CVaR, violation flags |
 
 ## Next layers (planned)
 
