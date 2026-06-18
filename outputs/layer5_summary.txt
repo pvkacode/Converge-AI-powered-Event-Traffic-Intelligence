@@ -5,14 +5,7 @@ LAYER 5 — ROBUST PRESCRIPTIVE OPTIMIZATION SUMMARY
 Active disruption sites  : 50
 Scenarios generated      : 50
 CVaR alpha level         : 0.90
-Uncertainty inflation κ  : 0.50
-Tier relaxation used     : 0
-
-SERVICE TIERS (rank-based, not absolute tail-risk cutoff)
-----------------------------------------
-  Emergency (top 8%)     : 4
-  Critical (next 12%)    : 6
-  Elevated (next 20%)    : 10
+Uncertainty inflation k  : 0.50
 
 RESOURCE DEPLOYMENT
 ----------------------------------------
@@ -20,42 +13,52 @@ RESOURCE DEPLOYMENT
   Barricades deployed    : 100 / 100
   Tow trucks deployed    : 15 / 15
   QRUs deployed          : 10 / 10
-  Diversions activated   : 0 / 15 budget
-
-CVaR — PRE vs POST (identical scenario set)
-----------------------------------------
-  Baseline CVaR 90%      : 33787597.3 min (no intervention)
-  Optimized CVaR 90%     : 6745470.5 min
-  Absolute reduction     : 27042126.8 min
-  Percent reduction      : 80.0%
+  Diversions activated   : 10
+  Critical sites         : 10
 
 OPTIMIZATION QUALITY
 ----------------------------------------
-  Expected delay (base)  : 7108268.5 min (weighted)
-  Expected delay (opt.)  : 2263824.0 min (weighted)
-  Delay reduction        : 68.2%
-  CC satisfaction (mean) : 0.966
-  CC violations (E/C)    : 0 sites → see layer5_chance_constraint_violations.csv
-  Mean effectiveness     : 0.497
-  Mean robustness score  : 0.473 (continuous [0,1])
-  Used fallback?         : No
-
-DIVERSION POLICY
-----------------------------------------
-  d_r is an optimized decision variable (NOT hardcoded for critical sites).
-  Budget: Σ d_r ≤ 15. Optimizer balances risk benefit vs cost.
+  Expected delay (raw)   : 7108268.5 min (weighted)
+  Expected delay (opt.)  : 3567378.6 min (weighted)
+  Delay reduction        : 49.8%
+  CVaR 90%               : 18055941.0 min
+  CC satisfaction (mean) : 0.959
+  Mean effectiveness     : 0.517
+  Mean robustness score  : 0.638
+  Used fallback?         : Yes
 
 SHADOW PRICES (marginal value per +1 unit)
 ----------------------------------------
-  police      : 37911.1942
-  barricades  : 19274.4628
-  tow         : 57983.7987
-  qru         : 64144.5177
+  police      : 47898.5630
+  barricades  : 24513.9090
+  tow         : 61866.4463
+  qru         : 71388.1197
+
+TIER DISTRIBUTION (entropy-weighted rank)
+----------------------------------------
+  emergency : 4
+  critical  : 6
+  elevated  : 10
+  normal    : 30
+
+PRE/POST CVaR COMPARISON (alpha=0.90)
+----------------------------------------
+  Baseline CVaR (no resources) : 33787597.3 min
+  Optimized CVaR               : 18055941.0 min
+  Absolute reduction           : 15731656.3 min
+  Percentage reduction         : 46.6%
+
+CHANCE CONSTRAINT STATUS
+----------------------------------------
+  Sites with violations : 1
+  (details in layer5_chance_constraint_violations.csv)
 
 INPUTS (Layer 4.5 canonical)
 ----------------------------------------
   layer45_scenario_ready_duration.csv
   layer45_operational_state_vector_normalized.csv
+  layer45_duration_quality.csv
+  layer45_cause_tau_thresholds.csv
 
 OUTPUTS
 ----------------------------------------
