@@ -1,4 +1,4 @@
-# Converge- Day 1 Pipeline (ASTraM Bengaluru Traffic Disruption Intelligence)
+# Converge — ASTraM Bengaluru Traffic Disruption Intelligence
 
 **Framing:** From reactive patrol logs to a predictive, self-improving disruption-intelligence system for Bengaluru traffic.
 
@@ -34,11 +34,14 @@ Kaplan-Meier survival curves answer operational questions directly:
 
 Layer 1 feeds Layer 3 resource sizing:
 
-```
-manpower_needed   ≈ f(impact_score, expected_duration, requires_road_closure)
-barricade_window  ≈ [start, start + P80_duration]
-diversion_window  ≈ same window
-```
+$$
+\text{manpower\_needed} \approx f(\text{impact\_score},\ \text{expected\_duration},\ \text{requires\_road\_closure})
+$$
+
+$$
+\text{barricade\_window} = [\text{start},\ \text{start} + P_{80,\text{duration}}], \qquad
+\text{diversion\_window} = \text{barricade\_window}
+$$
 
 ### Layer 2 — spatial dimension (“where should we pre-position resources?”)
 
@@ -46,11 +49,14 @@ Getis-Ord Gi* tests whether a junction is **anomalously hot**, not merely busy. 
 
 Layer 2 feeds Layer 3 placement:
 
-```
-pre_position_manpower(junction) ∝ Gi* significance × weighted_intensity
-priority_barricade_points       = hotspots ∩ planned_event_route
-diversion_candidates            = corridors adjacent to significant hotspots
-```
+$$
+\text{pre\_position\_manpower}(j) \propto G_i^*\ \text{significance} \times \text{weighted\_intensity}
+$$
+
+$$
+\text{priority\_barricade\_points} = \text{hotspots} \cap \text{planned\_event\_route}, \qquad
+\text{diversion\_candidates} = \{\text{corridors adjacent to significant hotspots}\}
+$$
 
 ### Worked example — breakdown at a known hotspot
 
@@ -79,9 +85,9 @@ diversion_candidates            = corridors adjacent to significant hotspots
 
 A single row-level confidence weight in **[0, 1]**, computed as a **noisy-OR** over four independent evidence flags:
 
-```
-trust_i = ∏_k (1 − w_k · flag_k,i)
-```
+$$
+\text{trust}_i = \prod_k \bigl(1 - w_k \cdot \text{flag}_{k,i}\bigr)
+$$
 
 | Flag | Weight | Meaning |
 |------|--------|---------|
@@ -96,11 +102,7 @@ Low-trust rows are **not deleted** — they contribute proportionally less to Ka
 
 ## Missingness test
 
-The pipeline fits a logistic regression predicting `P(no end timestamp | corridor, priority, cause, closure, hour)` and runs a likelihood-ratio test against an intercept-only model. Results are saved to:
-
-```
-outputs/missingness_test.txt
-```
+The pipeline fits a logistic regression predicting $P(\text{no end timestamp} \mid \text{corridor, priority, cause, closure, hour})$ and runs a likelihood-ratio test against an intercept-only model. Results are saved to `outputs/missingness_test.txt`.
 
 **Key finding:** ~3,500+ rows marked `status=closed` have **no** end timestamp at all — status and timestamp fields are inconsistently maintained in the source system. This is reported explicitly in the pipeline summary.
 
@@ -150,7 +152,7 @@ python src/frontend_exports.py              # dashboard-ready copies → outputs
 python src/validate_consistency.py
 ```
 
-Each layer script runs **baseline first, then advanced**, writing all outputs to `outputs/layer1_*`, `outputs/layer2_*`, `outputs/layer3_*`, and `outputs/layer4_*`.
+Each layer script runs **baseline first, then advanced**, writing outputs to `outputs/layer1_*` … `outputs/layer5_*`.
 
 ## Layer 1 outputs (`layer1_survival.py`)
 
@@ -289,7 +291,7 @@ Layers 1–4 were fit on the **entire** Nov 2023–Apr 2024 batch at once. Joini
 Not a synthetic target — a structured predictive summary per event for Layer 5:
 
 - Duration median + quantiles (p50/p80/p95) + conformal intervals
-- Calibrated high-impact probability (\(\tau\) = training p75 duration)
+- Calibrated high-impact probability (cause-specific $\tau_c = P_{75}(\text{duration} \mid \text{cause})$)
 - As-of retrieval confidence / IMS proxies
 - Novelty + drift flags (Isolation Forest + Mahalanobis)
 - Trust, fragility, and OBI surrogate signals
@@ -301,6 +303,8 @@ Not a synthetic target — a structured predictive summary per event for Layer 5
 | `layer45_time_split.py` | `build_time_split()` — chronological train/holdout |
 | `layer45_asof_features.py` | `build_asof_feature_matrix()` — daily snapshots, fallbacks, Hawkes/retrieval surrogates |
 | `layer45_feature_registry.py` | `layer45_feature_registry.json` + `layer45_leakage_audit.csv` |
+| `layer45_duration_guard.py` | Monotone sanitization, reliability score, sanity flags |
+| `layer45_tail_models.py` | Tail-risk classifier + tail-aware quantile mixture |
 | `layer45_predictive_fusion.py` | CatBoost models, conformal intervals, isotonic calibration, SHAP, deployment mode |
 
 #### Run
@@ -326,26 +330,29 @@ The CatBoost quantile regressors can produce inversions (p50 > p80) when the tra
 
 | Phase | What happens |
 |-------|-------------|
-| **A. Raw prediction** | Existing CatBoost quantile regressors produce raw p50/p80/p95 (log-space, back-transformed). Saved to `layer45_duration_raw_predictions.csv` for diagnostics. |
-| **B. Tail-risk model** | A separate CatBoostClassifier trained on `y_tail = 1[duration > τ_cause]` (training window only) produces `tail_risk_prob` per event. |
-| **C. Tail-aware mixture** | `Q_mix = (1 - π) · Q_typ + π · Q_tail` where `π = tail_risk_prob` and `Q_tail` comes from training-window tail-event quantile proxies (cause-specific where supported, global otherwise). This preserves true heavy-tail behaviour while damping isolated outlier spikes. |
-| **D. Monotone sanitization** | Sort the triple (p50, p80, p95) row-wise to enforce `Q50 ≤ Q80 ≤ Q95`. Then apply the hard safety clamp: `Q95_safe = min(Q95, max(10·Q50, 1440 min))`. If clamping pushes Q95 below Q80, re-sort. |
-| **E. Duration reliability** | `R = 0.25·Cal + 0.20·Retrieval + 0.20·(1−Novelty) + 0.15·(1−Drift) + 0.10·Support + 0.10·(1−Width)` all in [0, 1]. Components normalised using training-window statistics only. |
-| **F. Reliability logging only** | `duration_reliability`, `fallback_blend_flag`, and `fallback_blend_rate` are computed and logged for transparency in `layer45_duration_quality.csv` and `layer45_metrics.csv`. No blending is applied to the final output quantiles — the sanitized model output is used as-is. See the note on blending removal below. |
-| **G. Sanity flags** | Per-row: `quantile_crossing_flag`, `clamp_flag`, `fallback_blend_flag` (always 0 on current holdout), `tail_risk_flag`, `duration_sanity_flag`, `duration_guard_reason`. |
+| **A. Raw prediction** | Existing CatBoost quantile regressors produce raw $Q_{50}, Q_{80}, Q_{95}$ (log-space, back-transformed). Saved to `layer45_duration_raw_predictions.csv` for diagnostics. |
+| **B. Tail-risk model** | A separate CatBoostClassifier trained on $y_{\text{tail}} = \mathbf{1}[\text{duration} > \tau_{\text{cause}}]$ (training window only) produces `tail_risk_prob` per event. |
+| **C. Tail-aware mixture** | $Q_{\text{mix}} = (1 - \pi)\,Q_{\text{typ}} + \pi\,Q_{\text{tail}}$ where $\pi = \text{tail\_risk\_prob}$ and $Q_{\text{tail}}$ comes from training-window tail quantile proxies. |
+| **D. Monotone sanitization** | Sort $(Q_{50}, Q_{80}, Q_{95})$ row-wise, then clamp $Q_{95,\text{safe}} = \min\!\bigl(Q_{95},\ \max(10 \cdot Q_{50},\ 1440)\bigr)$. Re-sort if needed. |
+| **E. Duration reliability** | $R = 0.25\,\text{Cal} + 0.20\,\text{Retrieval} + 0.20\,(1-\text{Novelty}) + 0.15\,(1-\text{Drift}) + 0.10\,\text{Support} + 0.10\,(1-\text{Width})$ — all components in $[0,1]$. |
+| **F. Reliability logging only** | `duration_reliability`, `fallback_blend_flag`, and `fallback_blend_rate` are logged for transparency; no blending is applied to final quantiles. |
+| **G. Sanity flags** | Per-row: `quantile_crossing_flag`, `clamp_flag`, `fallback_blend_flag`, `tail_risk_flag`, `duration_sanity_flag`, `duration_guard_reason`. |
 | **H. Scenario-ready bundle** | `layer45_scenario_ready_duration.csv` — the canonical Layer 5 input. |
 
 **How monotone sanitization is enforced.**
-Row-wise sort of the quantile triple (numpy `sort` along axis=1) is deterministic and always produces a monotone result without iterative optimisation. The safety clamp then prevents p95 from exceeding `max(10·p50, 1440 min)` — 10× the median is a generous but bounded upper envelope; 1440 min = 24 hours is the absolute floor.
+Row-wise sort of the quantile triple is deterministic and always produces $Q_{50} \leq Q_{80} \leq Q_{95}$. The safety clamp prevents $Q_{95}$ from exceeding $\max(10 \cdot Q_{50},\ 1440\ \text{min})$.
 
 **How the tail-risk mixture works.**
-The tail-risk probability `π` is calibrated using isotonic regression on validation-set predictions. It acts as a continuous mixing weight between the typical-regime quantile model and conservative quantile proxies built from the training tail. This means:
-- events predicted as typical (`π ≈ 0`) get mostly the quantile model's output;
-- events predicted as tail (`π ≈ 1`) get quantiles shifted toward the observed tail distribution;
-- the mix never invents values outside the convex hull of the two regimes.
+Tail probability $\pi$ is isotonic-calibrated on the validation window:
+
+$$
+Q_{\text{mix}} = (1 - \pi)\,Q_{\text{typ}} + \pi\,Q_{\text{tail}}
+$$
+
+Events with $\pi \approx 0$ stay in the typical regime; events with $\pi \approx 1$ shift toward observed tail quantiles.
 
 **Fallback blending: removed after validation.**
-An earlier version of the quality gate blended the sanitized model quantiles with historical as-of fallbacks using `Q_final = R · Q_safe + (1−R) · Q_fallback`, so that low-reliability rows would be anchored to a conservative historical estimate. This blending fired on rows with reliability in [0.39, 0.49], which turn out to be moderate-confidence predictions of genuinely long-duration tail events — events where the raw model was already closer to truth than the as-of fallback. The blend dragged those predictions toward a worse estimate.
+An earlier version used $Q_{\text{final}} = R \cdot Q_{\text{safe}} + (1-R) \cdot Q_{\text{fallback}}$. This dragged moderate-confidence tail events toward worse historical fallbacks and was removed.
 
 After removing the blending step, the holdout comparison (sanitized output vs. raw p50 baseline) showed:
 
@@ -626,13 +633,16 @@ Implemented in `src/layer3_resource_optimization.py`. Consumes Layer 1 and Layer
 
 ### Learned DIS via PCA
 
-DIS is no longer a fixed-weight sum. A `sklearn.PCA` is fitted on the standardised 5-component matrix `[OBI, cascade_risk, future_risk, RMST_mean, persistence]` for all 294 junctions. PC1 (55.7 % of variance) is used as the DIS axis; its sign is corrected so that DIS correlates positively with OBI.
+DIS is no longer a fixed-weight sum. A `sklearn.PCA` is fitted on the standardised 5-component matrix $[\text{OBI}, \text{cascade\_risk}, \text{future\_risk}, \text{RMST\_mean}, \text{persistence}]$ for all 294 junctions. PC1 (55.7% of variance) is used as the DIS axis; its sign is corrected so that DIS correlates positively with OBI.
 
-```
-X_scaled[294×5] = StandardScaler().fit_transform([OBI, cascade_risk, future_risk, RMST, persistence])
-DIS_raw          = X_scaled @ PC1_loadings          # sign-checked vs OBI
-DIS              = 100 · (DIS_raw − min) / (max − min)
-```
+$$
+\mathbf{X}_{\text{scaled}} \in \mathbb{R}^{294 \times 5} = \text{StandardScaler}\bigl([\text{OBI}, \text{cascade}, \text{future}, \text{RMST}, \text{persistence}]\bigr)
+$$
+
+$$
+\text{DIS}_{\text{raw}} = \mathbf{X}_{\text{scaled}} \cdot \mathbf{w}_{\text{PC1}}, \qquad
+\text{DIS} = 100 \cdot \frac{\text{DIS}_{\text{raw}} - \min(\text{DIS}_{\text{raw}})}{\max(\text{DIS}_{\text{raw}}) - \min(\text{DIS}_{\text{raw}})}
+$$
 
 The fitted PCA is saved to `outputs/layer3_pca_model.pkl` for reproducibility.
 
@@ -642,36 +652,48 @@ Risk tiers: **Low** (0–30) · **Moderate** (30–60) · **High** (60–80) · 
 
 ODS is a multiplicative demand signal that drives continuous resource sizing:
 
-```
-ODS = DIS × DurationFactor × ClosureFactor × CascadeFactor
+$$
+\text{ODS} = \text{DIS} \times \text{DurationFactor} \times \text{ClosureFactor} \times \text{CascadeFactor}
+$$
 
-DurationFactor = 1 + P80_capped / 120          # P80 capped at 360 min
-ClosureFactor  = 1.5 if requires_road_closure else 1.0
-CascadeFactor  = 1 + R                          # R = Hawkes branching_ratio
-```
+$$
+\text{DurationFactor} = 1 + \frac{P_{80,\text{capped}}}{120}, \quad
+\text{ClosureFactor} = \begin{cases} 1.5 & \text{if requires\_road\_closure} \\ 1.0 & \text{otherwise} \end{cases}, \quad
+\text{CascadeFactor} = 1 + R
+$$
+
+where $P_{80,\text{capped}}$ is capped at 360 min and $R$ is the Hawkes branching ratio.
 
 Resource quantities derived continuously from ODS:
 
-```
-officers    = ceil(ODS / 30), capped at 25
-barricades  = ceil(ODS / 20), capped at 40
-tow_units   = ceil(ODS / 80), capped at 5
-supervisors = ceil(officers / 6)
-qru_units   = 1 if DIS ≥ 70 else 0
-```
+$$
+\text{officers} = \min\!\left(25,\ \lceil \text{ODS}/30 \rceil\right), \quad
+\text{barricades} = \min\!\left(40,\ \lceil \text{ODS}/20 \rceil\right), \quad
+\text{tow\_units} = \min\!\left(5,\ \lceil \text{ODS}/80 \rceil\right)
+$$
+
+$$
+\text{supervisors} = \lceil \text{officers}/6 \rceil, \qquad
+\text{qru\_units} = \begin{cases} 1 & \text{if DIS} \geq 70 \\ 0 & \text{otherwise} \end{cases}
+$$
 
 ### Linear Programming resource allocation
 
-`scipy.optimize.linprog` (HiGHS) maximises total DIS served subject to city-wide budget constraints across top-50 DIS≥30 junctions:
+`scipy.optimize.linprog` (HiGHS) maximises total DIS served subject to city-wide budget constraints across top-50 junctions with $\text{DIS} \geq 30$:
 
-```
-maximise   Σ DIS_i · x_i
-subject to Σ officers_i · x_i    ≤ 120
-           Σ tow_i · x_i          ≤ 15
-           Σ barricades_i · x_i  ≤ 100
-           Σ supervisors_i · x_i ≤ 20
-           0 ≤ x_i ≤ 1
-```
+$$
+\max_{\mathbf{x}} \sum_i \text{DIS}_i \cdot x_i
+$$
+
+subject to
+
+$$
+\sum_i \text{officers}_i \cdot x_i \leq 120, \quad
+\sum_i \text{tow}_i \cdot x_i \leq 15, \quad
+\sum_i \text{barricades}_i \cdot x_i \leq 100, \quad
+\sum_i \text{supervisors}_i \cdot x_i \leq 20, \quad
+0 \leq x_i \leq 1
+$$
 
 `allocation_fraction` = LP solution. Junctions outside the LP budget keep `x_i = 1` (recommended = allocated).
 
@@ -679,21 +701,24 @@ subject to Σ officers_i · x_i    ≤ 120
 
 A `networkx.DiGraph` is built from all events-clean corridor-junction pairs. Edge weight:
 
-```
-w(u,v) = 0.5 · (node_cost(u) + node_cost(v))
-node_cost(j) = 0.4·norm(OBI_j) + 0.3·norm(FutureRisk_j) + 0.2·norm(Hawkes_j) + 0.1·norm(RMST_j) + 0.01
-```
+$$
+w(u,v) = 0.5 \cdot \bigl(\text{node\_cost}(u) + \text{node\_cost}(v)\bigr)
+$$
+
+$$
+\text{node\_cost}(j) = 0.4\,\operatorname{norm}(\text{OBI}_j) + 0.3\,\operatorname{norm}(\text{FutureRisk}_j) + 0.2\,\operatorname{norm}(\text{Hawkes}_j) + 0.1\,\operatorname{norm}(\text{RMST}_j) + 0.01
+$$
 
 For each of the top-30 DIS junctions, the blocked junction is removed, and `nx.single_source_dijkstra` finds the 3 lowest-cost diversion targets. Zone-based fallback is used only when the graph is disconnected.
 
 ### Resource efficiency simulation
 
-```
-clearance_predicted = base_clearance × (1 − reduction)
-reduction           = (1 − exp(−0.08 · N_officers)) × 0.40    # max 40% improvement
-```
+$$
+\text{clearance\_predicted} = \text{base\_clearance} \times (1 - \text{reduction}), \qquad
+\text{reduction} = \bigl(1 - e^{-0.08 \cdot N_{\text{officers}}}\bigr) \times 0.40
+$$
 
-Simulated for N_officers multipliers [1.0, 1.1, 1.2, 1.3, 1.5, 2.0] across the top-20 junctions.
+Simulated for $N_{\text{officers}}$ multipliers $\{1.0, 1.1, 1.2, 1.3, 1.5, 2.0\}$ across the top-20 junctions.
 
 ### Barricading strategy (ODS-driven)
 
@@ -739,10 +764,10 @@ Implemented in `src/layer4_event_intelligence.py`. Focuses on the 191 true plann
 
 Categorical features use exact-match similarity (0 or 1). Continuous features use:
 
-```
-sim_cont(xi, xj) = 1 − |xi − xj| / range
-Gower(xi, xj)    = (Σ cat_sims + Σ cont_sims) / n_features
-```
+$$
+\text{sim}_{\text{cont}}(x_i, x_j) = 1 - \frac{|x_i - x_j|}{\text{range}}, \qquad
+\text{Gower}(x_i, x_j) = \frac{\sum \text{sim}_{\text{cat}} + \sum \text{sim}_{\text{cont}}}{n_{\text{features}}}
+$$
 
 Features: `event_cause` (cat), `corridor` (cat), `requires_road_closure` (cat), `hour_local` (cont), `dow_local` (cont), `duration_min_filled` (cont), `priority_code` (cont), `trust_score` (cont), `month` (cont).
 
@@ -761,9 +786,9 @@ Operationally-weighted categorical + continuous blend:
 
 Final blended similarity:
 
-```
-SIM = 0.6 × Hybrid + 0.4 × Gower
-```
+$$
+\text{SIM} = 0.6 \cdot \text{Hybrid} + 0.4 \cdot \text{Gower}
+$$
 
 ### Retrieval confidence tiers
 
@@ -777,27 +802,29 @@ Mean of top-k blended scores per planned event:
 
 ### Institutional Memory Score (IMS)
 
-```
-n_meaningful = |{j : SIM(query, j) ≥ 0.60}|
-mean_sim     = mean of SIM scores above threshold
-IMS          = log(1 + n_meaningful) × mean_sim
-```
+$$
+n_{\text{meaningful}} = \bigl|\{j : \text{SIM}(\text{query}, j) \geq 0.60\}\bigr|, \qquad
+\text{mean\_sim} = \text{mean of SIM scores above threshold}
+$$
+
+$$
+\text{IMS} = \log(1 + n_{\text{meaningful}}) \times \text{mean\_sim}
+$$
 
 Higher IMS → more reliable historical evidence → stronger weight on history vs Layer 3 rules.
 
 ### Evidence-based resource recommendation
 
-```
-evidence_weight  = min(1, IMS / max_IMS)
-blended_officers = evidence_weight × historical_est + (1 − evidence_weight) × l3_rule_est
-```
+$$
+\text{evidence\_weight} = \min\!\left(1,\ \frac{\text{IMS}}{\max(\text{IMS})}\right), \qquad
+\text{blended\_officers} = \text{evidence\_weight} \cdot \text{historical\_est} + (1 - \text{evidence\_weight}) \cdot \text{l3\_rule\_est}
+$$
 
 ### Impact forecast
 
-```
-impact_score = (0.35·norm(L3_DIS) + 0.25·norm(pred_duration)
-               + 0.20·closure_prob + 0.20·norm(IMS)) × trust_score × 100
-```
+$$
+\text{impact\_score} = \Bigl(0.35\,\operatorname{norm}(\text{L3\_DIS}) + 0.25\,\operatorname{norm}(\text{pred\_duration}) + 0.20\,\text{closure\_prob} + 0.20\,\operatorname{norm}(\text{IMS})\Bigr) \times \text{trust\_score} \times 100
+$$
 
 ### Public API
 
@@ -844,18 +871,22 @@ ims_df        # layer4_institutional_memory_scores.csv
 New additive module (`src/layer3_corridor_fragility.py`). Fits a marked Hawkes process per corridor with zone-level pooling and empirical Bayes shrinkage.
 
 **Model:**
-```
-λ_c(t) = μ_c + Σ_{t_i<t} α_{z(c)} · m_i · exp(−β_{z(c)} · (t − t_i))
 
-where m_i = trust_i × (1 + 0.5·closure_i) × (priority_i / max_priority)
-```
+$$
+\lambda_c(t) = \mu_c + \sum_{t_i < t} \alpha_{z(c)} \cdot m_i \cdot \exp\!\bigl(-\beta_{z(c)} \cdot (t - t_i)\bigr)
+$$
 
-**Zone pooling** (first-token of corridor name): ORR North 1/2 + ORR East 1/2 + ORR West 1 → zone ORR; Bellary Road 1/2 → zone BELLARY; etc.
+$$
+m_i = \text{trust}_i \times (1 + 0.5 \cdot \text{closure}_i) \times \frac{\text{priority}_i}{\max(\text{priority})}
+$$
 
-**Shrinkage** (for sparse corridors with n < 20):
-```
-θ_c = (n/(n+κ)) · θ̂_c + (κ/(n+κ)) · θ_{z(c)}
-```
+**Zone pooling** (first token of corridor name): ORR North 1/2 + ORR East 1/2 + ORR West 1 → zone ORR; Bellary Road 1/2 → zone BELLARY; etc.
+
+**Shrinkage** (for sparse corridors with $n < 20$):
+
+$$
+\theta_c = \frac{n}{n + \kappa}\,\hat{\theta}_c + \frac{\kappa}{n + \kappa}\,\theta_{z(c)}
+$$
 
 **Key outputs:**
 | Metric | Interpretation |
@@ -876,13 +907,19 @@ where m_i = trust_i × (1 + 0.5·closure_i) × (priority_i / max_priority)
 New additive module (`src/layer4_planned_event_retrieval.py`). Trust-weighted Gower similarity retrieval with prototype compression and principled abstention for sparse planned events (n = 191).
 
 **Design decisions:**
+
+$$
+s(q,p) = \exp\!\left(-\frac{d_G(q,p)}{h}\right) \cdot \tau_p, \qquad
+\text{Conf} = \min\!\left(1,\ \frac{n_{\text{eff}}}{k_0}\right) \cdot \bar{s}
+$$
+
 | Component | Choice | Rationale |
 |-----------|--------|-----------|
 | Prototype compression | KMeans → 47 clusters | Prevents degenerate retrieval; one prototype can't dominate |
-| Feature weights | IG-shrinkage: w_k = ρ·IG_k/ΣIG + (1−ρ)/P | Adapts to which features predict duration; ρ = 0.95 |
-| Similarity | s(q,p) = exp(−d_G/h) · τ_p | Trust-weighted; bandwidth h = 0.5 |
-| Confidence | Conf = min(1, n_eff/k₀) · s̄ | ESS-normalised mean similarity |
-| Abstention | max_sim < 0.15 or n_eff < 3.0 | Declines to predict when evidence is thin |
+| Feature weights | IG-shrinkage: $w_k = \rho \cdot \text{IG}_k / \sum \text{IG} + (1-\rho)/P$ | Adapts to which features predict duration; $\rho = 0.95$ |
+| Similarity | $s(q,p) = \exp(-d_G/h) \cdot \tau_p$ | Trust-weighted; bandwidth $h = 0.5$ |
+| Confidence | $\text{Conf} = \min(1,\ n_{\text{eff}}/k_0) \cdot \bar{s}$ | ESS-normalised mean similarity |
+| Abstention | $\max s < 0.15$ or $n_{\text{eff}} < 3.0$ | Declines to predict when evidence is thin |
 
 **Results (191 planned events):** 0% abstention rate; mean confidence = 0.786; mean n_eff = 4.97; MAE = 40.9 min; 57.6% of predictions within 20 min of actual. Top feature weight: `duration_clean` (57.2%).
 
@@ -894,27 +931,35 @@ New additive module (`src/layer4_planned_event_retrieval.py`). Trust-weighted Go
 
 ```
 Historical ASTraM Data (8,173 incidents, Nov 2023 – Apr 2024)
-        |
-        v
+        │
+        ▼
 Layer 1 — Duration Intelligence
 (KM, Cox PH, Frailty, AFT, RSF, RMST, GMM archetypes)
-        |
-        v
+        │
+        ▼
 Layer 2 — Spatial Intelligence
 (Gi*, OBI, Hawkes self-excitation, Future Risk, Persistence index)
-        |
-        v
-Layer 3 — Resource Optimization (v2)         Layer 3 — Corridor Fragility (Hawkes)
-(PCA-learned DIS, LP allocation, Dijkstra)   (marked Hawkes + EB shrinkage + LR test)
-        |                                              |
-        +──────────────────────┬────────────────────+
-                               v
-Layer 4 — Event Intelligence (v3)            Layer 4 — Prototype Retrieval
-(Gower+Hybrid, IMS, KG, counterfactuals)     (trust-weighted Gower + ESS confidence)
-        |
-        v
-Operational Action Plan
-(Deployment Blueprint + Growing Knowledge Base)
+        │
+        ├──────────────────────────────┐
+        ▼                              ▼
+Layer 3 — Resource Optimization      Layer 3 — Corridor Fragility
+(PCA-learned DIS, LP, Dijkstra)       (marked Hawkes + EB shrinkage + LR test)
+        │                              │
+        └──────────────┬───────────────┘
+                       ▼
+Layer 4 — Event Intelligence + Prototype Retrieval
+(Gower/K-Medoids, evidence tiers, L3 fallback, knowledge base)
+        │
+        ▼
+Layer 4.5 — Predictive Fusion (leak-free)
+(daily as-of features → CatBoost → JOSV → duration quality gate)
+        │
+        ▼
+Layer 5 — Robust Prescriptive Optimization
+(scenario generation → CVaR MILP → allocation + diversion + shadow prices)
+        │
+        ▼
+Operational Action Plan + Dashboard (`outputs/frontend/`, `layer5_frontend_export.csv`)
 ```
 
 ## Project structure
@@ -923,81 +968,67 @@ Operational Action Plan
 converge/
 ├── data/
 │   ├── events_raw.csv
-│   └── events_clean.parquet
+│   ├── events_clean.parquet
+│   └── events_clean.csv                 # written by data_pipeline.py
 ├── outputs/
 │   ├── missingness_test.txt
-│   ├── layer1_survival_quantiles.csv
-│   ├── layer1_frailty_scores.csv
-│   ├── layer1_rmst_summary.csv
-│   ├── layer1_duration_predictions.csv
-│   ├── layer1_survival_risk_scores.csv
-│   ├── layer1_incident_archetypes.csv
-│   ├── layer1_stacked_survival_predictions.csv
-│   ├── layer2_hotspots.csv
-│   ├── layer2_operational_burden_index.csv
-│   ├── layer2_hawkes_cascade_risk.csv
-│   ├── layer2_future_hotspot_risk.csv
-│   ├── layer2_hotspot_persistence.csv
-│   ├── layer2_severity_hotspots.csv
-│   ├── layer2_network_hotspots.csv
-│   ├── layer2_obi_stability.csv
-│   ├── layer3_disruption_impact_scores.csv
-│   ├── layer3_manpower_recommendations.csv
-│   ├── layer3_barricading_plan.csv
-│   ├── layer3_diversion_recommendations.csv
-│   ├── layer3_tow_placement.csv
-│   ├── layer3_deployment_blueprints.json
-│   ├── layer3_full_dashboard.csv
-│   ├── layer4_event_features.csv
-│   ├── layer4_nn_index.pkl
-│   ├── layer4_event_index_metadata.csv
-│   ├── layer4_encoders.pkl
-│   ├── layer4_retrieval_results.csv
-│   ├── layer4_event_outcome_predictions.csv
-│   ├── layer4_explainable_recommendations.txt
-│   ├── layer4_explainable_recommendations.json
-│   ├── layer4_scenario_simulations.json
-│   ├── layer4_event_knowledge_base.json
-│   ├── layer3_corridor_fragility.csv       # Hawkes fragility per corridor
-│   ├── layer3_fragility_validation.csv     # LR test results
-│   ├── layer3_zone_fragility_summary.csv   # zone-aggregated fragility
-│   ├── layer4_planned_event_retrieval.csv  # prototype retrieval results (191 events)
-│   ├── layer4_planned_event_prototypes.csv # 47 KMeans prototypes
-│   ├── layer4_retrieval_diagnostics.csv    # per-event confidence + error
-│   ├── layer4_prototype_utilization.csv    # prototype usage statistics
-│   ├── layer4_retrieval_feature_weights.json # IG-shrinkage feature weights
-│   ├── layer4_example_retrievals.json      # 5 annotated examples
-│   └── layer4_simulation_demos.json        # 3 demo simulations
-│   ├── layer45_asof_feature_matrix.csv     # leak-free training features
-│   ├── layer45_operational_state_vector.csv # JOSV for Layer 5
-│   ├── layer45_metrics.csv                 # backtest metrics
-│   ├── layer45_feature_registry.json       # feature leakage audit
-│   └── layer45_model_artifacts/            # CatBoost + calibrator
+│   ├── frontend/                        # dashboard copies (frontend_exports.py)
+│   ├── layer1_*                         # survival quantiles, RSF, frailty, stacked, SHAP, …
+│   ├── layer2_*                         # hotspots, OBI, Hawkes, network, stability, …
+│   ├── layer3_*                         # DIS, LP, barricades, diversions, fragility, …
+│   ├── layer4_*                         # retrieval, prototypes, knowledge base, …
+│   ├── layer45_*                        # as-of features, JOSV, scenario-ready duration, metrics
+│   ├── layer45_model_artifacts/         # CatBoost, calibrator, JOSV scaler, cause τ
+│   ├── layer5_*                         # allocation, diversion, CVaR, shadow prices, …
+│   └── layer5_model_artifacts/          # hyperparameter JSON snapshot
 ├── src/
-│   ├── data_pipeline.py
-│   ├── layer1_survival.py              # baseline + advanced survival
-│   ├── layer2_hotspots.py              # baseline + advanced hotspots
-│   ├── layer1_research_upgrades.py     # frailty LRT + stacked ensemble
-│   ├── layer2_research_upgrades.py     # MSHI + OBI stability
-│   ├── layer3_resource_optimization.py # DIS, manpower, barricades, diversions, tow
-│   ├── layer3_corridor_fragility.py    # marked Hawkes, zone pooling, EB shrinkage, LR test
-│   ├── layer4_event_intelligence.py    # retrieval, prediction, simulation, knowledge base
-│   ├── layer4_planned_event_retrieval.py # prototype retrieval (legacy KMeans)
-│   ├── layer4_methodology_upgrades.py    # leakage-free Gower + K-Medoids + confidence
-│   ├── layer4_operational_upgrades.py    # evidence tiers, quantiles, L3 fallback
-│   ├── layer45_predictive_fusion.py      # leak-free predictive fusion → JOSV
-│   ├── layer45_asof_features.py          # daily as-of surrogate features
-│   ├── layer45_time_split.py             # chronological backtest split
-│   ├── layer45_feature_registry.py       # leakage audit + feature registry
-│   ├── layer3_methodology_upgrades.py  # PCA bootstrap + log fragility
-│   ├── frontend_exports.py             # dashboard export layer
+│   ├── data_pipeline.py                 # clean + trust_score + MNAR test
+│   ├── layer1_survival.py               # baseline KM/Cox + advanced survival
+│   ├── layer2_hotspots.py               # baseline Gi* + advanced hotspot intelligence
+│   ├── layer1_research_upgrades.py      # frailty LRT + stacked ensemble
+│   ├── layer2_research_upgrades.py      # SPS/NHI + OBI stability + Hawkes validation
+│   ├── layer3_resource_optimization.py  # DIS, manpower, barricades, diversions, tow
+│   ├── layer3_corridor_fragility.py     # marked Hawkes + zone pooling + LR test
+│   ├── layer3_methodology_upgrades.py   # PCA bootstrap + log fragility
+│   ├── layer4_event_intelligence.py     # retrieval, prediction, simulation, KB
+│   ├── layer4_planned_event_retrieval.py
+│   ├── layer4_methodology_upgrades.py   # leakage-free Gower + K-Medoids
+│   ├── layer4_operational_upgrades.py   # evidence tiers + quantiles + L3 fallback
+│   ├── layer45_time_split.py            # chronological backtest split
+│   ├── layer45_asof_features.py         # daily as-of surrogate features
+│   ├── layer45_feature_registry.py      # leakage audit + feature registry
+│   ├── layer45_duration_guard.py        # monotone sanitization + reliability
+│   ├── layer45_tail_models.py           # tail-risk classifier + mixture
+│   ├── layer45_predictive_fusion.py     # CatBoost fusion → JOSV + exports
+│   ├── layer5_robust_optimization.py   # CVaR MILP → allocation + diversion
+│   ├── frontend_exports.py              # dashboard export layer
 │   └── validate_consistency.py
+├── .cursorignore
 ├── requirements.txt
 ├── HANDOFF.md
 └── README.md
 ```
 
+### Key Layer 4.5 outputs
+
+| File | Purpose |
+|------|---------|
+| `layer45_scenario_ready_duration.csv` | **Canonical Layer 5 duration input** (sanitized quantiles) |
+| `layer45_operational_state_vector_normalized.csv` | Normalized JOSV for optimization weights |
+| `layer45_asof_feature_matrix.csv` | Leak-free training feature matrix |
+| `layer45_metrics.csv` | Backtest metrics (RMSE, RMSLE, guard rates) |
+| `layer45_feature_registry.json` | Feature availability + leakage audit |
+
+### Key Layer 5 outputs
+
+| File | Purpose |
+|------|---------|
+| `layer5_resource_allocation.csv` | Per-site officers / barricades / tow / QRU + diversion |
+| `layer5_diversion_recommendations.csv` | Route A/B/C per diverted site |
+| `layer5_cvar_summary.csv` | Tail-risk summary at multiple $\alpha$ levels |
+| `layer5_shadow_prices.csv` | Marginal value of +1 unit per resource |
+| `layer5_frontend_export.csv` | Dashboard-ready allocation summary |
+
 ## Next layers (planned)
 
-- Layer 5: Optimization engine consuming JOSV from Layer 4.5
-- Layer 6: Bayesian post-event learning loop (updates priors after each incident closes)
+- **Layer 6:** Bayesian post-event learning loop (updates priors after each incident closes)
