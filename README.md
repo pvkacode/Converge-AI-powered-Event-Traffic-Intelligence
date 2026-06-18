@@ -316,6 +316,52 @@ Backtest mode trains on the early window and evaluates Mar–Apr 2024. Deploymen
 
 Duration regression trains on `log1p(duration_min)`; high-impact uses cause-specific \(\tau_c = P_{75}(\text{duration} \mid \text{cause})\) from the training window only.
 
+#### Layer 4.5 Duration Quality Gate (additive patch — `layer45_duration_guard.py`, `layer45_tail_models.py`)
+
+**Why raw quantiles are not safe for Layer 5.**
+The CatBoost quantile regressors can produce inversions (p50 > p80) when the training distribution has sparse strata, or implausible p95 values when a heavy tail is poorly supported. If Layer 5 uses these raw values directly for resource optimisation it may over-allocate to events with pathologically high p95, or violate monotone constraints in scenario generation.
+
+**What the duration quality gate does (strictly additive — no existing code is changed).**
+
+| Phase | What happens |
+|-------|-------------|
+| **A. Raw prediction** | Existing CatBoost quantile regressors produce raw p50/p80/p95 (log-space, back-transformed). Saved to `layer45_duration_raw_predictions.csv` for diagnostics. |
+| **B. Tail-risk model** | A separate CatBoostClassifier trained on `y_tail = 1[duration > τ_cause]` (training window only) produces `tail_risk_prob` per event. |
+| **C. Tail-aware mixture** | `Q_mix = (1 - π) · Q_typ + π · Q_tail` where `π = tail_risk_prob` and `Q_tail` comes from training-window tail-event quantile proxies (cause-specific where supported, global otherwise). This preserves true heavy-tail behaviour while damping isolated outlier spikes. |
+| **D. Monotone sanitization** | Sort the triple (p50, p80, p95) row-wise to enforce `Q50 ≤ Q80 ≤ Q95`. Then apply the hard safety clamp: `Q95_safe = min(Q95, max(10·Q50, 1440 min))`. If clamping pushes Q95 below Q80, re-sort. |
+| **E. Duration reliability** | `R = 0.25·Cal + 0.20·Retrieval + 0.20·(1−Novelty) + 0.15·(1−Drift) + 0.10·Support + 0.10·(1−Width)` all in [0, 1]. Components normalised using training-window statistics only. |
+| **F. Fallback blending** | Fallback quantiles from the as-of feature chain (cause×corridor → cause → corridor → global) are blended: `Q_final = R · Q_safe + (1−R) · Q_fallback`. When reliability is low the fallback dominates; when high the model dominates. |
+| **G. Sanity flags** | Per-row: `quantile_crossing_flag`, `clamp_flag`, `fallback_blend_flag`, `tail_risk_flag`, `duration_sanity_flag`, `duration_guard_reason`. |
+| **H. Scenario-ready bundle** | `layer45_scenario_ready_duration.csv` — the canonical Layer 5 input. |
+
+**How monotone sanitization is enforced.**
+Row-wise sort of the quantile triple (numpy `sort` along axis=1) is deterministic and always produces a monotone result without iterative optimisation. The safety clamp then prevents p95 from exceeding `max(10·p50, 1440 min)` — 10× the median is a generous but bounded upper envelope; 1440 min = 24 hours is the absolute floor.
+
+**How the tail-risk mixture works.**
+The tail-risk probability `π` is calibrated using isotonic regression on validation-set predictions. It acts as a continuous mixing weight between the typical-regime quantile model and conservative quantile proxies built from the training tail. This means:
+- events predicted as typical (`π ≈ 0`) get mostly the quantile model's output;
+- events predicted as tail (`π ≈ 1`) get quantiles shifted toward the observed tail distribution;
+- the mix never invents values outside the convex hull of the two regimes.
+
+**How fallback blending works.**
+The reliability score `R` is a weighted deterministic composite of six signals. When `R < 0.5` the fallback blend flag fires and the as-of quantile (pre-computed from history strictly before each event) dominates the final output. This means even if the model fails completely, the output remains a reasonable historical estimate — not a raw extrapolation.
+
+**High-impact decision threshold tuning.**
+Because cause-specific `τ_c` thresholds raise the base rate in some strata and reduce recall, an F-beta (β=2) optimal decision threshold is selected per cause on the validation window. This does not change labels or training — it is a post-hoc operating-point selection that restores operational recall while preserving calibrated probability output.
+
+**What Layer 5 must consume.**
+
+| Layer 5 input | File | Notes |
+|---------------|------|-------|
+| Safe duration quantiles | `layer45_scenario_ready_duration.csv` | `safe_duration_p50/p80/p95`, `duration_reliability`, `tail_risk_prob`, `duration_sanity_flag`, `duration_guard_reason` |
+| Normalized JOSV | `layer45_operational_state_vector_normalized.csv` | Includes both `raw_duration_*` (diagnostics) and `safe_duration_*` (optimisation) columns |
+
+**What Layer 5 must NOT consume.**
+
+`layer45_duration_raw_predictions.csv` — raw unsanitized quantiles, kept only for diagnostics.
+
+**This patch is strictly additive.** No existing layer files were modified. The purpose is to prevent bad tail predictions from contaminating resource optimisation.
+
 ### Computational complexity (approximate, n=8k incidents)
 
 | Module | Complexity | Runtime (local) |
