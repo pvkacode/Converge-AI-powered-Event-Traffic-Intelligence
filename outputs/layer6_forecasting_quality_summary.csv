@@ -1,0 +1,12 @@
+metric,value
+95pct Coverage,0.865753
+95pct Coverage Param Only,0.334247
+Coverage Delta,0.531507
+Mean Sharpness,6.693964
+Median Sharpness,5.06135
+CRPS,1.164332
+Mean Predictive SD,1.707645
+Mean Posterior SD,0.555055
+Mean Observation SD,1.497054
+Sharpness Efficiency,0.129333
+Coverage Penalty,0.084247

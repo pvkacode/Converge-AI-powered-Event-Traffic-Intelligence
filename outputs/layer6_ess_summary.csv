@@ -1,0 +1,120 @@
+stratum_cause,stratum_corridor,prior_level,n_eff_feedback,ci95_width_logspace,posterior_sigma_log,prior_sigma_log,prior_influence_lambda,prior_dominated,uncertainty_flag,notes
+accident,Bellary Road 1,stratum,1.87,0.1422,0.036279,0.901223,0.0016,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+accident,Bellary Road 2,stratum,2.0,0.7584,0.193475,0.533436,0.1315,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+accident,Hosur Road,stratum,1.0,0.0039,0.001,1.379345,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+accident,Non-corridor,stratum,3.87,2.1071,0.537513,0.856099,0.3942,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+accident,ORR North 1,stratum,1.99,0.537,0.136998,0.423788,0.1045,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+accident,Old Madras Road,cause,1.0,0.0039,0.001,0.748361,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+accident,Tumkur Road,stratum,1.98,0.7122,0.181688,0.23338,0.6061,True,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+congestion,Hennur Main Road,stratum,1.99,0.2026,0.051694,0.375206,0.019,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+congestion,Non-corridor,stratum,2.0,3.2335,0.82488,1.053916,0.6126,True,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+congestion,ORR North 1,cause,2.97,1.2808,0.326735,1.076465,0.0921,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+construction,Bellary Road 1,stratum,1.0,0.0039,0.001,1.946885,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+construction,IRR(Thanisandra road),cause,1.0,0.0039,0.001,2.274135,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+construction,Mysore Road,stratum,1.0,0.0039,0.001,3.649244,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+construction,Non-corridor,stratum,19.96,2.0039,0.5112,2.744246,0.0347,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+construction,ORR East 1,stratum,1.0,0.0039,0.001,0.430933,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+construction,ORR East 2,stratum,14.19,0.0312,0.007971,0.041344,0.0372,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+construction,ORR North 1,stratum,1.0,0.0039,0.001,1.738071,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+construction,ORR North 2,stratum,3.0,6.5009,1.658386,3.356424,0.2441,False,high,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+construction,ORR West 1,cause,1.0,0.0039,0.001,2.274135,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+construction,West of Chord Road,cause,1.0,0.0039,0.001,2.274135,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+others,Bellary Road 1,stratum,6.56,1.0852,0.276834,1.470084,0.0355,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+others,Bellary Road 2,stratum,1.9,1.5368,0.392052,1.657044,0.056,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+others,Hennur Main Road,cause,1.0,0.0039,0.001,1.650155,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+others,Hosur Road,stratum,1.0,0.0039,0.001,1.373387,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+others,IRR(Thanisandra road),cause,1.0,0.0039,0.001,1.650155,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+others,Magadi Road,stratum,3.61,1.7776,0.45348,1.352761,0.1124,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+others,Mysore Road,stratum,4.84,2.1645,0.552179,1.306169,0.1787,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+others,Non-corridor,stratum,25.98,1.1976,0.305509,1.545494,0.0391,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+others,ORR East 2,stratum,2.0,0.7497,0.191244,1.813279,0.0111,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+others,ORR North 1,cause,1.0,0.0039,0.001,1.650155,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+others,ORR North 2,stratum,1.0,0.0039,0.001,1.307122,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+others,ORR West 1,cause,2.0,0.7762,0.198019,1.650155,0.0144,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+others,Old Airport Road,stratum,1.0,0.0039,0.001,0.716829,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+others,Old Madras Road,stratum,1.0,0.0039,0.001,0.44387,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+others,Tumkur Road,stratum,4.69,1.9388,0.494597,1.593887,0.0963,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+others,Varthur Road,cause,1.0,0.0039,0.001,1.650155,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+others,West of Chord Road,stratum,2.78,1.647,0.420163,0.531979,0.6238,True,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+pot_holes,Bellary Road 1,stratum,2.98,1.7439,0.44488,1.590109,0.0783,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+pot_holes,CBD 1,stratum,1.0,0.0039,0.001,1.311226,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+pot_holes,CBD 2,cause,1.0,0.0039,0.001,2.128108,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+pot_holes,Magadi Road,stratum,2.93,0.6796,0.173357,1.055312,0.027,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+pot_holes,Mysore Road,stratum,2.91,1.0893,0.277878,1.067217,0.0678,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+pot_holes,Non-corridor,stratum,27.92,2.0868,0.532357,2.139018,0.0619,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+pot_holes,ORR East 1,stratum,1.0,0.0039,0.001,0.663847,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+pot_holes,ORR North 1,cause,1.0,0.0039,0.001,2.128108,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+pot_holes,ORR West 1,cause,1.0,0.0039,0.001,2.128108,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+pot_holes,Old Airport Road,cause,1.0,0.0039,0.001,2.128108,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+pot_holes,Old Madras Road,stratum,2.86,1.0867,0.277216,0.408235,0.4611,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+pot_holes,Tumkur Road,cause,1.0,0.0039,0.001,2.128108,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+pot_holes,Varthur Road,cause,1.0,0.0039,0.001,2.128108,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+pot_holes,West of Chord Road,cause,1.98,1.0362,0.264327,2.128108,0.0154,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+procession,Mysore Road,cause,1.0,0.0039,0.001,1.781776,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+procession,Non-corridor,stratum,3.63,2.2249,0.567584,1.722629,0.1086,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+protest,Non-corridor,stratum,1.0,0.0039,0.001,1.554257,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+public_event,Mysore Road,cause,1.0,0.0039,0.001,1.839605,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+public_event,Non-corridor,stratum,1.0,0.0039,0.001,1.398965,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+public_event,Old Airport Road,cause,5.0,0.0455,0.011617,1.839605,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+road_conditions,Bellary Road 1,stratum,1.96,4.5518,1.161182,2.333023,0.2477,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+road_conditions,Bellary Road 2,cause,1.85,6.1849,1.577783,2.578965,0.3743,False,high,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+road_conditions,CBD 2,stratum,1.0,0.0039,0.001,2.400044,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+road_conditions,Magadi Road,cause,2.9,0.8903,0.227114,2.578965,0.0078,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+road_conditions,Mysore Road,cause,1.0,0.0039,0.001,2.578965,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+road_conditions,Non-corridor,stratum,7.81,3.6505,0.931248,1.939857,0.2305,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+road_conditions,ORR West 1,stratum,1.0,0.0039,0.001,1.887536,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+road_conditions,West of Chord Road,cause,1.0,0.0039,0.001,2.578965,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+test_demo,Non-corridor,cause,1.0,,,,,,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+tree_fall,Airport New South Road,cause,2.0,1.4467,0.369053,1.420823,0.0675,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+tree_fall,Bannerghata Road,cause,1.0,0.0039,0.001,1.420823,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+tree_fall,Bellary Road 1,cause,7.37,2.069,0.527798,1.420823,0.138,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+tree_fall,Hosur Road,cause,1.0,0.0039,0.001,1.420823,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+tree_fall,Magadi Road,cause,1.0,0.0039,0.001,1.420823,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+tree_fall,Mysore Road,cause,3.79,2.0204,0.51541,1.420823,0.1316,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+tree_fall,Non-corridor,stratum,58.2,0.9393,0.239622,1.451549,0.0273,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+tree_fall,ORR North 1,cause,2.98,1.6572,0.422759,1.420823,0.0885,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+tree_fall,ORR West 1,cause,3.62,3.0071,0.767116,1.420823,0.2915,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+tree_fall,Old Madras Road,cause,1.0,0.0039,0.001,1.420823,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+tree_fall,Tumkur Road,cause,4.74,1.1277,0.287691,1.420823,0.041,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+tree_fall,West of Chord Road,cause,5.83,2.9254,0.746265,1.420823,0.2759,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+vehicle_breakdown,Airport New South Road,stratum,1.0,0.0039,0.001,0.682962,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+vehicle_breakdown,Bannerghata Road,stratum,8.61,0.8462,0.215876,0.570972,0.1429,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+vehicle_breakdown,Bellary Road 1,stratum,32.19,0.5785,0.147577,0.897022,0.0271,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+vehicle_breakdown,Bellary Road 2,stratum,13.08,1.0618,0.270872,0.86063,0.0991,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+vehicle_breakdown,CBD 1,stratum,1.0,0.0039,0.001,0.889258,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+vehicle_breakdown,CBD 2,stratum,2.0,0.3155,0.080489,0.710227,0.0128,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+vehicle_breakdown,Hennur Main Road,stratum,2.0,0.2015,0.051399,0.699662,0.0054,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+vehicle_breakdown,Hosur Road,stratum,15.19,0.8177,0.208585,0.895204,0.0543,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+vehicle_breakdown,IRR(Thanisandra road),stratum,3.9,1.0714,0.273313,0.485966,0.3163,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+vehicle_breakdown,Magadi Road,stratum,23.48,0.5265,0.134307,0.902516,0.0221,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+vehicle_breakdown,Mysore Road,stratum,57.09,0.4486,0.114427,0.934608,0.015,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+vehicle_breakdown,Non-corridor,stratum,135.2,0.3028,0.077248,0.855589,0.0082,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+vehicle_breakdown,ORR East 1,stratum,16.6,1.0292,0.262556,0.758283,0.1199,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+vehicle_breakdown,ORR East 2,stratum,5.83,1.1768,0.300192,0.829935,0.1308,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+vehicle_breakdown,ORR North 1,stratum,14.42,0.7309,0.186456,0.805966,0.0535,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+vehicle_breakdown,ORR North 2,stratum,14.98,0.7796,0.198881,0.944143,0.0444,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+vehicle_breakdown,ORR West 1,stratum,7.52,0.8215,0.209558,0.818218,0.0656,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+vehicle_breakdown,Old Airport Road,stratum,9.4,1.3966,0.356284,1.107401,0.1035,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+vehicle_breakdown,Old Madras Road,stratum,15.79,0.5528,0.141025,0.941537,0.0224,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+vehicle_breakdown,Tumkur Road,stratum,44.51,0.5183,0.132222,0.709001,0.0348,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+vehicle_breakdown,Varthur Road,stratum,5.61,1.2531,0.319671,0.933729,0.1172,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+vehicle_breakdown,West of Chord Road,stratum,5.81,0.5739,0.146404,0.697614,0.044,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+water_logging,Bannerghata Road,cause,8.4,3.1863,0.812832,1.745658,0.2168,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+water_logging,Bellary Road 1,cause,10.25,2.3043,0.587828,1.745658,0.1134,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+water_logging,Bellary Road 2,stratum,2.98,2.0209,0.515538,2.249477,0.0525,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+water_logging,CBD 2,cause,1.86,2.6031,0.664044,1.745658,0.1447,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+water_logging,Hennur Main Road,cause,2.0,0.0118,0.003021,1.745658,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+water_logging,Hosur Road,cause,4.59,3.1784,0.81081,1.745658,0.2157,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+water_logging,Magadi Road,cause,1.96,4.1707,1.063951,1.745658,0.3715,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+water_logging,Mysore Road,cause,20.89,2.1257,0.542273,1.745658,0.0965,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+water_logging,Non-corridor,stratum,54.85,1.1412,0.291119,1.878675,0.024,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+water_logging,ORR East 1,stratum,4.48,2.9808,0.760407,0.863192,0.776,True,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+water_logging,ORR East 2,cause,3.0,4.5457,1.159613,1.745658,0.4413,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+water_logging,ORR North 1,cause,4.95,2.8152,0.718166,1.745658,0.1693,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+water_logging,ORR North 2,cause,2.96,3.9573,1.009525,1.745658,0.3344,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+water_logging,ORR West 1,stratum,5.41,2.5475,0.649871,1.724004,0.1421,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+water_logging,Old Airport Road,cause,1.0,0.0039,0.001,1.745658,0.0,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+water_logging,Old Madras Road,cause,4.75,2.703,0.68953,1.745658,0.156,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+water_logging,Tumkur Road,cause,5.74,3.1927,0.814453,1.745658,0.2177,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+water_logging,Varthur Road,cause,4.82,3.4698,0.885148,1.745658,0.2571,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5
+water_logging,West of Chord Road,cause,2.95,4.2177,1.075956,1.745658,0.3799,False,ok,ESS = Kish ESS from exponential-forgetting weights; prior_dominated = lambda>0.5

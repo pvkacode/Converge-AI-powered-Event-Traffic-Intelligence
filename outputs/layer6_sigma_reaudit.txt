@@ -1,0 +1,197 @@
+================================================================================
+LAYER 6 SIGMA RE-AUDIT (PART B)
+================================================================================
+Audit date: 2026-06-19
+Scope: Read-only. No code modified. No outputs regenerated.
+Trigger: sigma_log=0.0582, n_eff_feedback=874.1, sigma_log*sqrt(n_eff)≈1.72
+
+Previous audit verdict: POSTERIOR_SD
+This re-audit traces var_post to first principles and tests the SE hypothesis.
+
+================================================================================
+ON-DISK GLOBAL POSTERIOR VALUES (source of numeric example)
+================================================================================
+File: outputs/layer6_global_posterior_summary.csv (generated 2026-06-19T10:22:12Z)
+  prior_sigma_log     = 1.239379   => var_prior  = 1.5361
+  posterior_sigma_log = 0.05818    => var_post   = 0.003385
+  n_eff_feedback      = 874.14
+
+Computed identities:
+  sigma_log * sqrt(n_eff) = 0.05818 * 29.4318 = 1.7201
+  sqrt(var_data) inferred from conjugate inversion = 1.7220  (see below)
+
+================================================================================
+FULL DERIVATION CHAIN FOR var_post / sigma_log
+================================================================================
+
+STAGE 1 — Observation transform
+  y = log1p(duration_min)   [log-minutes]
+
+STAGE 2 — Feedback observation variance (var_data)
+  File: src/layer6_bayesian_duration.py
+  Function: weighted_stats(y, w)  lines 61-68
+  var_data = weighted mean squared deviation of feedback log-durations
+  Global path uses _robust_trimmed_stats(y_all, w_all)  lines 115-157, 418-420
+
+  Answer Q2: var_data is the (trimmed/weighted) SAMPLE VARIANCE of individual
+  log-duration OBSERVATIONS — NOT variance of the sample mean, NOT pooled
+  posterior variance. It is observational/likelihood spread sigma_obs^2.
+
+STAGE 3 — Prior variance (var_prior)
+  File: src/layer6_bayesian_duration.py  _extract_priors() lines 164-203
+  var_prior = sample variance (or trimmed variance) of prior-period log durations
+  Used in conjugate update as prior variance on the LATENT MEAN mu.
+
+STAGE 4 — Conjugate posterior (var_post)
+  File: src/layer6_bayesian_duration.py  normal_normal_posterior() lines 75-90
+
+    tau_prior = 1 / var_prior
+    tau_data  = n_eff / var_data
+    tau_post  = tau_prior + tau_data
+    var_post  = 1 / tau_post
+    sigma_log = sqrt(var_post)
+
+  Bayesian model encoded:
+    mu ~ N(mu_prior, var_prior)           [prior on latent log-mean]
+    y_bar | mu ~ N(mu, var_data / n_eff) [information from effective sample]
+    mu | D ~ N(mu_post, var_post)
+
+STAGE 5 — Global export
+  global_dict["global_posterior"]["sigma_log"] = sqrt(var_gp)  line 497
+
+================================================================================
+NUMERIC INVERSION (global posterior on disk)
+================================================================================
+From var_post = 1 / (1/var_prior + n_eff/var_data):
+
+  n_eff/var_data = 1/var_post - 1/var_prior
+                 = 295.42 - 0.651
+                 = 294.77
+  var_data = n_eff / 294.77 = 2.9654
+  sqrt(var_data) = 1.722
+
+Check:
+  sqrt(var_data / n_eff) = sqrt(2.9654 / 874.14) = 0.05824 ≈ sigma_log (0.05818)
+
+Data-precision share:
+  tau_data / (tau_data + tau_prior) = 0.999997
+
+Interpretation: Global posterior is DATA-DOMINATED. Prior contributes ~0.03% of
+total precision. Therefore:
+
+  var_post ≈ var_data / n_eff
+  sigma_log ≈ sqrt(var_data / n_eff)
+
+Algebraic identity (NOT a bug):
+  sigma_log * sqrt(n_eff) ≈ sqrt(var_data) ≈ 1.72
+
+This equals the OBSERVATION standard deviation in log space, not because sigma_log
+IS observation SD, but because multiplying posterior SD of mu by sqrt(n_eff)
+recovers observational spread when the posterior is dominated by the likelihood.
+
+Analogy (frequentist): SE(mean) = SD(sample)/sqrt(n). Here sigma_log ≈ SE(mean)
+numerically because data precision overwhelms prior — but it is still computed as
+Bayesian posterior SD of mu, not as an explicit SE formula s/sqrt(n).
+
+================================================================================
+ANSWERS TO SPECIFIC QUESTIONS
+================================================================================
+
+Q1. What does var_post represent?
+  (a) posterior variance of mu  — YES (CORRECT)
+  (b) posterior predictive variance — NO (that would be var_post + var_data)
+  (c) observational variance — NO (that is var_data)
+  (d) standard error variance — NO as a stored quantity; numerically close to
+      var_data/n_eff when prior is weak/data-dominated
+
+Q2. In tau_data = n_eff / var_data, what is var_data?
+  Weighted (or trimmed) sample variance of log-duration observations in the
+  feedback batch. Individual-level spread, not mean variance.
+
+Q3. If n_eff becomes very large, should sigma_log shrink toward zero?
+  YES — holding var_data fixed, var_post ≈ var_data/n_eff -> 0 as n_eff -> inf.
+  This is correct behavior for uncertainty about the mean mu.
+
+Q4. Does sigma_log * sqrt(n_eff) ≈ constant emerge from the implemented formula?
+  YES — whenever tau_data >> tau_prior:
+    sigma_log * sqrt(n_eff) -> sqrt(var_data)
+  For global posterior, sqrt(var_data) ≈ 1.72 (constant for this batch).
+  This is an EXPECTED algebraic consequence, not evidence of mislabeling.
+
+Q5. Is sigma_log uncertainty of mu, y, or sample mean?
+  Uncertainty of the LATENT LOG-MEAN mu (posterior SD of parameter).
+  NOT uncertainty of a new observation y (needs + var_data).
+  Numerically similar to uncertainty of sample mean when prior is weak.
+
+Q6. For entropy — is sigma_log mathematically correct?
+  YES for GAUSSIAN PARAMETER ENTROPY H(N(mu, sigma_log^2)) on the distribution
+  of mu. Entropy/KL in _compute_entropy_summary use sigma as parameter scale.
+
+Q7. For ESS — is sigma_log mathematically correct?
+  PARTIAL: Kish ESS (n_eff_feedback) is independent of sigma — CORRECT.
+  ci95_width = 2*1.96*sigma_log is CORRECT for a 95% credible interval on mu.
+  It is NOT predictive interval width for y_new.
+
+Q8. For posterior predictive checks — is sigma_log mathematically correct?
+  AFTER predictive-scale patch: PPC uses predictive_sd = sqrt(var_post + var_obs),
+  NOT sigma_log alone — CORRECT for future y.
+  sigma_log alone would be WRONG for PPC (parameter-only intervals too narrow).
+
+Q9. Should global entropy row rename sigma_log -> posterior_sd_mu?
+  RECOMMENDED YES for documentation clarity. The quantity IS posterior SD of mu.
+  Renaming would reduce confusion with observation SD and predictive SD.
+
+================================================================================
+DEPENDENCY GRAPH (sigma_log / var_post)
+================================================================================
+
+feedback log-durations + weights
+        |
+        v
+weighted_stats / _robust_trimmed_stats --> var_data (observation variance)
+        |
+prior-period log-durations --> var_prior (sample variance used as prior on mu)
+        |
+        v
+normal_normal_posterior --> var_post --> sigma_log = sqrt(var_post)
+        |
+        +--> global JSON/CSV posterior summaries (PARAMETER level)
+        +--> entropy, KL, lambda, ESS ci95_width (PARAMETER level — correct)
+        +--> credible_interval mu +/- z*sigma_log (PARAMETER CI — correct)
+        |
+        v (predictive path, post-patch)
+predictive_sigma(var_post, var_obs) --> PPC, LOO coverage, residuals (CORRECT)
+
+================================================================================
+WHY THE PREVIOUS AUDIT STILL HOLDS (with refinement)
+================================================================================
+
+The observation sigma_log * sqrt(n_eff) ≈ 1.72 does NOT mean sigma_log was a
+standard error mislabeled as population SD. It means:
+
+  sigma_log ≈ sqrt(var_data) / sqrt(n_eff)
+
+which is the correct posterior SD of mu under data-dominated conjugate update.
+
+The previous audit stopped at the correct layer (posterior SD of mu). It did not
+miss a hidden SE computation — there is no sigma/sqrt(n) line in code. The numeric
+relationship the user flagged is the conjugate identity linking mean uncertainty to
+observation spread, not reverse-engineering SE into SD.
+
+================================================================================
+VERDICT (choose exactly one)
+================================================================================
+
+POSTERIOR_SD_OF_MU
+
+NOT: STANDARD_ERROR (not computed as s/sqrt(n); coincides numerically when prior weak)
+NOT: POSTERIOR_PREDICTIVE_SD (would be sqrt(var_post + var_data) ≈ sqrt(2.97) ≈ 1.72
+     for global — note sqrt(var_post)+sqrt(var_obs) is WRONG; var adds inside sqrt)
+NOT: OBSERVATION_SD (observation SD is sqrt(var_data) ≈ 1.72; sigma_log ≈ 0.058)
+
+Clarification: sqrt(var_post + var_data) ≈ sqrt(0.0034 + 2.97) ≈ 1.72 — predictive
+SD is dominated by var_data. Parameter SD (0.058) is much smaller than both.
+
+================================================================================
+END PART B
+================================================================================

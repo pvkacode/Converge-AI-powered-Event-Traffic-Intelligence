@@ -1,0 +1,6 @@
+model,family,score_rule,raw_score,robust_z_score,family_local_weight,bma_family_confident,judge_facing,notes
+duration_catboost,duration,crps_gaussian_logspace,0.933194,-0.6745,0.793963,True,True,"n=1094, sigma_resid=1.716"
+corridor_cause_prior,duration,crps_gaussian_logspace,1.17741,0.6745,0.206037,True,True,"n=1095, uses stratum prior distributions N(mu_prior, sigma_prior)"
+calibration_estimator,calibration,brier_score,0.108406,,,False,False,brier=0.1084; ECE=0.0000 (ECE is diagnostic only — excluded from BMA weighting)
+retrieval_estimator,retrieval,retrieval_residual_proxy_1mf1,0.2,,,False,False,proxy=1-F1_planned=0.2000; hit-rate/MRR not available in l45_metrics
+scenario_surrogate,surrogate,crps_gaussian_logspace_l5surrogate,0.699734,,,False,False,"n=4, L5 lognormal predictive"

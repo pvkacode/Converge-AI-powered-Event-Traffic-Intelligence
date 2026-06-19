@@ -1,0 +1,5 @@
+resource,parameter,shadow_price,sp_robust_z_score,sp_median,sp_mad,budget_cap,total_deployed,utilization_r,n_support,coverage_r,saturation_penalty_r,batch_confidence_r,confidence_score_c_r,gamma_prior,gamma_updated,gamma_delta,exp_shift,posterior_status,ci95_lo,ci95_hi
+police,gamma_p,47898.56,-0.4011,54882.5,11744.78,120.0,120.0,1.0,50,1.0,1,True,0.0,0.18,0.18,0.0,1.0,low_confidence_no_update,0.0232,0.3368
+barricades,gamma_b,24513.91,-1.744,54882.5,11744.78,100.0,100.0,1.0,50,1.0,1,True,0.0,0.1,0.1,0.0,1.0,low_confidence_no_update,0.01,0.198
+tow,gamma_t,61866.45,0.4011,54882.5,11744.78,15.0,15.0,1.0,15,0.3,1,True,0.0,0.25,0.25,0.0,1.0,low_confidence_no_update,0.054,0.446
+qru,gamma_q,71388.12,0.9479,54882.5,11744.78,10.0,10.0,1.0,10,0.2,1,True,0.0,0.3,0.3,0.0,1.0,low_confidence_no_update,0.104,0.496

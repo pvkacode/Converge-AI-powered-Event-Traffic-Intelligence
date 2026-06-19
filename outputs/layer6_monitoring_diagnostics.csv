@@ -1,0 +1,23 @@
+diagnostic_group,metric,value,flag,notes
+posterior_entropy,mean_posterior_entropy_logspace,-1.7197,ok,H = 0.5*ln(2πe) + ln(σ); mean over 119 strata
+posterior_entropy,mean_prior_entropy_logspace,1.6607,ok,Prior entropy baseline
+posterior_entropy,entropy_change_post_minus_prior,-3.3804,ok,Positive = posteriors more uncertain than priors (noisy or contradictory data)
+posterior_entropy,frac_strata_ci_width_grown_gt20pct,0.0,ok,0/119 strata: posterior_sigma > 1.2 × prior_sigma
+calibration_stability,ece_before_posterior_update,0.0,ok,ECE on feedback batch before recalibration
+calibration_stability,ece_after_posterior_update,0.163465,warning,ECE on feedback batch after Beta recalibration
+calibration_stability,brier_raw,0.108406,ok,Raw Brier score (proper scoring rule; lower is better)
+calibration_stability,brier_improvement_from_recalibration,-0.102763,warning,brier_raw - brier_calibrated; positive = recalibration helped
+calibration_stability,calibration_shift_variance_across_bins,0.025975,ok,Variance of per-bin shifts; high = inconsistent recalibration pattern
+calibration_stability,n_bins_miscalibrated_gt005,4.0,warning,Bins where |shift| > 0.05
+calibration_stability,n_bins_severely_miscalibrated_gt015,2.0,warning,Bins where |shift| > 0.15 — immediate recalibration recommended
+knowledge_retention,knowledge_retention_score,0.9578,ok,"KRS = 1 - (7/166). Degraded: 2 prototypes (trust<0.5), 5 duration strata (CI grew >20% or critical trigger)"
+knowledge_retention,n_degraded_prototypes,2.0,warning,Prototypes where trust_updated < 0.5
+knowledge_retention,n_degraded_duration_strata,5.0,ok,Strata: CI grew >20% vs prior OR flagged as critical duration trigger
+prototype_redundancy,n_near_duplicate_prototypes,30.0,warning,"30/47 prototypes share (cause, corridor) with another — candidates for pruning"
+prototype_redundancy,prototype_redundancy_rate,0.6383,warning,"Fraction of prototypes that are near-duplicates by (cause, corridor)"
+retrain_urgency,retrain_urgency_score,0.3553,ok,"Composite U = 0.3*s_drift(0.357) + 0.25*s_calib(0.545) + 0.2*s_unc(0.000) + 0.15*s_trust(0.213) + 0.1*s_trig(0.800). All s_c are normalised to [0,1]; label based on normalised scale."
+retrain_urgency,component_drift,0.3571,ok,"component_raw_value=0.3571 | component_normalized_severity=0.3571 | component_threshold=(0.0, 1.0) | label_basis=normalized_percentile | weight=0.3 | 2 crit + 1 mod / 7 drift tests"
+retrain_urgency,component_calibration,0.5449,warning,"component_raw_value=0.1635 | component_normalized_severity=0.5449 | component_threshold=(0.0, 0.3) | label_basis=normalized_percentile | weight=0.25 | ECE_after=0.1635; range (0.0, 0.3)"
+retrain_urgency,component_uncertainty,0.0,ok,"component_raw_value=0.0000 | component_normalized_severity=0.0000 | component_threshold=(0.0, 0.5) | label_basis=normalized_percentile | weight=0.2 | 0/119 strata CI grew >20%"
+retrain_urgency,component_trust,0.2128,ok,"component_raw_value=0.0426 | component_normalized_severity=0.2128 | component_threshold=(0.0, 0.2) | label_basis=normalized_percentile | weight=0.15 | 2/47 prototypes degraded"
+retrain_urgency,component_triggers,0.8,critical,"component_raw_value=8.0000 | component_normalized_severity=0.8000 | component_threshold=(0.0, 10.0) | label_basis=normalized_percentile | weight=0.1 | 8 critical triggers; range (0.0, 10.0)"

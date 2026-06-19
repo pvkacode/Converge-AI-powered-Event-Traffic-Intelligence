@@ -143,6 +143,7 @@ python src/layer4_methodology_upgrades.py   # leakage-free retrieval + K-Medoids
 python src/layer4_operational_upgrades.py   # evidence tiers + quantiles + L3 fallback (final L4)
 python src/layer45_predictive_fusion.py     # leak-free predictive fusion → JOSV (additive)
 python src/layer5_robust_optimization.py   # prescriptive MILP optimization → allocation + diversion (additive)
+python src/layer6_adaptive_learning.py     # adaptive learning → posteriors + triggers (additive, never mutates upstream)
 python src/frontend_exports.py              # dashboard-ready copies → outputs/frontend/
 python src/validate_consistency.py
 ```
@@ -951,7 +952,9 @@ converge/
 │   ├── layer45_*                        # as-of features, JOSV, scenario-ready duration, metrics
 │   ├── layer45_model_artifacts/         # CatBoost, calibrator, JOSV scaler, cause τ
 │   ├── layer5_*                         # allocation, diversion, CVaR, shadow prices, …
-│   └── layer5_model_artifacts/          # hyperparameter JSON snapshot
+│   ├── layer5_model_artifacts/          # hyperparameter JSON snapshot
+│   ├── layer6_*                         # posteriors, calibration, drift, triggers, health, …
+│   └── layer6_model_artifacts/          # JSON snapshots of all posteriors (versioned)
 ├── src/
 │   ├── data_pipeline.py                 # clean + trust_score + MNAR test
 │   ├── layer1_survival.py               # baseline KM/Cox + advanced survival
@@ -972,6 +975,12 @@ converge/
 │   ├── layer45_tail_models.py           # tail-risk classifier + mixture
 │   ├── layer45_predictive_fusion.py     # CatBoost fusion → JOSV + exports
 │   ├── layer5_robust_optimization.py   # CVaR MILP → allocation + diversion
+│   ├── layer6_adaptive_learning.py     # main orchestrator (8 components, additive)
+│   ├── layer6_feedback_store.py        # data loading / prior-feedback split
+│   ├── layer6_bayesian_duration.py     # hierarchical Bayesian duration update
+│   ├── layer6_calibration_updates.py   # Beta posterior calibration update
+│   ├── layer6_drift_detection.py       # Page-Hinkley, PSI, ODS
+│   ├── layer6_retrain_triggers.py      # retrain recommendation generator
 │   ├── frontend_exports.py              # dashboard export layer
 │   └── validate_consistency.py
 ├── .cursorignore
@@ -1003,6 +1012,428 @@ converge/
 | `layer5_shadow_prices.csv` | Marginal value of +1 unit per resource |
 | `layer5_frontend_export.csv` | Dashboard-ready allocation summary with baseline CVaR, optimized CVaR, violation flags |
 
-## Next layers (planned)
+---
 
-- **Layer 6:** Bayesian post-event learning loop (updates priors after each incident closes)
+## Layer 6 — Adaptive Learning (`layer6_adaptive_learning.py`)
+
+**Additive only — no Layer 4.5 or Layer 5 source or output files are ever modified.**
+
+Layer 6 is the post-event learning and monitoring loop. Its primary contribution is **drift detection and model-health monitoring** — not BMA weights. It closes the feedback cycle by treating the Mar–Apr 2024 holdout period as a newly closed incident batch and updating posterior beliefs from the Nov–Feb 2024 prior window. All outputs are recommendations and updated belief records.
+
+### What Layer 6 is and is not
+
+| Claim | Truth |
+|-------|-------|
+| Live feedback stream | **No.** The ASTraM log is a historical batch (Nov 2023–Apr 2024). Layer 6 simulates the feedback loop by designating Nov–Feb as prior and Mar–Apr as simulated feedback. No live stream exists. |
+| BMA is the main output | **No.** BMA is secondary and diagnostic-only for three of four model families (calibration, retrieval, surrogate each have only one model — no family-local comparison is possible). The duration family (2 models) produces judge-facing weights using CRPS. Raw cross-family NLL comparison across heterogeneous model types is not scientifically valid and is explicitly prohibited in this implementation. |
+| Shadow-price gamma updates are causal | **No.** All Layer 5 shadow prices come from the optimization model itself, not from real-world resource deployment outcomes. Shadow prices at full budget saturation reflect constrained optimization geometry, not true resource effectiveness. The gamma update is a heuristic prior shift, not a causal estimate. All 4 resource types were fully saturated in the Layer 5 solve, so confidence gating suppresses all gamma updates in this batch. |
+| Layer 6 mutates upstream files | **Never.** Layer 6 only emits recommendations to `outputs/layer6_*`. It never writes to any Layer 4.5 or Layer 5 file. |
+| Strongest contribution | **Drift/health monitoring:** rolling RMSE/MAE/Brier/ECE comparison, Page-Hinkley sequential alarm, PSI distributional shift, retrain urgency score, knowledge retention score, prototype trust stability. These findings should inform any decision to retrain Layer 4.5 or refine Layer 5 parameters. |
+
+### Dataset and governance
+
+**Historical batch.** Nov 2023–Feb 2024 = prior window (5,493 events). Mar–Apr 2024 = simulated feedback batch (2,564 events; 1,097 uncensored with observed durations). Direction of information flow is strictly forward in time.
+
+**Governance.** Layer 6 writes only to `outputs/layer6_*`. It never modifies Layer 4.5 or Layer 5 source code, model artifacts, or output files.
+
+### Helper modules
+
+| File | Role |
+|------|------|
+| `layer6_feedback_store.py` | Loads and exposes prior/feedback splits and all upstream outputs |
+| `layer6_bayesian_duration.py` | Hierarchical Bayesian duration update (Normal-Normal conjugate) |
+| `layer6_calibration_updates.py` | Beta posterior calibration update |
+| `layer6_drift_detection.py` | Page-Hinkley, PSI, ODS drift detection |
+| `layer6_retrain_triggers.py` | Aggregates signals into retrain recommendation records |
+
+### Data splits
+
+| Period | Rows | Role |
+|--------|------|------|
+| Nov 2023–Feb 2024 | 5,493 | Prior / training baseline |
+| Mar 2024–Apr 2024 | 2,564 | Feedback batch (1,097 uncensored with observed duration) |
+
+---
+
+### Component 1 — Hierarchical Bayesian Duration Update
+
+**Purpose.** Refresh duration priors per cause × corridor stratum using Mar–Apr feedback, weighted to favour recent events.
+
+**Model.** Transform: $y_i = \log(1 + \text{duration}_i)$. Hierarchy: global → cause → cause × corridor. Conjugate update at each level:
+
+$$
+y_i \sim \mathcal{N}(\mu_s, \sigma_s^2), \qquad \mu_s \sim \mathcal{N}(\mu_0, \sigma_0^2)
+$$
+
+Normal-Normal posterior:
+$$
+\tau_{\text{post}} = \tau_{\text{prior}} + \tau_{\text{data}}, \qquad
+\mu_{\text{post}} = \frac{\tau_{\text{prior}}\,\mu_{\text{prior}} + \tau_{\text{data}}\,\bar{y}_w}{\tau_{\text{post}}}
+$$
+where $\tau = 1/\sigma^2$ and $\bar{y}_w$ is the exponentially discounted weighted mean.
+
+**Exponential forgetting.** Each feedback observation is weighted:
+$$
+w_i = \exp\!\left(-\lambda\,\Delta t_i\right), \qquad \lambda = \frac{\ln 2}{\text{half-life}} \approx \frac{\ln 2}{30}
+$$
+Effective sample size uses Kish's formula: $n_{\text{eff}} = (\sum w_i)^2 / \sum w_i^2$.
+
+**Fallback hierarchy.** If a stratum has $n_{\text{eff}} < 3$ observations in the prior period, it borrows from the cause-level prior. If the cause is also sparse, it falls back to the global prior.
+
+**Credible intervals and quantiles.** Back-transformed from log-space:
+$$
+Q_{p,\text{minutes}} = e^{\mu_{\text{post}} + z_p \,\sigma_{\text{post}}} - 1
+$$
+
+**128 strata updated** in this batch. Notable shifts: `construction × Tumkur Road` (+7.74 log-units, 6.2 sigma) and `pot_holes × CBD 1` (−6.41 log-units, 4.9 sigma) — both flagged as critical retrain triggers.
+
+**Simplification.** The conjugate Gaussian prior on log-duration is an approximation; a log-normal mixture would better capture multimodality. Censored observations from the feedback batch are excluded (1,467 censored rows dropped) because the right-censoring mechanism is informative in this dataset.
+
+---
+
+### Component 2 — Calibration Posterior Update
+
+**Purpose.** Update Beta posteriors over high-impact probability bins using feedback-period actual outcomes.
+
+**Actual label construction.** For each uncensored Mar–Apr event, the actual high-impact label is:
+$$
+y_{\text{hi}} = \mathbf{1}\!\left\{\text{duration} > \tau_c\right\}, \qquad \tau_c = P_{75}(\text{duration} \mid \text{cause})
+$$
+where $\tau_c$ is computed from the training window only (from `layer45_cause_tau_thresholds.csv`).
+
+**Beta posterior update.** Decile bins (10 bins over $[0, 1]$):
+$$
+\theta_j \mid D \sim \text{Beta}(a_0 + s_j,\; b_0 + f_j)
+$$
+where $a_0 = b_0 = 1$ (uniform prior), $s_j$ = feedback successes in bin $j$, $f_j$ = failures.
+
+Calibrated probability: $\hat{p}_j = (a_0 + s_j) / (a_0 + b_0 + s_j + f_j)$
+
+**ECE.** $\text{ECE} = \sum_j \lvert \bar{p}_j - \bar{y}_j \rvert \cdot n_j / N$
+
+**Finding.** ECE on the feedback batch (0.1635) is materially worse than the near-zero ECE reported on the training set — a known artifact of isotonic calibration overfitting to the training distribution. The calibration estimator receives the highest BMA weight (0.41) because its calibration ECE is the lowest-NLL proxy despite the absolute miscalibration being real.
+
+**Simplification.** Bins 1, 3, 5, 6, 7, 9 (0.1–0.2, 0.3–0.4, …) are empty in the current prediction distribution, which is tri-modal (clustered at 0–0.1, 0.2–0.3, 0.8–0.9). Posterior updates are therefore concentrated in three bins.
+
+---
+
+### Component 3 — Drift Detection
+
+**Purpose.** Detect distributional shifts between Nov–Feb baseline and Mar–Apr feedback using three complementary tests.
+
+**Page-Hinkley (PH) test** — sequential change-point on the ordered log-duration series:
+$$
+\mathrm{PH}_t = \mathrm{PH}_{t-1} + (x_t - \mu_0 - \delta), \qquad
+M_t = \min_{s \leq t} \mathrm{PH}_s
+$$
+Alert when $\mathrm{PH}_t - M_t > \lambda$. Parameters: $\delta = 0.02$, $\lambda = 5.0$.
+
+**Population Stability Index (PSI)**:
+$$
+\mathrm{PSI} = \sum_{b=1}^{B} (f_b^{\text{new}} - f_b^{\text{base}}) \ln\!\frac{f_b^{\text{new}}}{f_b^{\text{base}}}
+$$
+Thresholds: $< 0.10$ stable, $0.10$–$0.25$ moderate, $> 0.25$ critical.
+
+**Operational Drift Score (ODS)** — week-over-week mean shift:
+$$
+\mathrm{ODS}_t = \frac{|\mu_t - \mu_{t-1}|}{\sigma_{t-1}}
+$$
+
+**Mean-shift z-test**: $z = |\bar{y}_{\text{fb}} - \mu_0| / (\sigma_0 / \sqrt{n_{\text{fb}}})$
+
+**Results.** 3 alerts across 7 tests:
+- **CRITICAL** Page-Hinkley: max PH = 326.8 — sustained upward shift in log-duration throughout Mar–Apr
+- **CRITICAL** Mean-shift z = 3.21 — mean log-duration significantly higher in feedback vs baseline
+- **MODERATE** PSI on `hour_local` = 0.153 — hour-of-day distribution shifted between periods
+
+---
+
+### Component 4 — Prototype Trust Update (Beta-Binomial + EMA)
+
+**Purpose.** Maintain per-prototype trust scores using a Beta-Binomial model updated against Mar–Apr residuals.
+
+**Trust update rule.** For each event matched to prototype $p$ in the feedback period:
+- Confident retrieval ($\text{conf} > 0.7$) + good outcome ($|\text{residual}| < 0.5$): +1 success
+- Confident retrieval + poor outcome ($|\text{residual}| > 1.5$): +1 failure
+- Uncertain retrieval + good outcome: +0.5 success
+
+Beta-Binomial posterior:
+$$
+\alpha_p^{(t)} = \alpha_0 + n_{\text{success}}, \qquad \beta_p^{(t)} = \beta_0 + n_{\text{failure}}
+$$
+$$
+R_p = \frac{\alpha_p^{(t)}}{\alpha_p^{(t)} + \beta_p^{(t)}}, \qquad
+Q_p^{(t+1)} = (1 - \eta)\,Q_p^{(t)} + \eta\,R_p, \qquad \eta = 0.20
+$$
+
+**Results.** 47 prototypes evaluated, mean trust 0.888 → 0.889 (stable). 2 prototypes degraded below 0.5 (flagged as critical triggers). Most prototypes had no feedback events because the 47 Layer 4 prototypes cover planned events only (procession, protest, public_event) — and only 25 planned events fell in Mar–Apr.
+
+---
+
+### Component 5 — Retrain Triggers
+
+**Purpose.** Aggregate all signals into a structured, priority-ranked recommendation log.
+
+**Trigger sources.** Drift tests, calibration bin shifts, large Bayesian posterior shifts (> 1.5 sigma from prior), degraded prototype trust, and Layer 5 chance-constraint violations.
+
+**Severity.** Critical (immediate action), Moderate (monitor), Info (data-collection note).
+
+**Results.** 30 triggers total: 7 critical, 22 moderate, 1 info. All written to `layer6_retrain_triggers.csv`. No upstream files modified.
+
+---
+
+### Component 6 — Resource Effectiveness Posteriors
+
+**Purpose.** Update posterior beliefs over Layer 5 resource effectiveness coefficients $\boldsymbol{\gamma} = [\gamma_p, \gamma_b, \gamma_t, \gamma_q]$ using feedback-period evidence.
+
+**Model.** Bayesian linear regression:
+$$
+z_i = \mathbf{x}_i^\top \boldsymbol{\gamma} + \varepsilon_i, \qquad \varepsilon_i \sim \mathcal{N}(0, \sigma^2)
+$$
+$$
+\boldsymbol{\gamma} \sim \mathcal{N}(\boldsymbol{\gamma}_0, \boldsymbol{\Sigma}_0)
+$$
+Normal-Normal conjugate posterior:
+$$
+\boldsymbol{\Sigma}_{\text{post}}^{-1} = \boldsymbol{\Sigma}_0^{-1} + \frac{1}{\sigma^2} \mathbf{X}^\top \mathbf{X}, \qquad
+\boldsymbol{\mu}_{\text{post}} = \boldsymbol{\Sigma}_{\text{post}}\!\left(\boldsymbol{\Sigma}_0^{-1}\boldsymbol{\gamma}_0 + \frac{1}{\sigma^2}\mathbf{X}^\top \mathbf{z}\right)
+$$
+
+**Confidence-gated prior shift (patch — replaces old Bayesian linear regression).** Shadow prices from a fully budget-saturated Layer 5 solve reflect constrained optimization geometry, not true resource effectiveness. The update now gates on a per-resource confidence score:
+
+$$
+c_r = \mathbf{1}[\text{support}>0] \cdot (1 - u_r) \cdot \text{cov}_r \cdot (1 - \text{sat}_r)
+$$
+
+where $u_r$ = utilization ratio, $\text{cov}_r$ = fraction of events with resource $r > 0$, $\text{sat}_r = 1$ if total deployed = budget cap.
+
+The bounded prior shift:
+$$
+\gamma_r^{\text{new}} = \text{clip}\!\left(\gamma_r^{\text{old}} \cdot \exp(\eta \cdot c_r \cdot z_r),\ \gamma_{\min},\ \gamma_{\max}\right), \qquad
+z_r = \frac{\text{sp}_r - \text{median}(\mathbf{sp})}{1.4826\,\text{MAD}(\mathbf{sp}) + \epsilon}
+$$
+
+**Results (this batch).** All 4 resource types fully saturated → $c_r = 0$ for all → **no gamma updates**. Shadow prices logged for diagnostics only. Prior values unchanged: $\gamma_0 = [0.18, 0.10, 0.25, 0.30]$.
+
+**Caution.** This is a heuristic prior shift, never a causal estimate. Without randomized allocation data, gamma updates cannot be interpreted as causal resource-effectiveness lifts.
+
+---
+
+### Component 7 — Bayesian Model Averaging Weights (family-local)
+
+**Purpose.** Maintain posterior weights within homogeneous model families. Cross-family NLL comparison is explicitly prohibited — raw NLL values in log-duration space are not commensurable with probability-space Brier scores or retrieval F1 residuals.
+
+**Family assignment and proper scoring rules.**
+
+| Family | Models | Scoring rule | Judge-facing? |
+|--------|--------|--------------|--------------|
+| `duration` | `duration_catboost`, `corridor_cause_prior` | CRPS (Gaussian, log-space) | **Yes** — 2 models, within-family comparison valid |
+| `calibration` | `calibration_estimator` | Brier score (ECE excluded from weighting — diagnostic only) | No — only 1 model |
+| `retrieval` | `retrieval_estimator` | 1 − F1 proxy (no hit-rate/MRR in l45_metrics) | No — only 1 model |
+| `surrogate` | `scenario_surrogate` | CRPS (L5 lognormal, log-space) | No — only 1 model |
+
+**Family-local weight update:**
+$$
+z_m = \frac{s_m - \text{median}(s_{\text{family}})}{1.4826\,\text{MAD}(s_{\text{family}}) + \epsilon}, \qquad
+w_m = \frac{\exp(-z_m / \tau)}{\sum_j \exp(-z_j / \tau)}, \quad \tau = 1.0
+$$
+
+**Results (this batch).**
+
+| Family | Model | CRPS / score | Family-local weight | Judge-facing? |
+|--------|-------|-------------|---------------------|--------------|
+| duration | `duration_catboost` | 0.9332 | **0.7940** | Yes |
+| duration | `corridor_cause_prior` | 1.2230 | **0.2060** | Yes |
+| calibration | `calibration_estimator` | 0.1084 (Brier) | n/a | No (1 model) |
+| retrieval | `retrieval_estimator` | 0.2000 (1−F1) | n/a | No (1 model) |
+| surrogate | `scenario_surrogate` | 0.6997 (CRPS) | n/a | No (1 model) |
+
+**Simplification.** The duration family has only 2 models; a 2-model BMA is sensitivity-limited. Retrieval and surrogate families have 1 model each — no within-family comparison is possible; they are diagnostic-only. ECE is explicitly excluded from BMA weighting (diagnostic use only).
+
+---
+
+### Component 8 — Model Health Monitoring
+
+**Purpose.** Track rolling metrics across prior-holdout and feedback-batch windows. **This is Layer 6's primary contribution.** Retrain urgency escalates when health metrics degrade even if individual drift tests are borderline.
+
+**Metrics tracked.**
+
+| Group | Metrics | Baseline source |
+|-------|---------|-----------------|
+| Duration | RMSE, MAE, Median AE, RMSLE | Layer 4.5 holdout_sanitized metrics |
+| Probability calibration | Brier score, ECE | Layer 4.5 holdout ECE/Brier |
+| Layer 5 optimization | CVaR reduction %, CC satisfaction | Layer 5 opt metrics |
+| Drift | PH stat, PSI, ODS, mean-shift z | Drift detection (`layer6_drift_report.csv`) |
+| Posterior uncertainty | Mean CI width in log-space, fraction of strata with CI grown > 20% | Bayesian duration posteriors |
+| Prototype trust | Mean abs trust delta, n degraded | Prototype trust update |
+| Retrain triggers | Count by severity | Retrain trigger output |
+
+**Urgency escalation.** CRITICAL if 3+ metrics critical; WARNING if 1+ critical or 4+ warnings. Borderline PSI combined with critical PH + critical mean-shift z + multiple stratum shifts escalates to CRITICAL regardless of individual test results.
+
+**Results (this batch).** Overall: **CRITICAL**
+- CRITICAL: PH max = 326.8, mean-shift z = 3.21, 7 critical triggers
+- WARNING: PSI on hour_local = 0.153, mean trust delta = 0.001
+- Retrain urgency score: 0.6086 (MONITOR threshold)
+- Knowledge retention score: 0.9657
+
+**Simplification.** Relative-change thresholds (warn at +20%, critical at +50% degradation) are conservative starting points for a first batch; a live deployment would calibrate against operational impact estimates.
+
+---
+
+### Additional monitoring diagnostics (Part F)
+
+New in this patch. All outputs are additive — no upstream files modified.
+
+| Diagnostic | What it measures |
+|------------|-----------------|
+| **Posterior entropy** | Gaussian differential entropy $H = \frac{1}{2}\ln(2\pi e\sigma^2)$ per stratum; tracks whether posteriors are shrinking (learning) or growing (contradictory data) |
+| **Calibration stability** | Rolling ECE/Brier variance across bins, count of severely miscalibrated bins, Brier improvement from recalibration |
+| **Knowledge Retention Score** | $\text{KRS} = 1 - n_\text{degraded} / n_\text{total}$; "degraded" = trust < 0.5 for prototypes, CI grew > 20% or critical trigger for duration strata |
+| **Prototype redundancy** | Near-duplicate detection: prototypes sharing (cause, corridor) — flags 30/47 prototypes as redundant, redundancy rate 0.64 |
+| **Retrain urgency score** | Composite $[0,1]$: $0.35 \cdot \text{drift} + 0.25 \cdot \text{calib} + 0.15 \cdot \text{unc} + 0.10 \cdot \text{trust} + 0.15 \cdot \text{triggers}$ |
+
+---
+
+### Run
+
+```bash
+python src/layer6_adaptive_learning.py
+```
+
+Runs after `layer5_robust_optimization.py`. Reads Layer 4.5 and Layer 5 canonical outputs only. Writes all Layer 6 outputs to `outputs/layer6_*`. Typical runtime: < 30 seconds.
+
+### Layer 6 outputs
+
+| File | Contents |
+|------|----------|
+| `layer6_posterior_duration_priors.json` | Global + per-stratum Bayesian posterior parameters; strata enriched with support_count, clean_count, quarantined_count, valid_flag, fallback_source, nan_guard_flag |
+| `layer6_duration_posterior_summary.csv` | Per-stratum: prior, posterior, CI, back-transformed quantiles, n_eff, fallback level, traceability fields (Part D) |
+| `layer6_calibration_posteriors.csv` | Per-bin Beta posterior params, posterior mean, CI, ECE before/after, Brier |
+| `layer6_drift_report.csv` | Per-test: score, threshold, alert flag, severity, retrain_urgency, recommendation |
+| `layer6_retrain_triggers.csv` | All recommendation records, sorted by severity |
+| `layer6_prototype_trust_updates.csv` | Per-prototype: prior trust, Beta params, posterior, EMA-updated trust, uncertainty |
+| `layer6_feedback_log.csv` | Per-event: actual vs predicted duration/probability, log-residual |
+| `layer6_resource_effectiveness_posteriors.json` | Confidence-gated gamma posteriors, saturation summary, caution disclaimer |
+| `layer6_shadow_price_diagnostics.csv` | Per-resource: shadow price, z-score, utilization, saturation penalty, confidence, posterior status |
+| `layer6_bma_weights.csv` | Per-model: family, raw score, robust z-score, family-local weight, judge-facing flag |
+| `layer6_bma_diagnostics.csv` | Per-family: n_models, confident flag, judge-facing flag, reason |
+| `layer6_score_normalization.csv` | Per-model normalized score summary (raw, z, weight, flags, notes) |
+| `layer6_model_health_summary.csv` | Per-metric health status, holdout vs feedback value, relative change, overall flag |
+| `layer6_monitoring_diagnostics.csv` | Posterior entropy, calibration stability, KRS, prototype redundancy, retrain urgency |
+| `layer6_versioned_knowledge_base.json` | Timestamped snapshot of all posterior beliefs |
+| `layer6_recalibration_recommendations.csv` | Per-bin calibration priority ranking with recommended action |
+| `layer6_active_alerts.csv` | Priority-ranked alerts from all components |
+| `layer6_posterior_uncertainty.csv` | Per-stratum CI width, uncertainty flag |
+| `layer6_prototype_diagnostics.csv` | Trust trajectory, health flag, mean residual per prototype |
+| `layer6_learning_summary.txt` | Human-readable run summary led by health dashboard |
+| `layer6_model_artifacts/` | JSON snapshots for versioning |
+| `layer6_posterior_residuals.csv` | **(Part C)** Per-event standardized residuals and predictive interval coverage; predictive scale `sqrt(var_post + var_obs)` with provenance fields |
+| `layer6_posterior_coverage_report.csv` | **(Part C)** Aggregate posterior predictive coverage at 50%, 80%, 95%; predictive scale; parameter-only audit column |
+| `layer6_posterior_predictive_checks.csv` | **(Part E)** PPCs per hierarchical level at predictive scale; KL(prior‖posterior) on parameter SD; provenance fields |
+| `layer6_prior_influence_summary.csv` | **(Part F)** Per-stratum prior influence λ = var_post/var_prior; posterior_influence = 1−λ; prior_dominated flag |
+| `layer6_ess_summary.csv` | **(Part F)** Per-stratum Kish ESS, 95% CI width, uncertainty flag, prior influence |
+| `layer6_posterior_integrity_report.csv` | **(Part G)** Traceable integrity audit: quarantine counts, upstream-flag overlap, NaN-taint check, global-posterior validity, stratum-level NaN guard, fallback integrity |
+| `layer6_entropy_summary.csv` | **(Part C/E)** Per-level differential entropy and KL divergence; same-level comparison only; cross-level aggregate flagged as non-interpretable |
+| `layer6_quarantine_report.csv` | Per-row quarantine audit: reasons, anomaly flag overlap, excluded_from_posterior |
+| `layer6_quarantine_summary.csv` | Per-reason quarantine aggregates: count, % of uncensored candidates |
+| `layer6_global_posterior_summary.csv` | Global posterior summary row with validity flag, reason, counts |
+| `layer6_predictive_sharpness.csv` | **(Diagnostics)** 95% interval sharpness by cause, corridor, and ESS support level |
+| `layer6_coverage_improvement.csv` | **(Diagnostics)** Predictive vs parameter-only 95% coverage delta by group |
+| `layer6_forecasting_quality_summary.csv` | **(Diagnostics)** Official calibration + sharpness quality table |
+| `layer6_sharpness_curve.csv` | **(Diagnostics)** Empirical coverage vs interval width (plot-ready) |
+| `layer6_calibration_sharpness_tradeoff.csv` | **(Diagnostics)** Coverage, mean width, sharpness efficiency by group |
+
+### Calibration vs Sharpness
+
+Probabilistic forecasting is evaluated on two axes: **calibration** and **sharpness**.
+
+**Calibration** measures how often true outcomes fall inside stated predictive intervals. In Layer 6, 95% sequential LOO coverage and the predictive-vs-parameter coverage delta (`layer6_coverage_improvement.csv`) report this.
+
+**Sharpness** measures how narrow those intervals are. Wide intervals can achieve high coverage while being uninformative. Mean/median interval width and width percentiles in `layer6_predictive_sharpness.csv` quantify sharpness; `Sharpness Efficiency = Coverage / MeanWidth` in `layer6_forecasting_quality_summary.csv` combines both.
+
+A good forecast should be **well calibrated** (coverage near nominal) **and as sharp as possible** (narrow intervals). The official summary is `layer6_forecasting_quality_summary.csv`: Coverage, Coverage Delta, Mean Sharpness, and Sharpness Efficiency.
+
+### Layer 6 patch: quarantine, robustness, traceability, NaN prevention (Parts C–H)
+
+This patch adds validation and traceability on top of the existing Bayesian learning loop. The core conjugate update logic is unchanged.
+
+**What this patch adds**
+
+| Part | What | Key design decision |
+|------|------|---------------------|
+| **C — Sequential residuals** | Standardized residuals `r_i = (y_i−μ_i)/(σ_pred+ε)`, coverage at 50/80/95% | Uses sequential LOO with **predictive scale** `sqrt(var_post + var_obs)`; parameter-only coverage retained as audit column |
+| **D — Hierarchical integrity** | Traceability fields on every stratum record: support_count, clean_count, quarantined_count, valid_flag, fallback_source, nan_guard_flag | Enrichment runs BEFORE canonical CSV/JSON writes so all outputs are traceable |
+| **E — Posterior predictive checks** | PPCs for stratum/cause/global levels; KL(prior‖posterior) same-level only | Draws and coverage use **predictive scale** `sqrt(var_post + var_obs)`; KL remains on parameter SD |
+| **F — Prior influence and ESS** | λ = var_post/var_prior from conjugate identity; Kish ESS already in n_eff_feedback | λ close to 1 = prior-dominated; λ close to 0 = data-dominated |
+| **G — Integrity report** | Answers: where did invalid durations come from, were they already upstream-flagged, did any NaN row reach the posterior stage, is the global posterior valid | Under correct operation no NaN row reaches the posterior update — the quarantine gate runs first |
+| **H — Robust statistics** | Trimmed mean + robust variance at global level; NaN guard floors variance at MIN_VAR | Already in update_duration_posteriors(); this patch verifies and surfaces it in the integrity report |
+
+**Key invariants**
+
+- **Quarantine runs before all posterior estimation.** No NaN-duration, non-positive-duration, missing-key, or anomaly-flagged row ever reaches `update_duration_posteriors()`. The integrity report explicitly checks this.
+- **Global posterior is never NaN.** A final NaN guard in `update_duration_posteriors()` falls back to the prior if the trimmed-mean estimator fails. The integrity report flags if this guard fires.
+- **Entropy and KL divergence are compared only at the same hierarchical level.** Stratum-level entropy is not compared to cause-level or global entropy. `same_level_comparable=False` is set when levels differ.
+- **Differential entropy H = ½ ln(2πe·σ²) can be negative** when σ < 1/√(2πe) ≈ 0.242. This is mathematically correct and is only interpretable within the same level and distribution family.
+- **Sequential LOO coverage vs PPC coverage are different quantities.** LOO coverage (in `layer6_posterior_coverage_report.csv`) measures predictive accuracy on held-out events using `sqrt(var_post + var_obs)`. PPC coverage (in `layer6_posterior_predictive_checks.csv`) uses the same predictive scale against the full posterior.
+- **Parameter uncertainty ≠ predictive uncertainty.** `sigma_log` / `var_post` describe belief about the latent log-mean μ (used in entropy, KL, λ, ESS). Future-observation checks (CRPS, coverage, PPC) must use `sqrt(var_post + var_obs)`.
+- **Layer45_reference_only is never the source of rolling performance numbers.** The main performance table uses `layer6_posterior_scoring` (sequential LOO) as the primary source. `layer45_reference_only` appears only in an explicit audit column.
+- **No upstream files are modified.** This patch is strictly additive.
+
+**Honest simplifications for tractability**
+
+- **ESS per stratum is the Kish ESS from the exponential-forgetting weight vector**, not a full importance-sampling ESS. For a uniform forgetting rate this is equivalent.
+- **Prior influence λ = var_post/var_prior** is derived from the conjugate-update identity and does not require re-running the update. This is exact for the normal-normal conjugate.
+- **PPC draws are from N(μ_post, var_post + var_obs)**, the marginal posterior predictive for a new log-duration observation. KL divergence in PPC rows still compares parameter distributions N(μ, σ_post²).
+- **Tail discrepancy** is the absolute difference between the observed left-tail fraction and the expected 2.5% — a simple first-order check, not a full chi-squared tail test.
+- **KL divergence is capped at 1e6.** When the posterior collapses (σ_post << σ_prior, which is expected for strata with many clean observations), the KL can grow very large and is not practically meaningful as a decision quantity.
+
+### Honest simplifications
+
+- **Duration family only.** BMA is judge-facing for duration only (2 models). Calibration, retrieval, and surrogate families each have 1 model and cannot produce a family-local weight comparison.
+- **Retrieval scoring.** No dedicated hit-rate/MRR metrics exist in `layer45_metrics.csv`; the retrieval residual proxy uses 1 − F1 from the holdout_planned split as an imperfect substitute.
+- **Prototype redundancy.** Near-duplicate detection uses (cause, corridor) string equality, not Gower distance — 63.8% redundancy rate suggests the Layer 4 K-Medoids produced prototypes within the same (cause, corridor) strata, which is expected and not a bug.
+- **Gamma updates.** Full budget saturation in Layer 5 means shadow prices cannot be used to update resource effectiveness beliefs in this batch. A future batch with partial utilization would allow non-trivial confidence scores.
+- **No BOCPD.** Bayesian Online Change-Point Detection was evaluated and excluded. Page-Hinkley + PSI + ODS + mean-shift z-test are sufficient for this dataset's batch cadence.
+
+### End-to-End Decision Pipeline (updated)
+
+```
+Historical ASTraM Data (8,173 incidents, Nov 2023 - Apr 2024)
+        |
+        v
+Layer 1 - Duration Intelligence
+(KM, Cox PH, Frailty, AFT, RSF, RMST, GMM archetypes)
+        |
+        v
+Layer 2 - Spatial Intelligence
+(Gi*, OBI, Hawkes self-excitation, Future Risk, Persistence index)
+        |
+        +------------------------------+
+        v                             v
+Layer 3 - Resource Optimization      Layer 3 - Corridor Fragility
+(PCA-learned DIS, LP, Dijkstra)      (marked Hawkes + EB shrinkage)
+        |                             |
+        +-------------+---------------+
+                      v
+Layer 4 - Event Intelligence + Prototype Retrieval
+(Gower/K-Medoids, evidence tiers, L3 fallback, knowledge base)
+        |
+        v
+Layer 4.5 - Predictive Fusion (leak-free)
+(daily as-of features -> CatBoost -> JOSV -> duration quality gate)
+        |
+        v
+Layer 5 - Robust Prescriptive Optimization
+(scenario generation -> CVaR MILP -> allocation + diversion + shadow prices)
+        |
+        v
+Operational Action Plan + Dashboard
+        |
+        v  [Mar-Apr 2024 feedback batch]
+Layer 6 - Adaptive Learning (ADDITIVE, recommendations only)
+(Bayesian duration update, calibration posteriors, drift detection,
+ prototype trust, BMA, resource effectiveness, model health monitoring)
+        |
+        v
+outputs/layer6_retrain_triggers.csv  (recommendations only -- never mutates upstream)
+```

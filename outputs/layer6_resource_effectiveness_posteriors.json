@@ -1,0 +1,91 @@
+{
+  "metadata": {
+    "model": "confidence_gated_prior_shift",
+    "parameters": [
+      "gamma_p",
+      "gamma_b",
+      "gamma_t",
+      "gamma_q"
+    ],
+    "evidence_path": "shadow_price_aggregate_confidence_gated",
+    "n_observations": 4,
+    "generated_at": "2026-06-19T10:34:30Z"
+  },
+  "caution": "Evidence is observational / model-derived. Shadow prices come from the Layer 5 optimization model, not real-world outcome measurement. 4 of 4 resource types fully budget-saturated \u2014 shadow prices at full saturation reflect constrained optimization geometry, not true resource effectiveness. Confidence gating suppresses material gamma updates for saturated resources.",
+  "saturation_summary": {
+    "n_resource_types": 4,
+    "n_fully_saturated": 4,
+    "saturation_warning": true
+  },
+  "prior": {
+    "means": [
+      0.18,
+      0.1,
+      0.25,
+      0.3
+    ],
+    "stds": [
+      0.08,
+      0.05,
+      0.1,
+      0.1
+    ]
+  },
+  "posterior": {
+    "parameters": [
+      {
+        "parameter": "gamma_p",
+        "prior_mean": 0.18,
+        "prior_std": 0.08,
+        "posterior_mean": 0.18,
+        "shift_from_prior": 0.0,
+        "confidence_score": 0.0,
+        "posterior_status": "low_confidence_no_update",
+        "ci95_lo": 0.0232,
+        "ci95_hi": 0.3368
+      },
+      {
+        "parameter": "gamma_b",
+        "prior_mean": 0.1,
+        "prior_std": 0.05,
+        "posterior_mean": 0.1,
+        "shift_from_prior": 0.0,
+        "confidence_score": 0.0,
+        "posterior_status": "low_confidence_no_update",
+        "ci95_lo": 0.01,
+        "ci95_hi": 0.198
+      },
+      {
+        "parameter": "gamma_t",
+        "prior_mean": 0.25,
+        "prior_std": 0.1,
+        "posterior_mean": 0.25,
+        "shift_from_prior": 0.0,
+        "confidence_score": 0.0,
+        "posterior_status": "low_confidence_no_update",
+        "ci95_lo": 0.054,
+        "ci95_hi": 0.446
+      },
+      {
+        "parameter": "gamma_q",
+        "prior_mean": 0.3,
+        "prior_std": 0.1,
+        "posterior_mean": 0.3,
+        "shift_from_prior": 0.0,
+        "confidence_score": 0.0,
+        "posterior_status": "low_confidence_no_update",
+        "ci95_lo": 0.104,
+        "ci95_hi": 0.496
+      }
+    ]
+  },
+  "l5_aggregate_evidence": {
+    "cvar_reduction_pct": 46.5604,
+    "shadow_prices": {
+      "police": 47898.56,
+      "barricades": 24513.91,
+      "tow": 61866.45,
+      "qru": 71388.12
+    }
+  }
+}

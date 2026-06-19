@@ -1,0 +1,2 @@
+source_batch,global_posterior_valid,global_posterior_reason,prior_mu_log,prior_sigma_log,posterior_mu_log,posterior_sigma_log,ci95_lo_log,ci95_hi_log,posterior_median_min,n_eff_feedback,n_clean_feedback,n_raw_uncensored,n_quarantined_internal,n_strata_updated,generated_at
+feedback_Mar_Apr_2024,True,robust_trimmed_mean; n_clean=934; n_trimmed=842,4.102466,1.239379,4.582472,0.05818,4.468439,4.696506,96.76,874.14,934,934,0,119,2026-06-19T10:34:30Z
