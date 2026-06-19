@@ -1,0 +1,94 @@
+======================================================================
+LAYER 6 ADAPTIVE LEARNING -- LEARNING SUMMARY
+Generated: 2026-06-18T23:39:58Z
+======================================================================
+
+DATASET
+  Prior period    : Nov 2023 - Feb 2024  (5,493 events)
+  Feedback batch  : Mar 2024 - Apr 2024  (2,564 events)
+  Uncensored obs  : 1,097 events used for posterior updates
+
+COMPONENT 1 -- Hierarchical Bayesian Duration Update
+  Strata updated         : 128
+  Forgetting half-life   : 30 days (exponential)
+  Model                  : Normal-Normal conjugate, partial pooling
+  Fallback hierarchy     : stratum -> cause -> global
+
+COMPONENT 2 -- Calibration Posterior Update
+  Feedback events used   : 1094
+  Probability bins       : 10 (decile)
+  ECE before update      : 0.0000
+  ECE after update       : 0.1635
+
+COMPONENT 3 -- Drift Detection
+  Tests run              : Page-Hinkley, PSI, ODS (weekly), Mean-shift z-test
+  Alerts fired           : 3
+    [CRITICAL] page_hinkley on log_duration: score=326.8316
+    [MODERATE] psi on hour_local: score=0.1526
+    [CRITICAL] mean_shift_ztest on log_duration: score=3.2097
+
+COMPONENT 4 -- Prototype Trust Update (Beta-Binomial + EMA)
+  Prototypes evaluated   : 47
+  Mean trust (prior)     : 0.8880
+  Mean trust (updated)   : 0.8890
+  Degraded prototypes    : 2
+
+COMPONENT 6 -- Resource Effectiveness Posteriors
+  Evidence path          : shadow_price_aggregate
+  Observations           : 4
+  gamma_p    : prior=0.180 -> post=0.397 (shift +0.217)
+  gamma_b    : prior=0.100 -> post=0.222 (shift +0.122)
+  gamma_t    : prior=0.250 -> post=0.491 (shift +0.241)
+  gamma_q    : prior=0.300 -> post=0.516 (shift +0.216)
+
+COMPONENT 7 -- Bayesian Model Averaging Weights
+  calibration_estimator       : w=0.4095 NLL=0.217
+  duration_catboost           : w=0.1708 NLL=1.966
+  corridor_cause_prior        : w=0.1588 NLL=2.112
+  retrieval_estimator         : w=0.1476 NLL=2.258
+  scenario_surrogate          : w=0.1133 NLL=2.787
+  Posterior entropy      : 1.4887
+  KL from uniform        : 0.1207
+
+COMPONENT 8 -- Model Health Monitoring
+  Overall health         : CRITICAL
+  Critical metrics       : 3
+  Warning metrics        : 2
+    [CRITICAL] page_hinkley_log_duration: 326.8316
+    [WARNING ] psi_hour_local: 0.1526
+    [CRITICAL] mean_shift_ztest_log_duration: 3.2097
+    [WARNING ] mean_abs_trust_delta: 0.0010
+    [CRITICAL] n_critical_triggers: 7.0000
+
+RETRAIN TRIGGERS
+  Total triggers         : 30
+  Critical               : 7
+  Moderate               : 22
+  Info                   : 1
+
+TOP RECOMMENDATIONS
+  1. [CRITICAL] DRIFT_MEAN_SHIFT_ZTEST_LOG_DURATION
+     RETRAIN_TRIGGER: Mean log-duration shifted by z=3.21 standard
+     errors. Layer 4.5 global prior should be updated.
+  2. [CRITICAL] DRIFT_PAGE_HINKLEY_LOG_DURATION
+     RETRAIN_TRIGGER: Page-Hinkley detects shift in log-duration
+     sequence. Recommend updating Layer 4.5 duration priors.
+  3. [CRITICAL] DUR_SHIFT_CONSTRUCTION_TUMKUR_ROAD
+     Stratum 'construction × Tumkur Road': posterior_mu shifted
+     +7.743 log-units (6.2 sigma). Prior fallback level: stratum.
+     Recommend updating Layer 4.5 duration priors for this
+     stratum.
+  4. [CRITICAL] DUR_SHIFT_OTHERS_OLD_MADRAS_ROAD
+     Stratum 'others × Old Madras Road': posterior_mu shifted
+     +2.243 log-units (5.1 sigma). Prior fallback level: stratum.
+     Recommend updating Layer 4.5 duration priors for this
+     stratum.
+  5. [CRITICAL] DUR_SHIFT_POT_HOLES_CBD_1
+     Stratum 'pot_holes × CBD 1': posterior_mu shifted -6.407 log-
+     units (4.9 sigma). Prior fallback level: stratum. Recommend
+     updating Layer 4.5 duration priors for this stratum.
+
+GOVERNANCE
+  Layer 6 is ADDITIVE only. No upstream files were modified.
+  All recommendations are in outputs/layer6_retrain_triggers.csv.
+======================================================================

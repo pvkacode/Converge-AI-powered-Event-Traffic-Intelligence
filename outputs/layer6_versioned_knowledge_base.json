@@ -1,0 +1,75 @@
+{
+  "version": "layer6_part2",
+  "generated_at": "2026-06-18T23:39:58Z",
+  "feedback_period": "2024-03-01 to 2024-04-08",
+  "prior_period": "2023-11-10 to 2024-02-29",
+  "global_duration_posterior": {
+    "mu_log": NaN,
+    "sigma_log": NaN,
+    "ci95_lo_log": NaN,
+    "ci95_hi_log": NaN,
+    "posterior_median_min": NaN,
+    "posterior_p80_min": NaN,
+    "posterior_p95_min": NaN,
+    "n_eff_feedback": 1025.26
+  },
+  "bma_weights": {
+    "duration_catboost": {
+      "weight": 0.170818,
+      "nll_proxy": 1.965718
+    },
+    "retrieval_estimator": {
+      "weight": 0.147585,
+      "nll_proxy": 2.25811
+    },
+    "calibration_estimator": {
+      "weight": 0.409548,
+      "nll_proxy": 0.216812
+    },
+    "corridor_cause_prior": {
+      "weight": 0.158777,
+      "nll_proxy": 2.111914
+    },
+    "scenario_surrogate": {
+      "weight": 0.113272,
+      "nll_proxy": 2.787341
+    }
+  },
+  "calibration_summary": {
+    "ece_before": 0.0,
+    "ece_after": 0.163465,
+    "brier_raw": 0.108406
+  },
+  "effectiveness_posteriors": {
+    "gamma_p": {
+      "posterior_mean": 0.3969,
+      "posterior_std": 0.0598
+    },
+    "gamma_b": {
+      "posterior_mean": 0.2218,
+      "posterior_std": 0.0354
+    },
+    "gamma_t": {
+      "posterior_mean": 0.4908,
+      "posterior_std": 0.0781
+    },
+    "gamma_q": {
+      "posterior_mean": 0.5156,
+      "posterior_std": 0.0832
+    }
+  },
+  "prototype_trust_summary": {
+    "mean_trust_prior": 0.8880446808510637,
+    "mean_trust_updated": 0.8890297872340425,
+    "n_degraded": 2
+  },
+  "health": {
+    "overall": "CRITICAL",
+    "n_critical_metrics": 3
+  },
+  "active_alerts": {
+    "n_critical": 7,
+    "n_total": 30
+  },
+  "governance": "Layer 6 is ADDITIVE only. No upstream files were modified. All recommendations are in outputs/layer6_retrain_triggers.csv."
+}

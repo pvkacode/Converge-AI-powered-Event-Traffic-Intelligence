@@ -1,0 +1,82 @@
+{
+  "metadata": {
+    "model": "bayesian_linear_regression",
+    "parameters": [
+      "gamma_p",
+      "gamma_b",
+      "gamma_t",
+      "gamma_q"
+    ],
+    "evidence_path": "shadow_price_aggregate",
+    "n_observations": 4,
+    "generated_at": "2026-06-18T23:39:58Z"
+  },
+  "caution": "Evidence is observational / model-derived. Shadow prices are derived from the Layer 5 optimization model, not real-world measured outcomes. Posterior means reflect updated parameter beliefs, not causal effect estimates.",
+  "prior": {
+    "means": [
+      0.18,
+      0.1,
+      0.25,
+      0.3
+    ],
+    "stds": [
+      0.08,
+      0.05,
+      0.1,
+      0.1
+    ]
+  },
+  "posterior": {
+    "parameters": [
+      {
+        "parameter": "gamma_p",
+        "prior_mean": 0.18,
+        "prior_std": 0.08,
+        "posterior_mean": 0.3969,
+        "posterior_std": 0.0598,
+        "ci95_lo": 0.2797,
+        "ci95_hi": 0.5141,
+        "shift_from_prior": 0.2169
+      },
+      {
+        "parameter": "gamma_b",
+        "prior_mean": 0.1,
+        "prior_std": 0.05,
+        "posterior_mean": 0.2218,
+        "posterior_std": 0.0354,
+        "ci95_lo": 0.1525,
+        "ci95_hi": 0.2911,
+        "shift_from_prior": 0.1218
+      },
+      {
+        "parameter": "gamma_t",
+        "prior_mean": 0.25,
+        "prior_std": 0.1,
+        "posterior_mean": 0.4908,
+        "posterior_std": 0.0781,
+        "ci95_lo": 0.3378,
+        "ci95_hi": 0.6439,
+        "shift_from_prior": 0.2408
+      },
+      {
+        "parameter": "gamma_q",
+        "prior_mean": 0.3,
+        "prior_std": 0.1,
+        "posterior_mean": 0.5156,
+        "posterior_std": 0.0832,
+        "ci95_lo": 0.3525,
+        "ci95_hi": 0.6786,
+        "shift_from_prior": 0.2156
+      }
+    ]
+  },
+  "l5_aggregate_evidence": {
+    "cvar_reduction_pct": 46.5604,
+    "shadow_prices": {
+      "police": 47898.56,
+      "barricades": 24513.91,
+      "tow": 61866.45,
+      "qru": 71388.12
+    }
+  }
+}

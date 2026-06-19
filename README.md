@@ -143,6 +143,7 @@ python src/layer4_methodology_upgrades.py   # leakage-free retrieval + K-Medoids
 python src/layer4_operational_upgrades.py   # evidence tiers + quantiles + L3 fallback (final L4)
 python src/layer45_predictive_fusion.py     # leak-free predictive fusion → JOSV (additive)
 python src/layer5_robust_optimization.py   # prescriptive MILP optimization → allocation + diversion (additive)
+python src/layer6_adaptive_learning.py     # adaptive learning → posteriors + triggers (additive, never mutates upstream)
 python src/frontend_exports.py              # dashboard-ready copies → outputs/frontend/
 python src/validate_consistency.py
 ```
@@ -951,7 +952,9 @@ converge/
 │   ├── layer45_*                        # as-of features, JOSV, scenario-ready duration, metrics
 │   ├── layer45_model_artifacts/         # CatBoost, calibrator, JOSV scaler, cause τ
 │   ├── layer5_*                         # allocation, diversion, CVaR, shadow prices, …
-│   └── layer5_model_artifacts/          # hyperparameter JSON snapshot
+│   ├── layer5_model_artifacts/          # hyperparameter JSON snapshot
+│   ├── layer6_*                         # posteriors, calibration, drift, triggers, health, …
+│   └── layer6_model_artifacts/          # JSON snapshots of all posteriors (versioned)
 ├── src/
 │   ├── data_pipeline.py                 # clean + trust_score + MNAR test
 │   ├── layer1_survival.py               # baseline KM/Cox + advanced survival
@@ -972,6 +975,12 @@ converge/
 │   ├── layer45_tail_models.py           # tail-risk classifier + mixture
 │   ├── layer45_predictive_fusion.py     # CatBoost fusion → JOSV + exports
 │   ├── layer5_robust_optimization.py   # CVaR MILP → allocation + diversion
+│   ├── layer6_adaptive_learning.py     # main orchestrator (8 components, additive)
+│   ├── layer6_feedback_store.py        # data loading / prior-feedback split
+│   ├── layer6_bayesian_duration.py     # hierarchical Bayesian duration update
+│   ├── layer6_calibration_updates.py   # Beta posterior calibration update
+│   ├── layer6_drift_detection.py       # Page-Hinkley, PSI, ODS
+│   ├── layer6_retrain_triggers.py      # retrain recommendation generator
 │   ├── frontend_exports.py              # dashboard export layer
 │   └── validate_consistency.py
 ├── .cursorignore
@@ -1003,6 +1012,335 @@ converge/
 | `layer5_shadow_prices.csv` | Marginal value of +1 unit per resource |
 | `layer5_frontend_export.csv` | Dashboard-ready allocation summary with baseline CVaR, optimized CVaR, violation flags |
 
-## Next layers (planned)
+---
 
-- **Layer 6:** Bayesian post-event learning loop (updates priors after each incident closes)
+## Layer 6 — Adaptive Learning (`layer6_adaptive_learning.py`)
+
+**Additive only — no Layer 4.5 or Layer 5 source files are ever modified.**
+Layer 6 is the post-event learning loop. It closes the feedback cycle by treating the Mar–Apr 2024 holdout period as a newly closed incident batch and using it to update all posterior beliefs accumulated during the Nov–Feb 2024 training period. All outputs are recommendations and updated belief records; the layer never patches upstream model weights or output files.
+
+### Dataset and governance constraints
+
+**Historical batch constraint.** The ASTraM log covers Nov 2023–Apr 2024 with no live stream. Layer 6 simulates the feedback loop by designating Nov 2023–Feb 2024 as the prior window and Mar–Apr 2024 as the feedback batch. Future incidents cannot inform past rows; the direction of information flow is strictly forward in time.
+
+**Governance constraint.** Layer 6 only *recommends* retraining. It writes to `outputs/layer6_retrain_triggers.csv` and related summaries. It never writes to any Layer 4.5 or Layer 5 file, modifies model weights, or changes calibration tables in place.
+
+### Helper modules
+
+| File | Role |
+|------|------|
+| `layer6_feedback_store.py` | Loads and exposes prior/feedback splits and all upstream outputs |
+| `layer6_bayesian_duration.py` | Hierarchical Bayesian duration update (Normal-Normal conjugate) |
+| `layer6_calibration_updates.py` | Beta posterior calibration update |
+| `layer6_drift_detection.py` | Page-Hinkley, PSI, ODS drift detection |
+| `layer6_retrain_triggers.py` | Aggregates signals into retrain recommendation records |
+
+### Data splits
+
+| Period | Rows | Role |
+|--------|------|------|
+| Nov 2023–Feb 2024 | 5,493 | Prior / training baseline |
+| Mar 2024–Apr 2024 | 2,564 | Feedback batch (1,097 uncensored with observed duration) |
+
+---
+
+### Component 1 — Hierarchical Bayesian Duration Update
+
+**Purpose.** Refresh duration priors per cause × corridor stratum using Mar–Apr feedback, weighted to favour recent events.
+
+**Model.** Transform: $y_i = \log(1 + \text{duration}_i)$. Hierarchy: global → cause → cause × corridor. Conjugate update at each level:
+
+$$
+y_i \sim \mathcal{N}(\mu_s, \sigma_s^2), \qquad \mu_s \sim \mathcal{N}(\mu_0, \sigma_0^2)
+$$
+
+Normal-Normal posterior:
+$$
+\tau_{\text{post}} = \tau_{\text{prior}} + \tau_{\text{data}}, \qquad
+\mu_{\text{post}} = \frac{\tau_{\text{prior}}\,\mu_{\text{prior}} + \tau_{\text{data}}\,\bar{y}_w}{\tau_{\text{post}}}
+$$
+where $\tau = 1/\sigma^2$ and $\bar{y}_w$ is the exponentially discounted weighted mean.
+
+**Exponential forgetting.** Each feedback observation is weighted:
+$$
+w_i = \exp\!\left(-\lambda\,\Delta t_i\right), \qquad \lambda = \frac{\ln 2}{\text{half-life}} \approx \frac{\ln 2}{30}
+$$
+Effective sample size uses Kish's formula: $n_{\text{eff}} = (\sum w_i)^2 / \sum w_i^2$.
+
+**Fallback hierarchy.** If a stratum has $n_{\text{eff}} < 3$ observations in the prior period, it borrows from the cause-level prior. If the cause is also sparse, it falls back to the global prior.
+
+**Credible intervals and quantiles.** Back-transformed from log-space:
+$$
+Q_{p,\text{minutes}} = e^{\mu_{\text{post}} + z_p \,\sigma_{\text{post}}} - 1
+$$
+
+**128 strata updated** in this batch. Notable shifts: `construction × Tumkur Road` (+7.74 log-units, 6.2 sigma) and `pot_holes × CBD 1` (−6.41 log-units, 4.9 sigma) — both flagged as critical retrain triggers.
+
+**Simplification.** The conjugate Gaussian prior on log-duration is an approximation; a log-normal mixture would better capture multimodality. Censored observations from the feedback batch are excluded (1,467 censored rows dropped) because the right-censoring mechanism is informative in this dataset.
+
+---
+
+### Component 2 — Calibration Posterior Update
+
+**Purpose.** Update Beta posteriors over high-impact probability bins using feedback-period actual outcomes.
+
+**Actual label construction.** For each uncensored Mar–Apr event, the actual high-impact label is:
+$$
+y_{\text{hi}} = \mathbf{1}\!\left\{\text{duration} > \tau_c\right\}, \qquad \tau_c = P_{75}(\text{duration} \mid \text{cause})
+$$
+where $\tau_c$ is computed from the training window only (from `layer45_cause_tau_thresholds.csv`).
+
+**Beta posterior update.** Decile bins (10 bins over $[0, 1]$):
+$$
+\theta_j \mid D \sim \text{Beta}(a_0 + s_j,\; b_0 + f_j)
+$$
+where $a_0 = b_0 = 1$ (uniform prior), $s_j$ = feedback successes in bin $j$, $f_j$ = failures.
+
+Calibrated probability: $\hat{p}_j = (a_0 + s_j) / (a_0 + b_0 + s_j + f_j)$
+
+**ECE.** $\text{ECE} = \sum_j \lvert \bar{p}_j - \bar{y}_j \rvert \cdot n_j / N$
+
+**Finding.** ECE on the feedback batch (0.1635) is materially worse than the near-zero ECE reported on the training set — a known artifact of isotonic calibration overfitting to the training distribution. The calibration estimator receives the highest BMA weight (0.41) because its calibration ECE is the lowest-NLL proxy despite the absolute miscalibration being real.
+
+**Simplification.** Bins 1, 3, 5, 6, 7, 9 (0.1–0.2, 0.3–0.4, …) are empty in the current prediction distribution, which is tri-modal (clustered at 0–0.1, 0.2–0.3, 0.8–0.9). Posterior updates are therefore concentrated in three bins.
+
+---
+
+### Component 3 — Drift Detection
+
+**Purpose.** Detect distributional shifts between Nov–Feb baseline and Mar–Apr feedback using three complementary tests.
+
+**Page-Hinkley (PH) test** — sequential change-point on the ordered log-duration series:
+$$
+\mathrm{PH}_t = \mathrm{PH}_{t-1} + (x_t - \mu_0 - \delta), \qquad
+M_t = \min_{s \leq t} \mathrm{PH}_s
+$$
+Alert when $\mathrm{PH}_t - M_t > \lambda$. Parameters: $\delta = 0.02$, $\lambda = 5.0$.
+
+**Population Stability Index (PSI)**:
+$$
+\mathrm{PSI} = \sum_{b=1}^{B} (f_b^{\text{new}} - f_b^{\text{base}}) \ln\!\frac{f_b^{\text{new}}}{f_b^{\text{base}}}
+$$
+Thresholds: $< 0.10$ stable, $0.10$–$0.25$ moderate, $> 0.25$ critical.
+
+**Operational Drift Score (ODS)** — week-over-week mean shift:
+$$
+\mathrm{ODS}_t = \frac{|\mu_t - \mu_{t-1}|}{\sigma_{t-1}}
+$$
+
+**Mean-shift z-test**: $z = |\bar{y}_{\text{fb}} - \mu_0| / (\sigma_0 / \sqrt{n_{\text{fb}}})$
+
+**Results.** 3 alerts across 7 tests:
+- **CRITICAL** Page-Hinkley: max PH = 326.8 — sustained upward shift in log-duration throughout Mar–Apr
+- **CRITICAL** Mean-shift z = 3.21 — mean log-duration significantly higher in feedback vs baseline
+- **MODERATE** PSI on `hour_local` = 0.153 — hour-of-day distribution shifted between periods
+
+---
+
+### Component 4 — Prototype Trust Update (Beta-Binomial + EMA)
+
+**Purpose.** Maintain per-prototype trust scores using a Beta-Binomial model updated against Mar–Apr residuals.
+
+**Trust update rule.** For each event matched to prototype $p$ in the feedback period:
+- Confident retrieval ($\text{conf} > 0.7$) + good outcome ($|\text{residual}| < 0.5$): +1 success
+- Confident retrieval + poor outcome ($|\text{residual}| > 1.5$): +1 failure
+- Uncertain retrieval + good outcome: +0.5 success
+
+Beta-Binomial posterior:
+$$
+\alpha_p^{(t)} = \alpha_0 + n_{\text{success}}, \qquad \beta_p^{(t)} = \beta_0 + n_{\text{failure}}
+$$
+$$
+R_p = \frac{\alpha_p^{(t)}}{\alpha_p^{(t)} + \beta_p^{(t)}}, \qquad
+Q_p^{(t+1)} = (1 - \eta)\,Q_p^{(t)} + \eta\,R_p, \qquad \eta = 0.20
+$$
+
+**Results.** 47 prototypes evaluated, mean trust 0.888 → 0.889 (stable). 2 prototypes degraded below 0.5 (flagged as critical triggers). Most prototypes had no feedback events because the 47 Layer 4 prototypes cover planned events only (procession, protest, public_event) — and only 25 planned events fell in Mar–Apr.
+
+---
+
+### Component 5 — Retrain Triggers
+
+**Purpose.** Aggregate all signals into a structured, priority-ranked recommendation log.
+
+**Trigger sources.** Drift tests, calibration bin shifts, large Bayesian posterior shifts (> 1.5 sigma from prior), degraded prototype trust, and Layer 5 chance-constraint violations.
+
+**Severity.** Critical (immediate action), Moderate (monitor), Info (data-collection note).
+
+**Results.** 30 triggers total: 7 critical, 22 moderate, 1 info. All written to `layer6_retrain_triggers.csv`. No upstream files modified.
+
+---
+
+### Component 6 — Resource Effectiveness Posteriors
+
+**Purpose.** Update posterior beliefs over Layer 5 resource effectiveness coefficients $\boldsymbol{\gamma} = [\gamma_p, \gamma_b, \gamma_t, \gamma_q]$ using feedback-period evidence.
+
+**Model.** Bayesian linear regression:
+$$
+z_i = \mathbf{x}_i^\top \boldsymbol{\gamma} + \varepsilon_i, \qquad \varepsilon_i \sim \mathcal{N}(0, \sigma^2)
+$$
+$$
+\boldsymbol{\gamma} \sim \mathcal{N}(\boldsymbol{\gamma}_0, \boldsymbol{\Sigma}_0)
+$$
+Normal-Normal conjugate posterior:
+$$
+\boldsymbol{\Sigma}_{\text{post}}^{-1} = \boldsymbol{\Sigma}_0^{-1} + \frac{1}{\sigma^2} \mathbf{X}^\top \mathbf{X}, \qquad
+\boldsymbol{\mu}_{\text{post}} = \boldsymbol{\Sigma}_{\text{post}}\!\left(\boldsymbol{\Sigma}_0^{-1}\boldsymbol{\gamma}_0 + \frac{1}{\sigma^2}\mathbf{X}^\top \mathbf{z}\right)
+$$
+
+**Evidence paths.** Two paths are attempted in order:
+1. **Event-level**: join Layer 5 allocations to feedback actuals (requires event-ID overlap). Uses log-ratio residual $z_i = \log(1 + \text{actual}) - \log(1 + \hat{y}_{50})$ as outcome.
+2. **Shadow-price aggregate** (fired in this run): Layer 5 shadow prices are scaled to gamma-space via $\hat{\gamma}_k \approx \text{shadowprice}_k / \text{scale}$ where $\text{scale} = (\bar{D}_\text{raw} / N_\text{sites}) \cdot (1 - \eta_\text{eff})$ and $\eta_\text{eff}$ is the mean delay reduction fraction (49.8%). Each resource type provides one indirect observation with noise $\sigma_k = 0.5 \gamma_{0,k}$.
+
+**Prior.** $\boldsymbol{\gamma}_0 = [0.18, 0.10, 0.25, 0.30]$ (Layer 5 fixed hyperparameters). $\sigma_0 = [0.08, 0.05, 0.10, 0.10]$.
+
+**Posterior (this run).**
+
+| Parameter | Prior mean | Posterior mean | Shift |
+|-----------|-----------|----------------|-------|
+| $\gamma_p$ (police) | 0.180 | 0.397 | +0.217 |
+| $\gamma_b$ (barricades) | 0.100 | 0.222 | +0.122 |
+| $\gamma_t$ (tow) | 0.250 | 0.491 | +0.241 |
+| $\gamma_q$ (QRU) | 0.300 | 0.516 | +0.216 |
+
+**CAUTION.** All evidence in this run is model-derived (shadow prices from Layer 5 optimization), not from real-world outcome measurement. The posterior means reflect updated parameter beliefs consistent with the observed marginal resource values — they do not represent causal lift estimates. The Layer 5 effectiveness function $E = 1 - \exp(-\sum \gamma_k r_k)$ is parametric, not learned from outcome labels, because no deployment outcome labels exist in the dataset.
+
+**Simplification.** Without event-level paired (resources, actual delay reduction) data, the regression uses aggregate shadow-price evidence only. A proper causal update would require a randomized resource allocation study.
+
+---
+
+### Component 7 — Bayesian Model Averaging Weights
+
+**Purpose.** Maintain posterior weights over five model components; track weight drift and entropy as indicators of which component the feedback most challenges.
+
+**BMA update.** Weights proportional to negative log-likelihood proxy:
+$$
+w_m \propto \exp\!\left(-\frac{\text{NLL}_m}{2}\right), \qquad w_m^{\text{norm}} = \frac{w_m}{\sum_k w_k}
+$$
+
+**NLL proxies (all in log-duration or probability space).**
+
+| Model | NLL proxy | How computed |
+|-------|-----------|--------------|
+| `duration_catboost` | Mean squared log-error on feedback actuals | $\bar\varepsilon^2$, Gaussian NLL in log-space |
+| `retrieval_estimator` | Layer 4.5 holdout-planned RMSLE | From `layer45_metrics.csv` (subset=holdout_planned) |
+| `calibration_estimator` | $5\,\text{ECE} + 2\,\text{Brier}$ | From calibration posterior update |
+| `corridor_cause_prior` | Mean NLL under prior $\mathcal{N}(\mu_{\text{prior}}, \sigma_{\text{prior}}^2)$ | Per-event lookup in Bayesian duration output; fallback to median NLL for NaN strata |
+| `scenario_surrogate` | NLL under L5 lognormal surrogate | $\mu = \log Q_{50}$, $\sigma = (\log Q_{95} - \log Q_{50}) / 1.645$ |
+
+**Rolling drift.** $D_\text{KL}(\mathbf{w} \| \mathbf{u}) = \sum_m w_m \log(w_m / u_m)$ where $\mathbf{u} = \mathbf{1}/5$ (uniform prior for first batch).
+
+**Results (this run).**
+
+| Model | Weight | NLL |
+|-------|--------|-----|
+| calibration_estimator | **0.410** | 0.217 |
+| duration_catboost | 0.171 | 1.966 |
+| corridor_cause_prior | 0.159 | 2.112 |
+| retrieval_estimator | 0.148 | 2.258 |
+| scenario_surrogate | 0.113 | 2.787 |
+
+Posterior entropy: 1.489 (near maximum of $\ln 5 \approx 1.609$ for 5 models), KL from uniform: 0.121. The calibration estimator dominates because the other four NLLs are much larger and closer to each other.
+
+**Simplification.** The NLL proxies mix different units (log-error vs probability cross-entropy vs retrieval RMSLE). They are not directly commensurable; the BMA weighting should be interpreted as a relative evidence ranking, not an absolute model probability. A proper BMA would require a common likelihood function on held-out data.
+
+---
+
+### Component 8 — Model Health Monitoring
+
+**Purpose.** Track rolling metrics across prior-holdout and feedback-batch windows, escalating retrain urgency when health metrics degrade even if drift tests are borderline.
+
+**Metrics tracked.**
+
+| Group | Metrics | Baseline source |
+|-------|---------|-----------------|
+| Duration | RMSE, MAE, Median AE, RMSLE | Layer 4.5 holdout_sanitized metrics |
+| Probability calibration | Brier score, ECE | Layer 4.5 holdout ECE/Brier |
+| Layer 5 optimization | CVaR reduction %, CC satisfaction | Layer 5 opt metrics |
+| Drift | PH stat, PSI, ODS | Drift detection output |
+| Posterior uncertainty | Mean CI width (log-space) | Bayesian duration posteriors |
+| Prototype trust | Mean abs trust delta | Prototype trust update |
+| Retrain triggers | Count by severity | Retrain trigger output |
+
+**Urgency escalation.** Overall health is CRITICAL if 3+ metrics are critical, WARNING if 1+ critical or 4+ warnings. A borderline PSI score (0.10–0.25) combined with critical drift tests and multiple stratum shifts will escalate to CRITICAL even if the PSI alone is only MODERATE.
+
+**Results (this run).** Overall: **CRITICAL**
+- CRITICAL: PH stat 326.8, mean-shift z = 3.21, 7 critical triggers
+- WARNING: PSI on hour_local = 0.153, mean trust delta = 0.001
+
+**Simplification.** Relative-change thresholds for duration metrics (warn at +20%, critical at +50% degradation vs holdout) are conservative starting points; a live deployment would calibrate these against operational impact estimates.
+
+---
+
+### Run
+
+```bash
+python src/layer6_adaptive_learning.py
+```
+
+Runs after `layer5_robust_optimization.py`. Reads Layer 4.5 and Layer 5 canonical outputs only. Writes all Layer 6 outputs to `outputs/layer6_*`. Typical runtime: < 30 seconds.
+
+### Layer 6 outputs
+
+| File | Contents |
+|------|----------|
+| `layer6_posterior_duration_priors.json` | Global + per-stratum Bayesian posterior parameters (51 KB) |
+| `layer6_duration_posterior_summary.csv` | Per-stratum: prior, posterior, CI, back-transformed quantiles, n_eff, fallback level |
+| `layer6_calibration_posteriors.csv` | Per-bin Beta posterior params, posterior mean, CI, ECE before/after, Brier |
+| `layer6_drift_report.csv` | Per-test: score, threshold, alert flag, severity, recommendation |
+| `layer6_retrain_triggers.csv` | All recommendation records, sorted by severity |
+| `layer6_prototype_trust_updates.csv` | Per-prototype: prior trust, Beta params, posterior, EMA-updated trust, uncertainty |
+| `layer6_feedback_log.csv` | Per-event: actual vs predicted duration/probability, log-residual, processing metadata |
+| `layer6_resource_effectiveness_posteriors.json` | Bayesian posterior over gamma_p/b/t/q, evidence path, caution disclaimer |
+| `layer6_bma_weights.csv` | Per-model NLL proxy, prior weight, posterior weight, weight drift |
+| `layer6_model_health_summary.csv` | Per-metric health status, holdout vs feedback value, relative change, overall flag |
+| `layer6_versioned_knowledge_base.json` | Timestamped snapshot of all posterior beliefs for versioning |
+| `layer6_recalibration_recommendations.csv` | Per-bin calibration priority ranking with recommended action |
+| `layer6_active_alerts.csv` | Deduplicated, priority-ranked alerts from all components |
+| `layer6_posterior_uncertainty.csv` | Per-stratum CI width, uncertainty flag |
+| `layer6_prototype_diagnostics.csv` | Extended prototype info: trust trajectory, health flag, mean residual |
+| `layer6_learning_summary.txt` | Human-readable full-run summary |
+| `layer6_model_artifacts/` | JSON snapshots: duration_posteriors, effectiveness_posteriors, bma_weights, calibration_posteriors, health_snapshot |
+
+### End-to-End Decision Pipeline (updated)
+
+```
+Historical ASTraM Data (8,173 incidents, Nov 2023 - Apr 2024)
+        |
+        v
+Layer 1 - Duration Intelligence
+(KM, Cox PH, Frailty, AFT, RSF, RMST, GMM archetypes)
+        |
+        v
+Layer 2 - Spatial Intelligence
+(Gi*, OBI, Hawkes self-excitation, Future Risk, Persistence index)
+        |
+        +------------------------------+
+        v                             v
+Layer 3 - Resource Optimization      Layer 3 - Corridor Fragility
+(PCA-learned DIS, LP, Dijkstra)      (marked Hawkes + EB shrinkage)
+        |                             |
+        +-------------+---------------+
+                      v
+Layer 4 - Event Intelligence + Prototype Retrieval
+(Gower/K-Medoids, evidence tiers, L3 fallback, knowledge base)
+        |
+        v
+Layer 4.5 - Predictive Fusion (leak-free)
+(daily as-of features -> CatBoost -> JOSV -> duration quality gate)
+        |
+        v
+Layer 5 - Robust Prescriptive Optimization
+(scenario generation -> CVaR MILP -> allocation + diversion + shadow prices)
+        |
+        v
+Operational Action Plan + Dashboard
+        |
+        v  [Mar-Apr 2024 feedback batch]
+Layer 6 - Adaptive Learning (ADDITIVE, recommendations only)
+(Bayesian duration update, calibration posteriors, drift detection,
+ prototype trust, BMA, resource effectiveness, model health monitoring)
+        |
+        v
+outputs/layer6_retrain_triggers.csv  (recommendations only -- never mutates upstream)
+```

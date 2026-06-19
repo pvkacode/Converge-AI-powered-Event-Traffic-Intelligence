@@ -1,0 +1,62 @@
+[
+  {
+    "model": "duration_catboost",
+    "nll_proxy_raw": 1.965718,
+    "nll_proxy_used": 1.965718,
+    "weight_prior": 0.2,
+    "weight_posterior": 0.170818,
+    "weight_drift": -0.029182,
+    "log_weight": -0.874453,
+    "posterior_entropy": 1.488741,
+    "kl_from_uniform": 0.120697,
+    "generated_at": "2026-06-18T23:39:58Z"
+  },
+  {
+    "model": "retrieval_estimator",
+    "nll_proxy_raw": 2.25811,
+    "nll_proxy_used": 2.25811,
+    "weight_prior": 0.2,
+    "weight_posterior": 0.147585,
+    "weight_drift": -0.052415,
+    "log_weight": -1.020649,
+    "posterior_entropy": 1.488741,
+    "kl_from_uniform": 0.120697,
+    "generated_at": "2026-06-18T23:39:58Z"
+  },
+  {
+    "model": "calibration_estimator",
+    "nll_proxy_raw": 0.216812,
+    "nll_proxy_used": 0.216812,
+    "weight_prior": 0.2,
+    "weight_posterior": 0.409548,
+    "weight_drift": 0.209548,
+    "log_weight": 0.0,
+    "posterior_entropy": 1.488741,
+    "kl_from_uniform": 0.120697,
+    "generated_at": "2026-06-18T23:39:58Z"
+  },
+  {
+    "model": "corridor_cause_prior",
+    "nll_proxy_raw": NaN,
+    "nll_proxy_used": 2.111914,
+    "weight_prior": 0.2,
+    "weight_posterior": 0.158777,
+    "weight_drift": -0.041223,
+    "log_weight": -0.947551,
+    "posterior_entropy": 1.488741,
+    "kl_from_uniform": 0.120697,
+    "generated_at": "2026-06-18T23:39:58Z"
+  },
+  {
+    "model": "scenario_surrogate",
+    "nll_proxy_raw": 2.787341,
+    "nll_proxy_used": 2.787341,
+    "weight_prior": 0.2,
+    "weight_posterior": 0.113272,
+    "weight_drift": -0.086728,
+    "log_weight": -1.285265,
+    "posterior_entropy": 1.488741,
+    "kl_from_uniform": 0.120697,
+    "generated_at": "2026-06-18T23:39:58Z"
+  }
+]

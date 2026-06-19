@@ -1,0 +1,8 @@
+test,variable,score,threshold,alert,severity,n_alerts,first_alert_idx,detail,recommendation
+page_hinkley,log_duration,326.8316,5.0,True,critical,1011,5.0,"max_PH=326.832, first_alert_at_index=5",RETRAIN_TRIGGER: Page-Hinkley detects shift in log-duration sequence. Recommend updating Layer 4.5 duration priors.
+psi,log_duration,0.0503,0.25,False,none,0,,"PSI=0.0503 (baseline n=2451, feedback n=1095)",PSI=0.0503 — distribution stable.
+psi,trust_score,0.0124,0.25,False,none,0,,PSI=0.0124,PSI=0.0124 on 'trust_score' — stable.
+psi,iso_anomaly_score,0.0266,0.25,False,none,0,,PSI=0.0266,PSI=0.0266 on 'iso_anomaly_score' — stable.
+psi,hour_local,0.1526,0.25,True,moderate,1,,PSI=0.1526,RETRAIN_TRIGGER: PSI=0.1526 on 'hour_local' indicates moderate distributional shift.
+ods_weekly,log_duration,0.5667,1.5,False,none,0,,max_ODS=0.567 across 7 weeks; alert weeks: [],ODS=0.567 — no week-over-week drift detected.
+mean_shift_ztest,log_duration,3.2097,2.0,True,critical,1,,"baseline_mu=4.929, feedback_mu=5.194, z=3.210",RETRAIN_TRIGGER: Mean log-duration shifted by z=3.21 standard errors. Layer 4.5 global prior should be updated.
