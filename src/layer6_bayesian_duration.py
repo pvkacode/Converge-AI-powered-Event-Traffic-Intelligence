@@ -100,8 +100,102 @@ def credible_interval(mu: float, var: float, z: float = 1.96) -> tuple[float, fl
 
 
 def log_to_minute_quantiles(mu: float, var: float) -> tuple[float, float, float]:
-    """Posterior predictive quantiles in original minute scale."""
+    """Parameter quantiles in original minute scale (uses posterior SD on mu only)."""
     sd  = np.sqrt(max(var, MIN_VAR))
+    q50 = float(np.expm1(mu))
+    q80 = float(np.expm1(mu + stats.norm.ppf(0.80) * sd))
+    q95 = float(np.expm1(mu + stats.norm.ppf(0.95) * sd))
+    return q50, q80, q95
+
+
+def predictive_variance(var_post: float, var_obs: float) -> float:
+    """Posterior predictive variance: var(mu | D) + var(y | mu)."""
+    return max(var_post, MIN_VAR) + max(var_obs, MIN_VAR)
+
+
+def predictive_sigma(var_post: float, var_obs: float) -> float:
+    """Posterior predictive standard deviation for a new log-duration observation."""
+    return float(np.sqrt(predictive_variance(var_post, var_obs)))
+
+
+def obs_variance_from_values(
+    y: np.ndarray,
+    w: np.ndarray | None = None,
+) -> float | None:
+    """Weighted observation variance from log-duration values."""
+    y = np.asarray(y, dtype=float)
+    if len(y) < 1:
+        return None
+    w = np.ones(len(y)) if w is None else np.asarray(w, dtype=float)
+    _, _, var_w = weighted_stats(y, w)
+    return float(var_w) if np.isfinite(var_w) else None
+
+
+def build_obs_variance_pools(fb: pd.DataFrame) -> dict:
+    """
+    Build stratum, cause, and global observation-variance pools from feedback.
+
+    Returns dict with keys: global (float|None), cause {str: float}, stratum {(cause,corr): float}
+    """
+    pools: dict = {"global": None, "cause": {}, "stratum": {}}
+    if fb.empty or "log_dur" not in fb.columns:
+        return pools
+
+    pools["global"] = obs_variance_from_values(fb["log_dur"].values)
+    for cause, grp in fb.groupby("event_cause"):
+        c = str(cause)
+        pools["cause"][c] = obs_variance_from_values(grp["log_dur"].values)
+        if "corridor_fill" in grp.columns:
+            for corr, sgrp in grp.groupby("corridor_fill"):
+                pools["stratum"][(c, str(corr))] = obs_variance_from_values(
+                    sgrp["log_dur"].values
+                )
+    return pools
+
+
+def resolve_obs_variance(
+    pools: dict,
+    cause: str | None = None,
+    corridor: str | None = None,
+    local_y: np.ndarray | None = None,
+    local_w: np.ndarray | None = None,
+    prior_period_var: float | None = None,
+) -> tuple[float, str, bool]:
+    """
+    Resolve observation variance with explicit fallback chain.
+
+    Returns (var_obs, source_label, valid).
+    """
+    if local_y is not None and len(local_y) >= 2:
+        v = obs_variance_from_values(local_y, local_w)
+        if v is not None and np.isfinite(v):
+            return v, "local_feedback", True
+
+    if cause and corridor:
+        v = pools.get("stratum", {}).get((cause, corridor))
+        if v is not None and np.isfinite(v):
+            return v, "pooled_stratum", True
+
+    if cause:
+        v = pools.get("cause", {}).get(cause)
+        if v is not None and np.isfinite(v):
+            return v, "pooled_cause", True
+
+    v = pools.get("global")
+    if v is not None and np.isfinite(v):
+        return v, "pooled_global", True
+
+    if prior_period_var is not None and np.isfinite(prior_period_var):
+        return max(float(prior_period_var), MIN_VAR), "prior_period_sample_var", True
+
+    return MIN_VAR, "min_var_floor", False
+
+
+def log_to_minute_predictive_quantiles(
+    mu: float, var_post: float, var_obs: float,
+) -> tuple[float, float, float]:
+    """Posterior predictive quantiles in original minute scale."""
+    sd = predictive_sigma(var_post, var_obs)
     q50 = float(np.expm1(mu))
     q80 = float(np.expm1(mu + stats.norm.ppf(0.80) * sd))
     q95 = float(np.expm1(mu + stats.norm.ppf(0.95) * sd))

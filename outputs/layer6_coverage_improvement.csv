@@ -1,0 +1,160 @@
+group_type,group_name,coverage_param_only,coverage_predictive,coverage_delta
+global,all_events,0.3342,0.8658,0.5315
+cause,accident,0.5,0.5625,0.0625
+cause,congestion,0.375,0.75,0.375
+cause,construction,0.473,0.8784,0.4054
+cause,debris,1.0,1.0,0.0
+cause,others,0.3617,0.8298,0.4681
+cause,pot_holes,0.3091,0.7818,0.4727
+cause,procession,0.625,0.875,0.25
+cause,protest,1.0,1.0,0.0
+cause,public_event,0.3333,0.5556,0.2222
+cause,road_conditions,0.5714,0.6667,0.0952
+cause,test_demo,0.0,0.0,0.0
+cause,tree_fall,0.3289,0.9195,0.5906
+cause,vehicle_breakdown,0.3136,0.9004,0.5869
+cause,water_logging,0.2688,0.8441,0.5753
+corridor,Airport New South Road,0.6667,0.6667,0.0
+corridor,Bannerghata Road,0.5238,0.8571,0.3333
+corridor,Bellary Road 1,0.3636,0.8182,0.4545
+corridor,Bellary Road 2,0.44,0.68,0.24
+corridor,CBD 1,0.75,0.75,0.0
+corridor,CBD 2,0.2222,0.3333,0.1111
+corridor,Hennur Main Road,0.6,0.7,0.1
+corridor,Hosur Road,0.4444,0.8148,0.3704
+corridor,IRR(Thanisandra road),0.7143,0.8571,0.1429
+corridor,Magadi Road,0.3947,0.8421,0.4474
+corridor,Mysore Road,0.3419,0.8803,0.5385
+corridor,Non-corridor,0.2254,0.9375,0.7121
+corridor,ORR East 1,0.4583,0.8333,0.375
+corridor,ORR East 2,0.6154,0.8205,0.2051
+corridor,ORR North 1,0.3429,0.7429,0.4
+corridor,ORR North 2,0.4167,0.875,0.4583
+corridor,ORR West 1,0.375,0.75,0.375
+corridor,Old Airport Road,0.2778,0.7222,0.4444
+corridor,Old Madras Road,0.4839,0.8387,0.3548
+corridor,Tumkur Road,0.2877,0.8904,0.6027
+corridor,Varthur Road,0.5333,0.7333,0.2
+corridor,West of Chord Road,0.5769,0.7692,0.1923
+support_level,LOW,0.4653,0.7341,0.2689
+support_level,MEDIUM,0.3298,0.8971,0.5673
+support_level,HIGH,0.226,0.9481,0.7221
+ppc_stratum,accident__Bellary Road 1,1.0,1.0,0.0
+ppc_stratum,accident__Bellary Road 2,0.5,1.0,0.5
+ppc_stratum,accident__Hosur Road,1.0,1.0,0.0
+ppc_stratum,accident__Non-corridor,0.5,1.0,0.5
+ppc_stratum,accident__ORR North 1,1.0,1.0,0.0
+ppc_stratum,accident__Tumkur Road,0.5,1.0,0.5
+ppc_stratum,congestion__Hennur Main Road,1.0,1.0,0.0
+ppc_stratum,congestion__Non-corridor,0.5,1.0,0.5
+ppc_stratum,construction__Bellary Road 1,1.0,1.0,0.0
+ppc_stratum,construction__Mysore Road,1.0,1.0,0.0
+ppc_stratum,construction__Non-corridor,0.1429,0.9524,0.8095
+ppc_stratum,construction__ORR East 1,1.0,1.0,0.0
+ppc_stratum,construction__ORR East 2,0.2667,1.0,0.7333
+ppc_stratum,construction__ORR North 1,1.0,1.0,0.0
+ppc_stratum,construction__ORR North 2,0.6667,1.0,0.3333
+ppc_stratum,others__Bellary Road 1,0.4286,1.0,0.5714
+ppc_stratum,others__Bellary Road 2,0.5,1.0,0.5
+ppc_stratum,others__Hosur Road,1.0,1.0,0.0
+ppc_stratum,others__Magadi Road,0.75,1.0,0.25
+ppc_stratum,others__Mysore Road,0.4,1.0,0.6
+ppc_stratum,others__Non-corridor,0.3571,1.0,0.6429
+ppc_stratum,others__ORR East 2,1.0,1.0,0.0
+ppc_stratum,others__ORR North 2,1.0,1.0,0.0
+ppc_stratum,others__Old Airport Road,1.0,1.0,0.0
+ppc_stratum,others__Old Madras Road,1.0,1.0,0.0
+ppc_stratum,others__Tumkur Road,0.6,1.0,0.4
+ppc_stratum,others__West of Chord Road,0.6667,0.6667,0.0
+ppc_stratum,pot_holes__Bellary Road 1,0.6667,1.0,0.3333
+ppc_stratum,pot_holes__CBD 1,1.0,1.0,0.0
+ppc_stratum,pot_holes__Magadi Road,0.6667,1.0,0.3333
+ppc_stratum,pot_holes__Mysore Road,0.6667,1.0,0.3333
+ppc_stratum,pot_holes__Non-corridor,0.0345,1.0,0.9655
+ppc_stratum,pot_holes__ORR East 1,1.0,1.0,0.0
+ppc_stratum,pot_holes__Old Madras Road,0.3333,1.0,0.6667
+ppc_stratum,procession__Non-corridor,0.5,1.0,0.5
+ppc_stratum,protest__Non-corridor,1.0,1.0,0.0
+ppc_stratum,public_event__Non-corridor,1.0,1.0,0.0
+ppc_stratum,road_conditions__Bellary Road 1,1.0,1.0,0.0
+ppc_stratum,road_conditions__CBD 2,1.0,1.0,0.0
+ppc_stratum,road_conditions__Non-corridor,0.75,0.875,0.125
+ppc_stratum,road_conditions__ORR West 1,1.0,1.0,0.0
+ppc_stratum,tree_fall__Non-corridor,0.0952,0.9841,0.8889
+ppc_stratum,vehicle_breakdown__Airport New South Road,1.0,1.0,0.0
+ppc_stratum,vehicle_breakdown__Bannerghata Road,0.3333,1.0,0.6667
+ppc_stratum,vehicle_breakdown__Bellary Road 1,0.2941,0.9706,0.6765
+ppc_stratum,vehicle_breakdown__Bellary Road 2,0.4286,0.9286,0.5
+ppc_stratum,vehicle_breakdown__CBD 1,1.0,1.0,0.0
+ppc_stratum,vehicle_breakdown__CBD 2,1.0,1.0,0.0
+ppc_stratum,vehicle_breakdown__Hennur Main Road,1.0,1.0,0.0
+ppc_stratum,vehicle_breakdown__Hosur Road,0.1875,0.9375,0.75
+ppc_stratum,vehicle_breakdown__IRR(Thanisandra road),0.25,1.0,0.75
+ppc_stratum,vehicle_breakdown__Magadi Road,0.2,0.96,0.76
+ppc_stratum,vehicle_breakdown__Mysore Road,0.2623,0.9508,0.6885
+ppc_stratum,vehicle_breakdown__Non-corridor,0.125,0.9653,0.8403
+ppc_stratum,vehicle_breakdown__ORR East 1,0.2353,0.9412,0.7059
+ppc_stratum,vehicle_breakdown__ORR East 2,0.8333,0.8333,0.0
+ppc_stratum,vehicle_breakdown__ORR North 1,0.4667,0.9333,0.4666
+ppc_stratum,vehicle_breakdown__ORR North 2,0.25,1.0,0.75
+ppc_stratum,vehicle_breakdown__ORR West 1,0.25,1.0,0.75
+ppc_stratum,vehicle_breakdown__Old Airport Road,0.5,0.9,0.4
+ppc_stratum,vehicle_breakdown__Old Madras Road,0.2941,1.0,0.7059
+ppc_stratum,vehicle_breakdown__Tumkur Road,0.1702,0.9787,0.8085
+ppc_stratum,vehicle_breakdown__Varthur Road,0.3333,1.0,0.6667
+ppc_stratum,vehicle_breakdown__West of Chord Road,0.6667,1.0,0.3333
+ppc_stratum,water_logging__Bellary Road 2,0.6667,1.0,0.3333
+ppc_stratum,water_logging__Non-corridor,0.0508,0.9661,0.9153
+ppc_stratum,water_logging__ORR East 1,0.6,0.8,0.2
+ppc_stratum,water_logging__ORR West 1,0.5,1.0,0.5
+ppc_cause,accident__cause_level,0.0714,0.9286,0.8572
+ppc_cause,congestion__cause_level,0.2857,0.8571,0.5714
+ppc_cause,construction__cause_level,0.0435,0.8043,0.7608
+ppc_cause,construction__cause_level,0.0217,0.3261,0.3044
+ppc_cause,construction__cause_level,0.0217,0.3043,0.2826
+ppc_cause,others__cause_level,0.0303,0.8788,0.8485
+ppc_cause,others__cause_level,0.0152,0.8939,0.8787
+ppc_cause,others__cause_level,0.0152,0.3636,0.3484
+ppc_cause,others__cause_level,0.1667,0.8939,0.7272
+ppc_cause,others__cause_level,0.0152,0.9394,0.9242
+ppc_cause,pot_holes__cause_level,0.0196,0.3529,0.3333
+ppc_cause,pot_holes__cause_level,0.0196,0.9608,0.9412
+ppc_cause,pot_holes__cause_level,0.0196,0.9608,0.9412
+ppc_cause,pot_holes__cause_level,0.0196,0.7451,0.7255
+ppc_cause,pot_holes__cause_level,0.0196,0.9804,0.9608
+ppc_cause,pot_holes__cause_level,0.0196,0.9804,0.9608
+ppc_cause,pot_holes__cause_level,0.2353,0.7255,0.4902
+ppc_cause,procession__cause_level,0.2,0.8,0.6
+ppc_cause,public_event__cause_level,0.1429,0.2857,0.1428
+ppc_cause,public_event__cause_level,0.4286,0.7143,0.2857
+ppc_cause,road_conditions__cause_level,0.4737,1.0,0.5263
+ppc_cause,road_conditions__cause_level,0.3158,0.8421,0.5263
+ppc_cause,road_conditions__cause_level,0.0526,0.8421,0.7895
+ppc_cause,road_conditions__cause_level,0.0526,0.8421,0.7895
+ppc_cause,tree_fall__cause_level,0.3333,0.8182,0.4849
+ppc_cause,tree_fall__cause_level,0.0101,0.7475,0.7374
+ppc_cause,tree_fall__cause_level,0.2727,0.9495,0.6768
+ppc_cause,tree_fall__cause_level,0.0101,0.9091,0.899
+ppc_cause,tree_fall__cause_level,0.0101,0.6162,0.6061
+ppc_cause,tree_fall__cause_level,0.2929,0.9495,0.6566
+ppc_cause,tree_fall__cause_level,0.3636,0.9697,0.6061
+ppc_cause,tree_fall__cause_level,0.5455,0.9697,0.4242
+ppc_cause,tree_fall__cause_level,0.0101,0.8687,0.8586
+ppc_cause,tree_fall__cause_level,0.101,0.9495,0.8485
+ppc_cause,tree_fall__cause_level,0.5051,1.0,0.4949
+ppc_cause,water_logging__cause_level,0.414,0.9554,0.5414
+ppc_cause,water_logging__cause_level,0.2357,0.9745,0.7388
+ppc_cause,water_logging__cause_level,0.3885,0.9108,0.5223
+ppc_cause,water_logging__cause_level,0.0191,0.6115,0.5924
+ppc_cause,water_logging__cause_level,0.3312,0.9745,0.6433
+ppc_cause,water_logging__cause_level,0.4713,0.9618,0.4905
+ppc_cause,water_logging__cause_level,0.1975,0.9745,0.777
+ppc_cause,water_logging__cause_level,0.5541,0.9618,0.4077
+ppc_cause,water_logging__cause_level,0.2739,0.9682,0.6943
+ppc_cause,water_logging__cause_level,0.4459,0.9618,0.5159
+ppc_cause,water_logging__cause_level,0.0064,0.8599,0.8535
+ppc_cause,water_logging__cause_level,0.3694,0.8025,0.4331
+ppc_cause,water_logging__cause_level,0.3312,0.9682,0.637
+ppc_cause,water_logging__cause_level,0.414,0.9618,0.5478
+ppc_cause,water_logging__cause_level,0.5414,0.949,0.4076
+ppc_global,global,0.061,0.9272,0.8662

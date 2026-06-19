@@ -1,0 +1,413 @@
+================================================================================
+LAYER 6 FORENSIC AUDIT: sigma_log PROVENANCE AND INTERPRETATION
+================================================================================
+Date: 2026-06-16
+Scope: Audit only — no code modified, no outputs recomputed, no patches applied.
+Branch: layer6-adaptive-learning @ 6067e43
+Question: Is global/stratum sigma_log a posterior SD, predictive SD, standard error,
+          pooled sample SD, or something else?
+
+================================================================================
+EXECUTIVE VERDICT
+================================================================================
+
+Verdict: POSTERIOR_SD
+
+sigma_log (and posterior_sigma_log at stratum level) is the square root of the
+normal-normal conjugate posterior variance of the log-mean PARAMETER mu.
+
+It is NOT computed as an explicit frequentist standard error (sigma / sqrt(n)).
+It is NOT the posterior predictive standard deviation for a new observation.
+It is NOT a raw pooled sample standard deviation.
+
+Caveat (separate from Issue #1): Several downstream routines LABEL or USE sigma_log
+as if it were an observation/predictive scale (PPC, sequential LOO coverage,
+log_to_minute_quantiles docstring). Those usages are potentially incorrect for
+predictive interpretation, but they do not change what sigma_log IS — they change
+whether those specific diagnostics are mathematically appropriate.
+
+Issue #1 (sigma masquerading as SD when it is actually SE): NOT CONFIRMED.
+The quantity is a legitimate Bayesian posterior standard deviation on mu.
+
+================================================================================
+1. COMPUTATION TRACE
+================================================================================
+
+--- STAGE 0: Observation transform ---
+
+File:     src/layer6_bayesian_duration.py
+Function: update_duration_posteriors(), _extract_priors()
+Variable: y = log_dur = log1p(duration_min)
+Formula:  y_i = log(1 + duration_i)
+Units:    log-minutes (dimensionless log scale)
+Interpretation: Observations in log-duration space; not sigma_log itself.
+
+--- STAGE 1: Prior variance (prior_sigma_log at extraction) ---
+
+File:     src/layer6_bayesian_duration.py
+Function: _extract_priors()
+Variables: var_p (stratum/cause), var_g (global)
+Formulas:
+  Stratum/cause prior:
+    mu_p  = mean(log_dur) over prior-period rows in stratum
+    var_p = max(sample_variance(log_dur), MIN_VAR)   [ld.var()]
+  Global prior:
+    (mu_g, var_g, _) = _robust_trimmed_stats(log_dur, ones)
+    fallback: nanvar if trimmed fails
+  prior_sigma_log = sqrt(var_p)  [stored in summary rows]
+  global prior sigma_log = sqrt(var_g)  [in global_dict["global_prior"]]
+
+Mathematical interpretation:
+  var_p / var_g are SAMPLE (or trimmed-sample) variances of log-duration
+  observations in the Nov–Feb prior window. In the conjugate update these are
+  treated as the prior variance of the MEAN PARAMETER mu — an empirical-Bayes
+  shortcut that sets prior uncertainty on mu equal to historical observation
+  spread (not historical SE of the mean).
+
+Units: log-minutes (std dev of log-duration observations, used as prior scale on mu)
+Uncertainty type: Prior uncertainty assigned to the parameter mu (modeling choice)
+Observation vs mean: Derived from observation spread; used as prior on mu.
+
+--- STAGE 2: Feedback data variance ---
+
+File:     src/layer6_bayesian_duration.py
+Function: weighted_stats(y, w)
+Variables: n_eff, mu_fb, var_fb
+Formulas:
+  n_eff = (sum w)^2 / sum(w^2)          [Kish 1965 effective sample size]
+  mu_w  = sum(w * y) / sum(w)
+  var_w = sum(w * (y - mu_w)^2) / sum(w)
+  var_fb = max(var_w, MIN_VAR)
+
+Mathematical interpretation:
+  Weighted variance of feedback log-duration OBSERVATIONS (Mar–Apr batch).
+  Used as var_data in the likelihood / data precision term.
+
+Units: log-minutes squared (observation variance)
+Uncertainty type: Observation spread (sampling variance sigma^2), NOT uncertainty of mean
+Observation vs mean: Observation-level variance
+
+--- STAGE 3: Conjugate posterior (CORE — origin of posterior_sigma_log / sigma_log) ---
+
+File:     src/layer6_bayesian_duration.py
+Function: normal_normal_posterior(mu_prior, var_prior, n_eff, mu_data, var_data)
+Variables: mu_post, var_post
+Formulas:
+  tau_prior = 1 / max(var_prior, MIN_VAR)
+  tau_data  = n_eff / max(var_data, MIN_VAR)
+  tau_post  = tau_prior + tau_data
+  mu_post   = (tau_prior * mu_prior + tau_data * mu_data) / tau_post
+  var_post  = 1 / tau_post
+
+  posterior_sigma_log = sqrt(var_post)     [stratum rows, line ~275]
+  global sigma_log    = sqrt(max(var_gp, MIN_VAR))  [global_dict, line ~403]
+
+Equivalent Bayesian model (standard normal-normal conjugate):
+  Prior:     mu ~ N(mu_prior, var_prior)
+  Likelihood: y_bar | mu ~ N(mu, var_data / n_eff)   [weighted mean precision]
+  Posterior: mu | data ~ N(mu_post, var_post)
+
+Mathematical interpretation:
+  sqrt(var_post) is the POSTERIOR STANDARD DEVIATION of the log-mean parameter mu.
+  It quantifies uncertainty about WHERE the stratum/global mean log-duration lies,
+  after pooling prior information with weighted feedback.
+
+Units: log-minutes (std dev of the posterior distribution on mu)
+Uncertainty type: Uncertainty of the MEAN PARAMETER (not a single observation)
+Observation vs mean: Uncertainty of the mean
+
+Relationship to standard error:
+  In the limit var_prior -> infinity (flat prior):
+    var_post -> var_data / n_eff
+    sigma_log -> sqrt(var_data / n_eff)
+  This equals the frequentist standard error of the (weighted) sample mean.
+  The code never forms sigma/sqrt(n) explicitly; the equivalence holds only in
+  the weak-prior limit. With informative prior (var_prior from historical sample
+  variance), posterior_sigma is generally NOT equal to sqrt(var_data/n_eff).
+
+--- STAGE 4: Credible intervals derived from var_post ---
+
+File:     src/layer6_bayesian_duration.py
+Function: credible_interval(mu, var, z=1.96)
+Formula:  ci_lo = mu - z * sqrt(var);  ci_hi = mu + z * sqrt(var)
+Variables: ci95_lo_log, ci95_hi_log (stratum and global)
+
+Mathematical interpretation:
+  95% credible interval for the PARAMETER mu (not for a new observation).
+  Derived directly from posterior variance — NOT from an independent CI width formula.
+
+--- STAGE 5: Minute-scale quantiles (potential mislabel) ---
+
+File:     src/layer6_bayesian_duration.py
+Function: log_to_minute_quantiles(mu, var)
+Docstring: "Posterior predictive quantiles in original minute scale."
+Formula:
+  sd  = sqrt(var)
+  q50 = expm1(mu)
+  q80 = expm1(mu + z_0.80 * sd)
+  q95 = expm1(mu + z_0.95 * sd)
+
+Mathematical interpretation:
+  Despite docstring, this uses ONLY sqrt(var_post) — parameter uncertainty —
+  without adding observation variance var_data. These are transformed PARAMETER
+  quantiles (expm1 of mu-quantiles), NOT full posterior predictive quantiles.
+  Correct predictive would need sqrt(var_post + var_data) in the z-scaling term.
+
+--- STAGE 6: Global posterior assembly ---
+
+File:     src/layer6_bayesian_duration.py
+Function: update_duration_posteriors() [global block, lines 314–412]
+Variables: mu_gp, var_gp, n_eff_g, mu_fb_g, var_fb_g
+Formulas:
+  (mu_fb_g, var_fb_g, n_trim) = _robust_trimmed_stats(y_all, w_all)
+  n_eff_g = kish_n_eff(w_all)
+  (mu_gp, var_gp) = normal_normal_posterior(mu_g, var_g, n_eff_g, mu_fb_g, var_fb_g)
+  global_dict["global_posterior"]["sigma_log"] = sqrt(max(var_gp, MIN_VAR))
+
+Same conjugate formula as stratum level. global_posterior_valid gates downstream PPC.
+
+================================================================================
+2. MATHEMATICAL INTERPRETATION — ANSWERS TO SPECIFIC QUESTIONS
+================================================================================
+
+A. How is sigma_log initially computed?
+
+   sigma_log = sqrt(var_post) where var_post = 1 / (1/var_prior + n_eff/var_data)
+   after a normal-normal conjugate update on the log-mean parameter mu.
+
+B. Is sigma_log sigma_post, sigma_predictive, SE(mu_post), sample_sd, or other?
+
+   Classification: sigma_post — posterior SD of the mean parameter mu in log space.
+
+   NOT sigma_predictive (would be sqrt(var_post + var_data)).
+   NOT an explicit SE(mu_post) = s/sqrt(n) computation (though numerically similar
+   when prior is weak).
+   NOT sample_sd (sample_sd is sqrt(var_data) or sqrt(var_prior) at prior extraction).
+
+C. If global posterior is y ~ N(mu_post, sigma_post^2), does sigma_log correspond?
+
+   NO — that generative statement describes a OBSERVATION model.
+   The code's Bayesian model is:
+     mu ~ N(mu_post, var_post)           [parameter posterior]
+     y | mu ~ N(mu, var_data)            [observation model, implicit]
+   sigma_log corresponds to sqrt(var_post) — uncertainty on mu — NOT the observation
+   noise sigma for y. Treating y ~ N(mu_post, sigma_log^2) is a modeling mismatch
+   used in PPC/LOO coverage (see Section 4).
+
+D. Is sigma_log ever divided by sqrt(n)?
+
+   NO. Grep across layer6*.py shows no sigma_log / sqrt(n) or equivalent.
+   Note: layer6_drift_detection.py line 319 uses sigma_baseline / sqrt(len(fb))
+   for a separate mean-shift z-test — that is NOT sigma_log and does not feed
+   the posterior pipeline.
+
+E. Is sigma_log ever derived from a confidence interval width?
+
+   NO. Credible intervals are computed FROM sqrt(var_post):
+     ci = mu +/- 1.96 * sqrt(var)
+   The direction is variance -> interval, not interval -> sigma.
+
+F. Downstream uses — mathematical correctness
+
+   (a) Entropy (Part C, _compute_entropy_summary)
+       File: layer6_adaptive_learning.py ~1640–1800
+       Uses: H = 0.5*ln(2*pi*e) + ln(sigma) on prior_sigma_log and posterior_sigma_log
+       Correct? YES — if sigma is the SD of N(mu, sigma^2) on the parameter.
+       Global row uses global_dict global_prior/global_posterior sigma_log.
+
+   (b) KL divergence (same function, PPC, entropy)
+       Formula: KL(N0||N1) with sigma as Gaussian scale
+       Correct? YES for comparing prior vs posterior parameter distributions at same level.
+
+   (c) Prior influence lambda (Part F, _compute_prior_influence_summary)
+       Formula: lambda = (sigma_post^2) / (sigma_prior^2) = var_post / var_prior
+       Correct? YES for normal-normal conjugate (equivalent to tau_prior/tau_post).
+
+   (d) ESS summary (Part F, _compute_ess_summary)
+       ESS: Kish n_eff_feedback (independent of sigma formula)
+       ci95_width = 2 * 1.96 * sigma_post
+       Correct? YES for parameter credible interval width in log space.
+
+   (e) Posterior uncertainty report (_write_posterior_uncertainty)
+       Uses posterior_sigma_log, ci95_width from ci95_lo/hi
+       Correct? YES for parameter uncertainty reporting.
+
+   (f) Monitoring diagnostics (_compute_monitoring_diagnostics)
+       Compares posterior_sigma vs 1.2 * prior_sigma for "uncertainty grown"
+       Correct? YES as relative parameter uncertainty comparison (same quantity type).
+
+   (g) Posterior predictive checks (_compute_posterior_predictive_checks, ~2334)
+       Draws: y_sim ~ N(mu_post, sigma_post)
+       Coverage: |y_obs - mu_post| <= z * sigma_post
+       Correct? NO for true posterior predictive checks.
+       Should use predictive SD sqrt(var_post + var_data) or integrate over mu.
+       var_post is usually much smaller than var_data. Using sigma_post for
+       observation-level intervals makes intervals too narrow -> undercoverage.
+
+   (h) Sequential LOO (_compute_sequential_posterior_predictive, ~1362)
+       Model comment: y_i ~ N(theta_s, sigma_s^2) with sigma_s = sqrt(var_seq)
+       CRPS, coverage intervals use sig_seq = sqrt(var_seq)
+       Correct? NO for observation-level predictive evaluation — same issue as PPC.
+
+   (i) log_to_minute_quantiles (exported as posterior_p80_min, posterior_p95_min)
+       Docstring claims posterior predictive; uses sqrt(var_post) only.
+       Correct? NO for predictive quantiles; YES for parameter-quantile back-transform.
+
+   (j) layer6_retrain_triggers.py sigma_shift
+       Uses prior_sigma_log in ratio with log_shift — parameter-scale comparison.
+       Correct? YES for detecting shift relative to prior parameter scale.
+
+G. If sigma_log were actually a standard error instead of posterior SD
+
+   Hypothetical — NOT the case found. For completeness:
+
+   Would become invalid (wrong scale):
+     - Entropy and KL summaries
+     - Credible intervals and ci95_width
+     - Prior influence lambda
+     - Uncertainty flags and monitoring "uncertainty grown" metrics
+     - Global/stratum JSON posterior summaries
+
+   Would require recomputation:
+     - layer6_entropy_summary.csv
+     - layer6_prior_influence_summary.csv
+     - layer6_ess_summary.csv
+     - layer6_posterior_uncertainty.csv
+     - layer6_monitoring_diagnostics.csv (entropy-related rows)
+     - layer6_posterior_predictive_checks.csv
+     - layer6_posterior_coverage_report.csv (sequential LOO)
+     - Stratum/global JSON posterior_p80_min, posterior_p95_min, ci95 columns
+
+   Would remain correct:
+     - posterior_mu_log (mean update unaffected)
+     - n_eff_feedback / Kish ESS counts
+     - Calibration / Brier / drift tests not using sigma_log
+     - Quarantine / leakage / fallback chain fixes
+
+   ACTUAL FINDING: None of the above recomputation is required for Issue #1 because
+   sigma_log IS posterior SD, not mislabeled SE.
+
+================================================================================
+3. DOWNSTREAM DEPENDENCY GRAPH
+================================================================================
+
+[Prior period log durations]
+        |
+        v
+_extract_priors() --> var_prior, prior_sigma_log = sqrt(var_prior)
+        |
+[Feedback log durations + weights]
+        |
+        v
+weighted_stats() --> n_eff, mu_fb, var_data (= var_fb)
+        |
+        v
+normal_normal_posterior() --> var_post, mu_post
+        |
+        +--> posterior_sigma_log = sqrt(var_post)  ------+----> dur_summary_df
+        |                                                 |
+        +--> global sigma_log = sqrt(var_gp) -----------+----> global_dict JSON
+        |                                                 |
+        v                                                 v
+credible_interval()                              log_to_minute_quantiles()
+  ci95_lo_log, ci95_hi_log                         posterior_p80/p95_min [*]
+        |                                                 |
+        +------------------------+------------------------+
+                                 |
+         +-----------------------+---------------------------+
+         |                       |                           |
+         v                       v                           v
+ _compute_entropy_summary   _compute_prior_influence    _compute_ess_summary
+ (H, KL on sigma)           (lambda = var_post/var_prior) (ci95_width, flags)
+         |                       |                           |
+         v                       v                           v
+ layer6_entropy_summary.csv  layer6_prior_influence...   layer6_ess_summary.csv
+         |
+         v
+ _compute_monitoring_diagnostics (entropy rows, uncertainty grown)
+         |
+         v
+ layer6_monitoring_diagnostics.csv
+
+ _write_posterior_uncertainty (sigma, ci width, flags)
+         |
+         v
+ layer6_posterior_uncertainty.csv
+
+ _compute_posterior_predictive_checks [**]
+   y_sim ~ N(mu_post, sigma_post); coverage vs sigma_post
+         |
+         v
+ layer6_posterior_predictive_checks.csv
+
+ _compute_sequential_posterior_predictive [**]
+   sig_seq = sqrt(var_seq); CRPS, interval coverage
+         |
+         v
+ layer6_posterior_coverage_report.csv (and related sequential outputs)
+
+ layer6_retrain_triggers.py (prior_sigma_log in shift ratios)
+
+ [*]  Mislabeled as predictive in docstring; uses parameter SD only
+ [**] Uses parameter SD as observation SD — predictive interpretation incorrect
+
+================================================================================
+4. DISTINCTION TABLE: QUANTITIES IN LOG SPACE
+================================================================================
+
+Quantity                    Symbol in code           Typical magnitude relation
+-------------------------   ----------------------   ----------------------------------
+Prior sample spread         sqrt(var_prior)          Largest (historical obs variance)
+Feedback obs spread         sqrt(var_data)           Large (within-batch variance)
+Posterior param SD          sigma_log                Small (uncertainty on mean)
+SE of weighted mean         sqrt(var_data/n_eff)     Similar to sigma_log if prior weak
+Posterior predictive SD     sqrt(var_post+var_data)  ~ sqrt(var_data) (dominated by obs)
+
+sigma_log in this codebase = posterior param SD, NOT explicit SE or predictive SD.
+
+================================================================================
+5. GLOBAL POSTERIOR SPECIFIC TRACE
+================================================================================
+
+global_dict["global_prior"]["sigma_log"]:
+  Source: sqrt(var_g) from robust trimmed prior-period log durations
+  Role:   Prior SD on global mu
+
+global_dict["global_posterior"]["sigma_log"]:
+  Source: sqrt(var_gp) from normal_normal_posterior(mu_g, var_g, n_eff_g,
+          mu_fb_g, var_fb_g)
+  Role:   Posterior SD on global mu after feedback update
+  Gate:   global_posterior_valid must be True for global PPC row
+
+Consumed in layer6_adaptive_learning.py:
+  - _compute_entropy_summary: global hierarchical_level row (lines ~1737–1773)
+  - _compute_posterior_predictive_checks: global PPC (lines ~2419–2427)
+  - Final summary CSV row (~3110–3112)
+
+================================================================================
+6. CONCLUSION AND RECOMMENDED NEXT STEPS
+================================================================================
+
+Issue #1 resolution:
+  sigma_log is the posterior standard deviation of the log-mean parameter mu from
+  the normal-normal conjugate update. It is NOT a standard error masquerading as
+  a standard deviation.
+
+  Verdict: POSTERIOR_SD
+
+Separate findings (NOT Issue #1 — do not patch in this audit):
+  1. PPC and sequential LOO treat parameter SD as observation SD — predictive
+     diagnostics may show undercoverage; fix would need predictive scale
+     sqrt(var_post + var_data), not a change to sigma_log itself.
+  2. log_to_minute_quantiles docstring overclaims "posterior predictive".
+  3. prior_sigma_log uses sample variance as prior on mu — modeling choice, not a
+     sigma_log computation bug.
+
+Recommended next action:
+  - Close Issue #1 (sigma identity) as resolved: POSTERIOR_SD.
+  - Optionally open a separate Issue #2 for predictive-scale misuse in PPC/LOO/
+    minute quantiles if predictive calibration is required.
+
+================================================================================
+END OF AUDIT
+================================================================================

@@ -1327,9 +1327,9 @@ Runs after `layer5_robust_optimization.py`. Reads Layer 4.5 and Layer 5 canonica
 | `layer6_prototype_diagnostics.csv` | Trust trajectory, health flag, mean residual per prototype |
 | `layer6_learning_summary.txt` | Human-readable run summary led by health dashboard |
 | `layer6_model_artifacts/` | JSON snapshots for versioning |
-| `layer6_posterior_residuals.csv` | **(Part C)** Per-event standardized residuals `r_i = (y_i − μ_i)/(σ_i + ε)` and predictive interval coverage flags from sequential LOO |
-| `layer6_posterior_coverage_report.csv` | **(Part C)** Aggregate posterior predictive coverage at 50%, 80%, 95%; grouped by overall and per prior_level; calibration flag |
-| `layer6_posterior_predictive_checks.csv` | **(Part E)** PPCs per hierarchical level: PPC coverage, mean error, tail discrepancy, KL(prior‖posterior); same_level_comparable flag |
+| `layer6_posterior_residuals.csv` | **(Part C)** Per-event standardized residuals and predictive interval coverage; predictive scale `sqrt(var_post + var_obs)` with provenance fields |
+| `layer6_posterior_coverage_report.csv` | **(Part C)** Aggregate posterior predictive coverage at 50%, 80%, 95%; predictive scale; parameter-only audit column |
+| `layer6_posterior_predictive_checks.csv` | **(Part E)** PPCs per hierarchical level at predictive scale; KL(prior‖posterior) on parameter SD; provenance fields |
 | `layer6_prior_influence_summary.csv` | **(Part F)** Per-stratum prior influence λ = var_post/var_prior; posterior_influence = 1−λ; prior_dominated flag |
 | `layer6_ess_summary.csv` | **(Part F)** Per-stratum Kish ESS, 95% CI width, uncertainty flag, prior influence |
 | `layer6_posterior_integrity_report.csv` | **(Part G)** Traceable integrity audit: quarantine counts, upstream-flag overlap, NaN-taint check, global-posterior validity, stratum-level NaN guard, fallback integrity |
@@ -1337,6 +1337,21 @@ Runs after `layer5_robust_optimization.py`. Reads Layer 4.5 and Layer 5 canonica
 | `layer6_quarantine_report.csv` | Per-row quarantine audit: reasons, anomaly flag overlap, excluded_from_posterior |
 | `layer6_quarantine_summary.csv` | Per-reason quarantine aggregates: count, % of uncensored candidates |
 | `layer6_global_posterior_summary.csv` | Global posterior summary row with validity flag, reason, counts |
+| `layer6_predictive_sharpness.csv` | **(Diagnostics)** 95% interval sharpness by cause, corridor, and ESS support level |
+| `layer6_coverage_improvement.csv` | **(Diagnostics)** Predictive vs parameter-only 95% coverage delta by group |
+| `layer6_forecasting_quality_summary.csv` | **(Diagnostics)** Official calibration + sharpness quality table |
+| `layer6_sharpness_curve.csv` | **(Diagnostics)** Empirical coverage vs interval width (plot-ready) |
+| `layer6_calibration_sharpness_tradeoff.csv` | **(Diagnostics)** Coverage, mean width, sharpness efficiency by group |
+
+### Calibration vs Sharpness
+
+Probabilistic forecasting is evaluated on two axes: **calibration** and **sharpness**.
+
+**Calibration** measures how often true outcomes fall inside stated predictive intervals. In Layer 6, 95% sequential LOO coverage and the predictive-vs-parameter coverage delta (`layer6_coverage_improvement.csv`) report this.
+
+**Sharpness** measures how narrow those intervals are. Wide intervals can achieve high coverage while being uninformative. Mean/median interval width and width percentiles in `layer6_predictive_sharpness.csv` quantify sharpness; `Sharpness Efficiency = Coverage / MeanWidth` in `layer6_forecasting_quality_summary.csv` combines both.
+
+A good forecast should be **well calibrated** (coverage near nominal) **and as sharp as possible** (narrow intervals). The official summary is `layer6_forecasting_quality_summary.csv`: Coverage, Coverage Delta, Mean Sharpness, and Sharpness Efficiency.
 
 ### Layer 6 patch: quarantine, robustness, traceability, NaN prevention (Parts C–H)
 
@@ -1346,9 +1361,9 @@ This patch adds validation and traceability on top of the existing Bayesian lear
 
 | Part | What | Key design decision |
 |------|------|---------------------|
-| **C — Sequential residuals** | Standardized residuals `r_i = (y_i−μ_i)/(σ_i+ε)`, coverage at 50/80/95% | Uses the existing sequential LOO scoring function; coverage is against the LOO predictive, not the full posterior |
+| **C — Sequential residuals** | Standardized residuals `r_i = (y_i−μ_i)/(σ_pred+ε)`, coverage at 50/80/95% | Uses sequential LOO with **predictive scale** `sqrt(var_post + var_obs)`; parameter-only coverage retained as audit column |
 | **D — Hierarchical integrity** | Traceability fields on every stratum record: support_count, clean_count, quarantined_count, valid_flag, fallback_source, nan_guard_flag | Enrichment runs BEFORE canonical CSV/JSON writes so all outputs are traceable |
-| **E — Posterior predictive checks** | PPCs for stratum/cause/global levels; KL(prior‖posterior) same-level only | `same_level_comparable=False` suppresses cross-level KL; full posterior used (not LOO) |
+| **E — Posterior predictive checks** | PPCs for stratum/cause/global levels; KL(prior‖posterior) same-level only | Draws and coverage use **predictive scale** `sqrt(var_post + var_obs)`; KL remains on parameter SD |
 | **F — Prior influence and ESS** | λ = var_post/var_prior from conjugate identity; Kish ESS already in n_eff_feedback | λ close to 1 = prior-dominated; λ close to 0 = data-dominated |
 | **G — Integrity report** | Answers: where did invalid durations come from, were they already upstream-flagged, did any NaN row reach the posterior stage, is the global posterior valid | Under correct operation no NaN row reaches the posterior update — the quarantine gate runs first |
 | **H — Robust statistics** | Trimmed mean + robust variance at global level; NaN guard floors variance at MIN_VAR | Already in update_duration_posteriors(); this patch verifies and surfaces it in the integrity report |
@@ -1359,7 +1374,8 @@ This patch adds validation and traceability on top of the existing Bayesian lear
 - **Global posterior is never NaN.** A final NaN guard in `update_duration_posteriors()` falls back to the prior if the trimmed-mean estimator fails. The integrity report flags if this guard fires.
 - **Entropy and KL divergence are compared only at the same hierarchical level.** Stratum-level entropy is not compared to cause-level or global entropy. `same_level_comparable=False` is set when levels differ.
 - **Differential entropy H = ½ ln(2πe·σ²) can be negative** when σ < 1/√(2πe) ≈ 0.242. This is mathematically correct and is only interpretable within the same level and distribution family.
-- **Sequential LOO coverage vs PPC coverage are different quantities.** LOO coverage (in `layer6_posterior_coverage_report.csv`) measures predictive accuracy on held-out events. PPC coverage (in `layer6_posterior_predictive_checks.csv`) measures model consistency against the full posterior.
+- **Sequential LOO coverage vs PPC coverage are different quantities.** LOO coverage (in `layer6_posterior_coverage_report.csv`) measures predictive accuracy on held-out events using `sqrt(var_post + var_obs)`. PPC coverage (in `layer6_posterior_predictive_checks.csv`) uses the same predictive scale against the full posterior.
+- **Parameter uncertainty ≠ predictive uncertainty.** `sigma_log` / `var_post` describe belief about the latent log-mean μ (used in entropy, KL, λ, ESS). Future-observation checks (CRPS, coverage, PPC) must use `sqrt(var_post + var_obs)`.
 - **Layer45_reference_only is never the source of rolling performance numbers.** The main performance table uses `layer6_posterior_scoring` (sequential LOO) as the primary source. `layer45_reference_only` appears only in an explicit audit column.
 - **No upstream files are modified.** This patch is strictly additive.
 
@@ -1367,7 +1383,7 @@ This patch adds validation and traceability on top of the existing Bayesian lear
 
 - **ESS per stratum is the Kish ESS from the exponential-forgetting weight vector**, not a full importance-sampling ESS. For a uniform forgetting rate this is equivalent.
 - **Prior influence λ = var_post/var_prior** is derived from the conjugate-update identity and does not require re-running the update. This is exact for the normal-normal conjugate.
-- **PPC draws are from the marginal posterior predictive N(μ_post, σ_post²)**, not a hierarchical predictive that propagates uncertainty up the tree. For a conjugate normal-normal model these coincide at the stratum level.
+- **PPC draws are from N(μ_post, var_post + var_obs)**, the marginal posterior predictive for a new log-duration observation. KL divergence in PPC rows still compares parameter distributions N(μ, σ_post²).
 - **Tail discrepancy** is the absolute difference between the observed left-tail fraction and the expected 2.5% — a simple first-order check, not a full chi-squared tail test.
 - **KL divergence is capped at 1e6.** When the posterior collapses (σ_post << σ_prior, which is expected for strata with many clean observations), the KL can grow very large and is not practically meaningful as a decision quantity.
 

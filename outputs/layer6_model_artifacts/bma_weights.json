@@ -8,7 +8,7 @@
     "family_local_weight": 0.793963,
     "bma_family_confident": true,
     "judge_facing": true,
-    "generated_at": "2026-06-19T09:44:52Z"
+    "generated_at": "2026-06-19T10:34:30Z"
   },
   {
     "model": "corridor_cause_prior",
@@ -19,7 +19,7 @@
     "family_local_weight": 0.206037,
     "bma_family_confident": true,
     "judge_facing": true,
-    "generated_at": "2026-06-19T09:44:52Z"
+    "generated_at": "2026-06-19T10:34:30Z"
   },
   {
     "model": "calibration_estimator",
@@ -30,7 +30,7 @@
     "family_local_weight": NaN,
     "bma_family_confident": false,
     "judge_facing": false,
-    "generated_at": "2026-06-19T09:44:52Z"
+    "generated_at": "2026-06-19T10:34:30Z"
   },
   {
     "model": "retrieval_estimator",
@@ -41,7 +41,7 @@
     "family_local_weight": NaN,
     "bma_family_confident": false,
     "judge_facing": false,
-    "generated_at": "2026-06-19T09:44:52Z"
+    "generated_at": "2026-06-19T10:34:30Z"
   },
   {
     "model": "scenario_surrogate",
@@ -52,6 +52,6 @@
     "family_local_weight": NaN,
     "bma_family_confident": false,
     "judge_facing": false,
-    "generated_at": "2026-06-19T09:44:52Z"
+    "generated_at": "2026-06-19T10:34:30Z"
   }
 ]

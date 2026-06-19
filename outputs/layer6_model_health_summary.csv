@@ -17,3 +17,5 @@ drift,mean_shift_ztest_log_duration,,3.2097,,critical,"baseline_mu=4.929, feedba
 posterior_uncertainty,mean_ci95_width_log,,1.1625,,healthy,Mean 95% CI width in log-duration space across 118 strata,CRITICAL
 prototype_trust,mean_abs_trust_delta,,0.001,,warning,2 prototypes degraded below 0.5 trust,CRITICAL
 retrain_triggers,n_critical_triggers,,8.0,,critical,8 critical + 23 moderate triggers in this batch,CRITICAL
+predictive_calibration,predictive_coverage_95pct,,0.8658,0.0842,warning,Future-observation metric: sequential LOO at sqrt(var_post+var_obs),CRITICAL
+predictive_calibration,parameter_coverage_95pct_audit,,0.3342,0.6158,healthy,Audit only: parameter SD coverage; NOT used for future-observation scoring,CRITICAL

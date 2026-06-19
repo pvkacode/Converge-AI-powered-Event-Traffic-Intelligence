@@ -50,6 +50,11 @@ outputs/layer6_posterior_predictive_checks.csv   (Part E: PPCs per hierarchical 
 outputs/layer6_prior_influence_summary.csv       (Part F: lambda = var_post/var_prior per stratum)
 outputs/layer6_ess_summary.csv                   (Part F: Kish ESS + uncertainty width per stratum)
 outputs/layer6_posterior_integrity_report.csv    (Part G: quarantine audit, NaN checks, fallback integrity)
+outputs/layer6_predictive_sharpness.csv          (Diagnostics: interval sharpness by group)
+outputs/layer6_coverage_improvement.csv          (Diagnostics: predictive vs param-only coverage delta)
+outputs/layer6_forecasting_quality_summary.csv   (Diagnostics: calibration + sharpness summary)
+outputs/layer6_sharpness_curve.csv               (Diagnostics: coverage vs width curve data)
+outputs/layer6_calibration_sharpness_tradeoff.csv (Diagnostics: coverage/width/efficiency by group)
 """
 
 from __future__ import annotations
@@ -86,6 +91,11 @@ from layer6_bayesian_duration import (
     _extract_priors,
     normal_normal_posterior,
     weighted_stats,
+    predictive_sigma,
+    build_obs_variance_pools,
+    resolve_obs_variance,
+    log_to_minute_predictive_quantiles,
+    MIN_VAR,
 )
 from layer6_calibration_updates import update_calibration_posteriors
 from layer6_drift_detection import run_drift_detection
@@ -960,6 +970,7 @@ def _model_health_summary(
     l45_metrics_df: pd.DataFrame,
     cvar_comparison: pd.DataFrame,
     opt_metrics: pd.DataFrame,
+    pp_metrics_df: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
     """
     Track rolling health metrics across the prior holdout and the feedback batch.
@@ -1150,6 +1161,42 @@ def _model_health_summary(
             "status":          trig_status,
             "note":            f"{n_crit} critical + {n_mod} moderate triggers in this batch",
         })
+
+    # ---- Predictive calibration (sequential LOO, predictive scale) ----
+    if pp_metrics_df is not None and not pp_metrics_df.empty:
+        def _pp_metric(prov: str, grp: str, metric: str) -> float | None:
+            mask = ((pp_metrics_df["provenance"] == prov) &
+                    (pp_metrics_df["metric_group"] == grp) &
+                    (pp_metrics_df["metric"] == metric))
+            if not mask.any():
+                return None
+            v = pp_metrics_df[mask]["value"].iloc[0]
+            return float(v) if v is not None and not np.isnan(float(v)) else None
+
+        cov95_pred  = _pp_metric("layer6_posterior_scoring", "coverage", "coverage_95pct")
+        cov95_param = _pp_metric("layer6_posterior_scoring", "coverage", "coverage_95pct_param_only")
+        for metric_name, val, note, is_primary in [
+            ("predictive_coverage_95pct", cov95_pred,
+             "Future-observation metric: sequential LOO at sqrt(var_post+var_obs)", True),
+            ("parameter_coverage_95pct_audit", cov95_param,
+             "Audit only: parameter SD coverage; NOT used for future-observation scoring", False),
+        ]:
+            if val is None:
+                continue
+            shortfall = abs(0.95 - val)
+            if is_primary:
+                status = "healthy" if shortfall < 0.05 else ("warning" if shortfall < 0.15 else "critical")
+            else:
+                status = "healthy"
+            rows.append({
+                "metric_group":   "predictive_calibration",
+                "metric":          metric_name,
+                "holdout_value":   None,
+                "feedback_value":  round(val, 4),
+                "relative_change": round(shortfall, 4),
+                "status":          status,
+                "note":            note,
+            })
 
     df = pd.DataFrame(rows)
     # Overall urgency: escalate if health metrics degrade even when drift tests are borderline
@@ -1372,9 +1419,9 @@ def _compute_sequential_posterior_predictive(
     full posterior trained on all feedback including event i.  This is the same
     category of leakage already fixed in Layer 4.5's as-of feature construction.
 
-    Model: y_i = log(1+duration) ~ N(theta_s, sigma_s^2).
-           theta_s updated via Normal-Normal conjugate using events j < i in
-           the same stratum (cause × corridor).
+    Model: mu ~ N(mu_post, var_post)  [parameter posterior]
+           y_new | mu ~ N(mu, var_obs)  [observation model]
+           y_new | D ~ N(mu_post, var_post + var_obs)  [predictive for scoring]
 
     Provenance labels
     -----------------
@@ -1400,6 +1447,12 @@ def _compute_sequential_posterior_predictive(
         on="event_id", how="left",
     )
     fb = fb.sort_values("start_local").reset_index(drop=True)
+
+    # Observation-variance pools for predictive scale (feedback batch)
+    _fb_pool_src = fb.copy()
+    if "log_duration" in _fb_pool_src.columns and "log_dur" not in _fb_pool_src.columns:
+        _fb_pool_src["log_dur"] = _fb_pool_src["log_duration"]
+    obs_pools = build_obs_variance_pools(_fb_pool_src)
 
     # Sequential LOO loop
     stratum_hist: dict[tuple, list[float]] = {}
@@ -1438,22 +1491,48 @@ def _compute_sequential_posterior_predictive(
             mu_seq, var_seq = mu_p, var_p
         n_seq = len(hist)
 
-        sig_seq   = float(np.sqrt(max(var_seq, 1e-6)))
-        sig_prior = float(np.sqrt(max(var_p, 1e-6)))
+        sig_post = float(np.sqrt(max(var_seq, MIN_VAR)))
+        if hist:
+            var_obs, obs_source, obs_valid = resolve_obs_variance(
+                obs_pools,
+                cause=cause,
+                corridor=corr,
+                local_y=np.array(hist, dtype=float),
+                prior_period_var=var_p,
+            )
+        else:
+            var_obs, obs_source, obs_valid = resolve_obs_variance(
+                obs_pools,
+                cause=cause,
+                corridor=corr,
+                prior_period_var=var_p,
+            )
+        sig_pred = predictive_sigma(var_seq, var_obs)
+        sig_pred_prior = predictive_sigma(var_p, var_obs)
 
-        # CRPS for sequential predictive
-        crps_seq   = _crps_gaussian(np.array([y_i]), np.array([mu_seq]),   sig_seq)
-        crps_prior = _crps_gaussian(np.array([y_i]), np.array([mu_p]),     sig_prior)
+        # Keep parameter SD for audit; score future outcomes with predictive SD
+        sig_seq = sig_pred
+
+        # CRPS for sequential predictive (predictive scale)
+        crps_seq   = _crps_gaussian(np.array([y_i]), np.array([mu_seq]),   sig_pred)
+        crps_prior = _crps_gaussian(np.array([y_i]), np.array([mu_p]),     sig_pred_prior)
 
         resid_seq   = y_i - mu_seq
         resid_prior = y_i - mu_p
 
         # Standardized residuals and predictive interval coverage (Part C)
         _Z50, _Z80, _Z95 = 0.6745, 1.2816, 1.9600
-        resid_std_seq = resid_seq / (sig_seq + 1e-9)
-        in_50 = abs(resid_seq) <= _Z50 * sig_seq
-        in_80 = abs(resid_seq) <= _Z80 * sig_seq
-        in_95 = abs(resid_seq) <= _Z95 * sig_seq
+        resid_std_seq = resid_seq / (sig_pred + 1e-9)
+        in_50 = abs(resid_seq) <= _Z50 * sig_pred
+        in_80 = abs(resid_seq) <= _Z80 * sig_pred
+        in_95 = abs(resid_seq) <= _Z95 * sig_pred
+        # Parameter-only coverage (audit comparison)
+        in_95_param = abs(resid_seq) <= _Z95 * sig_post
+        pred_lo_95 = mu_seq - _Z95 * sig_pred
+        pred_hi_95 = mu_seq + _Z95 * sig_pred
+        q50_min, q80_min, q95_min = log_to_minute_predictive_quantiles(
+            mu_seq, var_seq, var_obs
+        )
 
         # EWMA of log-space residuals
         if ewma_state is None:
@@ -1481,23 +1560,37 @@ def _compute_sequential_posterior_predictive(
             "log_duration_actual":  round(y_i, 4),
             "duration_min_actual":  round(float(row["duration_min"]), 2)
                                     if not np.isnan(float(row["duration_min"])) else None,
-            # --- sequential posterior ---
+            # --- sequential posterior (predictive scale for future-observation scoring) ---
             "mu_seq_logspace":      round(mu_seq, 4),
-            "sigma_seq_logspace":   round(sig_seq, 4),
+            "posterior_mean":       round(mu_seq, 4),
+            "sigma_seq_logspace":   round(sig_pred, 4),
+            "posterior_sd":         round(sig_post, 4),
+            "obs_sd":               round(float(np.sqrt(max(var_obs, MIN_VAR))), 4),
+            "predictive_sd":        round(sig_pred, 4),
+            "predictive_scale_source": "posterior_sd_plus_obs_sd",
+            "obs_variance_source":  obs_source,
+            "predictive_scale_valid": bool(obs_valid),
+            "predictive_scale_is_parameter_only": False,
             "dur_pred_seq_min":     round(float(np.expm1(mu_seq)), 2),
+            "pred_p80_min":         round(q80_min, 2),
+            "pred_p95_min":         round(q95_min, 2),
             "resid_seq_logspace":   round(resid_seq, 4),
             "absresid_seq_logspace":round(abs(resid_seq), 4),
             "resid_std_seq":        round(resid_std_seq, 4),
             "in_50pct_interval":    bool(in_50),
             "in_80pct_interval":    bool(in_80),
             "in_95pct_interval":    bool(in_95),
-            "interval_width_95":    round(2 * _Z95 * sig_seq, 4),
+            "in_95pct_interval_param_only": bool(in_95_param),
+            "predictive_interval_lower": round(pred_lo_95, 4),
+            "predictive_interval_upper": round(pred_hi_95, 4),
+            "interval_width_95":    round(2 * _Z95 * sig_pred, 4),
             "crps_seq":             round(crps_seq, 6),
             "n_earlier_stratum":    n_seq,
             "prior_level":          plevel,
-            # --- prior-only baseline ---
+            # --- prior-only baseline (predictive scale) ---
             "mu_prior_logspace":    round(mu_p, 4),
-            "sigma_prior_logspace": round(sig_prior, 4),
+            "sigma_prior_logspace": round(float(np.sqrt(max(var_p, MIN_VAR))), 4),
+            "predictive_sd_prior":  round(sig_pred_prior, 4),
             "dur_pred_prior_min":   round(float(np.expm1(mu_p)), 2),
             "resid_prior_logspace": round(resid_prior, 4),
             "crps_prior":           round(crps_prior, 6),
@@ -1559,6 +1652,7 @@ def _compute_sequential_posterior_predictive(
     cov_50 = float(event_df["in_50pct_interval"].sum() / max(_n_ev, 1))
     cov_80 = float(event_df["in_80pct_interval"].sum() / max(_n_ev, 1))
     cov_95 = float(event_df["in_95pct_interval"].sum() / max(_n_ev, 1))
+    cov_95_param = float(event_df["in_95pct_interval_param_only"].sum() / max(_n_ev, 1))
     mean_iw_95 = float(event_df["interval_width_95"].mean())
 
     # Calibration ECE (10 equal-width bins)
@@ -1596,19 +1690,21 @@ def _compute_sequential_posterior_predictive(
         ("layer6_posterior_scoring", "duration", "median_ae_logspace", medae_seq,
          "Median AE in log-duration space; sequential LOO"),
         ("layer6_posterior_scoring", "duration", "crps_mean", crps_seq_m,
-         "Mean CRPS; Gaussian predictive N(mu_seq, sigma_seq); sequential LOO"),
+         "Mean CRPS; Gaussian predictive N(mu, sqrt(var_post+var_obs)); sequential LOO"),
         ("layer6_posterior_scoring", "calibration", "brier_score", brier,
          "Brier score on high-impact probability; scored against actual_high_impact"),
         ("layer6_posterior_scoring", "calibration", "ece", ece,
          "ECE on high-impact probability; 10 equal-width bins"),
         ("layer6_posterior_scoring", "coverage", "coverage_50pct", cov_50,
-         "Fraction in 50% predictive interval (nominal: 0.50); sequential LOO"),
+         "Fraction in 50% predictive interval (nominal: 0.50); predictive scale; sequential LOO"),
         ("layer6_posterior_scoring", "coverage", "coverage_80pct", cov_80,
-         "Fraction in 80% predictive interval (nominal: 0.80); sequential LOO"),
+         "Fraction in 80% predictive interval (nominal: 0.80); predictive scale; sequential LOO"),
         ("layer6_posterior_scoring", "coverage", "coverage_95pct", cov_95,
-         "Fraction in 95% predictive interval (nominal: 0.95); sequential LOO"),
+         "Fraction in 95% predictive interval (nominal: 0.95); predictive scale; sequential LOO"),
+        ("layer6_posterior_scoring", "coverage", "coverage_95pct_param_only", cov_95_param,
+         "Audit: 95% coverage using parameter SD only (NOT used for future-observation metrics)"),
         ("layer6_posterior_scoring", "coverage", "mean_interval_width_95", mean_iw_95,
-         "Mean 95% predictive interval width in log-duration space; sequential LOO"),
+         "Mean 95% predictive interval width in log-duration space; predictive scale; sequential LOO"),
         ("layer6_prior_reference", "duration", "rmse_logspace", rmse_prior,
          "RMSE using prior-only predictive; no feedback incorporated; baseline"),
         ("layer6_prior_reference", "duration", "crps_mean", crps_prior_m,
@@ -2110,10 +2206,16 @@ def _write_posterior_residuals(event_df: pd.DataFrame, out_path: Path) -> None:
     cols = [
         "event_id", "event_cause", "corridor_fill", "start_local",
         "log_duration_actual", "duration_min_actual",
-        "mu_seq_logspace", "sigma_seq_logspace",
+        "mu_seq_logspace", "posterior_mean", "posterior_sd", "obs_sd", "predictive_sd",
+        "sigma_seq_logspace",
+        "predictive_scale_source", "obs_variance_source", "predictive_scale_valid",
+        "predictive_scale_is_parameter_only",
         "resid_seq_logspace", "resid_std_seq", "absresid_seq_logspace",
         "in_50pct_interval", "in_80pct_interval", "in_95pct_interval",
-        "interval_width_95", "crps_seq", "prior_level", "n_earlier_stratum",
+        "in_95pct_interval_param_only",
+        "predictive_interval_lower", "predictive_interval_upper",
+        "interval_width_95", "pred_p80_min", "pred_p95_min",
+        "crps_seq", "prior_level", "n_earlier_stratum",
     ]
     available = [c for c in cols if c in event_df.columns]
     df = event_df[available].copy()
@@ -2145,6 +2247,10 @@ def _write_posterior_coverage_report(event_df: pd.DataFrame, out_path: Path) -> 
     for group_name, sub in groups:
         n_sub = len(sub)
         iw95 = float(sub["interval_width_95"].mean()) if "interval_width_95" in sub.columns else None
+        cov_95_param = (
+            float(sub["in_95pct_interval_param_only"].sum() / max(n_sub, 1))
+            if "in_95pct_interval_param_only" in sub.columns else None
+        )
         for nom_cov, col in [
             (0.50, "in_50pct_interval"),
             (0.80, "in_80pct_interval"),
@@ -2159,11 +2265,333 @@ def _write_posterior_coverage_report(event_df: pd.DataFrame, out_path: Path) -> 
                 "coverage_shortfall":     round(nom_cov - actual_cov, 4) if actual_cov is not None else None,
                 "coverage_calibrated":    bool(abs(nom_cov - actual_cov) < 0.05) if actual_cov is not None else None,
                 "mean_interval_width_95": round(iw95, 4) if iw95 is not None else None,
+                "parameter_only_coverage_95": round(cov_95_param, 4) if (nom_cov == 0.95 and cov_95_param is not None) else None,
+                "predictive_scale_source": "posterior_sd_plus_obs_sd",
+                "predictive_scale_is_parameter_only": False,
                 "evaluation_method":      "sequential_loo",
                 "source":                 "layer6_posterior_scoring",
             })
 
     pd.DataFrame(rows).to_csv(out_path, index=False)
+
+
+# ---------------------------------------------------------------------------
+# Forecasting diagnostics — calibration + sharpness (read-only on LOO/PPC data)
+# ---------------------------------------------------------------------------
+
+_ESS_SUPPORT_LOW = 10.0    # Kish ESS thresholds for support-level grouping
+_ESS_SUPPORT_HIGH = 50.0
+
+
+def _ess_support_level(n_eff: float) -> str:
+    """Map Kish effective sample size to LOW / MEDIUM / HIGH support."""
+    if not np.isfinite(n_eff) or n_eff < _ESS_SUPPORT_LOW:
+        return "LOW"
+    if n_eff < _ESS_SUPPORT_HIGH:
+        return "MEDIUM"
+    return "HIGH"
+
+
+def _attach_stratum_n_eff(
+    pp_event_df: pd.DataFrame,
+    dur_summary_df: pd.DataFrame,
+) -> pd.DataFrame:
+    """Attach stratum Kish ESS for support-level grouping (no prediction changes)."""
+    if pp_event_df.empty:
+        return pp_event_df.copy()
+    df = pp_event_df.copy()
+    if dur_summary_df.empty or "n_eff_feedback" not in dur_summary_df.columns:
+        df["stratum_n_eff"] = np.nan
+        df["support_level"] = "LOW"
+        return df
+    ess_map = {
+        (str(r["stratum_cause"]), str(r["stratum_corridor"])): float(r["n_eff_feedback"])
+        for _, r in dur_summary_df.iterrows()
+    }
+    cause_ess: dict[str, float] = {}
+    for _, r in dur_summary_df.iterrows():
+        c = str(r["stratum_cause"])
+        v = float(r["n_eff_feedback"])
+        cause_ess[c] = max(cause_ess.get(c, 0.0), v)
+
+    def _lookup(row) -> float:
+        key = (str(row.get("event_cause", "")), str(row.get("corridor_fill", "")))
+        if key in ess_map:
+            return ess_map[key]
+        return cause_ess.get(str(row.get("event_cause", "")), float("nan"))
+
+    df["stratum_n_eff"] = df.apply(_lookup, axis=1)
+    df["support_level"] = df["stratum_n_eff"].apply(_ess_support_level)
+    return df
+
+
+def _width_distribution_stats(widths: pd.Series) -> dict:
+    """Percentile summary of 95% predictive interval widths."""
+    w = widths.dropna().astype(float)
+    if w.empty:
+        return {
+            "mean_width": None, "median_width": None,
+            "p10_width": None, "p25_width": None, "p50_width": None,
+            "p75_width": None, "p90_width": None, "width_sd": None,
+        }
+    return {
+        "mean_width":   round(float(w.mean()), 4),
+        "median_width": round(float(w.median()), 4),
+        "p10_width":    round(float(w.quantile(0.10)), 4),
+        "p25_width":    round(float(w.quantile(0.25)), 4),
+        "p50_width":    round(float(w.quantile(0.50)), 4),
+        "p75_width":    round(float(w.quantile(0.75)), 4),
+        "p90_width":    round(float(w.quantile(0.90)), 4),
+        "width_sd":     round(float(w.std()), 4),
+    }
+
+
+def _sharpness_group_row(
+    group_type: str,
+    group_name: str,
+    sub: pd.DataFrame,
+) -> dict:
+    stats = _width_distribution_stats(sub.get("interval_width_95", pd.Series(dtype=float)))
+    cov = (
+        float(sub["in_95pct_interval"].mean())
+        if (not sub.empty and "in_95pct_interval" in sub.columns) else None
+    )
+    return {
+        "group_type": group_type,
+        "group_name": group_name,
+        "n":            len(sub),
+        "coverage":     round(cov, 4) if cov is not None else None,
+        **stats,
+    }
+
+
+def _coverage_improvement_row(
+    group_type: str,
+    group_name: str,
+    sub: pd.DataFrame,
+) -> dict:
+    if sub.empty:
+        return {
+            "group_type": group_type,
+            "group_name": group_name,
+            "coverage_param_only": None,
+            "coverage_predictive": None,
+            "coverage_delta": None,
+        }
+    cp = float(sub["in_95pct_interval_param_only"].mean())
+    cv = float(sub["in_95pct_interval"].mean())
+    return {
+        "group_type":            group_type,
+        "group_name":            group_name,
+        "coverage_param_only":   round(cp, 4),
+        "coverage_predictive":   round(cv, 4),
+        "coverage_delta":        round(cv - cp, 4),
+    }
+
+
+def _compute_predictive_sharpness(
+    pp_event_df: pd.DataFrame,
+    dur_summary_df: pd.DataFrame,
+) -> pd.DataFrame:
+    """Sharpness diagnostics from existing 95% predictive interval widths (LOO)."""
+    if pp_event_df.empty:
+        return pd.DataFrame()
+
+    df = _attach_stratum_n_eff(pp_event_df, dur_summary_df)
+    rows: list[dict] = [ _sharpness_group_row("global", "all_events", df) ]
+
+    if "event_cause" in df.columns:
+        for cause, sub in df.groupby("event_cause"):
+            rows.append(_sharpness_group_row("cause", str(cause), sub))
+
+    if "corridor_fill" in df.columns:
+        for corr, sub in df.groupby("corridor_fill"):
+            rows.append(_sharpness_group_row("corridor", str(corr), sub))
+
+    if "support_level" in df.columns:
+        for level in ["LOW", "MEDIUM", "HIGH"]:
+            sub = df[df["support_level"] == level]
+            if not sub.empty:
+                rows.append(_sharpness_group_row("support_level", level, sub))
+
+    return pd.DataFrame(rows)
+
+
+def _compute_coverage_improvement(
+    pp_event_df: pd.DataFrame,
+    ppc_df: pd.DataFrame,
+    dur_summary_df: pd.DataFrame,
+) -> pd.DataFrame:
+    """Coverage delta: predictive scale minus parameter-only (LOO + PPC aggregates)."""
+    rows: list[dict] = []
+
+    if not pp_event_df.empty:
+        df = _attach_stratum_n_eff(pp_event_df, dur_summary_df)
+        rows.append(_coverage_improvement_row("global", "all_events", df))
+
+        if "event_cause" in df.columns:
+            for cause, sub in df.groupby("event_cause"):
+                rows.append(_coverage_improvement_row("cause", str(cause), sub))
+
+        if "corridor_fill" in df.columns:
+            for corr, sub in df.groupby("corridor_fill"):
+                rows.append(_coverage_improvement_row("corridor", str(corr), sub))
+
+        for level in ["LOW", "MEDIUM", "HIGH"]:
+            sub = df[df["support_level"] == level]
+            if not sub.empty:
+                rows.append(_coverage_improvement_row("support_level", level, sub))
+
+    if not ppc_df.empty and "ppc_coverage_95pct" in ppc_df.columns:
+        for _, r in ppc_df.iterrows():
+            cp = r.get("ppc_coverage_95pct_param_only")
+            cv = r.get("ppc_coverage_95pct")
+            if cp is None or cv is None or (isinstance(cp, float) and np.isnan(cp)):
+                continue
+            rows.append({
+                "group_type":          f"ppc_{r.get('level', 'unknown')}",
+                "group_name":          str(r.get("stratum", r.get("level", "unknown"))),
+                "coverage_param_only": round(float(cp), 4),
+                "coverage_predictive": round(float(cv), 4),
+                "coverage_delta":      round(float(cv) - float(cp), 4),
+            })
+
+    return pd.DataFrame(rows)
+
+
+def _pp_metric_value(pp_metrics_df: pd.DataFrame, metric: str) -> float | None:
+    if pp_metrics_df.empty:
+        return None
+    mask = (
+        (pp_metrics_df["provenance"] == "layer6_posterior_scoring")
+        & (pp_metrics_df["metric_group"] == "coverage")
+        & (pp_metrics_df["metric"] == metric)
+    ) | (
+        (pp_metrics_df["provenance"] == "layer6_posterior_scoring")
+        & (pp_metrics_df["metric_group"] == "duration")
+        & (pp_metrics_df["metric"] == metric)
+    )
+    if not mask.any():
+        return None
+    v = pp_metrics_df.loc[mask, "value"].iloc[0]
+    return float(v) if v is not None and np.isfinite(float(v)) else None
+
+
+def _compute_forecasting_quality_summary(
+    pp_event_df: pd.DataFrame,
+    pp_metrics_df: pd.DataFrame,
+) -> pd.DataFrame:
+    """Official Layer 6 calibration + sharpness quality table (diagnostic only)."""
+    if pp_event_df.empty:
+        return pd.DataFrame(columns=["metric", "value"])
+
+    cov95 = float(pp_event_df["in_95pct_interval"].mean())
+    cov95_param = float(pp_event_df["in_95pct_interval_param_only"].mean())
+    widths = pp_event_df["interval_width_95"].dropna().astype(float)
+    mean_w = float(widths.mean()) if len(widths) else float("nan")
+    med_w = float(widths.median()) if len(widths) else float("nan")
+    crps = _pp_metric_value(pp_metrics_df, "crps_mean")
+    mean_pred_sd = float(pp_event_df["predictive_sd"].mean()) if "predictive_sd" in pp_event_df else None
+    mean_post_sd = float(pp_event_df["posterior_sd"].mean()) if "posterior_sd" in pp_event_df else None
+    mean_obs_sd  = float(pp_event_df["obs_sd"].mean()) if "obs_sd" in pp_event_df else None
+    sharp_eff = (cov95 / mean_w) if mean_w and mean_w > 0 else None
+    cov_pen = abs(cov95 - 0.95)
+
+    specs: list[tuple[str, float | None]] = [
+        ("95pct Coverage", cov95),
+        ("95pct Coverage Param Only", cov95_param),
+        ("Coverage Delta", cov95 - cov95_param),
+        ("Mean Sharpness", mean_w),
+        ("Median Sharpness", med_w),
+        ("CRPS", crps),
+        ("Mean Predictive SD", mean_pred_sd),
+        ("Mean Posterior SD", mean_post_sd),
+        ("Mean Observation SD", mean_obs_sd),
+        ("Sharpness Efficiency", sharp_eff),
+        ("Coverage Penalty", cov_pen),
+    ]
+    rows = [
+        {"metric": name, "value": round(val, 6) if val is not None and np.isfinite(val) else None}
+        for name, val in specs
+    ]
+    return pd.DataFrame(rows)
+
+
+def _compute_sharpness_curve(pp_event_df: pd.DataFrame, n_bins: int = 20) -> pd.DataFrame:
+    """Empirical coverage vs interval width bins for visualization."""
+    if pp_event_df.empty:
+        return pd.DataFrame(columns=["interval_width", "empirical_coverage"])
+
+    df = pp_event_df.dropna(subset=["interval_width_95", "in_95pct_interval"]).copy()
+    if df.empty:
+        return pd.DataFrame(columns=["interval_width", "empirical_coverage"])
+
+    n_bins = min(n_bins, max(3, len(df) // 5))
+    df["width_bin"] = pd.qcut(
+        df["interval_width_95"].astype(float), q=n_bins, duplicates="drop",
+    )
+    rows = []
+    for _, grp in df.groupby("width_bin", observed=True):
+        rows.append({
+            "interval_width":     round(float(grp["interval_width_95"].mean()), 4),
+            "empirical_coverage": round(float(grp["in_95pct_interval"].mean()), 4),
+        })
+    return pd.DataFrame(rows).sort_values("interval_width").reset_index(drop=True)
+
+
+def _compute_calibration_sharpness_tradeoff(
+    pp_event_df: pd.DataFrame,
+    dur_summary_df: pd.DataFrame,
+) -> pd.DataFrame:
+    """Coverage, mean width, and sharpness efficiency by evaluation group."""
+    if pp_event_df.empty:
+        return pd.DataFrame(columns=["group", "coverage", "mean_width", "sharpness_efficiency"])
+
+    df = _attach_stratum_n_eff(pp_event_df, dur_summary_df)
+    groups: list[tuple[str, pd.DataFrame]] = [("global", df)]
+    for level in ["LOW", "MEDIUM", "HIGH"]:
+        sub = df[df["support_level"] == level]
+        if not sub.empty:
+            groups.append((f"support_{level}", sub))
+    if "event_cause" in df.columns:
+        for cause, sub in df.groupby("event_cause"):
+            groups.append((f"cause_{cause}", sub))
+
+    rows = []
+    for name, sub in groups:
+        cov = float(sub["in_95pct_interval"].mean())
+        mean_w = float(sub["interval_width_95"].mean())
+        eff = round(cov / mean_w, 6) if mean_w > 0 else None
+        rows.append({
+            "group":                name,
+            "coverage":             round(cov, 4),
+            "mean_width":           round(mean_w, 4),
+            "sharpness_efficiency": eff,
+        })
+    return pd.DataFrame(rows)
+
+
+def _write_forecasting_diagnostics(
+    pp_event_df: pd.DataFrame,
+    ppc_df: pd.DataFrame,
+    pp_metrics_df: pd.DataFrame,
+    dur_summary_df: pd.DataFrame,
+) -> None:
+    """Write calibration + sharpness diagnostic CSVs (no changes to model outputs)."""
+    sharp_df = _compute_predictive_sharpness(pp_event_df, dur_summary_df)
+    sharp_df.to_csv(OUTPUTS_DIR / "layer6_predictive_sharpness.csv", index=False)
+
+    cov_imp_df = _compute_coverage_improvement(pp_event_df, ppc_df, dur_summary_df)
+    cov_imp_df.to_csv(OUTPUTS_DIR / "layer6_coverage_improvement.csv", index=False)
+
+    fq_df = _compute_forecasting_quality_summary(pp_event_df, pp_metrics_df)
+    fq_df.to_csv(OUTPUTS_DIR / "layer6_forecasting_quality_summary.csv", index=False)
+
+    curve_df = _compute_sharpness_curve(pp_event_df)
+    curve_df.to_csv(OUTPUTS_DIR / "layer6_sharpness_curve.csv", index=False)
+
+    tradeoff_df = _compute_calibration_sharpness_tradeoff(pp_event_df, dur_summary_df)
+    tradeoff_df.to_csv(OUTPUTS_DIR / "layer6_calibration_sharpness_tradeoff.csv", index=False)
 
 
 # ---------------------------------------------------------------------------
@@ -2288,9 +2716,9 @@ def _compute_posterior_predictive_checks(
     Uses the FULL posterior (not sequential LOO) to check model-data consistency.
     For each stratum, cause, and global level:
       1. Find clean feedback observations assigned to that level
-      2. Draw n_sim samples from N(mu_post, sigma_post^2)
+      2. Draw n_sim samples from N(mu_post, sqrt(var_post + var_obs))
       3. Compare observed vs simulated distribution
-      4. Compute coverage, mean error, tail discrepancy, KL divergence
+      4. Compute coverage, mean error, tail discrepancy, KL divergence (parameter KL unchanged)
 
     KL divergence (same-level only):
       KL(N(mu0, s0^2) || N(mu1, s1^2)) =
@@ -2331,18 +2759,39 @@ def _compute_posterior_predictive_checks(
     fb["log_dur"] = np.log1p(fb["duration_min"])
     fb = fb[np.isfinite(fb["log_dur"])].copy()
 
+    fb["log_dur"] = np.log1p(fb["duration_min"])
+    fb = fb[np.isfinite(fb["log_dur"])].copy()
+    obs_pools = build_obs_variance_pools(fb)
+
     def _ppc(
         y_obs: np.ndarray,
         mu_prior: float, sig_prior: float,
         mu_post: float, sig_post: float,
+        var_post: float,
+        var_obs: float,
+        obs_source: str,
+        obs_valid: bool,
         level: str,
         stratum_label: str,
     ) -> dict:
         n_obs = len(y_obs)
+        sig_pred = predictive_sigma(var_post, var_obs)
+        pred_lo_95 = mu_post - _Z95 * sig_pred if np.isfinite(mu_post) else None
+        pred_hi_95 = mu_post + _Z95 * sig_pred if np.isfinite(mu_post) else None
         base = {
             "level": level, "stratum": stratum_label, "n_obs": n_obs,
             "mu_prior": round(mu_prior, 4), "sigma_prior": round(sig_prior, 4),
             "mu_posterior": round(mu_post, 4), "sigma_posterior": round(sig_post, 4),
+            "posterior_mean": round(mu_post, 4) if np.isfinite(mu_post) else None,
+            "posterior_sd": round(sig_post, 4) if np.isfinite(sig_post) else None,
+            "obs_sd": round(float(np.sqrt(max(var_obs, MIN_VAR))), 4),
+            "predictive_sd": round(sig_pred, 4),
+            "predictive_scale_source": "posterior_sd_plus_obs_sd",
+            "obs_variance_source": obs_source,
+            "predictive_scale_valid": bool(obs_valid),
+            "predictive_scale_is_parameter_only": False,
+            "predictive_interval_lower": round(pred_lo_95, 4) if pred_lo_95 is not None else None,
+            "predictive_interval_upper": round(pred_hi_95, 4) if pred_hi_95 is not None else None,
         }
         if n_obs == 0 or not np.isfinite(mu_post) or not np.isfinite(sig_post):
             base.update({
@@ -2351,6 +2800,7 @@ def _compute_posterior_predictive_checks(
                 "posterior_mean_error": None,
                 "ppc_coverage_50pct": None, "ppc_coverage_80pct": None,
                 "ppc_coverage_95pct": None,
+                "ppc_coverage_95pct_param_only": None,
                 "ppc_tail_discrepancy_5pct": None,
                 "kl_prior_to_posterior": None,
                 "same_level_comparable": False,
@@ -2358,14 +2808,15 @@ def _compute_posterior_predictive_checks(
             })
             return base
 
-        sig_post_safe = max(sig_post, 1e-6)
-        y_sim = rng.normal(mu_post, sig_post_safe, size=n_sim)
+        sig_pred_safe = max(sig_pred, 1e-6)
+        y_sim = rng.normal(mu_post, sig_pred_safe, size=n_sim)
 
         mean_err = float(np.mean(y_obs) - mu_post)
-        cov_50   = float(np.mean(np.abs(y_obs - mu_post) <= _Z50 * sig_post_safe))
-        cov_80   = float(np.mean(np.abs(y_obs - mu_post) <= _Z80 * sig_post_safe))
-        cov_95   = float(np.mean(np.abs(y_obs - mu_post) <= _Z95 * sig_post_safe))
-        tail_obs = float(np.mean(y_obs < mu_post - _Z95 * sig_post_safe))
+        cov_50   = float(np.mean(np.abs(y_obs - mu_post) <= _Z50 * sig_pred_safe))
+        cov_80   = float(np.mean(np.abs(y_obs - mu_post) <= _Z80 * sig_pred_safe))
+        cov_95   = float(np.mean(np.abs(y_obs - mu_post) <= _Z95 * sig_pred_safe))
+        cov_95_p = float(np.mean(np.abs(y_obs - mu_post) <= _Z95 * max(sig_post, 1e-6)))
+        tail_obs = float(np.mean(y_obs < mu_post - _Z95 * sig_pred_safe))
         tail_disc = abs(tail_obs - 0.025)
         kl = _kl(mu_prior, sig_prior, mu_post, sig_post)
 
@@ -2377,13 +2828,14 @@ def _compute_posterior_predictive_checks(
             "ppc_coverage_50pct":        round(cov_50, 4),
             "ppc_coverage_80pct":        round(cov_80, 4),
             "ppc_coverage_95pct":        round(cov_95, 4),
+            "ppc_coverage_95pct_param_only": round(cov_95_p, 4),
             "ppc_tail_discrepancy_5pct": round(tail_disc, 4),
             "kl_prior_to_posterior":     round(kl, 4) if kl is not None else None,
             "same_level_comparable":     True,
             "notes": (
-                "PPC uses full posterior (not sequential LOO); "
-                f"KL(prior||posterior)={kl:.4f}" if kl is not None else
-                "PPC uses full posterior; KL unavailable"
+                "PPC uses predictive scale sqrt(var_post+var_obs); "
+                f"KL(prior||posterior) on parameter SD={kl:.4f}" if kl is not None else
+                "PPC uses predictive scale; KL unavailable"
             ),
         })
         return base
@@ -2398,10 +2850,18 @@ def _compute_posterior_predictive_checks(
             else:
                 mask = fb["event_cause"] == cause
             y_obs = fb[mask]["log_dur"].values
+            var_post = float(row["posterior_sigma_log"]) ** 2
+            prior_var = float(row["prior_sigma_log"]) ** 2
+            var_obs, obs_source, obs_valid = resolve_obs_variance(
+                obs_pools, cause=cause, corridor=corr,
+                local_y=y_obs if len(y_obs) >= 2 else None,
+                prior_period_var=prior_var,
+            )
             rows.append(_ppc(
                 y_obs,
                 float(row["prior_mu_log"]), float(row["prior_sigma_log"]),
                 float(row["posterior_mu_log"]), float(row["posterior_sigma_log"]),
+                var_post, var_obs, obs_source, obs_valid,
                 "stratum", f"{cause}__{corr}",
             ))
 
@@ -2409,10 +2869,18 @@ def _compute_posterior_predictive_checks(
         for _, row in dur_summary_df[dur_summary_df["prior_level"] == "cause"].iterrows():
             cause = str(row["stratum_cause"])
             y_obs = fb[fb["event_cause"] == cause]["log_dur"].values
+            var_post = float(row["posterior_sigma_log"]) ** 2
+            prior_var = float(row["prior_sigma_log"]) ** 2
+            var_obs, obs_source, obs_valid = resolve_obs_variance(
+                obs_pools, cause=cause, corridor=None,
+                local_y=y_obs if len(y_obs) >= 2 else None,
+                prior_period_var=prior_var,
+            )
             rows.append(_ppc(
                 y_obs,
                 float(row["prior_mu_log"]), float(row["prior_sigma_log"]),
                 float(row["posterior_mu_log"]), float(row["posterior_sigma_log"]),
+                var_post, var_obs, obs_source, obs_valid,
                 "cause", f"{cause}__cause_level",
             ))
 
@@ -2420,10 +2888,19 @@ def _compute_posterior_predictive_checks(
     gprior = global_dict.get("global_prior", {})
     gpost  = global_dict.get("global_posterior", {})
     if gprior and gpost and gpost.get("global_posterior_valid"):
+        y_all = fb["log_dur"].values
+        var_post = float(gpost.get("sigma_log", 1)) ** 2
+        prior_var = float(gprior.get("sigma_log", 1)) ** 2
+        var_obs, obs_source, obs_valid = resolve_obs_variance(
+            obs_pools,
+            local_y=y_all if len(y_all) >= 2 else None,
+            prior_period_var=prior_var,
+        )
         rows.append(_ppc(
-            fb["log_dur"].values,
+            y_all,
             float(gprior.get("mu_log", 0)), float(gprior.get("sigma_log", 1)),
             float(gpost.get("mu_log", 0)),  float(gpost.get("sigma_log", 1)),
+            var_post, var_obs, obs_source, obs_valid,
             "global", "global",
         ))
 
@@ -2754,6 +3231,8 @@ def _write_summary(
     pp_crps  = _pp("layer6_posterior_scoring", "duration", "crps_mean")
     pp_brier = _pp("layer6_posterior_scoring", "calibration", "brier_score")
     pp_ece   = _pp("layer6_posterior_scoring", "calibration", "ece")
+    pp_cov95 = _pp("layer6_posterior_scoring", "coverage", "coverage_95pct")
+    pp_cov95_param = _pp("layer6_posterior_scoring", "coverage", "coverage_95pct_param_only")
     # Prior-only baseline (Layer 6)
     prior_rmse  = _pp("layer6_prior_reference", "duration", "rmse_logspace")
     prior_crps  = _pp("layer6_prior_reference", "duration", "crps_mean")
@@ -2816,6 +3295,7 @@ def _write_summary(
         "",
         "  ROLLING PERFORMANCE METRICS",
         "  Source: Layer 6 sequential LOO posterior-predictive evaluation",
+        "  Predictive scale: sqrt(var_post + var_obs) for future-observation scoring",
         "  (freshly scored from the conjugate model — NOT copied from layer45_metrics.csv)",
         f"  {'Metric':22s} {'Prior-only':>12s}  {'Seq-posterior':>13s}  {'Delta':>14s}",
         "  " + "-" * 65,
@@ -2830,6 +3310,14 @@ def _write_summary(
         f"  {'CVaR-90 red (L5)':22s} {'n/a':>12s}  {_fmt(cvar_red):>13s}  {'(L5 metric)':>14s}",
         f"  {'L4.5 RMSE (audit)':22s} {'---':>12s}  {_fmt(l45_rmse_ref):>13s}  "
         f"{'layer45_reference_only':>14s}",
+        "",
+        "  PREDICTIVE CALIBRATION (95% interval coverage, sequential LOO)",
+        f"  Predictive scale (primary) : {_fmt(pp_cov95)}  (nominal 0.95)",
+        f"  Parameter-only (audit)     : {_fmt(pp_cov95_param)}  (NOT used for future obs)",
+        "",
+        "  SCALE DISTINCTION",
+        "  Parameter diagnostics (entropy, KL, lambda, ESS) describe belief about mu.",
+        "  Predictive checks (CRPS, coverage, PPC) use sqrt(var_post + var_obs) for y_new.",
         "",
         "  CRPS delta: positive = sequential posterior improved over prior (learning occurred).",
         "  All metrics in LOG-space (log(1+duration)); L4.5 row is audit-only, never primary.",
@@ -3235,6 +3723,31 @@ def main() -> None:
     print("[L6]   -> layer6_score_normalization.csv")
 
     # =========================================================================
+    # SEQUENTIAL POSTERIOR-PREDICTIVE EVALUATION (Part A)
+    # =========================================================================
+    print("[L6] Part A: Sequential posterior-predictive evaluation (LOO)...")
+    pp_event_df, pp_weekly_df, pp_metrics_df = _compute_sequential_posterior_predictive(
+        feedback_actuals=feedback_actuals,
+        prior_df=prior_df,
+        joined_df=joined_df,
+    )
+    pp_full_df = pd.concat([
+        pp_metrics_df.assign(table="aggregate_metrics"),
+        pp_weekly_df.assign(table="weekly_summary") if not pp_weekly_df.empty else pd.DataFrame(),
+    ], ignore_index=True)
+    pp_event_df.to_csv(OUTPUTS_DIR / "layer6_posterior_predictive_report.csv", index=False)
+    pp_full_df.to_csv(OUTPUTS_DIR / "layer6_posterior_predictive_metrics.csv", index=False)
+    if not pp_metrics_df.empty:
+        for _, mrow in pp_metrics_df[pp_metrics_df["provenance"] == "layer6_posterior_scoring"].iterrows():
+            print(f"[L6]   [{mrow['provenance'][:18]}] {mrow['metric']:30s}: {mrow['value']:.4f}")
+    print("[L6]   -> layer6_posterior_predictive_report.csv (per-event)")
+    print("[L6]   -> layer6_posterior_predictive_metrics.csv (aggregates + weekly)")
+    _write_posterior_residuals(pp_event_df, OUTPUTS_DIR / "layer6_posterior_residuals.csv")
+    _write_posterior_coverage_report(pp_event_df, OUTPUTS_DIR / "layer6_posterior_coverage_report.csv")
+    print("[L6]   -> layer6_posterior_residuals.csv")
+    print("[L6]   -> layer6_posterior_coverage_report.csv")
+
+    # =========================================================================
     # COMPONENT 8 -- Model Health Monitoring
     # =========================================================================
     print("[L6] Component 8: Model Health Monitoring...")
@@ -3249,6 +3762,7 @@ def main() -> None:
         l45_metrics_df=l45_metrics_df,
         cvar_comparison=cvar_comparison,
         opt_metrics=opt_metrics,
+        pp_metrics_df=pp_metrics_df,
     )
     overall = str(health_df["overall_health"].iloc[0]) if not health_df.empty else "UNKNOWN"
     n_crit_h = int((health_df["status"] == "critical").sum())
@@ -3256,33 +3770,6 @@ def main() -> None:
     print(f"[L6]   Overall health: {overall} ({n_crit_h} critical, {n_warn_h} warning metrics)")
     health_df.to_csv(OUTPUTS_DIR / "layer6_model_health_summary.csv", index=False)
     print("[L6]   -> layer6_model_health_summary.csv")
-
-    # =========================================================================
-    # SEQUENTIAL POSTERIOR-PREDICTIVE EVALUATION (Part A)
-    # =========================================================================
-    print("[L6] Part A: Sequential posterior-predictive evaluation (LOO)...")
-    pp_event_df, pp_weekly_df, pp_metrics_df = _compute_sequential_posterior_predictive(
-        feedback_actuals=feedback_actuals,
-        prior_df=prior_df,
-        joined_df=joined_df,
-    )
-    # Write all three tables into one CSV (with provenance column discriminating them)
-    pp_full_df = pd.concat([
-        pp_metrics_df.assign(table="aggregate_metrics"),
-        pp_weekly_df.assign(table="weekly_summary") if not pp_weekly_df.empty else pd.DataFrame(),
-    ], ignore_index=True)
-    pp_event_df.to_csv(OUTPUTS_DIR / "layer6_posterior_predictive_report.csv", index=False)
-    pp_full_df.to_csv(OUTPUTS_DIR / "layer6_posterior_predictive_metrics.csv", index=False)
-    if not pp_metrics_df.empty:
-        for _, mrow in pp_metrics_df[pp_metrics_df["provenance"] == "layer6_posterior_scoring"].iterrows():
-            print(f"[L6]   [{mrow['provenance'][:18]}] {mrow['metric']:30s}: {mrow['value']:.4f}")
-    print("[L6]   -> layer6_posterior_predictive_report.csv (per-event)")
-    print("[L6]   -> layer6_posterior_predictive_metrics.csv (aggregates + weekly)")
-    # Part C: Residuals and coverage outputs
-    _write_posterior_residuals(pp_event_df, OUTPUTS_DIR / "layer6_posterior_residuals.csv")
-    _write_posterior_coverage_report(pp_event_df, OUTPUTS_DIR / "layer6_posterior_coverage_report.csv")
-    print("[L6]   -> layer6_posterior_residuals.csv")
-    print("[L6]   -> layer6_posterior_coverage_report.csv")
 
     # ENTROPY SUMMARY (Part C)
     # =========================================================================
@@ -3304,6 +3791,29 @@ def main() -> None:
     n_ppc_comparable = int(ppc_df["same_level_comparable"].sum()) if not ppc_df.empty else 0
     print(f"[L6]   {n_ppc} strata evaluated ({n_ppc_comparable} same-level comparable)")
     print("[L6]   -> layer6_posterior_predictive_checks.csv")
+
+    # FORECASTING DIAGNOSTICS — calibration + sharpness (diagnostic-only)
+    # =========================================================================
+    print("[L6] Forecasting diagnostics: calibration + sharpness...")
+    _write_forecasting_diagnostics(
+        pp_event_df=pp_event_df,
+        ppc_df=ppc_df,
+        pp_metrics_df=pp_metrics_df,
+        dur_summary_df=dur_summary_df,
+    )
+    if not pp_event_df.empty:
+        fq = _compute_forecasting_quality_summary(pp_event_df, pp_metrics_df)
+        cov_row = fq[fq["metric"] == "95pct Coverage"]
+        delta_row = fq[fq["metric"] == "Coverage Delta"]
+        sharp_row = fq[fq["metric"] == "Mean Sharpness"]
+        print(f"[L6]   Coverage={cov_row['value'].iloc[0] if len(cov_row) else 'n/a'}  "
+              f"Delta={delta_row['value'].iloc[0] if len(delta_row) else 'n/a'}  "
+              f"MeanWidth={sharp_row['value'].iloc[0] if len(sharp_row) else 'n/a'}")
+    print("[L6]   -> layer6_predictive_sharpness.csv")
+    print("[L6]   -> layer6_coverage_improvement.csv")
+    print("[L6]   -> layer6_forecasting_quality_summary.csv")
+    print("[L6]   -> layer6_sharpness_curve.csv")
+    print("[L6]   -> layer6_calibration_sharpness_tradeoff.csv")
 
     # PRIOR INFLUENCE AND ESS (Part F)
     # =========================================================================

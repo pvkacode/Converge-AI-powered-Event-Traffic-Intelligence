@@ -180,7 +180,27 @@
       "status": "critical",
       "note": "8 critical + 23 moderate triggers in this batch",
       "overall_health": "CRITICAL"
+    },
+    {
+      "metric_group": "predictive_calibration",
+      "metric": "predictive_coverage_95pct",
+      "holdout_value": NaN,
+      "feedback_value": 0.8658,
+      "relative_change": 0.0842,
+      "status": "warning",
+      "note": "Future-observation metric: sequential LOO at sqrt(var_post+var_obs)",
+      "overall_health": "CRITICAL"
+    },
+    {
+      "metric_group": "predictive_calibration",
+      "metric": "parameter_coverage_95pct_audit",
+      "holdout_value": NaN,
+      "feedback_value": 0.3342,
+      "relative_change": 0.6158,
+      "status": "healthy",
+      "note": "Audit only: parameter SD coverage; NOT used for future-observation scoring",
+      "overall_health": "CRITICAL"
     }
   ],
-  "generated_at": "2026-06-19T09:44:52Z"
+  "generated_at": "2026-06-19T10:34:30Z"
 }

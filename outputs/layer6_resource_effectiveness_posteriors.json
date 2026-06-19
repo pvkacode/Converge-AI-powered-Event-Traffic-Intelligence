@@ -9,7 +9,7 @@
     ],
     "evidence_path": "shadow_price_aggregate_confidence_gated",
     "n_observations": 4,
-    "generated_at": "2026-06-19T09:44:52Z"
+    "generated_at": "2026-06-19T10:34:30Z"
   },
   "caution": "Evidence is observational / model-derived. Shadow prices come from the Layer 5 optimization model, not real-world outcome measurement. 4 of 4 resource types fully budget-saturated \u2014 shadow prices at full saturation reflect constrained optimization geometry, not true resource effectiveness. Confidence gating suppresses material gamma updates for saturated resources.",
   "saturation_summary": {
