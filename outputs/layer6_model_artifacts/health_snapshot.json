@@ -155,10 +155,10 @@
       "metric_group": "posterior_uncertainty",
       "metric": "mean_ci95_width_log",
       "holdout_value": NaN,
-      "feedback_value": 1.6139,
+      "feedback_value": 1.1625,
       "relative_change": NaN,
       "status": "healthy",
-      "note": "Mean 95% CI width in log-duration space across 125 strata",
+      "note": "Mean 95% CI width in log-duration space across 118 strata",
       "overall_health": "CRITICAL"
     },
     {
@@ -175,12 +175,12 @@
       "metric_group": "retrain_triggers",
       "metric": "n_critical_triggers",
       "holdout_value": NaN,
-      "feedback_value": 7.0,
+      "feedback_value": 8.0,
       "relative_change": NaN,
       "status": "critical",
-      "note": "7 critical + 22 moderate triggers in this batch",
+      "note": "8 critical + 23 moderate triggers in this batch",
       "overall_health": "CRITICAL"
     }
   ],
-  "generated_at": "2026-06-18T23:39:58Z"
+  "generated_at": "2026-06-19T09:44:52Z"
 }

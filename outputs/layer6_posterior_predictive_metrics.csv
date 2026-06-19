@@ -1,0 +1,23 @@
+provenance,metric_group,metric,value,notes,table,year_week,n_events,rmse_seq_logspace,mae_seq_logspace,crps_seq,rmse_prior_logspace,crps_prior,delta_crps_seq_minus_prior,ewma_resid_last
+layer6_posterior_scoring,duration,rmse_logspace,2.261436,RMSE of log-duration residuals; sequential LOO posterior predictive; no L4.5 data used,aggregate_metrics,,,,,,,,,
+layer6_posterior_scoring,duration,mae_logspace,1.634351,MAE in log-duration space; sequential LOO,aggregate_metrics,,,,,,,,,
+layer6_posterior_scoring,duration,median_ae_logspace,1.1258,Median AE in log-duration space; sequential LOO,aggregate_metrics,,,,,,,,,
+layer6_posterior_scoring,duration,crps_mean,1.413709,"Mean CRPS; Gaussian predictive N(mu_seq, sigma_seq); sequential LOO",aggregate_metrics,,,,,,,,,
+layer6_posterior_scoring,calibration,brier_score,0.108535,Brier score on high-impact probability; scored against actual_high_impact,aggregate_metrics,,,,,,,,,
+layer6_posterior_scoring,calibration,ece,0.00047,ECE on high-impact probability; 10 equal-width bins,aggregate_metrics,,,,,,,,,
+layer6_posterior_scoring,coverage,coverage_50pct,0.136986,Fraction in 50% predictive interval (nominal: 0.50); sequential LOO,aggregate_metrics,,,,,,,,,
+layer6_posterior_scoring,coverage,coverage_80pct,0.23105,Fraction in 80% predictive interval (nominal: 0.80); sequential LOO,aggregate_metrics,,,,,,,,,
+layer6_posterior_scoring,coverage,coverage_95pct,0.334247,Fraction in 95% predictive interval (nominal: 0.95); sequential LOO,aggregate_metrics,,,,,,,,,
+layer6_posterior_scoring,coverage,mean_interval_width_95,2.175811,Mean 95% predictive interval width in log-duration space; sequential LOO,aggregate_metrics,,,,,,,,,
+layer6_prior_reference,duration,rmse_logspace,2.389316,RMSE using prior-only predictive; no feedback incorporated; baseline,aggregate_metrics,,,,,,,,,
+layer6_prior_reference,duration,crps_mean,1.21831,Mean CRPS using prior-only predictive; baseline,aggregate_metrics,,,,,,,,,
+layer6_prior_reference,duration,delta_crps_seq_vs_prior,-0.1954,CRPS reduction: positive = sequential posterior improved over prior,aggregate_metrics,,,,,,,,,
+layer45_reference_only,duration,rmse_logspace,1.727595,L4.5 duration_p50 vs feedback actuals in log-space; AUDIT ONLY — not the primary metric,aggregate_metrics,,,,,,,,,
+layer45_reference_only,duration,mae_logspace,1.245191,L4.5 MAE in log-space; AUDIT ONLY,aggregate_metrics,,,,,,,,,
+layer6_rolling_batch,,,,,weekly_summary,2024-W09,53.0,1.7412,1.1643,0.8939,1.7264,0.8416,0.0523,-0.4348
+layer6_rolling_batch,,,,,weekly_summary,2024-W10,284.0,2.4915,1.8622,1.5966,2.4069,1.2888,0.3078,0.3048
+layer6_rolling_batch,,,,,weekly_summary,2024-W11,153.0,2.2584,1.5966,1.3743,2.2359,1.0746,0.2997,0.2521
+layer6_rolling_batch,,,,,weekly_summary,2024-W12,125.0,2.1167,1.3521,1.1854,1.7767,0.8694,0.316,-1.0839
+layer6_rolling_batch,,,,,weekly_summary,2024-W13,238.0,2.3001,1.7121,1.501,2.7586,1.4324,0.0686,-0.0829
+layer6_rolling_batch,,,,,weekly_summary,2024-W14,235.0,2.121,1.5721,1.379,2.4657,1.2804,0.0986,-0.0947
+layer6_rolling_batch,,,,,weekly_summary,2024-W15,7.0,1.6712,1.262,1.0888,2.632,1.2298,-0.141,-0.4094

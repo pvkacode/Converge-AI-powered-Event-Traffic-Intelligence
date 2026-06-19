@@ -1,0 +1,21 @@
+source_batch,quarantine_reason,description,n_uncensored_candidates,n_quarantined,n_clean_for_posterior,total_rows_in_batch,pct_quarantined,generated_at,n_rows,pct_of_uncensored,excluded_from_posterior
+feedback_Mar_Apr_2024,_TOTAL_SUMMARY,Aggregate counts,1097.0,163.0,934.0,2564.0,14.86,2026-06-19T09:44:52Z,,,
+feedback_Mar_Apr_2024,nan_duration,duration_min is NaN,,,,,,2026-06-19T09:44:52Z,0.0,0.0,False
+feedback_Mar_Apr_2024,nonpositive_duration,duration_min <= 0 (log1p would be invalid or NaN),,,,,,2026-06-19T09:44:52Z,3.0,0.27,True
+feedback_Mar_Apr_2024,invalid_transform,log1p(duration_min) produces NaN or Inf,,,,,,2026-06-19T09:44:52Z,0.0,0.0,False
+feedback_Mar_Apr_2024,flagged_duration_anomaly,duration_anomaly == True (stratified MAD outlier),,,,,,2026-06-19T09:44:52Z,116.0,10.57,True
+feedback_Mar_Apr_2024,flagged_iso_anomaly,iso_flagged == True (Isolation Forest outlier),,,,,,2026-06-19T09:44:52Z,78.0,7.11,True
+feedback_Mar_Apr_2024,missing_key_cause,event_cause is NaN or empty,,,,,,2026-06-19T09:44:52Z,0.0,0.0,False
+feedback_Mar_Apr_2024,missing_key_corridor,corridor_fill is NaN or empty,,,,,,2026-06-19T09:44:52Z,0.0,0.0,False
+feedback_Mar_Apr_2024,invalid_timestamp,start_local is NaT or invalid,,,,,,2026-06-19T09:44:52Z,0.0,0.0,False
+feedback_Mar_Apr_2024,posterior_nan_source,row produced NaN in an intermediate posterior quantity,,,,,,2026-06-19T09:44:52Z,0.0,0.0,False
+prior_Nov2023_Feb2024,_TOTAL_SUMMARY,Aggregate counts,2451.0,440.0,2011.0,5493.0,17.95,2026-06-19T09:44:52Z,,,
+prior_Nov2023_Feb2024,nan_duration,duration_min is NaN,,,,,,2026-06-19T09:44:52Z,0.0,0.0,False
+prior_Nov2023_Feb2024,nonpositive_duration,duration_min <= 0 (log1p would be invalid or NaN),,,,,,2026-06-19T09:44:52Z,47.0,1.92,True
+prior_Nov2023_Feb2024,invalid_transform,log1p(duration_min) produces NaN or Inf,,,,,,2026-06-19T09:44:52Z,0.0,0.0,False
+prior_Nov2023_Feb2024,flagged_duration_anomaly,duration_anomaly == True (stratified MAD outlier),,,,,,2026-06-19T09:44:52Z,297.0,12.12,True
+prior_Nov2023_Feb2024,flagged_iso_anomaly,iso_flagged == True (Isolation Forest outlier),,,,,,2026-06-19T09:44:52Z,226.0,9.22,True
+prior_Nov2023_Feb2024,missing_key_cause,event_cause is NaN or empty,,,,,,2026-06-19T09:44:52Z,0.0,0.0,False
+prior_Nov2023_Feb2024,missing_key_corridor,corridor_fill is NaN or empty,,,,,,2026-06-19T09:44:52Z,0.0,0.0,False
+prior_Nov2023_Feb2024,invalid_timestamp,start_local is NaT or invalid,,,,,,2026-06-19T09:44:52Z,0.0,0.0,False
+prior_Nov2023_Feb2024,posterior_nan_source,row produced NaN in an intermediate posterior quantity,,,,,,2026-06-19T09:44:52Z,0.0,0.0,False

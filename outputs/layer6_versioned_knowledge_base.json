@@ -1,38 +1,60 @@
 {
   "version": "layer6_part2",
-  "generated_at": "2026-06-18T23:39:58Z",
+  "generated_at": "2026-06-19T09:44:52Z",
   "feedback_period": "2024-03-01 to 2024-04-08",
   "prior_period": "2023-11-10 to 2024-02-29",
   "global_duration_posterior": {
-    "mu_log": NaN,
-    "sigma_log": NaN,
-    "ci95_lo_log": NaN,
-    "ci95_hi_log": NaN,
-    "posterior_median_min": NaN,
-    "posterior_p80_min": NaN,
-    "posterior_p95_min": NaN,
-    "n_eff_feedback": 1025.26
+    "mu_log": 4.582472,
+    "sigma_log": 0.05818,
+    "ci95_lo_log": 4.468439,
+    "ci95_hi_log": 4.696506,
+    "posterior_median_min": 96.76,
+    "posterior_p80_min": 101.66,
+    "posterior_p95_min": 106.57,
+    "n_eff_feedback": 874.14,
+    "global_posterior_valid": true,
+    "global_posterior_reason": "robust_trimmed_mean; n_clean=934; n_trimmed=842"
   },
   "bma_weights": {
     "duration_catboost": {
-      "weight": 0.170818,
-      "nll_proxy": 1.965718
-    },
-    "retrieval_estimator": {
-      "weight": 0.147585,
-      "nll_proxy": 2.25811
-    },
-    "calibration_estimator": {
-      "weight": 0.409548,
-      "nll_proxy": 0.216812
+      "family": "duration",
+      "family_local_weight": 0.793963,
+      "raw_score": 0.933194,
+      "score_rule": "crps_gaussian_logspace",
+      "bma_family_confident": true,
+      "judge_facing": true
     },
     "corridor_cause_prior": {
-      "weight": 0.158777,
-      "nll_proxy": 2.111914
+      "family": "duration",
+      "family_local_weight": 0.206037,
+      "raw_score": 1.17741,
+      "score_rule": "crps_gaussian_logspace",
+      "bma_family_confident": true,
+      "judge_facing": true
+    },
+    "calibration_estimator": {
+      "family": "calibration",
+      "family_local_weight": NaN,
+      "raw_score": 0.108406,
+      "score_rule": "brier_score",
+      "bma_family_confident": false,
+      "judge_facing": false
+    },
+    "retrieval_estimator": {
+      "family": "retrieval",
+      "family_local_weight": NaN,
+      "raw_score": 0.2,
+      "score_rule": "retrieval_residual_proxy_1mf1",
+      "bma_family_confident": false,
+      "judge_facing": false
     },
     "scenario_surrogate": {
-      "weight": 0.113272,
-      "nll_proxy": 2.787341
+      "family": "surrogate",
+      "family_local_weight": NaN,
+      "raw_score": 0.699734,
+      "score_rule": "crps_gaussian_logspace_l5surrogate",
+      "bma_family_confident": false,
+      "judge_facing": false
     }
   },
   "calibration_summary": {
@@ -42,20 +64,24 @@
   },
   "effectiveness_posteriors": {
     "gamma_p": {
-      "posterior_mean": 0.3969,
-      "posterior_std": 0.0598
+      "posterior_mean": 0.18,
+      "confidence_score": 0.0,
+      "posterior_status": "low_confidence_no_update"
     },
     "gamma_b": {
-      "posterior_mean": 0.2218,
-      "posterior_std": 0.0354
+      "posterior_mean": 0.1,
+      "confidence_score": 0.0,
+      "posterior_status": "low_confidence_no_update"
     },
     "gamma_t": {
-      "posterior_mean": 0.4908,
-      "posterior_std": 0.0781
+      "posterior_mean": 0.25,
+      "confidence_score": 0.0,
+      "posterior_status": "low_confidence_no_update"
     },
     "gamma_q": {
-      "posterior_mean": 0.5156,
-      "posterior_std": 0.0832
+      "posterior_mean": 0.3,
+      "confidence_score": 0.0,
+      "posterior_status": "low_confidence_no_update"
     }
   },
   "prototype_trust_summary": {
@@ -68,8 +94,8 @@
     "n_critical_metrics": 3
   },
   "active_alerts": {
-    "n_critical": 7,
-    "n_total": 30
+    "n_critical": 8,
+    "n_total": 32
   },
   "governance": "Layer 6 is ADDITIVE only. No upstream files were modified. All recommendations are in outputs/layer6_retrain_triggers.csv."
 }

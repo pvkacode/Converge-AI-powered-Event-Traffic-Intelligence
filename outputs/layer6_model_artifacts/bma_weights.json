@@ -1,62 +1,57 @@
 [
   {
     "model": "duration_catboost",
-    "nll_proxy_raw": 1.965718,
-    "nll_proxy_used": 1.965718,
-    "weight_prior": 0.2,
-    "weight_posterior": 0.170818,
-    "weight_drift": -0.029182,
-    "log_weight": -0.874453,
-    "posterior_entropy": 1.488741,
-    "kl_from_uniform": 0.120697,
-    "generated_at": "2026-06-18T23:39:58Z"
-  },
-  {
-    "model": "retrieval_estimator",
-    "nll_proxy_raw": 2.25811,
-    "nll_proxy_used": 2.25811,
-    "weight_prior": 0.2,
-    "weight_posterior": 0.147585,
-    "weight_drift": -0.052415,
-    "log_weight": -1.020649,
-    "posterior_entropy": 1.488741,
-    "kl_from_uniform": 0.120697,
-    "generated_at": "2026-06-18T23:39:58Z"
-  },
-  {
-    "model": "calibration_estimator",
-    "nll_proxy_raw": 0.216812,
-    "nll_proxy_used": 0.216812,
-    "weight_prior": 0.2,
-    "weight_posterior": 0.409548,
-    "weight_drift": 0.209548,
-    "log_weight": 0.0,
-    "posterior_entropy": 1.488741,
-    "kl_from_uniform": 0.120697,
-    "generated_at": "2026-06-18T23:39:58Z"
+    "family": "duration",
+    "raw_score": 0.933194,
+    "score_rule": "crps_gaussian_logspace",
+    "robust_z_score": -0.6745,
+    "family_local_weight": 0.793963,
+    "bma_family_confident": true,
+    "judge_facing": true,
+    "generated_at": "2026-06-19T09:44:52Z"
   },
   {
     "model": "corridor_cause_prior",
-    "nll_proxy_raw": NaN,
-    "nll_proxy_used": 2.111914,
-    "weight_prior": 0.2,
-    "weight_posterior": 0.158777,
-    "weight_drift": -0.041223,
-    "log_weight": -0.947551,
-    "posterior_entropy": 1.488741,
-    "kl_from_uniform": 0.120697,
-    "generated_at": "2026-06-18T23:39:58Z"
+    "family": "duration",
+    "raw_score": 1.17741,
+    "score_rule": "crps_gaussian_logspace",
+    "robust_z_score": 0.6745,
+    "family_local_weight": 0.206037,
+    "bma_family_confident": true,
+    "judge_facing": true,
+    "generated_at": "2026-06-19T09:44:52Z"
+  },
+  {
+    "model": "calibration_estimator",
+    "family": "calibration",
+    "raw_score": 0.108406,
+    "score_rule": "brier_score",
+    "robust_z_score": NaN,
+    "family_local_weight": NaN,
+    "bma_family_confident": false,
+    "judge_facing": false,
+    "generated_at": "2026-06-19T09:44:52Z"
+  },
+  {
+    "model": "retrieval_estimator",
+    "family": "retrieval",
+    "raw_score": 0.2,
+    "score_rule": "retrieval_residual_proxy_1mf1",
+    "robust_z_score": NaN,
+    "family_local_weight": NaN,
+    "bma_family_confident": false,
+    "judge_facing": false,
+    "generated_at": "2026-06-19T09:44:52Z"
   },
   {
     "model": "scenario_surrogate",
-    "nll_proxy_raw": 2.787341,
-    "nll_proxy_used": 2.787341,
-    "weight_prior": 0.2,
-    "weight_posterior": 0.113272,
-    "weight_drift": -0.086728,
-    "log_weight": -1.285265,
-    "posterior_entropy": 1.488741,
-    "kl_from_uniform": 0.120697,
-    "generated_at": "2026-06-18T23:39:58Z"
+    "family": "surrogate",
+    "raw_score": 0.699734,
+    "score_rule": "crps_gaussian_logspace_l5surrogate",
+    "robust_z_score": NaN,
+    "family_local_weight": NaN,
+    "bma_family_confident": false,
+    "judge_facing": false,
+    "generated_at": "2026-06-19T09:44:52Z"
   }
 ]

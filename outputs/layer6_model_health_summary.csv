@@ -14,6 +14,6 @@ drift,psi_iso_anomaly_score,,0.0266,,healthy,PSI=0.0266,CRITICAL
 drift,psi_hour_local,,0.1526,,warning,PSI=0.1526,CRITICAL
 drift,ods_weekly_log_duration,,0.5667,,healthy,max_ODS=0.567 across 7 weeks; alert weeks: [],CRITICAL
 drift,mean_shift_ztest_log_duration,,3.2097,,critical,"baseline_mu=4.929, feedback_mu=5.194, z=3.210",CRITICAL
-posterior_uncertainty,mean_ci95_width_log,,1.6139,,healthy,Mean 95% CI width in log-duration space across 125 strata,CRITICAL
+posterior_uncertainty,mean_ci95_width_log,,1.1625,,healthy,Mean 95% CI width in log-duration space across 118 strata,CRITICAL
 prototype_trust,mean_abs_trust_delta,,0.001,,warning,2 prototypes degraded below 0.5 trust,CRITICAL
-retrain_triggers,n_critical_triggers,,7.0,,critical,7 critical + 22 moderate triggers in this batch,CRITICAL
+retrain_triggers,n_critical_triggers,,8.0,,critical,8 critical + 23 moderate triggers in this batch,CRITICAL

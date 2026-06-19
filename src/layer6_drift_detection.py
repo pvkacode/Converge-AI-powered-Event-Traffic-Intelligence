@@ -341,4 +341,9 @@ def run_drift_detection(
         })
 
     drift_df = pd.DataFrame(records)
+
+    # Annotate retrain_urgency per test: critical=1.0, moderate=0.5, none=0.0
+    _urg_map = {"critical": 1.0, "moderate": 0.5, "none": 0.0}
+    drift_df["retrain_urgency"] = drift_df["severity"].map(_urg_map).fillna(0.0)
+
     return drift_df

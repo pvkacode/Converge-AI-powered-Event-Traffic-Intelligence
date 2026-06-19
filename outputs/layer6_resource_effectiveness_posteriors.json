@@ -1,17 +1,22 @@
 {
   "metadata": {
-    "model": "bayesian_linear_regression",
+    "model": "confidence_gated_prior_shift",
     "parameters": [
       "gamma_p",
       "gamma_b",
       "gamma_t",
       "gamma_q"
     ],
-    "evidence_path": "shadow_price_aggregate",
+    "evidence_path": "shadow_price_aggregate_confidence_gated",
     "n_observations": 4,
-    "generated_at": "2026-06-18T23:39:58Z"
+    "generated_at": "2026-06-19T09:44:52Z"
   },
-  "caution": "Evidence is observational / model-derived. Shadow prices are derived from the Layer 5 optimization model, not real-world measured outcomes. Posterior means reflect updated parameter beliefs, not causal effect estimates.",
+  "caution": "Evidence is observational / model-derived. Shadow prices come from the Layer 5 optimization model, not real-world outcome measurement. 4 of 4 resource types fully budget-saturated \u2014 shadow prices at full saturation reflect constrained optimization geometry, not true resource effectiveness. Confidence gating suppresses material gamma updates for saturated resources.",
+  "saturation_summary": {
+    "n_resource_types": 4,
+    "n_fully_saturated": 4,
+    "saturation_warning": true
+  },
   "prior": {
     "means": [
       0.18,
@@ -32,41 +37,45 @@
         "parameter": "gamma_p",
         "prior_mean": 0.18,
         "prior_std": 0.08,
-        "posterior_mean": 0.3969,
-        "posterior_std": 0.0598,
-        "ci95_lo": 0.2797,
-        "ci95_hi": 0.5141,
-        "shift_from_prior": 0.2169
+        "posterior_mean": 0.18,
+        "shift_from_prior": 0.0,
+        "confidence_score": 0.0,
+        "posterior_status": "low_confidence_no_update",
+        "ci95_lo": 0.0232,
+        "ci95_hi": 0.3368
       },
       {
         "parameter": "gamma_b",
         "prior_mean": 0.1,
         "prior_std": 0.05,
-        "posterior_mean": 0.2218,
-        "posterior_std": 0.0354,
-        "ci95_lo": 0.1525,
-        "ci95_hi": 0.2911,
-        "shift_from_prior": 0.1218
+        "posterior_mean": 0.1,
+        "shift_from_prior": 0.0,
+        "confidence_score": 0.0,
+        "posterior_status": "low_confidence_no_update",
+        "ci95_lo": 0.01,
+        "ci95_hi": 0.198
       },
       {
         "parameter": "gamma_t",
         "prior_mean": 0.25,
         "prior_std": 0.1,
-        "posterior_mean": 0.4908,
-        "posterior_std": 0.0781,
-        "ci95_lo": 0.3378,
-        "ci95_hi": 0.6439,
-        "shift_from_prior": 0.2408
+        "posterior_mean": 0.25,
+        "shift_from_prior": 0.0,
+        "confidence_score": 0.0,
+        "posterior_status": "low_confidence_no_update",
+        "ci95_lo": 0.054,
+        "ci95_hi": 0.446
       },
       {
         "parameter": "gamma_q",
         "prior_mean": 0.3,
         "prior_std": 0.1,
-        "posterior_mean": 0.5156,
-        "posterior_std": 0.0832,
-        "ci95_lo": 0.3525,
-        "ci95_hi": 0.6786,
-        "shift_from_prior": 0.2156
+        "posterior_mean": 0.3,
+        "shift_from_prior": 0.0,
+        "confidence_score": 0.0,
+        "posterior_status": "low_confidence_no_update",
+        "ci95_lo": 0.104,
+        "ci95_hi": 0.496
       }
     ]
   },
