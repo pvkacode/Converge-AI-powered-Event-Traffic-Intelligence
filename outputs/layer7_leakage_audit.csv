@@ -6,4 +6,4 @@ confidence_i (asof_retrieval_confidence),layer45_asof_feature_matrix.csv,True,tr
 mark_i composite,layer45_asof_feature_matrix.csv,True,"weighted sum, weights are hyperparameters"
 zone_adjacency,geographic layout + layer3_diversion_recommendations.csv,True,"static structure, not time-varying"
 hawkes_intensity_asof,computed from strictly past events,True,parameters fit on training period only
-"model parameters (mu, alpha, beta)",fitted on Nov-Feb train only,True,not re-estimated on eval data
+"model parameters (mu, alpha, beta)","Part A fit: Nov 10 2023 - Jan 19 2024 (full zone-labeled window). Part B refit: Nov 10 2023 - Dec 31 2023 (eval Jan 1-19 2024).",True,not re-estimated on eval data

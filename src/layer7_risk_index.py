@@ -99,10 +99,19 @@ d_raw = (feat_valid[train_mask]
          .reindex(zones)
          .fillna(feat_valid[train_mask]["asof_fragility_proxy"].median()))
 d_min, d_max = d_raw.min(), d_raw.max()
-d_hat_norm = (d_raw - d_min) / (d_max - d_min + 1e-9)
-print(f"  D_hat (normalized):")
+
+# Floor at 0.05 instead of pure [0,1] min-max.
+# Reason: the minimum zone (Central Zone 1, median=0.864) is only 0.085 units
+# below the next-lowest (North Zone 1, 0.948) — a genuine data difference, not
+# a zero-impact zone.  Pure [0,1] min-max forces the minimum to exactly 0,
+# silencing ERI entirely for that zone regardless of its predicted probability
+# or spillover involvement.  [0.05, 1.0] preserves the relative ranking while
+# ensuring no zone is permanently excluded from non-zero ERI.
+DHAT_FLOOR = 0.05
+d_hat_norm = DHAT_FLOOR + (1.0 - DHAT_FLOOR) * (d_raw - d_min) / (d_max - d_min + 1e-9)
+print(f"  D_hat (normalized into [0.05, 1.0]):")
 for z in zones:
-    print(f"    {z}: raw={d_raw.get(z, np.nan):.3f}  norm={d_hat_norm.get(z, np.nan):.3f}")
+    print(f"    {z}: raw={d_raw.get(z, np.nan):.3f}  norm={d_hat_norm.get(z, np.nan):.4f}")
 
 # SSC normalization
 ssc_vals = ssc.set_index("zone")["SSC_centrality"].reindex(zones)
@@ -203,7 +212,10 @@ for h in [3, 6, 9]:
     ev["prob_hawkes_only"] = prob_hk
     ev["Y_bin_actual"] = ev[bin_col]
     ev["horizon_h"] = h
-    hawkes_preds[h] = ev[["grid_time_utc", "zone", "horizon_h", "prob_hawkes_only", "Y_bin_actual"]]
+    # Keep lambda_v and zone_hist_rate for baseline count estimates in Section 5
+    hawkes_preds[h] = ev[["grid_time_utc", "zone", "horizon_h",
+                           "prob_hawkes_only", "Y_bin_actual",
+                           "lambda_v", "zone_hist_rate"]]
     print(f"  {h}h Hawkes-only LogReg: train={len(tr)}, eval={len(ev)}")
 
 df_hk = pd.concat(hawkes_preds.values(), ignore_index=True)
@@ -239,15 +251,46 @@ for h in [3, 6, 9]:
     ph_base = base[base["horizon_h"] == h].copy()
     ph_hk   = df_hk[df_hk["horizon_h"] == h].copy()
 
-    # Merge Hawkes-only probs into main eval set
+    # Merge Hawkes-only probs + lambda_v + zone_hist_rate into main eval set
     ph_merged = ph_pred.merge(
-        ph_hk[["grid_time_utc", "zone", "prob_hawkes_only"]],
+        ph_hk[["grid_time_utc", "zone", "prob_hawkes_only", "lambda_v", "zone_hist_rate"]],
         on=["grid_time_utc", "zone"], how="left"
     )
     ph_merged["baseline_prob"] = ph_base["baseline_prob_bin"].values[:len(ph_merged)]
 
     y_true = ph_merged["Y_bin_actual"].values.astype(int)
     y_cnt  = ph_merged["Y_count_actual"].values.astype(float)
+
+    # Count estimates per model:
+    #   catboost_calibrated : hurdle NB count using calibrated P (stored as count_forecast)
+    #   catboost_raw        : same NB mean rescaled by prob_raw/prob_cal; documents the
+    #                         binary-probability difference while sharing the NB component
+    #   hawkes_only         : lambda_v(t) * h  (Hawkes-Poisson expected count over window h)
+    #   historical_rate     : zone_hist_rate * h  (training-period average count per window)
+    prob_cal   = ph_merged["prob_bin_hawkes"].fillna(0).values
+    prob_raw   = ph_merged["prob_bin_raw"].fillna(0).values
+    cnt_cal    = ph_merged["count_forecast"].fillna(0).values
+    lam_v      = ph_merged["lambda_v"].fillna(0).values
+    hist_rate  = ph_merged["zone_hist_rate"].fillna(0).values
+
+    # catboost_raw count: rescale hurdle product by probability ratio
+    safe_denom = np.where(prob_cal > 1e-6, prob_cal, 1e-6)
+    cnt_raw    = np.clip(prob_raw / safe_denom * cnt_cal, 0, cnt_cal.max() * 3)
+    cnt_hk     = lam_v * h          # Hawkes-Poisson approximation
+    cnt_hist   = hist_rate * h      # flat historical rate
+
+    count_estimates = {
+        "catboost_calibrated": cnt_cal,
+        "catboost_raw":        cnt_raw,
+        "hawkes_only":         cnt_hk,
+        "historical_rate":     cnt_hist,
+    }
+    count_methods = {
+        "catboost_calibrated": "NB hurdle: P_cal * E[Y|Y>0]",
+        "catboost_raw":        "NB hurdle rescaled: (P_raw/P_cal)*count_cal; shares NB component",
+        "hawkes_only":         "lambda_v(t)*h  (Hawkes-Poisson expected count over window)",
+        "historical_rate":     "zone_hist_rate*h  (training-period avg count per h-hour window)",
+    }
 
     for model_name, p_col in [
         ("catboost_calibrated", "prob_bin_hawkes"),
@@ -269,11 +312,11 @@ for h in [3, 6, 9]:
             "logloss": round(log_loss(yt, yp), 4),
             "ece":     round(ece(yt, yp), 4),
         }
-        if model_name == "catboost_calibrated":
-            cnt_pred = ph_merged["count_forecast"].fillna(0).values[valid]
-            row["count_mae"]  = round(float(np.mean(np.abs(cnt_pred - y_cnt[valid]))), 4)
-            row["count_rmse"] = round(float(np.sqrt(np.mean((cnt_pred - y_cnt[valid])**2))), 4)
-            row["count_crps"] = row["count_mae"]   # CRPS = MAE for point forecasts
+        cnt_pred = count_estimates[model_name][valid]
+        row["count_mae"]    = round(float(np.mean(np.abs(cnt_pred - y_cnt[valid]))), 4)
+        row["count_rmse"]   = round(float(np.sqrt(np.mean((cnt_pred - y_cnt[valid])**2))), 4)
+        row["count_crps"]   = row["count_mae"]   # CRPS = MAE for point forecasts
+        row["count_method"] = count_methods[model_name]
         metrics_rows.append(row)
 
     # Per-zone calibration (catboost_calibrated)

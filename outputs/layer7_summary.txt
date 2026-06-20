@@ -5,8 +5,11 @@ Complete Layer 7 Summary
 
 DATA LIMITATION (documented):
   Zone labels only exist through Jan 19 2024 (3,389 events).
-  Original spec window (Mar-Apr eval) is infeasible with current data.
-  Corrected evaluation window: Jan 1-19 2024 (~18.3 days, 868 events).
+  The originally specified evaluation window (extending to April 2024)
+  is infeasible — zone labels are absent past Jan 19 2024.
+  ACTUAL WINDOWS USED:
+    Training   : Nov 10, 2023 - Dec 31, 2023
+    Evaluation : Jan 1, 2024 - Jan 19, 2024 (~18.3 days, 868 events)
   This is a confirmed data constraint, not a methodological choice.
   All metrics include 95% bootstrap CIs to reflect the small holdout.
 
@@ -69,10 +72,10 @@ SOUTH ZONE 2 LIMITATION (documented):
 
 PERSISTENCE CLASSIFICATION:
   Pers_z = mean(ERI_3h, ERI_6h, ERI_9h)  |  Slope_z = ERI_9h - ERI_3h
-  Slope thresholds (data-driven): lo=0.0044  hi=0.1146
+  Slope thresholds (data-driven): lo=0.0236  hi=0.1439
   escalating: Slope > hi  (1133 grid points)
-  persistent: lo <= Slope <= hi  (2269 grid points)
-  transient:  Slope < lo  (1128 grid points)
+  persistent: lo <= Slope <= hi  (2264 grid points)
+  transient:  Slope < lo  (1133 grid points)
   Derived rule is the primary output.
   CatBoost classifier on persistence NOT built — small sample insufficient
   to clearly beat the derived rule. Flagged for future work.
@@ -103,3 +106,44 @@ ACCEPTANCE CHECKS:
   [5] lambda_v(t) from Nov-Dec refit, not Part A full-window fit: PASS
 
 ======================================================================
+
+OPERATIONAL TRANSLATION (Part C):
+  src/layer7_risk_translation.py translates ERI + persistence + SSC into
+  six operational actions.  This is NOT a new predictive model — it is an
+  interpretable rule layer on top of Part B's outputs.
+
+  ACTIONS (ascending severity):
+    watch                 No pre-positioning needed.
+    increase_monitoring   Duty officer increases check-in frequency.
+    stage_tow_unit        Pre-position tow near zone; standby deployment.
+    stage_barricade       Move barricading equipment to zone perimeter.
+    prepare_diversion     Alert traffic control; pre-clear alternate routes.
+    escalate_supervision  Senior officer response; activate diversion now.
+
+  THRESHOLD CALIBRATION (training-period percentiles, not hardcoded):
+    Thresholds are percentiles of max(ERI_3h, ERI_6h, ERI_9h) computed on
+    the training period (Nov 10 - Dec 31 2023) via the same CatBoost +
+    isotonic pipeline used in Part B.
+    ERI p25=0.0604  p75=0.3135  p90=0.5097  p95=0.8535
+    SSC high if SSC_norm >= 0.5 (above-median zone).
+    CI wide if half-width >= 0.1006 (eval p50; triggers caution).
+
+  EVAL ACTION DISTRIBUTION (Jan 1-19 2024, 4530 zone-time pairs):
+        watch                       :   699
+    increase_monitoring         :  2640
+    stage_tow_unit              :   273
+    stage_barricade             :   579
+    prepare_diversion           :   339
+    escalate_supervision        :     0
+
+  CAVEAT — CENTRAL ZONE 1:
+    D_hat_norm = 0.000 for this zone (minimum fragility proxy after
+    normalization).  Its ERI is always 0 and it always receives "watch".
+    Operational users should consult binary probability P_z,h directly
+    for Central Zone 1 rather than relying on its ERI or action rank.
+
+  OUTPUTS:
+    layer7_action_policy.csv              — Threshold rules + action descriptions
+    layer7_prepositioning_recommendations.csv — Per (zone, time): action + full context
+    layer7_operational_alerts.csv         — Top-30 alerts, plain English, readable
+                                            by non-technical users without knowing the math

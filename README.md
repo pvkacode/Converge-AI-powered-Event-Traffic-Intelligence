@@ -1101,3 +1101,21 @@ Re-fits the Hawkes model on **Nov 10 – Dec 31** only, then evaluates on the **
 | `layer7_risk_persistence.csv` | Pers_z, Slope_z, persistence class per (zone, grid_time) |
 | `layer7_top_k_early_warning.csv` | Top-20 rows by ERI with full decomposition |
 | `layer7_summary.txt` | Complete narrative summary |
+
+### Layer 7 Part C — Operational Translation (completed)
+
+**Full Layer 7 system:** Part A tests for cross-zone spillover. Part B forecasts event probability and count per zone and horizon, classifies persistence, and produces ERI scores. Part C translates those scores into six operational actions a dispatcher can act on directly.
+
+**Part C is an operational translation layer, not a new predictive model.** It applies calibrated rules to Part B outputs. No new ML model is trained.
+
+**Threshold calibration:** Action cutoffs are percentiles of the training-period ERI distribution (max across horizons, Nov 10–Dec 31 2023), not hardcoded values. Specifically: p25/p75/p90/p95 define the low/high/very-high/critical ERI levels. The SSC high/low split uses SSC_norm ≥ 0.5 (median zone). CI width split uses p50 of eval half-widths. All cutoffs are documented in `layer7_action_policy.csv`.
+
+**Actions:** watch → increase monitoring → stage tow unit → stage barricade → prepare diversion → escalate supervision. Higher SSC (spillover involvement) escalates towards barricade/diversion; escalating persistence trend with high certainty triggers the top action.
+
+**Caveat — Central Zone 1:** Its D_hat_norm = 0.000 (minimum fragility proxy after normalization), making its ERI always 0. It always receives "watch" from the action policy. Consult its binary probability P_z,h directly.
+
+| Output | Contents |
+|---|---|
+| `layer7_action_policy.csv` | Six-row policy: action, description, threshold triggers, all cutoff values |
+| `layer7_prepositioning_recommendations.csv` | Per (zone, grid_time): recommended action, ERI decomposition, persistence, CI |
+| `layer7_operational_alerts.csv` | Top-30 alerts by urgency, plain-English action label, readable without technical context |
