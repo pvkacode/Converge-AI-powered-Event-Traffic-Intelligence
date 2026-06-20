@@ -1,0 +1,12 @@
+component,metric,value,status,detail,generated_at
+api,fastapi_installed,True,healthy,API serves when installed; file backend works regardless,2026-06-20T01:47:22.874493+00:00
+api,endpoint_coverage,17,healthy,all expected routes present,2026-06-20T01:47:22.874493+00:00
+api,uptime_state,constructible,healthy,in-process construct check (no persistent server required),2026-06-20T01:47:22.874493+00:00
+feed,freshness_layer7_operations_overview.csv,-0.0004,healthy,age_hours=-0.000,2026-06-20T01:47:22.874493+00:00
+feed,freshness_layer7_active_alerts.csv,-0.0004,healthy,age_hours=-0.000,2026-06-20T01:47:22.874493+00:00
+feed,freshness_layer7_resource_recommendations.csv,-0.0005,healthy,age_hours=-0.000,2026-06-20T01:47:22.874493+00:00
+feed,freshness_layer7_override_history.csv,-0.0005,healthy,age_hours=-0.000,2026-06-20T01:47:22.874493+00:00
+feed,freshness_layer7_model_health.csv,-0.0005,healthy,age_hours=-0.000,2026-06-20T01:47:22.874493+00:00
+feed,freshness_layer7_counterfactuals.csv,-0.0005,healthy,age_hours=-0.000,2026-06-20T01:47:22.874493+00:00
+feed,n_stale_feeds,0,healthy,,2026-06-20T01:47:22.874493+00:00
+manifest,row_count_consistency,ok,healthy,manifest matches files,2026-06-20T01:47:22.874493+00:00

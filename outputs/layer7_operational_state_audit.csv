@@ -1,0 +1,13 @@
+check,result,evidence,finding_id,severity
+normalization_correctness,WEAK,"z inputs from L4.5 used without re-standardization; tail_risk_prob_z variance dominates",F-001,Critical
+percentile_correctness,OK,"rank(pct=True, method=average) used consistently; range [0,1]",,Info
+rank_stability,OK,"deterministic sort ORS desc + event_id tie-break; reproducible across runs",,Info
+tie_handling,OK,"event_id ascending secondary key; no rank collapse on ties",,Info
+missing_value_handling,OK,"non-finite z filled 0 (coverage_flag); robustness NaN->0 (no discount); reliability NaN->1",,Info
+score_saturation,PARTIAL,"sigmoid bounds ORS to (0,95]; min 0.0 observed (floor); std 35.3 across full pop",,Low
+rank_collapse,FLAG,"active sites collapse to global Normal tier (49/50)",F-007,Medium
+single_feature_dominance,FLAG,"tail_risk_prob_z = 94% of mean |contribution|; other 5 features inert",F-001,Critical
+dead_feature,FLAG,"critical_alert_indicator contributes 0.000 (1 event-keyed source only)",F-015,Medium
+ranking_scope,FLAG,"ORS over 3498 events; top of site_risk_ranking is non-active (in_layer5=False)",F-006,Medium
+ors_distribution,REPORTED,"range 0.0-94.98; tiers Normal2098/Elevated700/Critical420/Emergency280 (full pop)",,Info
+unstable_ranking_behavior,NONE,"deterministic; no instability observed",,Info

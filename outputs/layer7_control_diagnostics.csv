@@ -1,0 +1,18 @@
+group,metric,value,generated_at
+action_counts,QUEUE_RELIEF,25,2026-06-20T02:47:06.160690+00:00
+action_counts,DISPATCH_TOW,13,2026-06-20T02:47:06.160690+00:00
+action_counts,SIGNAL_OFFSET_ADJUST,9,2026-06-20T02:47:06.160690+00:00
+action_counts,ACTIVATE_DIVERSION,3,2026-06-20T02:47:06.160690+00:00
+feasibility,feasible_rate,0.84,2026-06-20T02:47:06.160690+00:00
+feasibility,resource_constrained,8,2026-06-20T02:47:06.160690+00:00
+resource_bottleneck,police,demand=0/reserve=20 bottleneck=False,2026-06-20T02:47:06.160690+00:00
+resource_bottleneck,marshal,demand=0/reserve=30 bottleneck=False,2026-06-20T02:47:06.160690+00:00
+resource_bottleneck,tow,demand=13/reserve=5 bottleneck=True,2026-06-20T02:47:06.160690+00:00
+resource_bottleneck,qru,demand=0/reserve=4 bottleneck=False,2026-06-20T02:47:06.160690+00:00
+benefit,avg_expected_benefit,0.573886,2026-06-20T02:47:06.160690+00:00
+benefit,avg_queue_reduction_m,27.8989,2026-06-20T02:47:06.160690+00:00
+benefit,avg_travel_reduction_min,21.0858,2026-06-20T02:47:06.160690+00:00
+benefit,avg_risk_reduction,0.053554,2026-06-20T02:47:06.160690+00:00
+cost,avg_cost_score,1.4987,2026-06-20T02:47:06.160690+00:00
+spillover,mean_spillover,4.0524,2026-06-20T02:47:06.160690+00:00
+spillover,max_spillover,6.401,2026-06-20T02:47:06.160690+00:00

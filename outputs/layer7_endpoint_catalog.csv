@@ -1,0 +1,14 @@
+endpoint,method,description,response_type,milestone,generated_at
+/,GET,Service index and endpoint list,object,M4,2026-06-20T01:47:25.239853+00:00
+/manifest,GET,"Dashboard manifest (pages, schema versions, freshness)",object,M4,2026-06-20T01:47:25.239853+00:00
+/overview,GET,Operations overview (per active site),list,M4,2026-06-20T01:47:25.239853+00:00
+/alerts,GET,Prioritized alert feed,list,M4,2026-06-20T01:47:25.239853+00:00
+/recommendations,GET,Resource recommendations,list,M4,2026-06-20T01:47:25.239853+00:00
+/overrides,GET,Override history,list,M4,2026-06-20T01:47:25.239853+00:00
+/health,GET,Model-health page (M4; unchanged for compatibility),list,M4,2026-06-20T01:47:25.239853+00:00
+/counterfactuals,GET,Counterfactual scenarios,list,M4,2026-06-20T01:47:25.239853+00:00
+/healthz,GET,Service liveness/status object,object,M5,2026-06-20T01:47:25.239853+00:00
+/metrics,GET,Dashboard KPIs,object,M5,2026-06-20T01:47:25.239853+00:00
+/site/{event_id},GET,Single-site operational record,object,M5,2026-06-20T01:47:25.239853+00:00
+/alerts/{priority},GET,Alerts filtered by priority P1..P4,list,M5,2026-06-20T01:47:25.239853+00:00
+/override/{override_id},GET,Single override details,object,M5,2026-06-20T01:47:25.239853+00:00

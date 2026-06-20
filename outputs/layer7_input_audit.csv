@@ -1,0 +1,13 @@
+file,layer,found,read_status,row_count,n_columns,n_required_columns,missing_required_columns,status
+layer5_resource_allocation.csv,Layer5,True,ok,50,29,3,,OK
+layer5_frontend_export.csv,Layer5,True,ok,50,30,3,,OK
+layer5_optimization_metrics.csv,Layer5,True,ok,20,2,2,,OK
+layer5_pre_post_cvar_comparison.csv,Layer5,True,ok,5,6,3,,OK
+layer5_shadow_prices.csv,Layer5,True,ok,4,7,2,,OK
+layer5_chance_constraint_violations.csv,Layer5,True,ok,1,7,4,,OK
+layer6_active_alerts.csv,Layer6,True,ok,37,6,4,,OK
+layer6_retrain_triggers.csv,Layer6,True,ok,32,12,5,,OK
+layer6_drift_report.csv,Layer6,True,ok,7,11,5,,OK
+layer6_model_health_summary.csv,Layer6,True,ok,20,8,4,,OK
+layer6_monitoring_diagnostics.csv,Layer6,True,ok,22,5,4,,OK
+layer45_operational_state_vector_normalized.csv,Layer4.5,True,ok,3498,60,7,,OK

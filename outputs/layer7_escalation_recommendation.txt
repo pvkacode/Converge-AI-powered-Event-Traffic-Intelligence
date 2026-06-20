@@ -1,0 +1,32 @@
+LAYER 7 — M7B.1 ESCALATION RISK THRESHOLD RECOMMENDATION
+==========================================================
+generated_at: 2026-06-20T02:30:02.540101+00:00
+
+escalation_risk: min=0.0476 max=0.3428 mean=0.1925 std=0.0687
+quantiles: p50=0.1901 p75=0.2350 p90=0.2845 p95=0.3066 p99=0.3316
+tier counts: {'LOW': 41, 'MEDIUM': 9}
+
+B2 — WOULD HIGH / CRITICAL EVER OCCUR?
+  observed-component ceiling (each driver at its own observed max) = 0.4375
+  HIGH (>=0.50) reachable: False
+  CRITICAL (>=0.75) reachable: False
+  mean component contributions: {'incident_intensity': 0.088875, 'queue_growth_30min': 0.000353, 'capacity_utilization': 0.102259, 'alert_density': 0.001}
+  near-dead drivers (max < 0.05): ['queue_growth_30min']
+
+DIAGNOSIS:
+  Risk is GENUINELY LOW in this batch, AND two drivers are structurally near-zero:
+   - queue_growth_30min ~ 0: the state model is mean-reverting, so the forecast mean
+     returns toward the current level -> little predicted queue growth.
+   - alert_density ~ 0: only event-keyed alerts count, and almost all alerts are
+     system-level (see audit findings F-013/F-015) -> sparse per-site signal.
+  Even with the remaining drivers maxed, the escalation ceiling is ~0.44,
+  so CRITICAL is unreachable and HIGH is effectively unreachable with current inputs.
+
+B3 — RECALIBRATION DECISION:
+  NO RECALIBRATION. The absolute tiers (0.25 / 0.50 / 0.75) carry semantic meaning;
+  a calm batch SHOULD read LOW/MEDIUM. The empty HIGH/CRITICAL bands reflect genuinely
+  low risk plus two structurally near-zero drivers — NOT mis-set thresholds.
+  Recommended (NON-threshold) follow-ups, out of this patch's scope:
+   * give queue_growth a non-mean-reverting growth signal if growth must drive HIGH;
+   * use event-keyed alert density once more alerts are site-attributable.
+  Thresholds are left UNCHANGED to preserve backward compatibility and semantics.

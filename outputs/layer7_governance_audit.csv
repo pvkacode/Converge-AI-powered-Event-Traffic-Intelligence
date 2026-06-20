@@ -1,0 +1,13 @@
+check,result,evidence,finding_id,severity
+human_approval_enforcement,OK,"overrides advisory only; never auto-applied to L5; recommendations not executed automatically",,Info
+approval_state_transitions,FLAG,"no enforcement that executed/approved follow valid prior state (OVR-0004 executed unflagged)",F-012,Medium
+override_traceability,OK,"append-only audit log, unique ids, full schema, safety report per request",,Info
+escalation_logic,OK_WITH_NOTE,"operator_queue 5 priority bands; but priority-4 (high-impact override) band structurally empty",F-004,Medium
+unsafe_automatic_actions,NONE,"no automatic actions; all human-in-the-loop; verified no upstream mutation",,Info
+governance_bypasses,NONE,"no path bypasses operator; overrides stored separately from production",,Info
+missing_approvals,FLAG,"approval lineage not required before executed; demo OVR-0004 executed without approved record",F-012,Medium
+override_approval_rate,REPORTED,"0.286 (4 approved+executed / 14)",,Info
+high_impact_override_rate,FLAG,"0.0 always (threshold 0.50 unreachable on absolute_ois max 0.29)",F-004,High
+alert_acknowledgement_rate,FLAG,"0.0137 (1/73); denominator includes 72 non-acknowledgeable system alerts",F-013,Medium
+low_confidence_recommendation_rate,REPORTED,"0.32 (16/50) driven by tercile DCS Low band",F-008,Low
+drift_trigger_frequency,REPORTED,"0.429 (3/7 drift tests alerting)",,Info

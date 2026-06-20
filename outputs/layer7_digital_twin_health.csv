@@ -1,0 +1,7 @@
+component,metric,value,status,generated_at
+scenario_coverage,scenarios_catalogued_vs_simulated,8/8,healthy,2026-06-20T01:47:22.899486+00:00
+scenario_coverage,sites_simulated,50,healthy,2026-06-20T01:47:22.899486+00:00
+simulation_validity,ss_bounded_no_nan,True,healthy,2026-06-20T01:47:22.899486+00:00
+confidence_validity,tcs_bounded_no_nan,True,healthy,2026-06-20T01:47:22.899486+00:00
+sandbox_validity,sandbox_ran_safety_enforced,5 valid / 3 flagged,healthy,2026-06-20T01:47:22.899486+00:00
+ranking_validity,ranking_complete,True,healthy,2026-06-20T01:47:22.899486+00:00

@@ -1,0 +1,8 @@
+override_id,event_id,override_type,old_value,new_value,operator_id,timestamp,justification,approval_status,override_source,generated_at
+TEMPLATE-001,<active_site_event_id>,diversion_enable,0,1,<operator_id>,<ISO-8601 UTC>,Enable diversion at this site,proposed,template,2026-06-20T01:47:21.572095+00:00
+TEMPLATE-002,<active_site_event_id>,diversion_disable,1,0,<operator_id>,<ISO-8601 UTC>,Disable diversion at this site,proposed,template,2026-06-20T01:47:21.572095+00:00
+TEMPLATE-003,<active_site_event_id>,increase_resources,police:4,police:6,<operator_id>,<ISO-8601 UTC>,Add police units,proposed,template,2026-06-20T01:47:21.572095+00:00
+TEMPLATE-004,<active_site_event_id>,decrease_resources,barricades:6,barricades:4,<operator_id>,<ISO-8601 UTC>,Reduce barricades,proposed,template,2026-06-20T01:47:21.572095+00:00
+TEMPLATE-005,<active_site_event_id>,acknowledge_alert,active,acknowledged,<operator_id>,<ISO-8601 UTC>,Acknowledge active alert,proposed,template,2026-06-20T01:47:21.572095+00:00
+TEMPLATE-006,<active_site_event_id>,suppress_alert,active,suppressed,<operator_id>,<ISO-8601 UTC>,Suppress alert (state reason),proposed,template,2026-06-20T01:47:21.572095+00:00
+TEMPLATE-007,<active_site_event_id>,change_service_tier,normal,critical,<operator_id>,<ISO-8601 UTC>,Escalate service tier,proposed,template,2026-06-20T01:47:21.572095+00:00

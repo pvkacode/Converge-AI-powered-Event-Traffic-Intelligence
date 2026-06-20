@@ -1,0 +1,14 @@
+finding,check,passed,detail,generated_at
+F-014,quality_gate_built,True,"3498 events; weight in [0.60,1.00]; flagged=1253",2026-06-20T01:49:12.141371+00:00
+F-014,quality_factor_applied,True,operational_state carries quality_factor + data_quality_flag (ORS down-weighted),2026-06-20T01:49:12.141371+00:00
+F-001,no_single_feature_dominance,True,"max |contribution| share = 0.333 (was 0.94 tail); shares={'contrib_tail_risk_prob_z': 0.3333, 'contrib_fragility_signal_z': 0.2222, 'contrib_obi_signal_z': 0.1667, 'contrib_drift_score_z': 0.1667, 'contrib_novelty_score_z': 0.1111, 'contrib_critical_alert_indicator': 0.0001}",2026-06-20T01:49:12.141371+00:00
+F-001,ors_schema_preserved,True,ORS columns intact,2026-06-20T01:49:12.141371+00:00
+F-001,ors_no_nan,True,0 NaN ORS,2026-06-20T01:49:12.141371+00:00
+F-002,ass_bounded_0_1,True,max ASS = 0.5509 (was 1.262); raw retained in alert_severity_raw=True,2026-06-20T01:49:12.141371+00:00
+F-002,ass_schema_preserved,True,ASS + priority columns intact,2026-06-20T01:49:12.141371+00:00
+F-003,p1_rate_reduced,True,"P1 share = 0.123 (was 0.315); dist={'P3': 32, 'P2': 16, 'P4': 16, 'P1': 9}",2026-06-20T01:49:12.141371+00:00
+F-004,impact_band_reachable,True,"High/Critical overrides = 5; impact_level set=['Critical', 'High', 'Low', 'Moderate'] (was only Low/Moderate)",2026-06-20T01:49:12.141371+00:00
+F-004,high_impact_rate_meaningful,True,high_impact_override_rate = 0.357143 (was always 0.0),2026-06-20T01:49:12.141371+00:00
+F-005,tcs_independent_axis,True,"TCS = 0.5*DCS + 0.5*scenario_stability (entropy 1-H/logK); robustness/uncertainty now diagnostic-only; TCS range [0.063,0.166]",2026-06-20T01:49:12.141371+00:00
+F-005,tcs_schema_preserved,True,TCS columns intact + scenario_stability added,2026-06-20T01:49:12.141371+00:00
+ALL,no_nan_patched_columns,True,0 NaN in patched/new columns (pre-existing structural NaN preserved by design),2026-06-20T01:49:12.141371+00:00

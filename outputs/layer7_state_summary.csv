@@ -1,0 +1,15 @@
+metric,value
+n_sites,3498
+n_in_layer5,50
+ors_mean,40.329462
+ors_std,14.548
+ors_variance,211.644296
+ors_min,8.836719
+ors_max,78.316351
+n_nan_ors,0
+n_coverage_flagged,0
+tier_emergency_count,280
+tier_critical_count,420
+tier_elevated_count,700
+tier_normal_count,2098
+generated_at,2026-06-20T01:47:21.561543+00:00

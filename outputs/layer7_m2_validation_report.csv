@@ -1,0 +1,14 @@
+check_id,phase,passed,detail,severity,generated_at
+active_site_coverage,active_site_view,True,"L5 events=50, in view=50, max_count=1",info,2026-06-20T01:47:21.572095+00:00
+active_site_uniqueness,active_site_view,True,0 duplicate event_id,info,2026-06-20T01:47:21.572095+00:00
+active_site_ranking_reproducibility,active_site_view,True,deterministic ORS-desc / event_id tie-break,info,2026-06-20T01:47:21.572095+00:00
+active_site_percentile_range,active_site_view,True,"percentile range [0.0200, 1.0000]",info,2026-06-20T01:47:21.572095+00:00
+active_site_tiers_populated,active_site_view,True,tier distribution: {'Normal': 50},info,2026-06-20T01:47:21.572095+00:00
+active_site_no_nan,active_site_view,True,0 NaN in required columns,info,2026-06-20T01:47:21.572095+00:00
+override_schema_validity,override_engine,True,all canonical columns present,info,2026-06-20T01:47:21.572095+00:00
+override_type_validity,override_engine,True,invalid types ['OVR-0009'] all flagged,info,2026-06-20T01:47:21.572095+00:00
+override_id_uniqueness,override_engine,True,0 duplicate override_id in audit log,info,2026-06-20T01:47:21.572095+00:00
+ois_range,override_engine,True,"OIS range [0.0000, 0.5460]",info,2026-06-20T01:47:21.572095+00:00
+safety_rule_enforcement,override_engine,True,"7 request(s) flagged; flag types: ['duplicate_override_id', 'expired_override', 'invalid_override_type', 'missing_justification', 'resource_below_zero', 'service_tier_violation', 'unknown_event_id']",info,2026-06-20T01:47:21.572095+00:00
+override_no_nan,override_engine,True,0 NaN across override outputs,info,2026-06-20T01:47:21.572095+00:00
+no_layer16_modifications,integrity,True,all writes confined to outputs/layer7_* (namespace guard); byte-level SHA audit performed externally,info,2026-06-20T01:47:21.572095+00:00

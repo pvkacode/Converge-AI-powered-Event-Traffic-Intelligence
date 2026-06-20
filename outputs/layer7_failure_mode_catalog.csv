@@ -1,0 +1,8 @@
+failure_id,failure_mode,description,detection,mitigation,severity,current_status,generated_at
+FM-01,missing_feeds,Required upstream output absent,Ingestion manifest found=False / file existence probe,Skip dependent engine; coverage_flag; degrade gracefully,critical,all required feeds present,2026-06-20T01:47:22.916498+00:00
+FM-02,stale_feeds,Feed older than freshness threshold,mtime/generated_at age > 48h,Stale banner; proceed with warning,warning,0 stale frontend feed(s),2026-06-20T01:47:22.916498+00:00
+FM-03,schema_drift,Upstream adds/renames a consumed column,Required-column intersection check in loader/validator,Use intersected columns; engine-level skip with reason,warning,no drift on consumed columns (M1 loader green),2026-06-20T01:47:22.916498+00:00
+FM-04,operator_misuse,Invalid/abusive override or sandbox request,Override safety rules + sandbox validation flags,Flag + record; never silently apply; OIS quantifies impact,moderate,safety rules enforced (M2/M6),2026-06-20T01:47:22.916498+00:00
+FM-05,sensor_failure,Future sensor offline/degraded,Sensor status field + coverage gate (inverse-variance fusion),Drop source; fall back to existing JOSV signals,warning,no live sensors yet (readiness only),2026-06-20T01:47:22.916498+00:00
+FM-06,alert_storms,Excessive simultaneous alerts overwhelm operators,Alert feed volume / priority-band spike detection,Dedup by topic; rate-limit display; escalate via playbooks,high,current alert feed size=73,2026-06-20T01:47:22.916498+00:00
+FM-07,resource_saturation,City-wide resource budget exhausted,Deployed totals vs budget caps,Mutual-aid request; diversion-first plans; reprioritize by DIS/ORS,high,"saturated: ['officers', 'barricades', 'tow_trucks', 'qru']",2026-06-20T01:47:22.916498+00:00

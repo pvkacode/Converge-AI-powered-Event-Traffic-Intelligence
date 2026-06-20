@@ -1,0 +1,9 @@
+scenario_id,scenario_name,description,counterfactual_map,derivation,confidence_delta,generated_at
+SCENARIO_0,Current recommended plan,Layer 5 recommended allocation as-is (baseline reference).,A_recommended,baseline,0.0,2026-06-20T01:47:22.890493+00:00
+SCENARIO_1,No intervention,Remove all resources; lose the recommended delay reduction.,B_no_action,counterfactual,-0.3,2026-06-20T01:47:22.890493+00:00
+SCENARIO_2,Resource reduction,Halve allocated resources.,C_reduced_resources,counterfactual,-0.15,2026-06-20T01:47:22.890493+00:00
+SCENARIO_3,Resource increase,Add resources (extra officers + tow) via shadow-price marginal value.,D_increased_resources,counterfactual,0.1,2026-06-20T01:47:22.890493+00:00
+SCENARIO_4,Diversion disabled,Turn off diversion where active; lose its share of the reduction.,E_diversion_disabled,counterfactual,-0.1,2026-06-20T01:47:22.890493+00:00
+SCENARIO_5,Operator override plan,Apply the operator override impact (if any) for the site.,,override,0.05,2026-06-20T01:47:22.890493+00:00
+SCENARIO_6,Worst-case drift escalation,Amplify risk/delay/alerts by the Layer 6 drift escalation factor.,,drift_worst,-0.4,2026-06-20T01:47:22.890493+00:00
+SCENARIO_7,Best-case stabilized state,Full effectiveness: maximal delay/risk/alert reduction.,,stabilized,0.4,2026-06-20T01:47:22.890493+00:00

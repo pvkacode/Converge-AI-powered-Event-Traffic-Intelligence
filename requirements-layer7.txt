@@ -1,0 +1,6 @@
+# Layer 7 M4 — OPTIONAL dependencies for the read-only dashboard API only.
+# The file-based dashboard backend (layer7_dashboard_backend.py) and all Layer 7
+# validation work WITHOUT these. Install only to run the HTTP API (layer7_api.py).
+# These are additive and do not affect Layers 1-6 or the core requirements.txt.
+fastapi>=0.110
+uvicorn>=0.29

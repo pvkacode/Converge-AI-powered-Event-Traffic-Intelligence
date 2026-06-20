@@ -1,0 +1,7 @@
+component,score,status,detail,generated_at
+pipeline_health,1.0,healthy,8/8 key outputs present,2026-06-20T01:47:22.919519+00:00
+data_freshness,1.0,healthy,6/6 feeds within 48.0h,2026-06-20T01:47:22.919519+00:00
+api_health,1.0,healthy,3/3 api checks healthy,2026-06-20T01:47:22.919519+00:00
+dashboard_health,1.0,healthy,manifest=True; pages=6/6,2026-06-20T01:47:22.919519+00:00
+digital_twin_health,1.0,healthy,6/6 twin components healthy,2026-06-20T01:47:22.919519+00:00
+governance_health,1.0,healthy,5 governance metrics,2026-06-20T01:47:22.919519+00:00

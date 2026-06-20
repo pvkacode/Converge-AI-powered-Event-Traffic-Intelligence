@@ -1,0 +1,9 @@
+sandbox_id,event_id,change_type,n_flags,valid,flags,generated_at
+SBX-001,FKID006340,resource_increase,0,True,,2026-06-20T01:47:22.890493+00:00
+SBX-002,FKID006955,resource_increase,0,True,,2026-06-20T01:47:22.890493+00:00
+SBX-003,FKID007660,resource_reduction,0,True,,2026-06-20T01:47:22.890493+00:00
+SBX-004,FKID008103,diversion_enable,0,True,,2026-06-20T01:47:22.890493+00:00
+SBX-005,FKID000022,diversion_disable,0,True,,2026-06-20T01:47:22.890493+00:00
+SBX-006,FKID000000,resource_increase,1,False,unknown_event_id,2026-06-20T01:47:22.890493+00:00
+SBX-007,FKID001288,teleport_units,1,False,invalid_change_type,2026-06-20T01:47:22.890493+00:00
+SBX-008,FKID001125,resource_reduction,1,False,reduction_exceeds_capacity,2026-06-20T01:47:22.890493+00:00

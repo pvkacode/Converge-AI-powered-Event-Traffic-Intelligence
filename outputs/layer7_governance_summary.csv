@@ -1,0 +1,6 @@
+metric,value,numerator,denominator,detail,generated_at
+override_approval_rate,0.285714,4,14,approved+executed / total overrides,2026-06-20T01:47:22.864488+00:00
+high_impact_override_rate,0.357143,5,14,"impact_level in {High,Critical} (quantile tiers)",2026-06-20T01:47:22.864488+00:00
+alert_acknowledgement_rate,0.013699,1,73,acknowledged/suppressed (approved) per active alert,2026-06-20T01:47:22.864488+00:00
+low_confidence_recommendation_rate,0.32,16,50,DCS tier == Low / active sites,2026-06-20T01:47:22.864488+00:00
+drift_trigger_frequency,0.428571,3,7,drift tests with alert==True / total tests,2026-06-20T01:47:22.864488+00:00

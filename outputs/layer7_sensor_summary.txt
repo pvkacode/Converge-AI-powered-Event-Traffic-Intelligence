@@ -1,0 +1,31 @@
+LAYER 7 — M7A SENSOR FUSION FRAMEWORK SUMMARY
+====================================================
+generated_at: 2026-06-20T02:04:02.163587+00:00
+mode: REPLAY (no real sensors) + LIVE seam (stub)
+
+sensor types supported: 12 / 12
+sensors registered: 235 across 50 sites
+status distribution: {'ACTIVE': 130, 'DEGRADED': 40, 'STALE': 32, 'SIMULATED': 21, 'OFFLINE': 12}
+reliability tiers: {'HIGH': 165, 'MEDIUM': 58, 'FAILED': 12} (mean R=0.802)
+
+replay observations generated: 336
+fused per-(site,quantity) estimates: 250
+fused per-site operational observations: 50
+conflict distribution: {'LOW_CONFLICT': 214, 'MEDIUM_CONFLICT': 35, 'HIGH_CONFLICT': 1}
+site confidence: mean=0.404 range=[0.235,0.475]
+sites in fallback: 31; quantity-level fallbacks: 42
+
+FALLBACK: 0-sensor fusion returns a finite Layer-5/6 estimate with a confidence
+penalty; framework never crashes when sensors are missing.
+FUTURE LIVE: LiveSensorAdapter seam present; live_ready=False until a real feed connects.
+
+VALIDATION: 9 passed / 0 failed
+   [PASS] m7a_registry_built: 235 sensors across 50 sites; 12 types; status={'ACTIVE': 130, 'DEGRADED': 40, 'STALE': 32, 'SIMULATED': 21, 'OFFLINE': 12}
+   [PASS] m7a_health_built: 235 sensors; R in [0.036,0.981]; tiers={'HIGH': 165, 'MEDIUM': 58, 'FAILED': 12}
+   [PASS] m7a_fused_finite: all fused operational values finite
+   [PASS] m7a_reliability_bounded: all R in [0,1]
+   [PASS] m7a_confidence_bounded: all confidences in [0,1]
+   [PASS] m7a_fallback_functions: 0-sensor fuse returns fallback tuple; site rows with fallback=31
+   [PASS] m7a_replay_functions: 336 replay observations generated (all REPLAY)
+   [PASS] m7a_provenance_populated: provenance fields populated on every fused row
+   [PASS] m7a_no_nan_core: no NaN in fused operational observations

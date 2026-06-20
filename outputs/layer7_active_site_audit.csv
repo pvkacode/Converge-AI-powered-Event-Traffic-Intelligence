@@ -1,0 +1,10 @@
+check,result,evidence,finding_id,severity
+site_selection_correctness,OK,"anchored on 50 unique L5 event_ids; every L5 event appears exactly once (M1.1 validated)",,Info
+top_n_stability,OK,"deterministic ORS-desc/event_id ranking; reproducible",,Info
+ranking_sensitivity,FLAG,"within-active ranking driven by ORS which is ~tail_risk_prob_z only; sensitive to one feature",F-001,Critical
+fairness_across_site_types,WEAK,"ranking inherits single-feature ORS; cause/corridor types not balanced; no fairness control",F-001,Medium
+override_visibility,OK,"override_state surfaced via digital_twin_state and override_history page",,Info
+concentration_risk,FLAG,"all top active sites are vehicle_breakdown / high tail_z; risk concentrated on one signal",F-001,Medium
+unstable_site_ordering,NONE,"deterministic ordering; no instability",,Info
+hidden_critical_sites,FLAG,"global operational_tier marks 49/50 active sites Normal -> truly elevated sites hidden unless active_operational_tier used",F-007,Medium
+active_percentile_range,OK,"within-subset percentile in [0.02,1.0]; tiers Emergency6/Critical10/Elevated15/Normal19 (active)",,Info

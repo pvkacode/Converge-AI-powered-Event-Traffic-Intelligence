@@ -1,0 +1,13 @@
+file,layer,found,source_timestamp,timestamp_source,age_hours,stale_flag,audit_time
+layer5_resource_allocation.csv,Layer5,True,2026-06-19T13:50:37.561643+00:00,file_mtime,11.9456,False,2026-06-20T01:47:21.551537+00:00
+layer5_frontend_export.csv,Layer5,True,2026-06-19T13:50:37.556633+00:00,file_mtime,11.9456,False,2026-06-20T01:47:21.551537+00:00
+layer5_optimization_metrics.csv,Layer5,True,2026-06-19T13:50:37.558643+00:00,file_mtime,11.9456,False,2026-06-20T01:47:21.551537+00:00
+layer5_pre_post_cvar_comparison.csv,Layer5,True,2026-06-19T13:50:37.560643+00:00,file_mtime,11.9456,False,2026-06-20T01:47:21.551537+00:00
+layer5_shadow_prices.csv,Layer5,True,2026-06-19T13:50:37.564645+00:00,file_mtime,11.9456,False,2026-06-20T01:47:21.551537+00:00
+layer5_chance_constraint_violations.csv,Layer5,True,2026-06-19T13:50:37.554119+00:00,file_mtime,11.9456,False,2026-06-20T01:47:21.551537+00:00
+layer6_active_alerts.csv,Layer6,True,2026-06-19T10:34:30+00:00,generated_at,15.2143,False,2026-06-20T01:47:21.551537+00:00
+layer6_retrain_triggers.csv,Layer6,True,2026-06-19T10:34:30+00:00,generated_at,15.2143,False,2026-06-20T01:47:21.551537+00:00
+layer6_drift_report.csv,Layer6,True,2026-06-19T13:50:37.571643+00:00,file_mtime,11.9455,False,2026-06-20T01:47:21.551537+00:00
+layer6_model_health_summary.csv,Layer6,True,2026-06-19T13:50:37.588648+00:00,file_mtime,11.9455,False,2026-06-20T01:47:21.551537+00:00
+layer6_monitoring_diagnostics.csv,Layer6,True,2026-06-19T13:50:37.589648+00:00,file_mtime,11.9455,False,2026-06-20T01:47:21.551537+00:00
+layer45_operational_state_vector_normalized.csv,Layer4.5,True,2026-06-19T13:50:37.462850+00:00,file_mtime,11.9456,False,2026-06-20T01:47:21.551537+00:00

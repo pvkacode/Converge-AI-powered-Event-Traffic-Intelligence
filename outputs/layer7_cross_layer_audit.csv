@@ -1,0 +1,12 @@
+check,result,evidence,finding_id,severity
+never_mutates_upstream,PASS,"SHA-256 audits across M1-M7 confirm L1-6 src (27) + outputs (214) byte-identical; only layer7_* added",,Info
+write_namespace_confined,PASS,"every milestone orchestrator enforces layer7_ namespace guard; no non-layer7 writes",,Info
+respects_L6_integrity_flags,FAIL,"no L7 module reads quarantine_report/posterior_integrity/valid_flag/duration_sanity_flag; integrity gating not propagated",F-014,Medium
+consumes_L6_uncertainty,PARTIAL,"posterior_uncertainty (CI width) consumed in DCS via cause-level map; drift_report consumed in alerts/SVI",F-014,Low
+degrades_gracefully_uncertainty,PARTIAL,"DCS lowers with uncertainty; BUT alerts/overrides/ORS do not down-weight L6-flagged-unsafe rows",F-014,Medium
+respects_L4.5_sanity_flags,FAIL,"duration_sanity_flag/duration_guard_reason not consumed by any L7 module; uses safe quantiles indirectly via L5 only",F-014,Medium
+does_not_bypass_governance,PASS,"all override/recommendation paths advisory; human-in-the-loop; no auto-execution",,Info
+L5_input_freshness_tracked,PASS,"loader records mtime/generated_at; service_monitor + observability flag staleness",,Info
+L6_severity_vocab_normalized,PASS,"alert engine maps critical/moderate/warning/info/none to one scale (though ASS unbounded, F-002)",F-002,Info
+backward_compatibility,PASS,"M4 endpoints preserved through M5 (api_extensions augments, /health intact); SHA-stable",,Info
+circular_dependency,NONE,"strict forward DAG; no cycles",,Info

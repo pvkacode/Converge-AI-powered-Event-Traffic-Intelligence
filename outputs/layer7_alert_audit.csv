@@ -1,0 +1,12 @@
+check,result,evidence,finding_id,severity
+severity_calibration,WEAK,"base map info0.25/warning0.50/moderate0.65/critical0.90; ASS=base*corr*recency exceeds 1.0 (max 1.2623, 9 alerts >1)",F-002,High
+formula_consistency,FLAG,"implementation multiplicative; math_specification.md S5.2 documents additive model -> doc/code divergence",F-002,High
+alert_inflation,FLAG,"P1=23/73 (31.5%); any corroborated critical clears 0.85 cut",F-003,High
+duplicate_alert_merging,OK,"dedup by l7_alert_id with merged_count; 0 duplicate ids",,Info
+stale_alert_handling,WEAK,"recency=exp(-age/24); only 2 distinct values; L6 batch shares one generated_at; mtime fallback env-dependent",F-010,Medium
+priority_thresholds,WEAK,"fixed cuts P1>=0.85/P2>=0.60/P3>=0.40 on an unbounded score; not distribution-calibrated",F-003,High
+priority_distribution,REPORTED,"P1=23 P2=47 P3=2 P4=1",,Info
+priority_inversion,NONE,"feed sorted by ASS desc; deterministic; no inversion observed",,Info
+alert_floods,FLAG,"73 alerts, 23 P1; corroboration amplifies critical cluster (log_duration topic, 3 sources)",F-003,High
+corroboration_logic,OK_WITH_NOTE,"distinct-source count per topic_key; heuristic topic parsing (DUR_SHIFT/drift tokens) could mis-group",,Low
+event_keying,REPORTED,"only 1/73 alerts event-keyed (CCV FKID006955); rest system-level",,Info

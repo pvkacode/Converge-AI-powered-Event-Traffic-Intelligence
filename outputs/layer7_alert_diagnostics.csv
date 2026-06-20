@@ -1,0 +1,39 @@
+topic_key,n_alerts,n_sources,sources,max_ass,top_priority,generated_at
+layer4.5::log_duration,8,3,active_alerts;drift_report;retrain_triggers,0.5509168869508271,P1,2026-06-20T01:47:21.551537+00:00
+layer5::event:fkid006955,1,1,cc_violations,0.43693399413336254,P1,2026-06-20T01:47:21.551537+00:00
+dur_shift::others_old_madras_road,2,2,active_alerts;retrain_triggers,0.43103354580221254,P2,2026-06-20T01:47:21.551537+00:00
+dur_shift::others_old_airport_road,2,2,active_alerts;retrain_triggers,0.43103354580221254,P2,2026-06-20T01:47:21.551537+00:00
+dur_shift::construction_orr_east_1,2,2,active_alerts;retrain_triggers,0.43103354580221254,P2,2026-06-20T01:47:21.551537+00:00
+dur_shift::pot_holes_cbd_1,2,2,active_alerts;retrain_triggers,0.43103354580221254,P2,2026-06-20T01:47:21.551537+00:00
+dur_shift::pot_holes_cbd_2,2,2,active_alerts;retrain_triggers,0.43103354580221254,P2,2026-06-20T01:47:21.551537+00:00
+layer4.5::hour_local,4,3,active_alerts;drift_report;retrain_triggers,0.3978844183533752,P2,2026-06-20T01:47:21.551537+00:00
+retrain_triggers::general,1,1,active_alerts,0.38129890590195714,P2,2026-06-20T01:47:21.551537+00:00
+layer5::chance_constraint_satisfaction,1,1,retrain_triggers,0.38129890590195714,P2,2026-06-20T01:47:21.551537+00:00
+layer5::general,1,1,active_alerts,0.38129890590195714,P2,2026-06-20T01:47:21.551537+00:00
+dur_shift::accident_bellary_road_2,2,2,active_alerts;retrain_triggers,0.3113020053015979,P3,2026-06-20T01:47:21.551537+00:00
+dur_shift::construction_bellary_road_1,2,2,active_alerts;retrain_triggers,0.3113020053015979,P3,2026-06-20T01:47:21.551537+00:00
+dur_shift::congestion_hennur_main_road,2,2,active_alerts;retrain_triggers,0.3113020053015979,P3,2026-06-20T01:47:21.551537+00:00
+dur_shift::construction_west_of_chord_road,2,2,active_alerts;retrain_triggers,0.3113020053015979,P3,2026-06-20T01:47:21.551537+00:00
+dur_shift::construction_orr_west_1,2,2,active_alerts;retrain_triggers,0.3113020053015979,P3,2026-06-20T01:47:21.551537+00:00
+dur_shift::public_event_mysore_road,2,2,active_alerts;retrain_triggers,0.3113020053015979,P3,2026-06-20T01:47:21.551537+00:00
+dur_shift::public_event_non-corridor,2,2,active_alerts;retrain_triggers,0.3113020053015979,P3,2026-06-20T01:47:21.551537+00:00
+dur_shift::others_orr_north_1,2,2,active_alerts;retrain_triggers,0.3113020053015979,P3,2026-06-20T01:47:21.551537+00:00
+dur_shift::pot_holes_old_madras_road,2,2,active_alerts;retrain_triggers,0.3113020053015979,P3,2026-06-20T01:47:21.551537+00:00
+dur_shift::pot_holes_orr_north_1,2,2,active_alerts;retrain_triggers,0.3113020053015979,P3,2026-06-20T01:47:21.551537+00:00
+dur_shift::pot_holes_orr_west_1,2,2,active_alerts;retrain_triggers,0.3113020053015979,P3,2026-06-20T01:47:21.551537+00:00
+dur_shift::tree_fall_magadi_road,2,2,active_alerts;retrain_triggers,0.3113020053015979,P3,2026-06-20T01:47:21.551537+00:00
+dur_shift::water_logging_old_madras_road,2,2,active_alerts;retrain_triggers,0.3113020053015979,P3,2026-06-20T01:47:21.551537+00:00
+dur_shift::water_logging_old_airport_road,2,2,active_alerts;retrain_triggers,0.3113020053015979,P3,2026-06-20T01:47:21.551537+00:00
+dur_shift::vehicle_breakdown_cbd_2,2,2,active_alerts;retrain_triggers,0.3113020053015979,P3,2026-06-20T01:47:21.551537+00:00
+dur_shift::road_conditions_orr_west_1,2,2,active_alerts;retrain_triggers,0.3113020053015979,P3,2026-06-20T01:47:21.551537+00:00
+"layer4.5::bin_1 [0.1,0.2]",1,1,retrain_triggers,0.2753825431514135,P4,2026-06-20T01:47:21.551537+00:00
+"layer4.5::bin_3 [0.3,0.4]",1,1,retrain_triggers,0.2753825431514135,P4,2026-06-20T01:47:21.551537+00:00
+"layer4.5::bin_6 [0.6,0.7]",1,1,retrain_triggers,0.2753825431514135,P4,2026-06-20T01:47:21.551537+00:00
+layer4::prototype_32,1,1,retrain_triggers,0.2753825431514135,P4,2026-06-20T01:47:21.551537+00:00
+layer4::general,2,1,active_alerts,0.2753825431514135,P4,2026-06-20T01:47:21.551537+00:00
+"layer4.5::bin_7 [0.7,0.8]",1,1,retrain_triggers,0.2753825431514135,P4,2026-06-20T01:47:21.551537+00:00
+layer4.5::general,4,1,active_alerts,0.2753825431514135,P4,2026-06-20T01:47:21.551537+00:00
+layer4::prototype_8,1,1,retrain_triggers,0.2753825431514135,P4,2026-06-20T01:47:21.551537+00:00
+predictive_calibration::general,1,1,active_alerts,0.2118327255010873,P4,2026-06-20T01:47:21.551537+00:00
+prototype_trust::general,1,1,active_alerts,0.2118327255010873,P4,2026-06-20T01:47:21.551537+00:00
+layer4.5::stratum coverage,1,1,retrain_triggers,0.10591636275054366,P4,2026-06-20T01:47:21.551537+00:00

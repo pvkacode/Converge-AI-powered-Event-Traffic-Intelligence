@@ -1,0 +1,13 @@
+check,result,evidence,finding_id,severity
+scenario_realism,OK_WITH_NOTE,"deltas derived from shadow prices + counterfactual outputs; plausible signs/magnitudes",,Info
+scenario_diversity,WEAK,"8 scenarios but outcomes monotonically ordered; little site-specific reordering",F-011,Medium
+score_behavior,OK,"SS bounded [0.341,0.713]; baseline S0=0.5 reference; lower=better",,Info
+all_sites_choose_S7,CONFIRMED,"best_scenario_id=S7 for 50/50 sites",F-011,Medium
+all_sites_reject_S6,CONFIRMED,"worst_scenario_id=S6 for 50/50 sites",F-011,Medium
+is_this_a_design_flaw,EXPECTED,"Mathematically EXPECTED not a bug: S7='best-case stabilized' has all-improving deltas (delay/risk/alert reduced) -> always lowest SS; S6='worst-case drift' has all-worsening deltas -> always highest SS. By construction these bound the set, so argmin=S7 argmax=S6 for every site deterministically.",F-011,Medium
+decision_value,LOW,"ranking/plan_comparison therefore tautological; do not help operators choose among realistic plans",F-011,Medium
+deterministic_outcomes,FLAG,"plan_comparison prefer_alternative=S7 for all 50 sites",F-011,Medium
+score_saturation,PARTIAL,"override/confidence SS components near-constant -> SS driven by delay+risk only",F-020,Low
+unrealistic_assumptions,FLAG,"S7 assumes full effectiveness gain and S6 assumes uniform drift escalation; idealized bounds not operational plans",F-011,Low
+twin_confidence_independence,FLAG,"TCS recursively includes DCS plus its own components (double counting)",F-005,High
+recommendation_framing,FLAG,"twin presented as scenario ranking; better framed as sensitivity bounds given deterministic S7/S6",F-011,Medium

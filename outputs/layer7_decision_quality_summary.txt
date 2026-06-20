@@ -1,0 +1,37 @@
+LAYER 7 — M7C.1 DECISION-QUALITY SUMMARY
+==============================================
+generated_at: 2026-06-20T02:56:49.483591+00:00
+transparency only — no recommendation, score, or optimizer logic was changed.
+
+ACTION DISTRIBUTION (selected):
+  {'QUEUE_RELIEF': 25, 'DISPATCH_TOW': 13, 'SIGNAL_OFFSET_ADJUST': 9, 'ACTIVATE_DIVERSION': 3}
+
+COMPETITION (selected actions):
+  QUEUE_RELIEF           share=0.50 mean_control=0.491 wins(sig/div/qr/disp)=39/8/0/28
+  DISPATCH_TOW           share=0.26 mean_control=0.481 wins(sig/div/qr/disp)=27/8/11/0
+  SIGNAL_OFFSET_ADJUST   share=0.18 mean_control=0.267 wins(sig/div/qr/disp)=0/4/0/18
+  ACTIVATE_DIVERSION     share=0.06 mean_control=0.505 wins(sig/div/qr/disp)=10/0/5/3
+
+DOMINANCE: NO_DOMINANCE_DETECTED (max share = 0.50 < 0.7)
+
+mean decision confidence: 0.1361
+decision stability tiers: {'WEAK': 33, 'MODERATE': 15, 'STRONG': 2}
+weak-decision rate: 33/50 = 0.660
+review-recommended count: 33
+
+HIGHEST-REGRET decisions (max_regret):
+  FKID008103: best=DISPATCH_TOW max_regret=0.722
+  FKID003235: best=DISPATCH_TOW max_regret=0.618
+  FKID003103: best=DISPATCH_TOW max_regret=0.602
+
+LOWEST-REGRET decisions:
+  FKID004806: best=SIGNAL_OFFSET_ADJUST max_regret=0.123
+  FKID004694: best=SIGNAL_OFFSET_ADJUST max_regret=0.132
+  FKID004829: best=SIGNAL_OFFSET_ADJUST max_regret=0.156
+
+VALIDATION: 5 passed / 0 failed
+   [PASS] m7c1_best_matches_recommendation: 0 sites where diagnostic best != existing recommendation (should be 0)
+   [PASS] m7c1_confidence_bounded: decision_confidence in [0.008,0.378]
+   [PASS] m7c1_confidence_finite: confidence finite
+   [PASS] m7c1_regret_finite_nonneg: regret finite, non-negative; range [0.0035,0.7224]
+   [PASS] m7c1_pairwise_counts_valid: a_wins+b_wins+ties == n_common for every pair

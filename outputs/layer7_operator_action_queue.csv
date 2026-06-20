@@ -1,0 +1,40 @@
+queue_rank,event_id,reason,priority,decision_confidence_score,recommended_action,generated_at
+1,FKID000022,Emergency operational tier,1,0.2111058423120144,Immediate deployment review and on-site command,2026-06-20T01:47:22.873487+00:00
+2,FKID001288,Emergency operational tier,1,0.122690315615363,Immediate deployment review and on-site command,2026-06-20T01:47:22.873487+00:00
+3,FKID006340,Emergency operational tier,1,0.1263691945655428,Immediate deployment review and on-site command,2026-06-20T01:47:22.873487+00:00
+4,FKID006955,Emergency operational tier,1,0.1535936208280041,Immediate deployment review and on-site command,2026-06-20T01:47:22.873487+00:00
+5,FKID007660,Emergency operational tier,1,0.1897441346247523,Immediate deployment review and on-site command,2026-06-20T01:47:22.873487+00:00
+6,FKID008103,Emergency operational tier,1,0.1251454843132605,Immediate deployment review and on-site command,2026-06-20T01:47:22.873487+00:00
+7,FKID000002,Low decision confidence,2,0.1573242673690655,Validate recommendation; collect more evidence,2026-06-20T01:47:22.873487+00:00
+8,FKID000316,Low decision confidence,2,0.1845393506770266,Validate recommendation; collect more evidence,2026-06-20T01:47:22.873487+00:00
+9,FKID000346,Low decision confidence,2,0.1628955619298823,Validate recommendation; collect more evidence,2026-06-20T01:47:22.873487+00:00
+10,FKID000944,Low decision confidence,2,0.1346470091390943,Validate recommendation; collect more evidence,2026-06-20T01:47:22.873487+00:00
+11,FKID001125,Low decision confidence,2,0.1325585031189086,Validate recommendation; collect more evidence,2026-06-20T01:47:22.873487+00:00
+12,FKID001288,Low decision confidence,2,0.122690315615363,Validate recommendation; collect more evidence,2026-06-20T01:47:22.873487+00:00
+13,FKID001592,Low decision confidence,2,0.1848869791100851,Validate recommendation; collect more evidence,2026-06-20T01:47:22.873487+00:00
+14,FKID004492,Low decision confidence,2,0.1638671644717979,Validate recommendation; collect more evidence,2026-06-20T01:47:22.873487+00:00
+15,FKID004829,Low decision confidence,2,0.1502409355954263,Validate recommendation; collect more evidence,2026-06-20T01:47:22.873487+00:00
+16,FKID005593,Low decision confidence,2,0.1770482358386719,Validate recommendation; collect more evidence,2026-06-20T01:47:22.873487+00:00
+17,FKID006015,Low decision confidence,2,0.1628011367640383,Validate recommendation; collect more evidence,2026-06-20T01:47:22.873487+00:00
+18,FKID006340,Low decision confidence,2,0.1263691945655428,Validate recommendation; collect more evidence,2026-06-20T01:47:22.873487+00:00
+19,FKID006361,Low decision confidence,2,0.1787770158681056,Validate recommendation; collect more evidence,2026-06-20T01:47:22.873487+00:00
+20,FKID006955,Low decision confidence,2,0.1535936208280041,Validate recommendation; collect more evidence,2026-06-20T01:47:22.873487+00:00
+21,FKID007660,Low decision confidence,2,0.1897441346247523,Validate recommendation; collect more evidence,2026-06-20T01:47:22.873487+00:00
+22,FKID008103,Low decision confidence,2,0.1251454843132605,Validate recommendation; collect more evidence,2026-06-20T01:47:22.873487+00:00
+23,FKID006955,Critical alert (layer5::event:fkid006955),3,0.1535936208280041,Investigate alert root cause,2026-06-20T01:47:22.873487+00:00
+24,SYSTEM,Critical alert (layer4.5::log_duration),3,,Investigate alert root cause,2026-06-20T01:47:22.873487+00:00
+25,SYSTEM,Critical alert (layer4.5::log_duration),3,,Investigate alert root cause,2026-06-20T01:47:22.873487+00:00
+26,SYSTEM,Critical alert (layer4.5::log_duration),3,,Investigate alert root cause,2026-06-20T01:47:22.873487+00:00
+27,SYSTEM,Critical alert (layer4.5::log_duration),3,,Investigate alert root cause,2026-06-20T01:47:22.873487+00:00
+28,SYSTEM,Critical alert (layer4.5::log_duration),3,,Investigate alert root cause,2026-06-20T01:47:22.873487+00:00
+29,SYSTEM,Critical alert (layer4.5::log_duration),3,,Investigate alert root cause,2026-06-20T01:47:22.873487+00:00
+30,SYSTEM,Critical alert (layer4.5::log_duration),3,,Investigate alert root cause,2026-06-20T01:47:22.873487+00:00
+31,SYSTEM,Critical alert (layer4.5::log_duration),3,,Investigate alert root cause,2026-06-20T01:47:22.873487+00:00
+32,FKID001125,High-impact override OVR-0011 (OIS=0.10),4,0.1325585031189086,Review override justification and impact,2026-06-20T01:47:22.873487+00:00
+33,FKID001288,High-impact override OVR-0002 (OIS=0.13),4,0.122690315615363,Review override justification and impact,2026-06-20T01:47:22.873487+00:00
+34,FKID006340,High-impact override OVR-0001 (OIS=0.27),4,0.1263691945655428,Review override justification and impact,2026-06-20T01:47:22.873487+00:00
+35,FKID006955,High-impact override OVR-0004 (OIS=0.10),4,0.1535936208280041,Review override justification and impact,2026-06-20T01:47:22.873487+00:00
+36,FKID006955,High-impact override OVR-0008 (OIS=0.21),4,0.1535936208280041,Review override justification and impact,2026-06-20T01:47:22.873487+00:00
+37,GLOBAL,Drift trigger: page_hinkley on log_duration,5,,Schedule retrain/recalibration investigation,2026-06-20T01:47:22.873487+00:00
+38,GLOBAL,Drift trigger: psi on hour_local,5,,Schedule retrain/recalibration investigation,2026-06-20T01:47:22.873487+00:00
+39,GLOBAL,Drift trigger: mean_shift_ztest on log_duration,5,,Schedule retrain/recalibration investigation,2026-06-20T01:47:22.873487+00:00

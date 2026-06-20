@@ -1,0 +1,384 @@
+LAYER 7 — M1 RUN SUMMARY
+========================================
+generated_at: 2026-06-20T01:47:21.561543+00:00
+runtime_seconds: 0.614
+
+files_read: 12/12
+rows_processed: 3571 (operational_state=3498, prioritized_alerts=73)
+
+VALIDATION:
+  checks_total: 12
+  passed: 12
+  failed: 0
+    [PASS] loader/loader_no_missing_required: all required inputs present
+    [PASS] loader/loader_no_schema_drift: no schema drift on consumed columns
+    [PASS] loader/loader_empty_inputs_noted: no empty inputs
+    [PASS] loader/loader_three_outputs_written: input_audit, schema_inventory, data_freshness written
+    [PASS] operational_state/state_no_missing_tiers: tiers present: ['Critical', 'Elevated', 'Emergency', 'Normal'] (expected ['Critical', 'Elevated', 'Emergency', 'Normal'])
+    [PASS] operational_state/state_no_nan_risk_scores: 0 NaN ORS values
+    [PASS] operational_state/state_nonzero_variance: ORS variance = 211.644
+    [PASS] operational_state/state_score_in_range: ORS range [8.837, 78.316]
+    [PASS] alert_prioritization/alerts_no_duplicate_ids: 0 duplicate l7_alert_id
+    [PASS] alert_prioritization/alerts_ordering_reproducible: feed sorted by ASS desc (deterministic tie-break on id)
+    [PASS] alert_prioritization/alerts_no_nan_ass: 0 NaN ASS values
+    [PASS] alert_prioritization/alerts_severity_distribution_reported: priority distribution: {'P3': 32, 'P2': 16, 'P4': 16, 'P1': 9}
+
+WARNINGS:
+  (none)
+
+OPERATIONAL STATE:
+  ORS mean: 40.329462
+  ORS variance: 211.644296
+  ORS range: [8.836719, 78.316351]
+  tiers: Normal=2098 Elevated=700 Critical=420 Emergency=280
+
+ALERT PRIORITIZATION:
+  priority distribution: {'P3': 32, 'P2': 16, 'P4': 16, 'P1': 9}
+
+OUTPUT FILES:
+  outputs/layer7_input_audit.csv
+  outputs/layer7_schema_inventory.csv
+  outputs/layer7_data_freshness.csv
+  outputs/layer7_operational_state.csv
+  outputs/layer7_site_risk_ranking.csv
+  outputs/layer7_state_summary.csv
+  outputs/layer7_prioritized_alerts.csv
+  outputs/layer7_alert_summary.csv
+  outputs/layer7_alert_diagnostics.csv
+  outputs/layer7_validation_report.csv
+  outputs/layer7_run_summary.txt
+
+========================================
+LAYER 7 — M1.1 + M2 APPENDIX
+========================================
+generated_at: 2026-06-20T01:47:21.572095+00:00
+runtime_seconds: 0.307
+
+M1.1 ACTIVE-SITE VIEW:
+  active_count: 50
+  tier_distribution: {'Normal': 50}
+
+M2 OVERRIDE ENGINE:
+  request_source: demo
+  overrides_in_audit_log: 14
+  invalid_requests: 7
+  high_impact_overrides (OIS>=0.50): 1
+  impact_level_distribution: {'Low': 7, 'Moderate': 6, 'High': 1}
+  approval_status_distribution: {'proposed': 8, 'approved': 3, 'executed': 1, 'rejected': 1, 'expired': 1}
+
+VALIDATION (M1.1 + M2):
+  checks_total: 13  passed: 13  failed: 0
+    [PASS] active_site_view/active_site_coverage: L5 events=50, in view=50, max_count=1
+    [PASS] active_site_view/active_site_uniqueness: 0 duplicate event_id
+    [PASS] active_site_view/active_site_ranking_reproducibility: deterministic ORS-desc / event_id tie-break
+    [PASS] active_site_view/active_site_percentile_range: percentile range [0.0200, 1.0000]
+    [PASS] active_site_view/active_site_tiers_populated: tier distribution: {'Normal': 50}
+    [PASS] active_site_view/active_site_no_nan: 0 NaN in required columns
+    [PASS] override_engine/override_schema_validity: all canonical columns present
+    [PASS] override_engine/override_type_validity: invalid types ['OVR-0009'] all flagged
+    [PASS] override_engine/override_id_uniqueness: 0 duplicate override_id in audit log
+    [PASS] override_engine/ois_range: OIS range [0.0000, 0.5460]
+    [PASS] override_engine/safety_rule_enforcement: 7 request(s) flagged; flag types: ['duplicate_override_id', 'expired_override', 'invalid_override_type', 'missing_justification', 'resource_below_zero', 'service_tier_violation', 'unknown_event_id']
+    [PASS] override_engine/override_no_nan: 0 NaN across override outputs
+    [PASS] integrity/no_layer16_modifications: all writes confined to outputs/layer7_* (namespace guard); byte-level SHA audit performed externally
+
+WARNINGS:
+  - override requests are demo/synthetic (no operator input file present)
+
+NEW OUTPUT FILES (M1.1 + M2):
+  outputs/layer7_active_site_state.csv
+  outputs/layer7_active_site_ranking.csv
+  outputs/layer7_active_site_validation.csv
+  outputs/layer7_override_templates.csv
+  outputs/layer7_override_audit_log.csv
+  outputs/layer7_override_safety_report.csv
+  outputs/layer7_override_impact_report.csv
+  outputs/layer7_override_diagnostics.csv
+  outputs/layer7_m2_validation_report.csv
+
+
+========================================
+LAYER 7 — M3 APPENDIX (Explainability & Decision Support)
+========================================
+generated_at: 2026-06-20T01:47:21.593060+00:00
+runtime_seconds: 0.219
+
+PART A — EXPLANATIONS:
+  site_explanations: 50
+  resource_explanations: 50
+  alert_explanations: 73
+  degenerate_risk_sites: 0
+
+PART C — ACTIVE-SITE TIERS:
+  {'Normal': 19, 'Elevated': 15, 'Critical': 10, 'Emergency': 6}
+
+PART D — OIS (relative vs absolute):
+  absolute_ois anchors: {'delay': 856657.4360119477, 'risk': 100.0, 'alert': 0.5509168869508271}
+  relative_ois range: [0.0000, 0.5460]
+  absolute_ois range: [0.0000, 0.2747]
+  impact_level (absolute): {'Low': 5, 'Moderate': 4, 'High': 3, 'Critical': 2}
+
+PART B — COUNTERFACTUALS:
+  rows: 250  sites: 50
+  mean score by scenario: {'A_recommended': 0.0, 'B_no_action': 0.0915, 'C_reduced_resources': 0.0457, 'D_increased_resources': 0.0955, 'E_diversion_disabled': 0.0065}
+
+VALIDATION (M3):
+  checks_total: 11  passed: 11  failed: 0
+    [PASS] explanation_engine/m3_explanations_no_nan: 0 NaN across explanation outputs
+    [PASS] explanation_engine/m3_active_tiers_complete: active tier distribution: {'Normal': 19, 'Elevated': 15, 'Critical': 10, 'Emergency': 6}
+    [PASS] explanation_engine/m3_explanations_generated: site=50, resource=50, alert=73
+    [PASS] explanation_engine/m3_contribution_shares_sum_to_one: 50 sites sum~1; 0 degenerate (all-zero contrib)
+    [PASS] explanation_engine/m3_relative_ois_range: relative_ois range [0.0000, 0.5460]
+    [PASS] explanation_engine/m3_absolute_ois_range: absolute_ois range [0.0000, 0.2747]
+    [PASS] counterfactual_engine/m3_counterfactuals_generated: 250 rows = 50 sites x 5 scenarios (expected 250)
+    [PASS] counterfactual_engine/m3_counterfactuals_no_nan: 0 NaN in counterfactual output
+    [PASS] counterfactual_engine/m3_counterfactual_score_range: score range [0.0000, 0.4288]
+    [PASS] counterfactual_engine/m3_counterfactual_baseline_zero: Scenario A (recommended) deltas are zero reference
+    [PASS] integrity/no_layer16_modifications: all writes confined to outputs/layer7_* (namespace guard); byte-level SHA audit performed externally
+
+WARNINGS:
+  (none)
+
+NEW OUTPUT FILES (M3):
+  outputs/layer7_site_explanations.csv
+  outputs/layer7_resource_explanations.csv
+  outputs/layer7_alert_explanations.csv
+  outputs/layer7_active_site_tiers.csv
+  outputs/layer7_override_impact_extended.csv
+  outputs/layer7_counterfactual_analysis.csv
+  outputs/layer7_m3_validation_report.csv
+
+
+========================================
+LAYER 7 — M4 APPENDIX (Operational Dashboard Backend)
+========================================
+generated_at: 2026-06-20T01:47:22.843487+00:00
+runtime_seconds: 0.457
+
+PAGE EXPORTS (outputs/frontend/):
+  layer7_operations_overview.csv: 50 rows
+  layer7_active_alerts.csv: 73 rows
+  layer7_resource_recommendations.csv: 50 rows
+  layer7_override_history.csv: 14 rows
+  layer7_model_health.csv: 29 rows
+  layer7_counterfactuals.csv: 250 rows
+  layer7_dashboard_manifest.json: 6 pages
+
+READ-ONLY API:
+  fastapi_installed: True
+  endpoints: ['/', '/manifest', '/overview', '/alerts', '/recommendations', '/overrides', '/health', '/counterfactuals']
+
+VALIDATION (M4):
+  checks_total: 20  passed: 20  failed: 0
+    [PASS] dashboard_backend/m4_overview_populated: layer7_operations_overview.csv: 50 rows
+    [PASS] dashboard_backend/m4_overview_keycols_nonnull: missing=[], blank_keycells=0
+    [PASS] dashboard_backend/m4_overview_pk_unique: 0 duplicate event_id
+    [PASS] dashboard_backend/m4_alerts_populated: layer7_active_alerts.csv: 73 rows
+    [PASS] dashboard_backend/m4_alerts_keycols_nonnull: missing=[], blank_keycells=0
+    [PASS] dashboard_backend/m4_alerts_pk_unique: 0 duplicate l7_alert_id
+    [PASS] dashboard_backend/m4_recommendations_populated: layer7_resource_recommendations.csv: 50 rows
+    [PASS] dashboard_backend/m4_recommendations_keycols_nonnull: missing=[], blank_keycells=0
+    [PASS] dashboard_backend/m4_recommendations_pk_unique: 0 duplicate event_id
+    [PASS] dashboard_backend/m4_overrides_populated: layer7_override_history.csv: 14 rows
+    [PASS] dashboard_backend/m4_overrides_keycols_nonnull: missing=[], blank_keycells=0
+    [PASS] dashboard_backend/m4_overrides_pk_unique: 0 duplicate override_id
+    [PASS] dashboard_backend/m4_model_health_populated: layer7_model_health.csv: 29 rows
+    [PASS] dashboard_backend/m4_model_health_keycols_nonnull: missing=[], blank_keycells=0
+    [PASS] dashboard_backend/m4_counterfactuals_populated: layer7_counterfactuals.csv: 250 rows
+    [PASS] dashboard_backend/m4_counterfactuals_keycols_nonnull: missing=[], blank_keycells=0
+    [PASS] dashboard_backend/m4_manifest_consistent: manifest row counts match page frames
+    [PASS] api/m4_api_providers_pure: providers return data without web dep (overview rows=50)
+    [PASS] api/m4_api_app_constructs: FastAPI app built; routes ok, missing=[]
+    [PASS] integrity/no_layer16_modifications: all writes confined to outputs/layer7_* and outputs/frontend/layer7_*; byte-level SHA audit performed externally
+
+WARNINGS:
+  (none)
+
+NEW OUTPUT FILES (M4):
+  outputs/frontend/layer7_operations_overview.csv
+  outputs/frontend/layer7_active_alerts.csv
+  outputs/frontend/layer7_resource_recommendations.csv
+  outputs/frontend/layer7_override_history.csv
+  outputs/frontend/layer7_model_health.csv
+  outputs/frontend/layer7_counterfactuals.csv
+  outputs/frontend/layer7_dashboard_manifest.json
+  outputs/layer7_m4_validation_report.csv
+
+
+========================================
+LAYER 7 — M5 APPENDIX (Decision Confidence / API Hardening / Governance)
+========================================
+generated_at: 2026-06-20T01:47:22.874493+00:00
+runtime_seconds: 0.521
+
+DECISION CONFIDENCE (Part A):
+  sites: 50  DCS range: [0.1227, 0.3311]  mean: 0.2218
+  tiers: {'High': 17, 'Moderate': 17, 'Low': 16}
+
+API (Parts B/C/D/E):
+  fastapi_installed: True
+  endpoints catalogued: 13  (M4 /health preserved; new status at /healthz)
+  validation cases passed: 18/18
+  audit sweep calls: 13  mean_response_ms: 6.814
+
+SERVICE HEALTH (Part G):
+  status counts: {'healthy': 11}
+
+OPERATOR QUEUE (Part F):
+  items: 39  by priority: {1: 6, 2: 16, 3: 9, 4: 5, 5: 3}
+
+GOVERNANCE (Part H):
+  override_approval_rate: 0.285714 (4/14)
+  high_impact_override_rate: 0.357143 (5/14)
+  alert_acknowledgement_rate: 0.013699 (1/73)
+  low_confidence_recommendation_rate: 0.32 (16/50)
+  drift_trigger_frequency: 0.428571 (3/7)
+
+VALIDATION (M5):
+  checks_total: 11  passed: 11  failed: 0
+    [PASS] decision_confidence/m5_dcs_range: DCS range [0.1227, 0.3311]
+    [PASS] decision_confidence/m5_dcs_no_nan: 0 NaN in DCS output
+    [PASS] decision_confidence/m5_dcs_tiers_present: tier distribution: {'High': 17, 'Moderate': 17, 'Low': 16}
+    [PASS] operator_queue/m5_operator_queue_built: 39 queue items; priority bands: {1: 6, 2: 16, 3: 9, 4: 5, 5: 3}
+    [PASS] operator_queue/m5_operator_queue_no_nan: 0 NaN in queue
+    [PASS] governance/m5_governance_generated: 5 governance metrics; 0 NaN
+    [PASS] service_monitor/m5_service_health_ok: 11 health rows; critical=0; status counts={'healthy': 11}
+    [PASS] api_validation/m5_api_validation_all_pass: 18/18 API validation cases passed
+    [PASS] api_audit/m5_api_audit_logged: 13 calls logged this sweep; all_200=True; total_log_rows=39
+    [PASS] openapi/m5_endpoint_catalog_complete: catalog endpoints=13; openapi paths=13
+    [PASS] integrity/no_layer16_modifications: all writes confined to outputs/layer7_*; byte-level SHA audit external
+
+WARNINGS:
+  (none)
+
+NEW OUTPUT FILES (M5):
+  outputs/layer7_decision_confidence.csv
+  outputs/layer7_operator_action_queue.csv
+  outputs/layer7_governance_summary.csv
+  outputs/layer7_service_health.csv
+  outputs/layer7_api_validation_report.csv
+  outputs/layer7_api_audit_log.csv
+  outputs/layer7_openapi_snapshot.json
+  outputs/layer7_endpoint_catalog.csv
+  outputs/layer7_m5_validation_report.csv
+
+
+========================================
+LAYER 7 — M6 APPENDIX (Digital Twin & Scenario Simulation)
+========================================
+generated_at: 2026-06-20T01:47:22.899486+00:00
+runtime_seconds: 0.699
+
+DIGITAL TWIN (Part A):
+  twin states: 50 active sites
+
+SCENARIOS (Part B/C/D):
+  scenarios: 8  simulations: 400 (50 sites x 8)
+  mean SS by scenario (lower=better): {'SCENARIO_0': 0.5, 'SCENARIO_1': 0.554, 'SCENARIO_2': 0.527, 'SCENARIO_3': 0.4536, 'SCENARIO_4': 0.5078, 'SCENARIO_5': 0.4941, 'SCENARIO_6': 0.5731, 'SCENARIO_7': 0.4483}
+  SS range: [0.3591, 0.6749]
+
+RANKING (Part F):
+  best-scenario distribution: {'SCENARIO_3': 28, 'SCENARIO_7': 21, 'SCENARIO_5': 1}
+
+PLAN COMPARISON (Part E):
+  prefer_alternative: 50/50
+
+TWIN CONFIDENCE (Part H):
+  TCS range: [0.0628, 0.1662]  mean: 0.1118  tiers: {'High': 17, 'Moderate': 17, 'Low': 16}
+
+SANDBOX (Part G):
+  source: demo  requests: 8  valid: 5  flagged: 3
+
+TWIN HEALTH (Part I):
+  {'healthy': 6}
+
+VALIDATION (M6):
+  checks_total: 13  passed: 13  failed: 0
+    [PASS] digital_twin/m6_twin_state_built: 50 twin states; 0 NaN
+    [PASS] scenario_library/m6_scenario_catalog_complete: 8 scenarios catalogued
+    [PASS] simulator/m6_all_scenarios_simulated: 400 rows = 50 sites x 8 scenarios
+    [PASS] simulator/m6_simulation_score_bounded: SS range [0.3591, 0.6749]
+    [PASS] simulator/m6_simulation_no_nan: 0 NaN in simulations
+    [PASS] simulator/m6_ranking_complete: ranking rows=50 (sites=50), no NaN
+    [PASS] plan_comparison/m6_plan_comparison_built: 50 site comparisons; prefer_alternative=50; 0 NaN
+    [PASS] twin_confidence/m6_tcs_bounded: TCS range [0.0628, 0.1662]; tiers={'High': 17, 'Moderate': 17, 'Low': 16}; 0 NaN
+    [PASS] operator_sandbox/m6_sandbox_works: source=demo; 8 requests; valid=5; flagged=3; flag_types=['invalid_change_type', 'reduction_exceeds_capacity', 'unknown_event_id']
+    [PASS] operator_sandbox/m6_sandbox_safety_enforced: 3 request(s) flagged by sandbox safety checks
+    [PASS] digital_twin_health/m6_twin_health_built: health rows=6; status={'healthy': 6}
+    [PASS] exports/m6_dashboard_exports: frontend exports: ['layer7_twin_scenarios.csv', 'layer7_plan_comparison.csv', 'layer7_scenario_ranking.csv']
+    [PASS] integrity/no_layer16_modifications: all writes confined to outputs/layer7_* and outputs/frontend/layer7_*; byte-level SHA audit external
+
+WARNINGS:
+  (none)
+
+NEW OUTPUT FILES (M6):
+  outputs/layer7_digital_twin_state.csv
+  outputs/layer7_scenario_catalog.csv
+  outputs/layer7_twin_scenarios.csv
+  outputs/layer7_twin_scenarios_full.csv
+  outputs/layer7_scenario_ranking.csv
+  outputs/layer7_plan_comparison.csv
+  outputs/layer7_twin_confidence.csv
+  outputs/layer7_sandbox_results.csv
+  outputs/layer7_sandbox_validation.csv
+  outputs/layer7_digital_twin_health.csv
+  outputs/layer7_m6_validation_report.csv
+  outputs/frontend/layer7_twin_scenarios.csv
+  outputs/frontend/layer7_plan_comparison.csv
+  outputs/frontend/layer7_scenario_ranking.csv
+
+
+========================================
+LAYER 7 — M7 APPENDIX (Operational Integration / Deployment Readiness)
+========================================
+generated_at: 2026-06-20T01:47:22.924506+00:00
+runtime_seconds: 0.458
+
+SENSOR FUSION READINESS (Part B):
+  SVI range: [0.1338, 0.3943]  mean: 0.2029  tiers: {'High': 17, 'Moderate': 17, 'Low': 16}
+
+DEPLOYMENT READINESS (Part F):
+  DRS: 93.23/100
+  components: validation=1.0, integrity=1.0, observability=1.0, governance=0.661428, simulation=1.0
+
+OBSERVABILITY (Part G):
+  components: 6  status: {'healthy': 6}  mean_score: 1.000
+
+PLAYBOOKS (Part E):
+  PB-001:10; PB-002:2; PB-003:1; PB-004:4; PB-005:6
+
+INTEGRATION (Parts A/C/D/H/I):
+  sensor types: 7  simulated feed: 60  event-bus routes: 10  failure modes: 7  contracts: 5 schemas
+
+VALIDATION (M7):
+  checks_total: 11  passed: 11  failed: 0
+    [PASS] sensor_adapter/m7_sensor_schema_valid: 7 sensor types; 8 canonical fields
+    [PASS] sensor_fusion_readiness/m7_svi_bounded: SVI range [0.1338, 0.3943]; tiers={'High': 17, 'Moderate': 17, 'Low': 16}; 0 NaN
+    [PASS] ingestion_simulator/m7_ingestion_simulator_ran: 60 synthetic feed events; types=['drift_alert', 'incident_update', 'operator_update', 'resource_change', 'sensor_update']
+    [PASS] event_bus/m7_event_bus_catalog: 10 routes; dead-letter routes=3
+    [PASS] playbooks/m7_playbooks_generated: 5 playbooks; total matches=23
+    [PASS] observability/m7_observability_built: 6 components; mean_score=1.000; status={'healthy': 6}
+    [PASS] failure_modes/m7_failure_modes_generated: 7 failure modes catalogued
+    [PASS] deployment_readiness/m7_drs_bounded: DRS=93.23/100; components={'validation': 1.0, 'integrity': 1.0, 'observability': 1.0, 'governance': 0.661428, 'simulation': 1.0}
+    [PASS] contracts/m7_integration_contracts_generated: 5 future schemas documented (api/sensor/dashboard/twin/alert)
+    [PASS] exports/m7_dashboard_exports: frontend exports: ['layer7_sensor_fusion_readiness.csv', 'layer7_operational_playbooks.csv', 'layer7_deployment_readiness.csv']
+    [PASS] integrity/no_layer16_modifications: all writes confined to outputs/layer7_* and outputs/frontend/layer7_*; byte-level SHA audit external
+
+WARNINGS:
+  (none)
+
+NEW OUTPUT FILES (M7):
+  outputs/layer7_sensor_schema.json
+  outputs/layer7_sensor_fusion_readiness.csv
+  outputs/layer7_simulated_feed.csv
+  outputs/layer7_event_bus_catalog.csv
+  outputs/layer7_operational_playbooks.csv
+  outputs/layer7_observability_report.csv
+  outputs/layer7_deployment_readiness.csv
+  outputs/layer7_failure_mode_catalog.csv
+  outputs/layer7_integration_contracts.json
+  outputs/layer7_m7_validation_report.csv
+  outputs/frontend/layer7_sensor_fusion_readiness.csv
+  outputs/frontend/layer7_operational_playbooks.csv
+  outputs/frontend/layer7_deployment_readiness.csv
+

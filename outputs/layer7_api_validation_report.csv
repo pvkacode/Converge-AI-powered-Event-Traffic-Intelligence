@@ -1,0 +1,19 @@
+case,category,passed,detail,generated_at
+schema_overview,schema_mismatch,True,ok,2026-06-20T01:47:22.855484+00:00
+schema_alerts,schema_mismatch,True,ok,2026-06-20T01:47:22.855484+00:00
+schema_recommendations,schema_mismatch,True,ok,2026-06-20T01:47:22.855484+00:00
+schema_overrides,schema_mismatch,True,ok,2026-06-20T01:47:22.855484+00:00
+site_valid,valid_id,True,resolved site FKID006340,2026-06-20T01:47:22.855484+00:00
+site_missing,missing_id,True,unknown event_id returns empty (404 at HTTP layer),2026-06-20T01:47:22.855484+00:00
+site_blank,malformed,True,blank event_id returns empty,2026-06-20T01:47:22.855484+00:00
+priority_valid,valid_priority,True,P1 returns a list,2026-06-20T01:47:22.855484+00:00
+priority_invalid,invalid_priority,True,P9 rejected by validator (400 at HTTP layer),2026-06-20T01:47:22.855484+00:00
+priority_malformed,malformed,True,blank priority rejected,2026-06-20T01:47:22.855484+00:00
+override_valid,valid_id,True,resolved override OVR-0001,2026-06-20T01:47:22.855484+00:00
+override_missing,invalid_override_id,True,unknown override_id returns empty (404 at HTTP layer),2026-06-20T01:47:22.855484+00:00
+page_file_overview,schema_mismatch,True,layer7_operations_overview.csv present,2026-06-20T01:47:22.855484+00:00
+page_file_alerts,schema_mismatch,True,layer7_active_alerts.csv present,2026-06-20T01:47:22.855484+00:00
+page_file_recommendations,schema_mismatch,True,layer7_resource_recommendations.csv present,2026-06-20T01:47:22.855484+00:00
+page_file_overrides,schema_mismatch,True,layer7_override_history.csv present,2026-06-20T01:47:22.855484+00:00
+page_file_health,schema_mismatch,True,layer7_model_health.csv present,2026-06-20T01:47:22.855484+00:00
+page_file_counterfactuals,schema_mismatch,True,layer7_counterfactuals.csv present,2026-06-20T01:47:22.855484+00:00

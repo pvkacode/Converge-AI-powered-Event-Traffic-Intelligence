@@ -1,0 +1,15 @@
+diagnostic_group,metric,value,flag,generated_at
+consistency,negative_speeds,0,OK,2026-06-20T02:27:28.190133+00:00
+consistency,negative_queues,0,OK,2026-06-20T02:27:28.190133+00:00
+consistency,travel_time_inconsistencies,0,OK,2026-06-20T02:27:28.190133+00:00
+consistency,capacity_over_1,0,OK,2026-06-20T02:27:28.190133+00:00
+consistency,variance_explosions,0,OK,2026-06-20T02:27:28.190133+00:00
+kalman_stability,n_sites,50,,2026-06-20T02:27:28.190133+00:00
+kalman_stability,all_stable,True,OK,2026-06-20T02:27:28.190133+00:00
+kalman_stability,max_spectral_radius_A,0.98,,2026-06-20T02:27:28.190133+00:00
+kalman_stability,max_posterior_variance,3600.0,,2026-06-20T02:27:28.190133+00:00
+kalman_stability,min_P_eigenvalue,0.01495253,,2026-06-20T02:27:28.190133+00:00
+kalman_stability,max_innovation_cov_cond,94230.601,,2026-06-20T02:27:28.190133+00:00
+kalman_stability,kalman_updates_per_site,1,,2026-06-20T02:27:28.190133+00:00
+state_finiteness,all_state_values_finite,True,OK,2026-06-20T02:27:28.190133+00:00
+state_finiteness,all_variances_nonneg,True,OK,2026-06-20T02:27:28.190133+00:00

@@ -1,0 +1,7 @@
+check_id,phase,passed,detail,severity,active_count,tier_distribution,generated_at
+active_site_coverage,active_site_view,True,"L5 events=50, in view=50, max_count=1",info,50,{'Normal': 50},2026-06-20T01:47:21.570064+00:00
+active_site_uniqueness,active_site_view,True,0 duplicate event_id,info,50,{'Normal': 50},2026-06-20T01:47:21.570064+00:00
+active_site_ranking_reproducibility,active_site_view,True,deterministic ORS-desc / event_id tie-break,info,50,{'Normal': 50},2026-06-20T01:47:21.570064+00:00
+active_site_percentile_range,active_site_view,True,"percentile range [0.0200, 1.0000]",info,50,{'Normal': 50},2026-06-20T01:47:21.570064+00:00
+active_site_tiers_populated,active_site_view,True,tier distribution: {'Normal': 50},info,50,{'Normal': 50},2026-06-20T01:47:21.570064+00:00
+active_site_no_nan,active_site_view,True,0 NaN in required columns,info,50,{'Normal': 50},2026-06-20T01:47:21.570064+00:00

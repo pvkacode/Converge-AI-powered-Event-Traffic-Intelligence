@@ -1,0 +1,15 @@
+override_id,event_id,override_type,approval_status,operator_id,justification,override_source,timestamp,relative_ois,absolute_ois,impact_level,safety_status,flags,generated_at
+OVR-0001,FKID006340,diversion_enable,approved,demo_operator,Top-risk emergency site; pre-emptive diversion,demo,2026-06-19T09:00:00Z,0.545972,0.274704,Critical,ok,,2026-06-20T01:47:22.843487+00:00
+OVR-0002,FKID001288,increase_resources,approved,demo_operator,Raise police presence at critical site,demo,2026-06-19T09:00:00Z,0.489816,0.134452,High,ok,,2026-06-20T01:47:22.843487+00:00
+OVR-0003,FKID001693,change_service_tier,approved,demo_operator,Escalate tier given rising fragility,demo,2026-06-19T09:00:00Z,0.266092,0.083718,Moderate,ok,,2026-06-20T01:47:22.843487+00:00
+OVR-0004,FKID006955,acknowledge_alert,executed,demo_operator,Chance-constraint violation reviewed by duty officer,demo,2026-06-19T09:00:00Z,0.125,0.099138,High,ok,,2026-06-20T01:47:22.843487+00:00
+OVR-0005,FKID008103,increase_resources,proposed,demo_operator,Add tow capacity for breakdown-prone corridor,demo,2026-06-19T09:00:00Z,0.268792,0.08072,Moderate,ok,,2026-06-20T01:47:22.843487+00:00
+OVR-0006,FKID004125,decrease_resources,proposed,demo_operator,Right-size barricades on stabilized site,demo,2026-06-19T09:00:00Z,0.311771,0.067517,Moderate,ok,,2026-06-20T01:47:22.843487+00:00
+OVR-0007,FKID007660,diversion_disable,proposed,demo_operator,Diversion no longer needed; reopen corridor,demo,2026-06-19T09:00:00Z,0.172041,0.038481,Low,ok,,2026-06-20T01:47:22.843487+00:00
+OVR-0008,FKID006955,suppress_alert,rejected,demo_operator,Request to suppress denied — keep monitoring,demo,2026-06-19T09:00:00Z,0.345247,0.210519,Critical,ok,,2026-06-20T01:47:22.843487+00:00
+OVR-0009,FKID006955,delete_site,proposed,demo_operator,Invalid type demo,demo,2026-06-19T09:00:00Z,0.0,0.0,Low,flagged,invalid_override_type,2026-06-20T01:47:22.843487+00:00
+OVR-0010,FKID000022,increase_resources,proposed,demo_operator,,demo,2026-06-19T09:00:00Z,0.247063,0.067503,Moderate,flagged,missing_justification,2026-06-20T01:47:22.843487+00:00
+OVR-0011,FKID001125,decrease_resources,proposed,demo_operator,Reduce below zero demo,demo,2026-06-19T09:00:00Z,0.365593,0.100611,High,flagged,resource_below_zero,2026-06-20T01:47:22.843487+00:00
+OVR-0012,FKID000000,acknowledge_alert,proposed,demo_operator,Unknown event demo,demo,2026-06-19T09:00:00Z,0.0,0.0,Low,flagged,unknown_event_id,2026-06-20T01:47:22.843487+00:00
+OVR-0013,FKID000316,change_service_tier,proposed,demo_operator,Invalid tier demo,demo,2026-06-19T09:00:00Z,0.0,0.0,Low,flagged,service_tier_violation,2026-06-20T01:47:22.843487+00:00
+OVR-0014,FKID003911,acknowledge_alert,expired,demo_operator,Expired override demo,demo,2025-01-01T00:00:00Z,0.0,0.0,Low,flagged,expired_override,2026-06-20T01:47:22.843487+00:00

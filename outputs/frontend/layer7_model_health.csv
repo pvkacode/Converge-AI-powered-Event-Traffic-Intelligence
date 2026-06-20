@@ -1,0 +1,30 @@
+panel,metric_group,metric,holdout_value,feedback_value,status_normalized,detail,overall_health,generated_at
+health,duration,duration_rmse,6038.9789,6052.3142,healthy,,CRITICAL,2026-06-20T01:47:22.843487+00:00
+health,duration,duration_mae,2362.8005,2367.0735,healthy,,CRITICAL,2026-06-20T01:47:22.843487+00:00
+health,duration,duration_medae,78.124,78.592,healthy,,CRITICAL,2026-06-20T01:47:22.843487+00:00
+health,duration,duration_rmsle,1.7266,1.7276,healthy,,CRITICAL,2026-06-20T01:47:22.843487+00:00
+health,probability_calibration,high_impact_brier,0.108406,0.108406,healthy,,CRITICAL,2026-06-20T01:47:22.843487+00:00
+health,probability_calibration,high_impact_ece,0.0,0.0,healthy,,CRITICAL,2026-06-20T01:47:22.843487+00:00
+health,layer5_optimization,cvar_reduction_pct,,46.5604,healthy,L5 optimization metrics (no holdout baseline),CRITICAL,2026-06-20T01:47:22.843487+00:00
+health,layer5_optimization,cc_satisfaction_mean,,0.9592,healthy,L5 optimization metrics (no holdout baseline),CRITICAL,2026-06-20T01:47:22.843487+00:00
+health,drift,page_hinkley_log_duration,,326.8316,critical,"max_PH=326.832, first_alert_at_index=5",CRITICAL,2026-06-20T01:47:22.843487+00:00
+health,drift,psi_log_duration,,0.0503,healthy,"PSI=0.0503 (baseline n=2451, feedback n=1095)",CRITICAL,2026-06-20T01:47:22.843487+00:00
+health,drift,psi_trust_score,,0.0124,healthy,PSI=0.0124,CRITICAL,2026-06-20T01:47:22.843487+00:00
+health,drift,psi_iso_anomaly_score,,0.0266,healthy,PSI=0.0266,CRITICAL,2026-06-20T01:47:22.843487+00:00
+health,drift,psi_hour_local,,0.1526,warning,PSI=0.1526,CRITICAL,2026-06-20T01:47:22.843487+00:00
+health,drift,ods_weekly_log_duration,,0.5667,healthy,max_ODS=0.567 across 7 weeks; alert weeks: [],CRITICAL,2026-06-20T01:47:22.843487+00:00
+health,drift,mean_shift_ztest_log_duration,,3.2097,critical,"baseline_mu=4.929, feedback_mu=5.194, z=3.210",CRITICAL,2026-06-20T01:47:22.843487+00:00
+health,posterior_uncertainty,mean_ci95_width_log,,1.1625,healthy,Mean 95% CI width in log-duration space across 118 strata,CRITICAL,2026-06-20T01:47:22.843487+00:00
+health,prototype_trust,mean_abs_trust_delta,,0.001,warning,2 prototypes degraded below 0.5 trust,CRITICAL,2026-06-20T01:47:22.843487+00:00
+health,retrain_triggers,n_critical_triggers,,8.0,critical,8 critical + 23 moderate triggers in this batch,CRITICAL,2026-06-20T01:47:22.843487+00:00
+health,predictive_calibration,predictive_coverage_95pct,,0.8658,warning,Future-observation metric: sequential LOO at sqrt(var_post+var_obs),CRITICAL,2026-06-20T01:47:22.843487+00:00
+health,predictive_calibration,parameter_coverage_95pct_audit,,0.3342,healthy,Audit only: parameter SD coverage; NOT used for future-observation scoring,CRITICAL,2026-06-20T01:47:22.843487+00:00
+drift,drift,page_hinkley:log_duration,,326.8316,critical,"max_PH=326.832, first_alert_at_index=5",,2026-06-20T01:47:22.843487+00:00
+drift,drift,psi:log_duration,,0.0503,none,"PSI=0.0503 (baseline n=2451, feedback n=1095)",,2026-06-20T01:47:22.843487+00:00
+drift,drift,psi:trust_score,,0.0124,none,PSI=0.0124,,2026-06-20T01:47:22.843487+00:00
+drift,drift,psi:iso_anomaly_score,,0.0266,none,PSI=0.0266,,2026-06-20T01:47:22.843487+00:00
+drift,drift,psi:hour_local,,0.1526,moderate,PSI=0.1526,,2026-06-20T01:47:22.843487+00:00
+drift,drift,ods_weekly:log_duration,,0.5667,none,max_ODS=0.567 across 7 weeks; alert weeks: [],,2026-06-20T01:47:22.843487+00:00
+drift,drift,mean_shift_ztest:log_duration,,3.2097,critical,"baseline_mu=4.929, feedback_mu=5.194, z=3.210",,2026-06-20T01:47:22.843487+00:00
+monitoring,knowledge_retention,knowledge_retention_score,,0.9578,ok,"KRS = 1 - (7/166). Degraded: 2 prototypes (trust<0.5), 5 duration strata (CI grew >20% or critical trigger)",,2026-06-20T01:47:22.843487+00:00
+monitoring,retrain_urgency,retrain_urgency_score,,0.3553,ok,"Composite U = 0.3*s_drift(0.357) + 0.25*s_calib(0.545) + 0.2*s_unc(0.000) + 0.15*s_trust(0.213) + 0.1*s_trig(0.800). All s_c are normalised to [0,1]; label based on normalised scale.",,2026-06-20T01:47:22.843487+00:00

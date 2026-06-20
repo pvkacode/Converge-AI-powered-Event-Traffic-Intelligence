@@ -1,0 +1,10 @@
+check,result,evidence,finding_id,severity
+score_construction,WEAK,"DCS = (1-norm_unc)*robustness*duration_reliability (product of three [0,1])",F-009,Medium
+score_compression,FLAG,"product compresses score: range 0.1227-0.3311, mean 0.2218; cannot exceed ~0.6 in practice",F-009,Medium
+calibration,WEAK,"no calibration against observed outcomes; components are heuristic proxies",F-009,Medium
+tier_assignment,FLAG,"terciles force High17/Moderate17/Low16 regardless of absolute level; 'High' at 0.33 absolute is low confidence",F-008,Medium
+tier_collapse,PARTIAL,"tiers always ~equal thirds; do not collapse to one tier but are rank-only, not absolute",F-008,Medium
+score_inflation,NONE,"no inflation; opposite problem (compression)",F-009,Info
+uncertainty_mapping,WEAK,"posterior uncertainty mapped per-event via event_cause (cause-level CI width); loses corridor granularity",,Medium
+distribution,REPORTED,"High17/Moderate17/Low16",,Info
+downstream_propagation,NOTE,"DCS feeds TCS (double-count, F-005), operator_queue, governance, SVI -> compression propagates",F-005,Medium

@@ -1,0 +1,11 @@
+event_source,event_type,priority,target_consumer,retry_policy,dead_letter_flag,generated_at
+sensor_adapter,sensor_update,P3,operational_state_engine,retry_3_backoff_5s,False,2026-06-20T01:47:22.914488+00:00
+ingestion_simulator,incident_update,P2,operational_state_engine,retry_3_backoff_5s,False,2026-06-20T01:47:22.914488+00:00
+operator_console,operator_update,P2,override_engine,retry_1,False,2026-06-20T01:47:22.914488+00:00
+drift_monitor,drift_alert,P1,alert_prioritization+playbooks,retry_1,True,2026-06-20T01:47:22.914488+00:00
+optimizer_bridge,resource_change,P2,dashboard_backend,retry_3_backoff_5s,False,2026-06-20T01:47:22.914488+00:00
+alert_prioritization,prioritized_alert,P1,playbooks+dashboard,retry_2,True,2026-06-20T01:47:22.914488+00:00
+decision_confidence,confidence_update,P3,dashboard_backend,retry_2,False,2026-06-20T01:47:22.914488+00:00
+digital_twin,scenario_result,P3,dashboard_backend,retry_2,False,2026-06-20T01:47:22.914488+00:00
+governance,governance_event,P2,observability,retry_2,False,2026-06-20T01:47:22.914488+00:00
+playbooks,operator_action,P1,operator_console,retry_1,True,2026-06-20T01:47:22.914488+00:00

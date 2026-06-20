@@ -1,0 +1,2 @@
+n_active_sites,n_geo_valid_nodes,n_pairs,n_significant_edges,edge_weight_threshold,d0_km,network_density,avg_node_degree,avg_weighted_degree,mean_distance_km,same_corridor_edges,generated_at
+50,50,1225,940,0.05,5.0,0.767347,37.6,10.1261,10.785,1225,2026-06-20T02:30:03.907125+00:00

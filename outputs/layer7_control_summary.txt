@@ -1,0 +1,27 @@
+LAYER 7 — M7C MPC-LITE CONTROL RECOMMENDATION SUMMARY
+======================================================
+generated_at: 2026-06-20T02:47:06.160690+00:00
+human-in-the-loop: every non-information recommendation requires approval; none executed.
+
+A. recommendations generated: 50 (active actions: 50; NO_ACTION: 0)
+B. action-type distribution: {'QUEUE_RELIEF': 25, 'DISPATCH_TOW': 13, 'SIGNAL_OFFSET_ADJUST': 9, 'ACTIVATE_DIVERSION': 3}
+C. resource-constrained rate: 0.160 (8 actions)
+D. avg expected queue reduction: 27.9 m
+E. avg expected travel-time reduction: 21.09 min
+F. avg escalation-risk reduction: 0.0536
+G. spillover-risk: mean=4.052 max=6.401
+H. centrality: betweenness max=0.0169 weighted_degree max=0.331
+I. operator-priority tiers: {'LOW': 19, 'MEDIUM': 15, 'HIGH': 10, 'CRITICAL': 6}
+J. future APIs: recommendations + operator_actions are flat, schema-stable feeds ready to serve.
+K. future GNN: spillover + centrality + per-node features are graph-ready signals.
+
+VALIDATION: 9 passed / 0 failed
+   [PASS] m7c_scores_finite: 384 action scores finite
+   [PASS] m7c_recs_explainable: every recommendation has a metric-grounded reason
+   [PASS] m7c_recs_reference_metrics: explanations reference actual metrics
+   [PASS] m7c_resource_constraints_respected: reserve respected; demand=[0, 0, 13, 0] reserve=[20, 30, 5, 4]
+   [PASS] m7c_spillover_finite: spillover range [0.411,6.401]
+   [PASS] m7c_centrality_finite: 50 nodes; centrality finite
+   [PASS] m7c_simulation_finite: simulation outputs finite
+   [PASS] m7c_approval_enforced: all non-information recommendations require approval; none executed
+   [PASS] m7c_priority_bounded: operator_priority in [0,1]

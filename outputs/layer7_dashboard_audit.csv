@@ -1,0 +1,16 @@
+page_or_artifact,check,result,evidence,finding_id,severity
+manifest,consistency,OK,"manifest page row-counts match files; schema_version per page",,Info
+operations_overview,schema,OK,"event_id PK unique; ORS+active tier+allocation+top_risk_factor+n_alerts present",,Info
+operations_overview,content,FLAG,"top_risk_factor ~always Tail Risk (reflects ORS dominance)",F-001,Low
+active_alerts,schema,OK,"l7_alert_id PK unique; priority/severity/root_cause present",,Info
+active_alerts,content,FLAG,"P1 over-represented (31.5%)",F-003,Medium
+resource_recommendations,schema,OK,"event_id PK; rationale_score+explanation present",,Info
+overrides,schema,OK,"override_id PK; relative+absolute OIS+impact_level+safety_status",,Info
+overrides,content,FLAG,"impact_level never High/Critical (anchor mismatch)",F-004,Medium
+model_health,schema,WEAK,"mixed numeric/blank cells (NaN->''); key columns non-null only",F-017,Low
+counterfactuals,schema,OK,"250 rows; event_id+scenario+score; no NaN",,Info
+twin_scenarios(frontend),content,FLAG,"deterministic best=S7/worst=S6 across all sites",F-011,Medium
+plan_comparison(frontend),content,FLAG,"always prefer_alternative=S7 (tautological)",F-011,Medium
+stale_exports,check,OK,"all 6 M4 pages within 48h (data_freshness healthy)",,Info
+duplicated_information,NOTE,"frontend pages duplicate outputs/ files by design (single read-path)",,Info
+missing_fields,NONE,"no required field missing across pages",,Info

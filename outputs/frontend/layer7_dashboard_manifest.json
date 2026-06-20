@@ -1,0 +1,145 @@
+{
+  "layer7_milestone": "M4",
+  "title": "ASTraM Layer 7 Operational Dashboard Backend",
+  "generated_at": "2026-06-20T01:47:22.843487+00:00",
+  "read_only": true,
+  "pages": {
+    "overview": {
+      "file": "outputs/frontend/layer7_operations_overview.csv",
+      "rows": 50,
+      "primary_key": "event_id",
+      "schema_version": "42e0c44bc1",
+      "columns": [
+        "event_id",
+        "event_cause",
+        "operational_risk_score",
+        "operational_tier",
+        "service_tier",
+        "robustness_score",
+        "active_operational_tier",
+        "top_risk_factor",
+        "top_risk_share",
+        "officers_allocated",
+        "barricades_allocated",
+        "tow_trucks_allocated",
+        "qru_allocated",
+        "diversion_activated",
+        "n_alerts",
+        "generated_at"
+      ],
+      "mtime": "2026-06-20T01:47:24.490190+00:00"
+    },
+    "alerts": {
+      "file": "outputs/frontend/layer7_active_alerts.csv",
+      "rows": 73,
+      "primary_key": "l7_alert_id",
+      "schema_version": "69dc1711dd",
+      "columns": [
+        "priority_rank",
+        "l7_alert_id",
+        "priority",
+        "severity",
+        "alert_severity_score",
+        "affected_layer",
+        "affected_event_id",
+        "root_cause",
+        "description",
+        "generated_at"
+      ],
+      "mtime": "2026-06-20T01:47:24.494185+00:00"
+    },
+    "recommendations": {
+      "file": "outputs/frontend/layer7_resource_recommendations.csv",
+      "rows": 50,
+      "primary_key": "event_id",
+      "schema_version": "81d1c76262",
+      "columns": [
+        "event_id",
+        "event_cause",
+        "service_tier",
+        "officers_allocated",
+        "barricades_allocated",
+        "tow_trucks_allocated",
+        "qru_allocated",
+        "diversion_activated",
+        "diversion_reason",
+        "expected_delay_reduction_min",
+        "effectiveness",
+        "robustness_score",
+        "resource_rationale_score",
+        "resource_explanation",
+        "generated_at"
+      ],
+      "mtime": "2026-06-20T01:47:24.497337+00:00"
+    },
+    "overrides": {
+      "file": "outputs/frontend/layer7_override_history.csv",
+      "rows": 14,
+      "primary_key": "override_id",
+      "schema_version": "63037a9228",
+      "columns": [
+        "override_id",
+        "event_id",
+        "override_type",
+        "approval_status",
+        "operator_id",
+        "justification",
+        "override_source",
+        "timestamp",
+        "relative_ois",
+        "absolute_ois",
+        "impact_level",
+        "safety_status",
+        "flags",
+        "generated_at"
+      ],
+      "mtime": "2026-06-20T01:47:24.500217+00:00"
+    },
+    "model_health": {
+      "file": "outputs/frontend/layer7_model_health.csv",
+      "rows": 29,
+      "primary_key": null,
+      "schema_version": "87bd68d861",
+      "columns": [
+        "panel",
+        "metric_group",
+        "metric",
+        "holdout_value",
+        "feedback_value",
+        "status_normalized",
+        "detail",
+        "overall_health",
+        "generated_at"
+      ],
+      "mtime": "2026-06-20T01:47:24.502227+00:00"
+    },
+    "counterfactuals": {
+      "file": "outputs/frontend/layer7_counterfactuals.csv",
+      "rows": 250,
+      "primary_key": null,
+      "schema_version": "1d1f92d903",
+      "columns": [
+        "event_id",
+        "active_operational_tier",
+        "scenario_type",
+        "expected_delay_delta",
+        "expected_risk_delta",
+        "expected_alert_delta",
+        "counterfactual_score",
+        "generated_at"
+      ],
+      "mtime": "2026-06-20T01:47:24.507338+00:00"
+    }
+  },
+  "api_endpoints": [
+    "/",
+    "/manifest",
+    "/overview",
+    "/alerts",
+    "/recommendations",
+    "/overrides",
+    "/health",
+    "/counterfactuals"
+  ],
+  "note": "Additive-only. Layers 1-6 frozen. Canonical L1-L4 frontend files untouched."
+}

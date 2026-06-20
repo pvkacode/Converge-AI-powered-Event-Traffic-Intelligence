@@ -1,0 +1,12 @@
+check_id,phase,passed,detail,severity,generated_at
+m5_dcs_range,decision_confidence,True,"DCS range [0.1227, 0.3311]",info,2026-06-20T01:47:22.874493+00:00
+m5_dcs_no_nan,decision_confidence,True,0 NaN in DCS output,info,2026-06-20T01:47:22.874493+00:00
+m5_dcs_tiers_present,decision_confidence,True,"tier distribution: {'High': 17, 'Moderate': 17, 'Low': 16}",info,2026-06-20T01:47:22.874493+00:00
+m5_operator_queue_built,operator_queue,True,"39 queue items; priority bands: {1: 6, 2: 16, 3: 9, 4: 5, 5: 3}",info,2026-06-20T01:47:22.874493+00:00
+m5_operator_queue_no_nan,operator_queue,True,0 NaN in queue,info,2026-06-20T01:47:22.874493+00:00
+m5_governance_generated,governance,True,5 governance metrics; 0 NaN,info,2026-06-20T01:47:22.874493+00:00
+m5_service_health_ok,service_monitor,True,11 health rows; critical=0; status counts={'healthy': 11},info,2026-06-20T01:47:22.874493+00:00
+m5_api_validation_all_pass,api_validation,True,18/18 API validation cases passed,info,2026-06-20T01:47:22.874493+00:00
+m5_api_audit_logged,api_audit,True,13 calls logged this sweep; all_200=True; total_log_rows=39,info,2026-06-20T01:47:22.874493+00:00
+m5_endpoint_catalog_complete,openapi,True,catalog endpoints=13; openapi paths=13,info,2026-06-20T01:47:22.874493+00:00
+no_layer16_modifications,integrity,True,all writes confined to outputs/layer7_*; byte-level SHA audit external,info,2026-06-20T01:47:22.874493+00:00

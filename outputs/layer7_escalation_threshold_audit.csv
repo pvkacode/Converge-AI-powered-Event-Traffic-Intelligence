@@ -1,0 +1,5 @@
+tier,lower,upper,count,empirical_max,observed_component_ceiling,reachable_given_observed_components,generated_at
+LOW,0.0,0.25,41,0.3428,0.437505,True,2026-06-20T02:30:02.540101+00:00
+MEDIUM,0.25,0.5,9,0.3428,0.437505,True,2026-06-20T02:30:02.540101+00:00
+HIGH,0.5,0.75,0,0.3428,0.437505,False,2026-06-20T02:30:02.540101+00:00
+CRITICAL,0.75,1.0,0,0.3428,0.437505,False,2026-06-20T02:30:02.540101+00:00

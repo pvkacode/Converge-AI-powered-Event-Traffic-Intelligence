@@ -1,0 +1,5 @@
+resource_type,reserve_available,demand,allocated,remaining,bottleneck
+police,20,0,0,20,False
+marshal,30,0,0,30,False
+tow,5,13,5,0,True
+qru,4,0,0,4,False

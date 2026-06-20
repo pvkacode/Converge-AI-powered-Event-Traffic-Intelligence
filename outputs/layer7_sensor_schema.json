@@ -1,0 +1,120 @@
+{
+  "schema_version": "layer7_m7",
+  "generated_at": "2026-06-20T01:47:22.922507+00:00",
+  "live_ingestion": false,
+  "note": "Schema only. No live ingestion, no external calls (M7 readiness layer).",
+  "canonical_record": {
+    "sensor_id": {
+      "type": "string",
+      "required": true,
+      "description": "Unique sensor identifier"
+    },
+    "sensor_type": {
+      "type": "enum",
+      "required": true,
+      "enum": [
+        "traffic_camera",
+        "gps_probe",
+        "roadside_unit",
+        "weather_feed",
+        "planned_event_feed",
+        "manual_operator_feed",
+        "social_signal_feed"
+      ],
+      "description": "One of the supported canonical sensor types"
+    },
+    "timestamp": {
+      "type": "string(iso8601)",
+      "required": true,
+      "description": "Observation time (UTC)"
+    },
+    "latitude": {
+      "type": "float",
+      "required": true,
+      "description": "WGS84 latitude"
+    },
+    "longitude": {
+      "type": "float",
+      "required": true,
+      "description": "WGS84 longitude"
+    },
+    "confidence": {
+      "type": "float[0,1]",
+      "required": true,
+      "description": "Source-declared confidence"
+    },
+    "payload_json": {
+      "type": "object",
+      "required": true,
+      "description": "Type-specific payload"
+    },
+    "status": {
+      "type": "enum",
+      "required": true,
+      "enum": [
+        "active",
+        "degraded",
+        "offline"
+      ],
+      "description": "Sensor operational status"
+    }
+  },
+  "sensor_types": {
+    "traffic_camera": {
+      "description": "traffic camera sensor",
+      "typical_payload_fields": [
+        "vehicle_count",
+        "queue_length_m",
+        "incident_detected"
+      ]
+    },
+    "gps_probe": {
+      "description": "gps probe sensor",
+      "typical_payload_fields": [
+        "speed_kph",
+        "heading_deg",
+        "trip_id"
+      ]
+    },
+    "roadside_unit": {
+      "description": "roadside unit sensor",
+      "typical_payload_fields": [
+        "occupancy_pct",
+        "flow_vph",
+        "avg_speed_kph"
+      ]
+    },
+    "weather_feed": {
+      "description": "weather feed sensor",
+      "typical_payload_fields": [
+        "condition",
+        "visibility_m",
+        "precip_mm"
+      ]
+    },
+    "planned_event_feed": {
+      "description": "planned event feed sensor",
+      "typical_payload_fields": [
+        "event_cause",
+        "expected_attendance",
+        "corridor"
+      ]
+    },
+    "manual_operator_feed": {
+      "description": "manual operator feed sensor",
+      "typical_payload_fields": [
+        "operator_id",
+        "observation_text",
+        "severity"
+      ]
+    },
+    "social_signal_feed": {
+      "description": "social signal feed sensor",
+      "typical_payload_fields": [
+        "platform",
+        "mention_count",
+        "sentiment"
+      ]
+    }
+  }
+}

@@ -1,0 +1,11 @@
+check,result,evidence,finding_id,severity
+explanation_faithfulness,OK,"share_i=|contrib_i|/sum|contrib| computed directly from ORS logit terms; faithful to score",,Info
+consistency_with_scores,OK,"top factor matches dominant contributor; risk_explanation text derived from same shares",,Info
+contribution_sum_check,OK,"full per-site contribution shares sum to 1.0 (50/50 sites); 0 degenerate",,Info
+top_factor_realism,FLAG,"explanations are faithful BUT reveal the dominance bug: most sites 'Tail Risk ~92%' -> explanations expose a one-feature score",F-001,Medium
+contradiction_detection,NONE,"no contradiction logic; explanations restate scores (cannot contradict by construction)",,Low
+impossible_explanations,NONE,"no impossible shares observed (all in [0,1], sum 1)",,Info
+duplicated_reasoning,FLAG,"near-identical 'Tail Risk dominates' narrative repeated across most sites (low differentiation)",F-001,Low
+resource_explanation_consistency,OK,"resource_rationale text aligns with tier/robustness/CC status; rationale_score in [0,1]",,Info
+alert_explanation_consistency,OK,"ASS breakdown (base x corr x recency) matches prioritized_alerts values",,Info
+counterfactual_explanations,OK_WITH_NOTE,"counterfactual deltas vs baseline are coherent; but feed into deterministic twin (see twin audit)",F-011,Low

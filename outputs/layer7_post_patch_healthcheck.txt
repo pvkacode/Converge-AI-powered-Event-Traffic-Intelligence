@@ -1,0 +1,52 @@
+LAYER 7 — POST-PATCH DISTRIBUTION HEALTHCHECK
+======================================================
+generated_at: 2026-06-20T01:54:47.782387+00:00
+
+1. ORS operational_tier (full population, n=3498):
+   Emergency     280    8.0%
+   Critical      420   12.0%
+   Elevated      700   20.0%
+   Normal       2098   60.0%
+   ORS score range: [8.837, 78.316] / [0,100]
+   active_operational_tier (active sites, n=50): {'Normal': np.int64(19), 'Elevated': np.int64(15), 'Critical': np.int64(10), 'Emergency': np.int64(6)}
+
+2. Alert priority (n=73):
+   P1       9   12.3%
+   P2      16   21.9%
+   P3      32   43.8%
+   P4      16   21.9%
+   ASS range: [0.1059, 0.5509] / [0,1]
+
+3. TCS tier (n=50):
+   High          17   34.0%
+   Moderate      17   34.0%
+   Low           16   32.0%
+   TCS range: [0.0628, 0.1662] / [0,1]
+
+4. Override impact_level (n=14):
+   Critical       2   14.3%
+   High           3   21.4%
+   Moderate       4   28.6%
+   Low            5   35.7%
+   absolute_ois range: [0.0000, 0.2747]; relative_ois range: [0.0000, 0.5460]
+
+HEALTH CHECKS:
+   [PASS] ORS_operational_tier: no tier >70%: max share=0.600 (3498 obs)
+   [PASS] ORS_operational_tier: no empty tier: missing=[]; dist={'Normal': 2098, 'Elevated': 700, 'Critical': 420, 'Emergency': 280}
+   [PASS] active_operational_tier: no tier >70%: max share=0.380 (50 obs)
+   [PASS] active_operational_tier: no empty tier: missing=[]; dist={'Normal': 19, 'Elevated': 15, 'Critical': 10, 'Emergency': 6}
+   [PASS] alert_priority: no tier >70%: max share=0.438 (73 obs)
+   [PASS] alert_priority: no empty tier: missing=[]; dist={'P3': 32, 'P2': 16, 'P4': 16, 'P1': 9}
+   [PASS] tcs_tier: no tier >70%: max share=0.340 (50 obs)
+   [PASS] tcs_tier: no empty tier: missing=[]; dist={'High': 17, 'Moderate': 17, 'Low': 16}
+   [PASS] override_impact_level: no tier >70%: max share=0.357 (14 obs)
+   [PASS] override_impact_level: no empty tier: missing=[]; dist={'Low': 5, 'Moderate': 4, 'High': 3, 'Critical': 2}
+   [PASS] decision_confidence_tier: no tier >70%: max share=0.340 (50 obs)
+   [PASS] decision_confidence_tier: no empty tier: missing=[]; dist={'High': 17, 'Moderate': 17, 'Low': 16}
+   [PASS] ORS: not saturated: range [8.8367,78.3164] within [0,100]
+   [PASS] ASS: not saturated: range [0.1059,0.5509] within [0,1]
+   [PASS] TCS: not saturated: range [0.0628,0.1662] within [0,1]
+   [PASS] absolute_OIS: not saturated: range [0.0000,0.2747] within [0,1]
+
+RESULT: 16 passed / 0 failed
+OVERALL: HEALTHY

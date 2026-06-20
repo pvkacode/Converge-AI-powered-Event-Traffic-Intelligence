@@ -1,0 +1,23 @@
+LAYER 7 — M7B TRAFFIC STATE ESTIMATION SUMMARY
+====================================================
+generated_at: 2026-06-20T02:27:28.192130+00:00
+method: linear Kalman filter (7-state) on M7A fused observations
+
+A. state vectors estimated: 50 sites x 7 states = 350 estimates
+B. forecast horizon coverage: [np.int64(5), np.int64(15), np.int64(30)] min x ['incident_intensity', 'queue_length', 'speed', 'travel_time'] (600 forecasts)
+C. state confidence: mean=0.565; uncertainty tiers={'MEDIUM': 299, 'LOW': 48, 'HIGH': 3}
+D. escalation-risk tiers: {'LOW': 41, 'MEDIUM': 9} (risk range [0.048,0.343])
+E. capacity-utilization tiers: {'NORMAL': 45, 'ELEVATED': 5} (util range [0.115,0.727])
+F. Kalman stability: all_stable=True; spectral_radius(A)=0.9800<1; max_post_var=3600.00; min_P_eig=1.50e-02; updates/site=1
+G. fallback behaviour: 31 sites carry M7A fallback flag; observation noise inflated (R_eff *= 1/conf * (1+conflict) * 1.5) -> wider, still-finite estimates; never crashes
+H. layer compatibility: reads M7A + L5/L6 only; no upstream or existing-L7 output modified.
+
+VALIDATION: 8 passed / 0 failed
+   [PASS] m7b_state_values_finite: 0 non-finite state values
+   [PASS] m7b_variances_nonneg: all posterior variances >= 0
+   [PASS] m7b_capacity_bounded: capacity in [0,1]
+   [PASS] m7b_forecasts_finite: all forecast values finite
+   [PASS] m7b_no_negative_speed: min speed=33.320
+   [PASS] m7b_no_negative_queue: min queue=0.000
+   [PASS] m7b_escalation_bounded: escalation_risk in [0,1]
+   [PASS] m7b_kalman_stable: all sites stable; max spectral_radius_A=0.9800; max_post_var=3600.00

@@ -1,0 +1,16 @@
+override_id,event_id,override_type,approval_status,n_flags,safety_status,flags,is_valid,generated_at
+OVR-0001,FKID006340,diversion_enable,approved,0,ok,,True,2026-06-20T01:47:21.572095+00:00
+OVR-0002,FKID001288,increase_resources,approved,0,ok,,True,2026-06-20T01:47:21.572095+00:00
+OVR-0003,FKID004125,change_service_tier,approved,0,ok,,True,2026-06-20T01:47:21.572095+00:00
+OVR-0004,FKID006955,acknowledge_alert,executed,0,ok,,True,2026-06-20T01:47:21.572095+00:00
+OVR-0005,FKID007660,increase_resources,proposed,0,ok,,True,2026-06-20T01:47:21.572095+00:00
+OVR-0006,FKID000944,decrease_resources,proposed,0,ok,,True,2026-06-20T01:47:21.572095+00:00
+OVR-0007,FKID008103,diversion_disable,proposed,0,ok,,True,2026-06-20T01:47:21.572095+00:00
+OVR-0008,FKID006955,suppress_alert,rejected,0,ok,,True,2026-06-20T01:47:21.572095+00:00
+OVR-0009,FKID006955,delete_site,proposed,1,flagged,invalid_override_type,False,2026-06-20T01:47:21.572095+00:00
+OVR-0010,FKID000022,increase_resources,proposed,1,flagged,missing_justification,False,2026-06-20T01:47:21.572095+00:00
+OVR-0011,FKID001125,decrease_resources,proposed,1,flagged,resource_below_zero,False,2026-06-20T01:47:21.572095+00:00
+OVR-0012,FKID000000,acknowledge_alert,proposed,1,flagged,unknown_event_id,False,2026-06-20T01:47:21.572095+00:00
+OVR-0001,FKID006361,diversion_enable,proposed,1,flagged,duplicate_override_id,False,2026-06-20T01:47:21.572095+00:00
+OVR-0013,FKID001693,change_service_tier,proposed,1,flagged,service_tier_violation,False,2026-06-20T01:47:21.572095+00:00
+OVR-0014,FKID000316,acknowledge_alert,expired,1,flagged,expired_override,False,2026-06-20T01:47:21.572095+00:00

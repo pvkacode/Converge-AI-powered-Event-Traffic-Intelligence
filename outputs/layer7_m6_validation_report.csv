@@ -1,0 +1,14 @@
+check_id,phase,passed,detail,severity,generated_at
+m6_twin_state_built,digital_twin,True,50 twin states; 0 NaN,info,2026-06-20T01:47:22.899486+00:00
+m6_scenario_catalog_complete,scenario_library,True,8 scenarios catalogued,info,2026-06-20T01:47:22.899486+00:00
+m6_all_scenarios_simulated,simulator,True,400 rows = 50 sites x 8 scenarios,info,2026-06-20T01:47:22.899486+00:00
+m6_simulation_score_bounded,simulator,True,"SS range [0.3591, 0.6749]",critical,2026-06-20T01:47:22.899486+00:00
+m6_simulation_no_nan,simulator,True,0 NaN in simulations,critical,2026-06-20T01:47:22.899486+00:00
+m6_ranking_complete,simulator,True,"ranking rows=50 (sites=50), no NaN",critical,2026-06-20T01:47:22.899486+00:00
+m6_plan_comparison_built,plan_comparison,True,50 site comparisons; prefer_alternative=50; 0 NaN,info,2026-06-20T01:47:22.899486+00:00
+m6_tcs_bounded,twin_confidence,True,"TCS range [0.0628, 0.1662]; tiers={'High': 17, 'Moderate': 17, 'Low': 16}; 0 NaN",info,2026-06-20T01:47:22.899486+00:00
+m6_sandbox_works,operator_sandbox,True,"source=demo; 8 requests; valid=5; flagged=3; flag_types=['invalid_change_type', 'reduction_exceeds_capacity', 'unknown_event_id']",info,2026-06-20T01:47:22.899486+00:00
+m6_sandbox_safety_enforced,operator_sandbox,True,3 request(s) flagged by sandbox safety checks,info,2026-06-20T01:47:22.899486+00:00
+m6_twin_health_built,digital_twin_health,True,health rows=6; status={'healthy': 6},info,2026-06-20T01:47:22.899486+00:00
+m6_dashboard_exports,exports,True,"frontend exports: ['layer7_twin_scenarios.csv', 'layer7_plan_comparison.csv', 'layer7_scenario_ranking.csv']",info,2026-06-20T01:47:22.899486+00:00
+no_layer16_modifications,integrity,True,all writes confined to outputs/layer7_* and outputs/frontend/layer7_*; byte-level SHA audit external,info,2026-06-20T01:47:22.899486+00:00

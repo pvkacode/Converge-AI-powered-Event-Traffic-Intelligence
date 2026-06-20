@@ -1,0 +1,13 @@
+check,result,evidence,finding_id,severity
+score_bounds_relative,OK,"relative_ois in [0.0,0.545] within [0,1]",,Info
+score_bounds_absolute,OK,"absolute_ois in [0.0,0.29] within [0,1]",,Info
+relative_vs_absolute,FLAG,"absolute_ois capped ~0.29 by large L5 anchors; High-impact thresholds (>=0.50) unreachable",F-004,High
+impact_tiers,FLAG,"impact_level only Low(13)/Moderate(1); High/Critical never reached",F-004,High
+monotonicity_relative,WEAK,"batch min-max means relative_ois ordering can shift with batch composition; not cross-batch monotone",F-016,Low
+monotonicity_absolute,OK,"absolute_ois monotone in |proxies| via fixed anchors",,Info
+traceability,OK_WITH_GAP,"audit log append-only, unique ids; full schema present; BUT no approval transition enforcement",F-012,Medium
+override_inflation,NONE,"no inflation; if anything deflated (absolute band unreachable)",F-004,Info
+missing_audit_fields,NONE,"all canonical fields present; no NaN in audit log",,Info
+approval_enforcement,FLAG,"executed status accepted without recorded approved lineage (OVR-0004 executed)",F-012,Medium
+duplicate_override_ids,OK,"duplicate request (2nd OVR-0001) excluded from audit; flagged in safety report; log ids unique",,Info
+safety_rule_coverage,OK,"7 safety rule types enforced (invalid type, missing just., dup id, unknown event, below-zero, tier, expired)",,Info

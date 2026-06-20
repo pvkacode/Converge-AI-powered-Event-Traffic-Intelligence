@@ -1,0 +1,51 @@
+event_id,active_operational_tier,top_factor_1,top_factor_1_share,top_factor_2,top_factor_2_share,top_factor_3,top_factor_3_share,full_share_sum,risk_explanation,generated_at
+FKID006340,Emergency,Tail Risk,0.33085,Fragility,0.2365,Operational Burden,0.170141,1.0,"Risk dominated by Tail Risk (33%), Fragility (24%), Operational Burden (17%).",2026-06-20T01:47:21.593060+00:00
+FKID006955,Emergency,Tail Risk,0.257679,Critical Alert,0.194658,Fragility,0.179967,1.0,"Risk dominated by Tail Risk (26%), Critical Alert (19%), Fragility (18%).",2026-06-20T01:47:21.593060+00:00
+FKID007660,Emergency,Tail Risk,0.328966,Fragility,0.217415,Operational Burden,0.170854,1.0,"Risk dominated by Tail Risk (33%), Fragility (22%), Operational Burden (17%).",2026-06-20T01:47:21.593060+00:00
+FKID008103,Emergency,Tail Risk,0.390249,Operational Burden,0.184442,Drift,0.163457,1.0,"Risk dominated by Tail Risk (39%), Operational Burden (18%), Drift (16%).",2026-06-20T01:47:21.593060+00:00
+FKID000022,Emergency,Tail Risk,0.354033,Fragility,0.210704,Operational Burden,0.177017,1.0,"Risk dominated by Tail Risk (35%), Fragility (21%), Operational Burden (18%).",2026-06-20T01:47:21.593060+00:00
+FKID001288,Emergency,Tail Risk,0.374568,Operational Burden,0.194985,Drift,0.157372,1.0,"Risk dominated by Tail Risk (37%), Operational Burden (19%), Drift (16%).",2026-06-20T01:47:21.593060+00:00
+FKID001125,Critical,Tail Risk,0.380571,Operational Burden,0.196069,Fragility,0.150595,1.0,"Risk dominated by Tail Risk (38%), Operational Burden (20%), Fragility (15%).",2026-06-20T01:47:21.593060+00:00
+FKID006361,Critical,Tail Risk,0.338159,Fragility,0.222349,Operational Burden,0.168475,1.0,"Risk dominated by Tail Risk (34%), Fragility (22%), Operational Burden (17%).",2026-06-20T01:47:21.593060+00:00
+FKID004125,Critical,Tail Risk,0.350417,Fragility,0.202496,Operational Burden,0.18163,1.0,"Risk dominated by Tail Risk (35%), Fragility (20%), Operational Burden (18%).",2026-06-20T01:47:21.593060+00:00
+FKID001693,Critical,Tail Risk,0.39362,Operational Burden,0.204316,Drift,0.192353,1.0,"Risk dominated by Tail Risk (39%), Operational Burden (20%), Drift (19%).",2026-06-20T01:47:21.593060+00:00
+FKID000944,Critical,Tail Risk,0.362458,Fragility,0.186917,Operational Burden,0.182525,1.0,"Risk dominated by Tail Risk (36%), Fragility (19%), Operational Burden (18%).",2026-06-20T01:47:21.593060+00:00
+FKID000316,Critical,Tail Risk,0.394499,Operational Burden,0.200658,Drift,0.166921,1.0,"Risk dominated by Tail Risk (39%), Operational Burden (20%), Drift (17%).",2026-06-20T01:47:21.593060+00:00
+FKID006514,Critical,Tail Risk,0.408944,Operational Burden,0.208189,Drift,0.154999,1.0,"Risk dominated by Tail Risk (41%), Operational Burden (21%), Drift (15%).",2026-06-20T01:47:21.593060+00:00
+FKID006015,Critical,Tail Risk,0.328044,Fragility,0.19971,Drift,0.18384,1.0,"Risk dominated by Tail Risk (33%), Fragility (20%), Drift (18%).",2026-06-20T01:47:21.593060+00:00
+FKID000842,Critical,Tail Risk,0.379953,Fragility,0.231338,Operational Burden,0.18341,1.0,"Risk dominated by Tail Risk (38%), Fragility (23%), Operational Burden (18%).",2026-06-20T01:47:21.593060+00:00
+FKID000129,Critical,Tail Risk,0.370911,Fragility,0.219496,Operational Burden,0.184129,1.0,"Risk dominated by Tail Risk (37%), Fragility (22%), Operational Burden (18%).",2026-06-20T01:47:21.593060+00:00
+FKID003911,Elevated,Tail Risk,0.409968,Operational Burden,0.19851,Drift,0.1731,1.0,"Risk dominated by Tail Risk (41%), Operational Burden (20%), Drift (17%).",2026-06-20T01:47:21.593060+00:00
+FKID000528,Elevated,Tail Risk,0.392921,Fragility,0.267177,Drift,0.197514,1.0,"Risk dominated by Tail Risk (39%), Fragility (27%), Drift (20%).",2026-06-20T01:47:21.593060+00:00
+FKID000923,Elevated,Tail Risk,0.380528,Operational Burden,0.187316,Drift,0.153526,1.0,"Risk dominated by Tail Risk (38%), Operational Burden (19%), Drift (15%).",2026-06-20T01:47:21.593060+00:00
+FKID007189,Elevated,Tail Risk,0.402575,Operational Burden,0.19421,Drift,0.142989,1.0,"Risk dominated by Tail Risk (40%), Operational Burden (19%), Drift (14%).",2026-06-20T01:47:21.593060+00:00
+FKID001133,Elevated,Tail Risk,0.36844,Fragility,0.180268,Operational Burden,0.168082,1.0,"Risk dominated by Tail Risk (37%), Fragility (18%), Operational Burden (17%).",2026-06-20T01:47:21.593060+00:00
+FKID004711,Elevated,Tail Risk,0.413233,Fragility,0.227877,Drift,0.158348,1.0,"Risk dominated by Tail Risk (41%), Fragility (23%), Drift (16%).",2026-06-20T01:47:21.593060+00:00
+FKID004806,Elevated,Tail Risk,0.424954,Fragility,0.193061,Drift,0.17297,1.0,"Risk dominated by Tail Risk (42%), Fragility (19%), Drift (17%).",2026-06-20T01:47:21.593060+00:00
+FKID007137,Elevated,Tail Risk,0.41636,Operational Burden,0.183367,Fragility,0.170961,1.0,"Risk dominated by Tail Risk (42%), Operational Burden (18%), Fragility (17%).",2026-06-20T01:47:21.593060+00:00
+FKID005996,Elevated,Tail Risk,0.386591,Fragility,0.187536,Operational Burden,0.175671,1.0,"Risk dominated by Tail Risk (39%), Fragility (19%), Operational Burden (18%).",2026-06-20T01:47:21.593060+00:00
+FKID000968,Elevated,Tail Risk,0.423408,Fragility,0.248544,Drift,0.17663,1.0,"Risk dominated by Tail Risk (42%), Fragility (25%), Drift (18%).",2026-06-20T01:47:21.593060+00:00
+FKID001931,Elevated,Tail Risk,0.452383,Fragility,0.24695,Drift,0.140931,1.0,"Risk dominated by Tail Risk (45%), Fragility (25%), Drift (14%).",2026-06-20T01:47:21.593060+00:00
+FKID001932,Elevated,Tail Risk,0.452383,Fragility,0.24695,Drift,0.140931,1.0,"Risk dominated by Tail Risk (45%), Fragility (25%), Drift (14%).",2026-06-20T01:47:21.593060+00:00
+FKID003103,Elevated,Tail Risk,0.396668,Fragility,0.257506,Drift,0.162933,1.0,"Risk dominated by Tail Risk (40%), Fragility (26%), Drift (16%).",2026-06-20T01:47:21.593060+00:00
+FKID001646,Elevated,Tail Risk,0.405232,Operational Burden,0.186194,Drift,0.145261,1.0,"Risk dominated by Tail Risk (41%), Operational Burden (19%), Drift (15%).",2026-06-20T01:47:21.593060+00:00
+FKID004531,Elevated,Tail Risk,0.471945,Drift,0.196456,Novelty,0.139221,1.0,"Risk dominated by Tail Risk (47%), Drift (20%), Novelty (14%).",2026-06-20T01:47:21.593060+00:00
+FKID000164,Normal,Tail Risk,0.438025,Fragility,0.216837,Drift,0.142528,1.0,"Risk dominated by Tail Risk (44%), Fragility (22%), Drift (14%).",2026-06-20T01:47:21.593060+00:00
+FKID005593,Normal,Tail Risk,0.436033,Fragility,0.258034,Novelty,0.136509,1.0,"Risk dominated by Tail Risk (44%), Fragility (26%), Novelty (14%).",2026-06-20T01:47:21.593060+00:00
+FKID004694,Normal,Tail Risk,0.452555,Drift,0.168697,Fragility,0.165146,1.0,"Risk dominated by Tail Risk (45%), Drift (17%), Fragility (17%).",2026-06-20T01:47:21.593060+00:00
+FKID003235,Normal,Tail Risk,0.435863,Fragility,0.192562,Drift,0.190268,1.0,"Risk dominated by Tail Risk (44%), Fragility (19%), Drift (19%).",2026-06-20T01:47:21.593060+00:00
+FKID005137,Normal,Tail Risk,0.421864,Fragility,0.243783,Drift,0.141418,1.0,"Risk dominated by Tail Risk (42%), Fragility (24%), Drift (14%).",2026-06-20T01:47:21.593060+00:00
+FKID001489,Normal,Tail Risk,0.470808,Drift,0.196123,Fragility,0.175361,1.0,"Risk dominated by Tail Risk (47%), Drift (20%), Fragility (18%).",2026-06-20T01:47:21.593060+00:00
+FKID004408,Normal,Tail Risk,0.450964,Fragility,0.188394,Drift,0.164207,1.0,"Risk dominated by Tail Risk (45%), Fragility (19%), Drift (16%).",2026-06-20T01:47:21.593060+00:00
+FKID004829,Normal,Tail Risk,0.450399,Drift,0.187756,Novelty,0.154786,1.0,"Risk dominated by Tail Risk (45%), Drift (19%), Novelty (15%).",2026-06-20T01:47:21.593060+00:00
+FKID005079,Normal,Tail Risk,0.472011,Fragility,0.243413,Novelty,0.146742,1.0,"Risk dominated by Tail Risk (47%), Fragility (24%), Novelty (15%).",2026-06-20T01:47:21.593060+00:00
+FKID001592,Normal,Tail Risk,0.396004,Drift,0.189624,Operational Burden,0.169328,1.0,"Risk dominated by Tail Risk (40%), Drift (19%), Operational Burden (17%).",2026-06-20T01:47:21.593060+00:00
+FKID000346,Normal,Tail Risk,0.482005,Drift,0.195956,Novelty,0.175814,1.0,"Risk dominated by Tail Risk (48%), Drift (20%), Novelty (18%).",2026-06-20T01:47:21.593060+00:00
+FKID004519,Normal,Tail Risk,0.497714,Fragility,0.231752,Novelty,0.158489,1.0,"Risk dominated by Tail Risk (50%), Fragility (23%), Novelty (16%).",2026-06-20T01:47:21.593060+00:00
+FKID003897,Normal,Tail Risk,0.438941,Operational Burden,0.210446,Fragility,0.175263,1.0,"Risk dominated by Tail Risk (44%), Operational Burden (21%), Fragility (18%).",2026-06-20T01:47:21.593060+00:00
+FKID004967,Normal,Tail Risk,0.45092,Drift,0.185364,Novelty,0.165547,1.0,"Risk dominated by Tail Risk (45%), Drift (19%), Novelty (17%).",2026-06-20T01:47:21.593060+00:00
+FKID005194,Normal,Tail Risk,0.463504,Fragility,0.177888,Drift,0.154547,1.0,"Risk dominated by Tail Risk (46%), Fragility (18%), Drift (15%).",2026-06-20T01:47:21.593060+00:00
+FKID004492,Normal,Tail Risk,0.4351,Drift,0.208734,Novelty,0.145552,1.0,"Risk dominated by Tail Risk (44%), Drift (21%), Novelty (15%).",2026-06-20T01:47:21.593060+00:00
+FKID005244,Normal,Tail Risk,0.523639,Novelty,0.165184,Drift,0.148697,1.0,"Risk dominated by Tail Risk (52%), Novelty (17%), Drift (15%).",2026-06-20T01:47:21.593060+00:00
+FKID004401,Normal,Tail Risk,0.406402,Operational Burden,0.209195,Drift,0.194845,1.0,"Risk dominated by Tail Risk (41%), Operational Burden (21%), Drift (19%).",2026-06-20T01:47:21.593060+00:00
+FKID000002,Normal,Tail Risk,0.402567,Operational Burden,0.207221,Drift,0.194686,1.0,"Risk dominated by Tail Risk (40%), Operational Burden (21%), Drift (19%).",2026-06-20T01:47:21.593060+00:00

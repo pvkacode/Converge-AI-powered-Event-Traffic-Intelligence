@@ -1,0 +1,13 @@
+check_id,phase,passed,detail,severity,generated_at
+loader_no_missing_required,loader,True,all required inputs present,info,2026-06-20T01:47:21.561543+00:00
+loader_no_schema_drift,loader,True,no schema drift on consumed columns,info,2026-06-20T01:47:21.561543+00:00
+loader_empty_inputs_noted,loader,True,no empty inputs,info,2026-06-20T01:47:21.561543+00:00
+loader_three_outputs_written,loader,True,"input_audit, schema_inventory, data_freshness written",info,2026-06-20T01:47:21.561543+00:00
+state_no_missing_tiers,operational_state,True,"tiers present: ['Critical', 'Elevated', 'Emergency', 'Normal'] (expected ['Critical', 'Elevated', 'Emergency', 'Normal'])",info,2026-06-20T01:47:21.561543+00:00
+state_no_nan_risk_scores,operational_state,True,0 NaN ORS values,info,2026-06-20T01:47:21.561543+00:00
+state_nonzero_variance,operational_state,True,ORS variance = 211.644,info,2026-06-20T01:47:21.561543+00:00
+state_score_in_range,operational_state,True,"ORS range [8.837, 78.316]",info,2026-06-20T01:47:21.561543+00:00
+alerts_no_duplicate_ids,alert_prioritization,True,0 duplicate l7_alert_id,info,2026-06-20T01:47:21.561543+00:00
+alerts_ordering_reproducible,alert_prioritization,True,feed sorted by ASS desc (deterministic tie-break on id),info,2026-06-20T01:47:21.561543+00:00
+alerts_no_nan_ass,alert_prioritization,True,0 NaN ASS values,info,2026-06-20T01:47:21.561543+00:00
+alerts_severity_distribution_reported,alert_prioritization,True,"priority distribution: {'P3': 32, 'P2': 16, 'P4': 16, 'P1': 9}",info,2026-06-20T01:47:21.561543+00:00

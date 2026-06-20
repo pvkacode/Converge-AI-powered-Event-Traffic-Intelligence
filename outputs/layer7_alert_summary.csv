@@ -1,0 +1,15 @@
+dimension,key,n_alerts
+priority,P1,9
+priority,P2,16
+priority,P3,32
+priority,P4,16
+severity_raw,critical,22
+severity_raw,moderate,47
+severity_raw,warning,3
+severity_raw,info,1
+source_feed,active_alerts,37
+source_feed,retrain_triggers,32
+source_feed,drift_report,3
+source_feed,cc_violations,1
+total,all,73
+meta,generated_at,2026-06-20T01:47:21.551537+00:00

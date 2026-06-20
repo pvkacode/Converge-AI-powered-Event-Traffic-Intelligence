@@ -1,0 +1,9 @@
+sandbox_id,event_id,change_type,resource,delta_units,expected_delay_change,expected_risk_change,expected_alert_change,sandbox_simulation_score,valid,flags,sandbox_source,generated_at
+SBX-001,FKID006340,resource_increase,police,3,-143695.689,-10.7222,-0.0,0.436621,True,,demo,2026-06-20T01:47:22.890493+00:00
+SBX-002,FKID006955,resource_increase,tow,2,-123732.8926,-6.9963,-0.1092,0.439984,True,,demo,2026-06-20T01:47:22.890493+00:00
+SBX-003,FKID007660,resource_reduction,barricades,2,49027.8181,6.8573,0.0,0.528022,True,,demo,2026-06-20T01:47:22.890493+00:00
+SBX-004,FKID008103,diversion_enable,,0,-77051.2441,-4.9168,0.0,0.46768,True,,demo,2026-06-20T01:47:22.890493+00:00
+SBX-005,FKID000022,diversion_disable,,0,24767.5002,4.8798,0.0,0.516988,True,,demo,2026-06-20T01:47:22.890493+00:00
+SBX-006,FKID000000,resource_increase,police,2,0.0,0.0,0.0,0.5,False,unknown_event_id,demo,2026-06-20T01:47:22.890493+00:00
+SBX-007,FKID001288,teleport_units,police,1,0.0,0.0,0.0,0.5,False,invalid_change_type,demo,2026-06-20T01:47:22.890493+00:00
+SBX-008,FKID001125,resource_reduction,qru,99,0.0,0.0,0.0,0.5,False,reduction_exceeds_capacity,demo,2026-06-20T01:47:22.890493+00:00

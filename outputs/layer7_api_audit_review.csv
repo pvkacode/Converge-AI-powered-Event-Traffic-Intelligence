@@ -1,0 +1,19 @@
+endpoint_or_aspect,milestone,check,result,evidence,finding_id,severity
+/overview,M4,serves+schema,OK,"200; list of overview records (smoke-tested)",,Info
+/alerts,M4,serves+schema,OK,"200; list",,Info
+/recommendations,M4,serves+schema,OK,"200; list",,Info
+/overrides,M4,serves+schema,OK,"200; list",,Info
+/health,M4,serves+schema,OK,"200; returns model-health page (list of 29)",,Info
+/counterfactuals,M4,serves+schema,OK,"200; list",,Info
+/manifest,M4,serves+schema,OK,"200; object (6 pages)",,Info
+/healthz,M5,serves+schema,OK,"200; status object {status,version,timestamp,validation_passed}",,Info
+/metrics,M5,serves+schema,OK,"200; KPI object",,Info
+/site/{event_id},M5,validation,OK,"200 valid; 404 unknown (BAD_ID); resolved via overview",,Info
+/alerts/{priority},M5,validation,OK,"200 P1; 400 invalid (P9)",,Info
+/override/{override_id},M5,validation,OK,"200 valid; 404 unknown (OVR-9999)",,Info
+endpoint_naming,M4/M5,consistency,FLAG,"/health=model-health list vs /healthz=liveness object (back-compat compromise)",F-018,Low
+error_handling_M4_base,M4,validation,WEAK,"M4 list endpoints have no input to validate; get_page raises KeyError internally (not exposed)",,Low
+serialization,both,check,OK_WITH_NOTE,"pandas->records with fillna(''); numeric upstream-missing rendered as '' strings",F-017,Low
+endpoint_drift,both,check,OK,"endpoint_catalog (13) == openapi paths (13) == expected_routes; no drift",,Info
+auth/rate_limiting,both,check,NOTE,"none (read-only local API by design; acceptable for non-production readiness)",,Low
+inconsistent_payloads,both,check,NONE,"object vs list types documented in endpoint_catalog response_type",,Info
