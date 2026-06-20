@@ -1,0 +1,2 @@
+lrt_statistic,df,p_value_asymptotic,p_value_permutation,perm_n,spillover_strength,beta_shared_h1,beta_shared_h0,half_life_hours,loglik_h0,loglik_h1,note_asymptotic
+534.886426,34,0.0,,0,strong,1.314147,2.453751,0.5275,-7564.9963,-7297.5531,asymptotic chi2 can be optimistic on sparse data

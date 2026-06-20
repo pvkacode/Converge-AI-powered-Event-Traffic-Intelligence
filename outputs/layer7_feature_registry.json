@@ -1,0 +1,43 @@
+[
+  {
+    "feature_name": "DIS_asof",
+    "source_column": "asof_fragility_proxy",
+    "source_file": "layer45_asof_feature_matrix.csv",
+    "mark_weight": 0.4,
+    "asof_safe": true,
+    "note": "proxy for disruption impact score; normalized to [0,1] using train-period stats"
+  },
+  {
+    "feature_name": "OBI_asof",
+    "source_column": "asof_obi_proxy",
+    "source_file": "layer45_asof_feature_matrix.csv",
+    "mark_weight": 0.3,
+    "asof_safe": true,
+    "note": "operational burden index proxy; normalized to [0,1] using train-period stats"
+  },
+  {
+    "feature_name": "severity_i",
+    "source_column": "priority",
+    "source_file": "layer45_asof_feature_matrix.csv",
+    "mark_weight": 0.2,
+    "asof_safe": true,
+    "note": "High=1.0, Low=0.333, missing=0.667; event-level property, not time-varying"
+  },
+  {
+    "feature_name": "confidence_i",
+    "source_column": "asof_retrieval_confidence",
+    "source_file": "layer45_asof_feature_matrix.csv",
+    "mark_weight": 0.1,
+    "asof_safe": true,
+    "note": "retrieval confidence; normalized to [0,1] using train-period stats"
+  },
+  {
+    "feature_name": "mark_i",
+    "source_column": "computed",
+    "source_file": "layer45_asof_feature_matrix.csv",
+    "mark_weight": null,
+    "asof_safe": true,
+    "note": "0.4*DIS + 0.3*OBI + 0.2*SEV + 0.1*CONF; weights are explicit hyperparameters",
+    "mark_fallback_used": false
+  }
+]

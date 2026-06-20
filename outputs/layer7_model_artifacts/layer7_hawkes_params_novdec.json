@@ -1,0 +1,114 @@
+{
+  "beta": 1.1242100350620863,
+  "half_life_hours": 0.6165637727310138,
+  "t0_utc": "2023-11-09 19:24:48.154000+00:00",
+  "T_train_hours": 1251.7008802777777,
+  "train_period": "Nov 10 2023 \u2013 Dec 31 2023",
+  "note": "Used for lambda_v(t) feature in layer7_zone_forecast. NOT Part A params.",
+  "zone_params": {
+    "Central Zone 1": {
+      "mu": 0.02740856915774217,
+      "alpha_self": 0.6990695690650661,
+      "alpha_cross": {
+        "Central Zone 2": 0.32058063982154167,
+        "North Zone 1": 0.19066765379081863,
+        "North Zone 2": 0.20222719535133826,
+        "South Zone 1": 0.0,
+        "West Zone 1": 0.2774349112861867
+      },
+      "converged": "True"
+    },
+    "Central Zone 2": {
+      "mu": 0.1246331238602279,
+      "alpha_self": 0.7702813733563579,
+      "alpha_cross": {
+        "Central Zone 1": 0.6480609930543286,
+        "East Zone 2": 0.7337543346346319,
+        "North Zone 2": 0.6738126899662985,
+        "South Zone 2": 0.34473720537359914
+      },
+      "converged": "True"
+    },
+    "East Zone 1": {
+      "mu": 0.06165292389446261,
+      "alpha_self": 1.0641555799969022,
+      "alpha_cross": {
+        "East Zone 2": 0.3488605498862798,
+        "North Zone 2": 0.33734364529504124,
+        "South Zone 2": 0.0
+      },
+      "converged": "True"
+    },
+    "East Zone 2": {
+      "mu": 0.0507400938642052,
+      "alpha_self": 0.3851735264158265,
+      "alpha_cross": {
+        "Central Zone 2": 0.16903780302771848,
+        "East Zone 1": 0.45220129004426646,
+        "South Zone 2": 0.0777415519652202
+      },
+      "converged": "True"
+    },
+    "North Zone 1": {
+      "mu": 0.07314415138203624,
+      "alpha_self": 0.8382585337058733,
+      "alpha_cross": {
+        "Central Zone 1": 0.36235180828505664,
+        "North Zone 2": 0.3938352530004913,
+        "West Zone 1": 0.3266369447310169
+      },
+      "converged": "True"
+    },
+    "North Zone 2": {
+      "mu": 0.11552302139936246,
+      "alpha_self": 0.7085969449667812,
+      "alpha_cross": {
+        "Central Zone 1": 0.5898972479654685,
+        "Central Zone 2": 0.2336736311266823,
+        "East Zone 1": 0.21599294982214057,
+        "North Zone 1": 0.4652782041431206
+      },
+      "converged": "True"
+    },
+    "South Zone 1": {
+      "mu": 0.023089908952190635,
+      "alpha_self": 1.555056986050633,
+      "alpha_cross": {
+        "Central Zone 1": 0.1306405399114883,
+        "South Zone 2": 0.17533133045554508,
+        "West Zone 2": 0.11082358076817587
+      },
+      "converged": "True"
+    },
+    "South Zone 2": {
+      "mu": 0.03939826097963771,
+      "alpha_self": 1.5678534076281725,
+      "alpha_cross": {
+        "Central Zone 2": 0.20026064456918527,
+        "East Zone 1": 0.5378595313230631,
+        "East Zone 2": 0.27076624272062016,
+        "South Zone 1": 0.7403713086475143
+      },
+      "converged": "True"
+    },
+    "West Zone 1": {
+      "mu": 0.08935031460871606,
+      "alpha_self": 0.7136452075686096,
+      "alpha_cross": {
+        "Central Zone 1": 0.419819586304752,
+        "North Zone 1": 0.7438816024928574,
+        "West Zone 2": 0.6223482165835931
+      },
+      "converged": "True"
+    },
+    "West Zone 2": {
+      "mu": 0.1268054510654459,
+      "alpha_self": 0.787697568686377,
+      "alpha_cross": {
+        "South Zone 1": 0.050494590170914504,
+        "West Zone 1": 0.38314480464511985
+      },
+      "converged": "True"
+    }
+  }
+}

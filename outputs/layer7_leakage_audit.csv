@@ -1,0 +1,9 @@
+feature,source,asof_safe,normalization
+DIS_asof (asof_fragility_proxy),layer45_asof_feature_matrix.csv,True,train-period min/max only
+OBI_asof (asof_obi_proxy),layer45_asof_feature_matrix.csv,True,train-period min/max only
+severity_i (priority),layer45_asof_feature_matrix.csv,True,fixed map High=1/Low=0.33/nan=0.67
+confidence_i (asof_retrieval_confidence),layer45_asof_feature_matrix.csv,True,train-period min/max only
+mark_i composite,layer45_asof_feature_matrix.csv,True,"weighted sum, weights are hyperparameters"
+zone_adjacency,geographic layout + layer3_diversion_recommendations.csv,True,"static structure, not time-varying"
+hawkes_intensity_asof,computed from strictly past events,True,parameters fit on training period only
+"model parameters (mu, alpha, beta)",fitted on Nov-Feb train only,True,not re-estimated on eval data

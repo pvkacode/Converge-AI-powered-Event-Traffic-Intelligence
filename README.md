@@ -1003,6 +1003,101 @@ converge/
 | `layer5_shadow_prices.csv` | Marginal value of +1 unit per resource |
 | `layer5_frontend_export.csv` | Dashboard-ready allocation summary with baseline CVaR, optimized CVaR, violation flags |
 
+## Layer 7 — Cross-Zone Spillover Intelligence (Marked Hawkes)
+
+New module pair (`src/layer7_cross_zone_hawkes.py`, `src/layer7b_spillover_forecast_eval.py`). Extends Layer 3's self-exciting model to capture between-zone contagion: does a disruption in Central Zone 1 raise the probability of a follow-on incident in adjacent zones?
+
+### Data limitation — documented explicitly
+
+Zone labels in `events_clean.parquet` are only populated **Nov 10 2023 – Jan 19 2024** (3,389 usable events). The originally planned Nov–Feb train / Mar–Apr evaluation split is **not possible** — events after Jan 19 have null zone and cannot participate in any zone-level model component. This is a confirmed data constraint, not a methodological choice.
+
+Consequence for evaluation design:
+- Part A fits on the full zone-labeled window (Nov 10 – Jan 19) so all 3,389 events contribute to parameter estimation; the stability fold serves as its generalization proxy.
+- Part B uses a strict chronological split within that window — train Nov 10 – Dec 31, eval Jan 1 – Jan 19 — giving a genuine out-of-sample holdout with ~19 days of evaluation data. Because the holdout is smaller than other project evaluations, **all Part B metrics are reported with 95% bootstrap confidence intervals** (event-level resample, B=1,000) rather than point estimates alone.
+
+### Part A — Cross-Zone Spillover Discovery
+
+**Model:** $\lambda_v(t) = \mu_v + \alpha_{vv} A_v(t) + \sum_{u \in \text{adj}(v)} \alpha_{u \to v} A_u(t)$
+
+where $A_u(t) = \sum_{t_i < t,\, \text{zone}=u} m_i e^{-\beta(t - t_i)}$ and the mark $m_i = 0.40 \cdot \text{DIS}_{\text{asof}} + 0.30 \cdot \text{OBI}_{\text{asof}} + 0.20 \cdot \text{severity}_i + 0.10 \cdot \text{confidence}_i$ (fixed hyperparameters, not learned).
+
+**Fit strategy:** Profile likelihood over a 60-point $\beta$ grid; per-zone L-BFGS-B with 4 restarts; empirical-Bayes L2 shrinkage ($\kappa=5$) on cross-zone $\alpha$ parameters.
+
+**Adjacency:** 10 geographic zones, 17 undirected edges → 34 directed pairs.
+
+**Key results:**
+- LRT statistic = 534.9, df = 34, p ≈ 2.5 × 10⁻⁹¹ — **strong** spillover effect.
+- Spillover half-life: **0.53 hours** (excitation decays within ~30 min).
+- Top spillover centrality zones: Central Zone 2 (SSC = 3.70), Central Zone 1 (3.47), North Zone 2 (3.09).
+- Only one directed pair has a 95% CI strictly above zero (East Zone 2 → Central Zone 2: α = 0.85 [0.44, 1.27]) — the rest show detectable aggregate signal but wide individual uncertainty.
+- Chronological stability fold (Nov–Dec vs full Nov–Jan): 91% of pairs stable.
+- Permutation test skipped (n = 3,389 > threshold 3,000); asymptotic χ² p-value noted as potentially optimistic on sparse data.
+
+| Output file | Contents |
+|---|---|
+| `layer7_cross_excitation_matrix.csv` | 34 directed-pair α estimates with 95% delta-method CI |
+| `layer7_cross_excitation_uncertainty.csv` | α, SE, CI columns |
+| `layer7_lrt_results.csv` | LRT statistic, df, p-values, beta, log-likelihoods |
+| `layer7_spillover_stability.csv` | Per-pair alpha comparison across chronological fold |
+| `layer7_spillover_summary.csv` | Per-zone μ, α_self, S, V, SSC, event count |
+| `layer7_spillover_centrality.csv` | Zones ranked by spillover centrality (SSC = S + V) |
+| `layer7_hawkes_intensity_asof.csv` | As-of intensity for all 3,389 zone-labeled events (strictly past-only) |
+| `layer7_leakage_audit.csv` | Point-in-time safety check for all features |
+| `layer7_feature_registry.json` | Feature provenance and mark weight registry |
+| `layer7_hawkes_fusion_summary.txt` | Full text summary |
+
+### Part B — Out-of-Sample Forecast Evaluation
+
+Re-fits the Hawkes model on **Nov 10 – Dec 31** only, then evaluates on the **Jan 1 – Jan 19** holdout. Parameters from Part A are not reused — Part B has its own independent fit to ensure the evaluation is genuinely out-of-sample.
+
+**Evaluation metrics (all with 95% bootstrap CI):**
+
+| Metric | Description |
+|---|---|
+| Held-out log-likelihood | Total and per-event LL on Jan 1–19; compared to homogeneous Poisson baseline (rate = n_train / T_train per zone) |
+| Mean log-intensity | Mean $\log \lambda(t_i)$ over eval events with bootstrap CI; positive ΔLL vs Poisson = Hawkes captures temporal structure |
+| KS time-rescaling test | Residual inter-arrival times $\Lambda_v(t_{i-1}, t_i)$ should be Exp(1) if model is correctly specified; KS statistic and p-value per zone |
+| Day-by-day intensity | Mean predicted λ vs observed event count per day over Jan 1–19 |
+
+**Why CIs instead of point estimates:** with ~19 evaluation days the per-event LL variance is non-negligible. The 95% CI from 1,000 bootstrap replicates (event-level resample) characterises this uncertainty explicitly, consistent with the project's commitment to not over-stating precision.
+
+| Output file | Contents |
+|---|---|
+| `layer7b_eval_metrics.csv` | Aggregate LL, bootstrap CI, KS pass rate, beta, data limitation note |
+| `layer7b_eval_per_zone.csv` | Per-zone LL, Poisson baseline, bootstrap CI, KS stat/p |
+| `layer7b_eval_daily_intensity.csv` | Day-by-day n_observed vs mean predicted intensity |
+| `layer7b_forecast_eval_summary.txt` | Full text summary with data limitation disclosure |
+
+### Layer 7 src entries
+
+```
+│   ├── layer7_cross_zone_hawkes.py      # Part A: spillover discovery, LRT, stability, as-of export
+│   └── layer7b_spillover_forecast_eval.py  # Part B: out-of-sample eval, bootstrap CIs, KS test
+```
+
 ## Next layers (planned)
 
 - **Layer 6:** Bayesian post-event learning loop (updates priors after each incident closes)
+
+### Layer 7 Part B — ERI and Persistence (completed)
+
+**Evaluation window correction:** Zone labels only exist through Jan 19 2024. The originally specified Mar–Apr window is infeasible. Train = Nov 10–Dec 31 2023; Eval = Jan 1–19 2024 (~18.3 days). This is a confirmed data constraint. All metrics include 95% bootstrap CIs (B=1,000).
+
+**South Zone 2:** KS calibration p=0.021 (weakest among 10 zones). CI widened by ×1.5 in ERI and persistence outputs. Per-zone AUC at 9h = 0.651 vs 0.770–0.852 for other zones. Reported separately throughout spatial calibration.
+
+**CatBoost as primary model** for binary P(z,h). Isotonic calibration applied post-training. NB regression (not Poisson) for count forecasts — overdispersion confirmed (alpha 0.045–0.159). Models never blended across targets.
+
+**ERI/SSC separation:** SSC enters only as a post-prediction multiplier in the ERI formula (`ERI = P × D_hat × (1 + SSC_norm)`), never as a CatBoost feature. `ERI_base` and `ERI` both reported so the SSC adjustment is visible and auditable.
+
+**Persistence classification** (transient/persistent/escalating) derived from ERI slope across horizons. Derived rule is primary; CatBoost classifier not built (small sample insufficient to clearly beat the rule).
+
+| Output | Contents |
+|---|---|
+| `layer7_metrics.csv` | Global calibration: AUC, Brier, ECE, log loss; CatBoost vs Hawkes-only vs historical baseline |
+| `layer7_reliability_diagram.csv` | Calibration curve data (10 bins, raw and calibrated) |
+| `layer7_spatial_calibration.csv` | Per-zone calibration metrics; South Zone 2 flagged |
+| `layer7_shap_summary.csv` | Mean absolute SHAP per feature per horizon |
+| `layer7_expected_risk_index.csv` | ERI_base, ERI, CI per (zone, grid_time, horizon) |
+| `layer7_risk_persistence.csv` | Pers_z, Slope_z, persistence class per (zone, grid_time) |
+| `layer7_top_k_early_warning.csv` | Top-20 rows by ERI with full decomposition |
+| `layer7_summary.txt` | Complete narrative summary |

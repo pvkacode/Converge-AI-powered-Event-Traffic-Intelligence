@@ -1,0 +1,26 @@
+{
+  "3": {
+    "horizon_h": 3,
+    "use_calibration": true,
+    "ece_raw_val_fold": 0.0432,
+    "ece_cal_val_fold": 0.0344,
+    "val_fold_n": 2196,
+    "reason": "calibration reduces val ECE 0.0432 -> 0.0344"
+  },
+  "6": {
+    "horizon_h": 6,
+    "use_calibration": true,
+    "ece_raw_val_fold": 0.2511,
+    "ece_cal_val_fold": 0.0356,
+    "val_fold_n": 2196,
+    "reason": "calibration reduces val ECE 0.2511 -> 0.0356"
+  },
+  "9": {
+    "horizon_h": 9,
+    "use_calibration": true,
+    "ece_raw_val_fold": 0.1632,
+    "ece_cal_val_fold": 0.0469,
+    "val_fold_n": 2196,
+    "reason": "calibration reduces val ECE 0.1632 -> 0.0469"
+  }
+}
