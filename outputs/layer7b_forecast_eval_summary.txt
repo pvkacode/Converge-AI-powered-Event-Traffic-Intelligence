@@ -1,0 +1,73 @@
+======================================================================
+ASTraM Layer 7 Part B — Out-of-Sample Spillover Forecast Evaluation
+======================================================================
+
+DATA LIMITATION — documented explicitly:
+  Zone labels in events_clean.parquet are only populated through
+  Jan 19 2024 (3,389 usable events). The originally planned
+  Mar-Apr evaluation window is infeasible — those events have null
+  zone and cannot participate in a zone-level Hawkes model.
+  This is a confirmed data limitation, not a methodological choice.
+
+CHRONOLOGICAL SPLIT (revised to fit zone-labeled window):
+  Train : Nov 10, 2023 – Dec 31, 2023
+  Eval  : Jan 01, 2024 – Jan 19, 2024  (genuine zone-labeled cutoff)
+  Eval duration : 18.3 days  |  Eval events: 868
+
+  The holdout is smaller than this project's other evaluations.
+  All metrics include 95% bootstrap CIs (event-level resample, B=1000).
+
+--- Model Fit (Part B training window: Nov-Dec only) ---
+  Best beta : 1.12421 h^-1  (half-life: 0.62 h)
+  Train LL  : -5412.673
+  Mark fallback used: False
+
+--- Held-Out Log-Likelihood ---
+  Hawkes LL (total)   : -2027.577  (-2.3359 per event)
+  Poisson LL (total)  : -2266.012  (-2.6106 per event)
+  dLL (Hawkes-Poisson): 238.436
+  Hawkes > Poisson on holdout: True
+
+--- Mean Log-Intensity (intensity-term only, with bootstrap CI) ---
+  Hawkes  : -1.2917  95% CI [-1.3519, -1.2347]
+  (Bootstrap: B=1000, event-level resample with replacement)
+  CI width: 0.1172  — wider than typical due to small holdout
+
+--- KS Time-Rescaling Test (model calibration) ---
+  9/10 zones pass KS calibration test (p>0.05)
+    Central Zone 1        : KS=0.1114  p=0.2672  [PASS]  n=78
+    Central Zone 2        : KS=0.0408  p=0.9508  [PASS]  n=154
+    East Zone 1           : KS=0.1041  p=0.4812  [PASS]  n=62
+    East Zone 2           : KS=0.0902  p=0.8059  [PASS]  n=47
+    North Zone 1          : KS=0.0952  p=0.5108  [PASS]  n=71
+    North Zone 2          : KS=0.1108  p=0.2355  [PASS]  n=84
+    South Zone 1          : KS=0.1168  p=0.5188  [PASS]  n=46
+    South Zone 2          : KS=0.1900  p=0.0211  [FAIL]  n=61
+    West Zone 1           : KS=0.0706  p=0.5743  [PASS]  n=118
+    West Zone 2           : KS=0.0458  p=0.9832  [PASS]  n=95
+
+--- Per-Zone Held-Out LL ---
+  Central Zone 1        : n_eval= 78  LL=-193.389  vs Poisson=-213.814  mean_log_lam=-1.626312  95%CI [-1.805,-1.469]
+  Central Zone 2        : n_eval=154  LL=-291.815  vs Poisson=-315.222  mean_log_lam=-0.92419  95%CI [-1.017,-0.830]
+  East Zone 1           : n_eval= 62  LL=-178.087  vs Poisson=-183.361  mean_log_lam=-1.859713  95%CI [-2.047,-1.687]
+  East Zone 2           : n_eval= 47  LL=-149.681  vs Poisson=-152.048  mean_log_lam=-2.138744  95%CI [-2.302,-1.966]
+  North Zone 1          : n_eval= 71  LL=-187.210  vs Poisson=-201.306  mean_log_lam=-1.514619  95%CI [-1.686,-1.345]
+  North Zone 2          : n_eval= 84  LL=-206.531  vs Poisson=-227.332  mean_log_lam=-1.162317  95%CI [-1.273,-1.039]
+  South Zone 1          : n_eval= 98  LL=-140.946  vs Poisson=-267.901  mean_log_lam=-0.612809  95%CI [-0.898,-0.319]
+  South Zone 2          : n_eval= 61  LL=-193.386  vs Poisson=-191.243  mean_log_lam=-1.493486  95%CI [-1.713,-1.281]
+  West Zone 1           : n_eval=118  LL=-254.178  vs Poisson=-273.410  mean_log_lam=-1.218166  95%CI [-1.334,-1.092]
+  West Zone 2           : n_eval= 95  LL=-232.352  vs Poisson=-240.375  mean_log_lam=-1.433298  95%CI [-1.544,-1.324]
+
+--- Outputs ---
+  layer7b_eval_metrics.csv       — aggregate metrics with CIs
+  layer7b_eval_per_zone.csv      — per-zone metrics with CIs
+  layer7b_eval_daily_intensity.csv — day-by-day observed vs predicted
+  layer7b_forecast_eval_summary.txt — this summary
+
+--- Leakage Audit ---
+  Model parameters fit on Nov-Dec training only: YES
+  Eval intensities use strictly past events only: YES
+  Normalization stats from training period only: YES
+  Layer 1-6 and Part A output files NOT modified: YES
+
+======================================================================

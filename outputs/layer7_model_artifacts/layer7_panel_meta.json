@@ -1,0 +1,25 @@
+{
+  "t0_utc": "2023-11-09 19:24:48.154000+00:00",
+  "train_end_h": 1252.5863461111112,
+  "eval_start_h": 1252.5866238888889,
+  "grid_end_h": 1708.5863461111112,
+  "horizons": [
+    3,
+    6,
+    9
+  ],
+  "zones": [
+    "Central Zone 1",
+    "Central Zone 2",
+    "East Zone 1",
+    "East Zone 2",
+    "North Zone 1",
+    "North Zone 2",
+    "South Zone 1",
+    "South Zone 2",
+    "West Zone 1",
+    "West Zone 2"
+  ],
+  "grid_step_h": 1.0,
+  "south_zone_2_ks_note": "South Zone 2 showed KS p=0.021 in Part B spillover eval \u2014 weakest calibration among zones. Widen confidence band in ERI."
+}

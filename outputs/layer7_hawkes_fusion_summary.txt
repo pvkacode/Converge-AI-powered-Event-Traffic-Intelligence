@@ -1,0 +1,95 @@
+======================================================================
+ASTraM Layer 7 Part A — Cross-Zone Spillover Discovery
+Hawkes Fusion Summary
+======================================================================
+
+Spec train period  : Nov 2023 – Feb 2024
+Spec eval period   : Mar 2024 – Apr 2024
+Effective data     : Zone labels populated Nov 2023 – Jan 19 2024 only.
+  Events with valid zone: 3389 (Nov-Jan); Mar-Apr have null zone.
+  Out-of-sample eval on Mar-Apr is not possible from the current data.
+  Intensity export covers all 3389 zone-labelled events.
+Zones        : 10
+Adjacent pairs (directed): 34
+Training events (zone-labelled): 3389
+
+--- Mark Construction ---
+Formula : m_i = 0.40*DIS_asof + 0.30*OBI_asof + 0.20*severity_i + 0.10*confidence_i
+Weights are explicit hyperparameters, NOT learned from data.
+All components sourced from layer45_asof_feature_matrix.csv.
+Mark fallback (m_i=1) used: False
+
+--- Model Fit ---
+Strategy     : profile likelihood over shared beta grid (60 candidates)
+H0 (self-only): best beta = 2.45375 h^-1  |  log-lik = -7564.996
+H1 (cross-zone): best beta = 1.31415 h^-1  |  log-lik = -7297.553
+Spillover half-life : 0.53 hours
+Shrinkage (kappa)   : 5.0 (empirical-Bayes style L2 on cross-zone alphas)
+
+--- Likelihood Ratio Test ---
+LRT statistic : 534.8864
+Degrees of freedom : 34
+Asymptotic chi2 p-value : 2.4698e-91
+Permutation test : SKIPPED (n_train=3389 > threshold 3000)
+  Asymptotic p-value reported; note it can be optimistic on sparse data.
+Spillover effect : STRONG
+
+--- Spillover Centrality (top zones) ---
+  Central Zone 2          SSC=3.7047  S=0.9674  V=2.7373
+  Central Zone 1          SSC=3.4681  S=2.2669  V=1.2011
+  North Zone 2            SSC=3.0926  S=1.6172  V=1.4754
+  West Zone 1             SSC=2.7147  S=1.0057  V=1.7090
+  East Zone 2             SSC=2.3757  S=1.6485  V=0.7272
+  North Zone 1            SSC=2.3348  S=1.2865  V=1.0483
+  South Zone 2            SSC=2.2483  S=0.8438  V=1.4046
+  East Zone 1             SSC=2.1120  S=1.2627  V=0.8493
+  West Zone 2             SSC=1.1916  S=0.8034  V=0.3882
+  South Zone 1            SSC=0.8880  S=0.3631  V=0.5248
+
+--- Significant Cross-Zone Pairs (CI_lower > 0) ---
+  East Zone 2 -> Central Zone 2: alpha=0.8549 [0.4356, 1.2741]
+  Central Zone 1 -> Central Zone 2: alpha=0.7836 [0.4211, 1.1461]
+  West Zone 2 -> West Zone 1: alpha=0.7165 [0.4484, 0.9846]
+  North Zone 2 -> Central Zone 2: alpha=0.5832 [0.3131, 0.8533]
+  East Zone 1 -> South Zone 2: alpha=0.5779 [0.2990, 0.8569]
+  North Zone 1 -> West Zone 1: alpha=0.5714 [0.2765, 0.8663]
+  South Zone 2 -> Central Zone 2: alpha=0.5156 [0.2599, 0.7714]
+  North Zone 1 -> North Zone 2: alpha=0.4874 [0.2038, 0.7711]
+  Central Zone 1 -> North Zone 2: alpha=0.4851 [0.1715, 0.7988]
+  East Zone 1 -> East Zone 2: alpha=0.4552 [0.2149, 0.6954]
+  East Zone 2 -> East Zone 1: alpha=0.4459 [0.1604, 0.7315]
+  North Zone 2 -> North Zone 1: alpha=0.4373 [0.2328, 0.6418]
+  Central Zone 1 -> West Zone 1: alpha=0.4210 [0.1191, 0.7230]
+  West Zone 1 -> West Zone 2: alpha=0.3876 [0.1982, 0.5771]
+  North Zone 2 -> East Zone 1: alpha=0.3772 [0.1921, 0.5622]
+  West Zone 1 -> Central Zone 1: alpha=0.3493 [0.1867, 0.5118]
+  East Zone 2 -> South Zone 2: alpha=0.3477 [0.0834, 0.6120]
+  Central Zone 2 -> Central Zone 1: alpha=0.3428 [0.2203, 0.4653]
+  Central Zone 1 -> North Zone 1: alpha=0.3423 [0.0829, 0.6016]
+  South Zone 1 -> South Zone 2: alpha=0.3006 [0.0728, 0.5284]
+  Central Zone 2 -> North Zone 2: alpha=0.2732 [0.1333, 0.4132]
+  West Zone 1 -> North Zone 1: alpha=0.2688 [0.1005, 0.4371]
+  Central Zone 1 -> South Zone 1: alpha=0.2349 [0.0597, 0.4101]
+  North Zone 1 -> Central Zone 1: alpha=0.2276 [0.0155, 0.4397]
+  North Zone 2 -> Central Zone 1: alpha=0.2196 [0.0490, 0.3901]
+  South Zone 2 -> South Zone 1: alpha=0.2031 [0.0510, 0.3552]
+  Central Zone 2 -> South Zone 2: alpha=0.1783 [0.0760, 0.2805]
+  Central Zone 2 -> East Zone 2: alpha=0.1731 [0.0781, 0.2682]
+
+--- Stability (Nov-Dec fold vs full Nov-Jan training) ---
+  Fraction of pairs stable across fold : 0.91
+
+--- Leakage Audit ---
+  All features point-in-time safe: True
+  Intensity export uses strictly past events only.
+  Normalisation stats derived from training period only.
+  Layer 1-6 files: NOT MODIFIED.
+
+--- Acceptance Checks ---
+  [1] Cross-zone Hawkes uses adjacent zone pairs only: PASS
+  [2] Spillover coefficients have 95% CI from delta method: PASS
+  [3] As-of intensity computed from strictly past events: PASS
+  [4] All mark components from layer45_asof_feature_matrix.csv: PASS
+  [5] No upstream Layer 1-6 files modified, no external data: PASS
+
+======================================================================

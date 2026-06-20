@@ -1,0 +1,149 @@
+======================================================================
+ASTraM Layer 7 Part B — Zone Forecast, ERI, and Persistence
+Complete Layer 7 Summary
+======================================================================
+
+DATA LIMITATION (documented):
+  Zone labels only exist through Jan 19 2024 (3,389 events).
+  The originally specified evaluation window (extending to April 2024)
+  is infeasible — zone labels are absent past Jan 19 2024.
+  ACTUAL WINDOWS USED:
+    Training   : Nov 10, 2023 - Dec 31, 2023
+    Evaluation : Jan 1, 2024 - Jan 19, 2024 (~18.3 days, 868 events)
+  This is a confirmed data constraint, not a methodological choice.
+  All metrics include 95% bootstrap CIs to reflect the small holdout.
+
+ADDITIVE ARCHITECTURE:
+  Layer 7 adds cross-zone Hawkes spillover and zone-level probabilistic
+  forecasting on top of Layers 1-6. No upstream outputs are modified.
+  No external data used. No causal claims made.
+
+SUB-PARTS:
+  Part A: Cross-zone spillover discovery (src/layer7_cross_zone_hawkes.py)
+  Part B-eval: Spillover forecast eval (src/layer7b_spillover_forecast_eval.py)
+  Part B-core: Zone forecast models (src/layer7_zone_forecast.py,
+               src/layer7_feature_builder.py)
+  Part B-ERI:  Risk index + calibration + SHAP (src/layer7_risk_index.py,
+               src/layer7_persistence.py)
+
+MODELS:
+  Binary P(z,h): CatBoost classifier + CONDITIONAL isotonic calibration.
+    Applied per-horizon only if ECE improves on the 15% val fold used for
+    early stopping (correct out-of-sample comparison, not holdout look-ahead).
+      3h: CALIBRATED  val-fold ECE 0.043 -> 0.034
+      6h: CALIBRATED  val-fold ECE 0.251 -> 0.036  (large raw overconfidence)
+      9h: CALIBRATED  val-fold ECE 0.163 -> 0.047
+    All three horizons passed the conditional test. Note: on the full holdout,
+    3h raw ECE (0.015) outperforms calibrated (0.032). This tension reflects
+    the calibrator slightly overfitting on 3h's 2196-row val fold. It is
+    documented here; the val-fold decision rule is the correct process.
+  Count E[Y]: Negative Binomial (hurdle on non-zero counts).
+    NB chosen over Poisson to handle overdispersion (alpha > 0 for all
+    horizons: 0.045, 0.125, 0.159). Never blended with the binary output.
+  Baselines: historical zone rate, logistic regression on Hawkes lambda only.
+
+FEATURES (CatBoost — SSC explicitly excluded):
+  Hawkes lambda_v(t): from Nov-Dec-only refit (NOT Part A's full fit).
+  Recent activity: count/burden in 1h, 4h, 24h windows.
+  Time: hour sin/cos, day-of-week, is_weekend, is_peak.
+  Static zone: Layer 2 hotspot burden, Layer 4.5 fragility proxy, hist rate.
+  SSC enters ONLY in the ERI multiplier, never as a model feature.
+
+BINARY FORECAST PERFORMANCE (CatBoost, eval Jan 1-19):
+  3h: AUC=0.797  Brier=0.1694
+  6h: see layer7_metrics.csv
+  9h: see layer7_metrics.csv
+  All metrics include 95% bootstrap CIs (B=1000).
+
+ERI FORMULA:
+  ERI_base_z,h = P_z,h * D_hat_z_norm
+  ERI_z,h      = ERI_base_z,h * (1 + SSC_norm_z)
+  D_hat_z = median(asof_fragility_proxy) per zone, training period only.
+  SSC_norm_z = (SSC_z - min) / (max - min), from Part A outputs.
+  ERI_base isolates local activity; ERI adds spillover amplification.
+  Reporting both ensures the SSC adjustment's effect is visible.
+
+SOUTH ZONE 2 LIMITATION (documented):
+  KS time-rescaling test p=0.021 in Part B spillover evaluation.
+  Weakest calibration among 10 zones. Per-zone AUC at 9h = 0.651
+  (vs 0.770-0.852 for other zones).
+  CI widened by factor 1.5 in ERI and persistence outputs.
+  Treat South Zone 2 persistence classification with additional caution.
+
+PERSISTENCE CLASSIFICATION:
+  Pers_z = mean(ERI_3h, ERI_6h, ERI_9h)  |  Slope_z = ERI_9h - ERI_3h
+  Slope thresholds (data-driven): lo=0.0236  hi=0.1439
+  escalating: Slope > hi  (1133 grid points)
+  persistent: lo <= Slope <= hi  (2264 grid points)
+  transient:  Slope < lo  (1133 grid points)
+  Derived rule is the primary output.
+  CatBoost classifier on persistence NOT built — small sample insufficient
+  to clearly beat the derived rule. Flagged for future work.
+
+SPATIAL CALIBRATION:
+  Computed globally and per-zone (see layer7_spatial_calibration.csv).
+  South Zone 2 reported separately throughout.
+  Metrics: Brier, ECE, log loss (binary); MAE, RMSE, CRPS (count).
+  CRPS = MAE for point forecasts (exact for Dirac delta distribution).
+
+OUTPUTS (Layer 7 complete):
+  Part A (10 files): layer7_*.csv/json/txt
+  Part B-eval (4 files): layer7b_*.csv/txt
+  Part B-core (4 files): layer7_panel_dataset.csv,
+    layer7_predictions.csv, layer7_baseline_predictions.csv,
+    layer7_model_artifacts/
+  Part B-ERI (8 files): layer7_metrics.csv,
+    layer7_reliability_diagram.csv, layer7_spatial_calibration.csv,
+    layer7_shap_summary.csv, layer7_expected_risk_index.csv,
+    layer7_risk_persistence.csv, layer7_top_k_early_warning.csv,
+    layer7_summary.txt
+
+ACCEPTANCE CHECKS:
+  [1] SSC applied once in ERI multiplier, absent from model features: PASS
+  [2] Persistence uses derived rule as primary (CatBoost optional): PASS
+  [3] South Zone 2 limitation documented and CI widened: PASS
+  [4] No upstream files modified, no external data: PASS
+  [5] lambda_v(t) from Nov-Dec refit, not Part A full-window fit: PASS
+
+======================================================================
+
+OPERATIONAL TRANSLATION (Part C):
+  src/layer7_risk_translation.py translates ERI + persistence + SSC into
+  six operational actions.  This is NOT a new predictive model — it is an
+  interpretable rule layer on top of Part B's outputs.
+
+  ACTIONS (ascending severity):
+    watch                 No pre-positioning needed.
+    increase_monitoring   Duty officer increases check-in frequency.
+    stage_tow_unit        Pre-position tow near zone; standby deployment.
+    stage_barricade       Move barricading equipment to zone perimeter.
+    prepare_diversion     Alert traffic control; pre-clear alternate routes.
+    escalate_supervision  Senior officer response; activate diversion now.
+
+  THRESHOLD CALIBRATION (training-period percentiles, not hardcoded):
+    Thresholds are percentiles of max(ERI_3h, ERI_6h, ERI_9h) computed on
+    the training period (Nov 10 - Dec 31 2023) via the same CatBoost +
+    isotonic pipeline used in Part B.
+    ERI p25=0.0604  p75=0.3135  p90=0.5097  p95=0.8535
+    SSC high if SSC_norm >= 0.5 (above-median zone).
+    CI wide if half-width >= 0.1006 (eval p50; triggers caution).
+
+  EVAL ACTION DISTRIBUTION (Jan 1-19 2024, 4530 zone-time pairs):
+        watch                       :   699
+    increase_monitoring         :  2640
+    stage_tow_unit              :   273
+    stage_barricade             :   579
+    prepare_diversion           :   339
+    escalate_supervision        :     0
+
+  CAVEAT — CENTRAL ZONE 1:
+    D_hat_norm = 0.000 for this zone (minimum fragility proxy after
+    normalization).  Its ERI is always 0 and it always receives "watch".
+    Operational users should consult binary probability P_z,h directly
+    for Central Zone 1 rather than relying on its ERI or action rank.
+
+  OUTPUTS:
+    layer7_action_policy.csv              — Threshold rules + action descriptions
+    layer7_prepositioning_recommendations.csv — Per (zone, time): action + full context
+    layer7_operational_alerts.csv         — Top-30 alerts, plain English, readable
+                                            by non-technical users without knowing the math

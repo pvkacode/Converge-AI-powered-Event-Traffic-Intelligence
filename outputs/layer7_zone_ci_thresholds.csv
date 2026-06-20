@@ -1,0 +1,11 @@
+zone,D_hat_norm,SSC_norm,ci_p25_narrow_threshold,ci_p50,ci_p75,ci_min_training,ci_max_training,n_training_samples,eval_ci_mean,eval_ci_vs_threshold,rationale
+Central Zone 1,0.05,0.916,0.0423,0.0437,0.0442,0.0401,0.047,9,0.0371,NARROW,Per-zone: D_hat confound removed; 'narrow' = zone's own training p25. Old global threshold was 0.1006.
+Central Zone 2,0.2635,1.0,0.2354,0.306,0.3604,0.2352,0.3644,9,0.2679,wide,Per-zone: D_hat confound removed; 'narrow' = zone's own training p25. Old global threshold was 0.1006.
+East Zone 1,0.0769,0.435,0.0465,0.0511,0.0522,0.0444,0.0545,9,0.0416,NARROW,Per-zone: D_hat confound removed; 'narrow' = zone's own training p25. Old global threshold was 0.1006.
+East Zone 2,1.0,0.528,0.5913,0.6797,0.7108,0.5682,0.7273,9,0.5739,NARROW,Per-zone: D_hat confound removed; 'narrow' = zone's own training p25. Old global threshold was 0.1006.
+North Zone 1,0.0571,0.514,0.0399,0.0409,0.0465,0.0388,0.0479,9,0.0369,NARROW,Per-zone: D_hat confound removed; 'narrow' = zone's own training p25. Old global threshold was 0.1006.
+North Zone 2,0.1608,0.783,0.1274,0.1431,0.1561,0.1199,0.1614,9,0.1343,wide,Per-zone: D_hat confound removed; 'narrow' = zone's own training p25. Old global threshold was 0.1006.
+South Zone 1,0.9992,0.0,0.3021,0.3881,0.3977,0.2403,0.4037,9,0.2909,NARROW,Per-zone: D_hat confound removed; 'narrow' = zone's own training p25. Old global threshold was 0.1006.
+South Zone 2,0.0819,0.483,0.0836,0.0922,0.0975,0.0822,0.1018,9,0.076,NARROW,Per-zone: D_hat confound removed; 'narrow' = zone's own training p25. Old global threshold was 0.1006.
+West Zone 1,0.2505,0.649,0.1856,0.2033,0.2364,0.1845,0.2389,9,0.1884,wide,Per-zone: D_hat confound removed; 'narrow' = zone's own training p25. Old global threshold was 0.1006.
+West Zone 2,0.1628,0.108,0.0843,0.0955,0.1005,0.0806,0.1029,9,0.0823,NARROW,Per-zone: D_hat confound removed; 'narrow' = zone's own training p25. Old global threshold was 0.1006.
