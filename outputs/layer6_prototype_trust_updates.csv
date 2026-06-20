@@ -1,0 +1,48 @@
+prototype_id,cause,corridor,n_matched_feedback,trust_prior,alpha_prior,beta_prior,n_successes,n_failures,alpha_posterior,beta_posterior,r_p,trust_updated,trust_delta,posterior_uncertainty,mean_residual,update_source
+0,protest,Non-corridor,1,0.9,9.0,1.0,0.0,0.0,9.0,1.0,0.9,0.9,0.0,0.0905,1.4575,beta_binomial_ema
+1,procession,Non-corridor,8,0.9571,9.5714,0.4286,1.0,0.0,10.5714,0.4286,0.961,0.9579,0.0008,0.0559,1.1627,beta_binomial_ema
+2,public_event,Non-corridor,9,1.0,10.0,0.0,0.5,0.0,10.5,0.0,1.0,1.0,0.0,0.0,2.4509,beta_binomial_ema
+3,public_event,CBD 2,9,1.0,10.0,0.0,0.5,0.0,10.5,0.0,1.0,1.0,0.0,0.0,2.4509,beta_binomial_ema
+4,procession,Non-corridor,8,0.925,9.25,0.75,1.0,0.0,10.25,0.75,0.9318,0.9264,0.0014,0.0728,1.1627,beta_binomial_ema
+5,procession,Non-corridor,8,1.0,10.0,0.0,1.0,0.0,11.0,0.0,1.0,1.0,0.0,0.0,1.1627,beta_binomial_ema
+6,public_event,Non-corridor,9,1.0,10.0,0.0,0.5,0.0,10.5,0.0,1.0,1.0,0.0,0.0,2.4509,beta_binomial_ema
+7,procession,Non-corridor,8,1.0,10.0,0.0,1.0,0.0,11.0,0.0,1.0,1.0,0.0,0.0,1.1627,beta_binomial_ema
+8,public_event,Non-corridor,9,0.49,4.9,5.1,0.5,0.0,5.4,5.1,0.5143,0.4949,0.0049,0.1474,2.4509,beta_binomial_ema
+9,public_event,Mysore Road,1,0.9667,9.6667,0.3333,0.0,0.0,9.6667,0.3333,0.9667,0.9667,0.0,0.0541,2.5261,beta_binomial_ema
+10,public_event,ORR West 1,9,1.0,10.0,0.0,0.5,0.0,10.5,0.0,1.0,1.0,0.0,0.0,2.4509,beta_binomial_ema
+11,public_event,Bannerghata Road,9,0.7,7.0,3.0,0.5,0.0,7.5,3.0,0.7143,0.7029,0.0029,0.1332,2.4509,beta_binomial_ema
+12,public_event,Non-corridor,9,0.9333,9.3333,0.6667,0.5,0.0,9.8333,0.6667,0.9365,0.934,0.0006,0.0719,2.4509,beta_binomial_ema
+13,public_event,Bellary Road 2,9,0.9727,9.7273,0.2727,0.5,0.0,10.2273,0.2727,0.974,0.973,0.0003,0.0469,2.4509,beta_binomial_ema
+14,procession,Hennur Main Road,8,0.95,9.5,0.5,1.0,0.0,10.5,0.5,0.9545,0.9509,0.0009,0.0601,1.1627,beta_binomial_ema
+15,public_event,Magadi Road,9,1.0,10.0,0.0,0.5,0.0,10.5,0.0,1.0,1.0,0.0,0.0,2.4509,beta_binomial_ema
+16,procession,Magadi Road,8,1.0,10.0,0.0,1.0,0.0,11.0,0.0,1.0,1.0,0.0,0.0,1.1627,beta_binomial_ema
+17,protest,CBD 2,1,1.0,10.0,0.0,0.0,0.0,10.0,0.0,1.0,1.0,0.0,0.0,1.4575,beta_binomial_ema
+18,public_event,Non-corridor,9,0.7,7.0,3.0,0.5,0.0,7.5,3.0,0.7143,0.7029,0.0029,0.1332,2.4509,beta_binomial_ema
+19,public_event,Non-corridor,9,0.7,7.0,3.0,0.5,0.0,7.5,3.0,0.7143,0.7029,0.0029,0.1332,2.4509,beta_binomial_ema
+20,procession,Non-corridor,8,1.0,10.0,0.0,1.0,0.0,11.0,0.0,1.0,1.0,0.0,0.0,1.1627,beta_binomial_ema
+21,protest,Mysore Road,1,0.85,8.5,1.5,0.0,0.0,8.5,1.5,0.85,0.85,0.0,0.1077,1.4575,beta_binomial_ema
+22,public_event,Non-corridor,9,1.0,10.0,0.0,0.5,0.0,10.5,0.0,1.0,1.0,0.0,0.0,2.4509,beta_binomial_ema
+23,procession,Non-corridor,8,0.9538,9.5385,0.4615,1.0,0.0,10.5385,0.4615,0.958,0.9547,0.0008,0.0579,1.1627,beta_binomial_ema
+24,public_event,Old Airport Road,5,1.0,10.0,0.0,0.0,0.0,10.0,0.0,1.0,1.0,0.0,0.0,2.2329,beta_binomial_ema
+25,procession,Magadi Road,8,1.0,10.0,0.0,1.0,0.0,11.0,0.0,1.0,1.0,0.0,0.0,1.1627,beta_binomial_ema
+26,vip_movement,Mysore Road,0,0.76,7.6,2.4,0.0,0.0,7.6,2.4,0.76,0.76,0.0,0.1288,,no_feedback
+27,public_event,Non-corridor,9,0.745,7.45,2.55,0.5,0.0,7.95,2.55,0.7571,0.7474,0.0024,0.1264,2.4509,beta_binomial_ema
+28,protest,Non-corridor,1,1.0,10.0,0.0,0.0,0.0,10.0,0.0,1.0,1.0,0.0,0.0,1.4575,beta_binomial_ema
+29,vip_movement,Non-corridor,0,0.7,7.0,3.0,0.0,0.0,7.0,3.0,0.7,0.7,0.0,0.1382,,no_feedback
+30,public_event,Non-corridor,9,0.7,7.0,3.0,0.5,0.0,7.5,3.0,0.7143,0.7029,0.0029,0.1332,2.4509,beta_binomial_ema
+31,procession,Non-corridor,8,0.85,8.5,1.5,1.0,0.0,9.5,1.5,0.8636,0.8527,0.0027,0.0991,1.1627,beta_binomial_ema
+32,public_event,Non-corridor,9,0.49,4.9,5.1,0.5,0.0,5.4,5.1,0.5143,0.4949,0.0049,0.1474,2.4509,beta_binomial_ema
+33,public_event,Non-corridor,9,0.7,7.0,3.0,0.5,0.0,7.5,3.0,0.7143,0.7029,0.0029,0.1332,2.4509,beta_binomial_ema
+34,public_event,Non-corridor,9,0.94,9.4,0.6,0.5,0.0,9.9,0.6,0.9429,0.9406,0.0006,0.0684,2.4509,beta_binomial_ema
+35,public_event,Old Airport Road,5,1.0,10.0,0.0,0.0,0.0,10.0,0.0,1.0,1.0,0.0,0.0,2.2329,beta_binomial_ema
+36,public_event,Non-corridor,9,0.8,8.0,2.0,0.5,0.0,8.5,2.0,0.8095,0.8019,0.0019,0.1158,2.4509,beta_binomial_ema
+37,public_event,Non-corridor,9,0.9,9.0,1.0,0.5,0.0,9.5,1.0,0.9048,0.901,0.001,0.0866,2.4509,beta_binomial_ema
+38,procession,Magadi Road,8,1.0,10.0,0.0,1.0,0.0,11.0,0.0,1.0,1.0,0.0,0.0,1.1627,beta_binomial_ema
+39,procession,Non-corridor,8,0.775,7.75,2.25,1.0,0.0,8.75,2.25,0.7955,0.7791,0.0041,0.1164,1.1627,beta_binomial_ema
+40,procession,Non-corridor,8,1.0,10.0,0.0,1.0,0.0,11.0,0.0,1.0,1.0,0.0,0.0,1.1627,beta_binomial_ema
+41,public_event,Non-corridor,9,1.0,10.0,0.0,0.5,0.0,10.5,0.0,1.0,1.0,0.0,0.0,2.4509,beta_binomial_ema
+42,public_event,Old Madras Road,9,1.0,10.0,0.0,0.5,0.0,10.5,0.0,1.0,1.0,0.0,0.0,2.4509,beta_binomial_ema
+43,procession,Non-corridor,8,0.925,9.25,0.75,1.0,0.0,10.25,0.75,0.9318,0.9264,0.0014,0.0728,1.1627,beta_binomial_ema
+44,public_event,Non-corridor,9,0.7,7.0,3.0,0.5,0.0,7.5,3.0,0.7143,0.7029,0.0029,0.1332,2.4509,beta_binomial_ema
+45,vip_movement,Non-corridor,0,0.7545,7.5455,2.4545,0.0,0.0,7.5455,2.4545,0.7545,0.7545,0.0,0.1298,,no_feedback
+46,vip_movement,Mysore Road,0,1.0,10.0,0.0,0.0,0.0,10.0,0.0,1.0,1.0,0.0,0.0,,no_feedback

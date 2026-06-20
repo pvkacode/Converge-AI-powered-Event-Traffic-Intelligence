@@ -1,0 +1,57 @@
+[
+  {
+    "model": "duration_catboost",
+    "family": "duration",
+    "raw_score": 0.933194,
+    "score_rule": "crps_gaussian_logspace",
+    "robust_z_score": -0.6745,
+    "family_local_weight": 0.793963,
+    "bma_family_confident": true,
+    "judge_facing": true,
+    "generated_at": "2026-06-19T10:34:30Z"
+  },
+  {
+    "model": "corridor_cause_prior",
+    "family": "duration",
+    "raw_score": 1.17741,
+    "score_rule": "crps_gaussian_logspace",
+    "robust_z_score": 0.6745,
+    "family_local_weight": 0.206037,
+    "bma_family_confident": true,
+    "judge_facing": true,
+    "generated_at": "2026-06-19T10:34:30Z"
+  },
+  {
+    "model": "calibration_estimator",
+    "family": "calibration",
+    "raw_score": 0.108406,
+    "score_rule": "brier_score",
+    "robust_z_score": NaN,
+    "family_local_weight": NaN,
+    "bma_family_confident": false,
+    "judge_facing": false,
+    "generated_at": "2026-06-19T10:34:30Z"
+  },
+  {
+    "model": "retrieval_estimator",
+    "family": "retrieval",
+    "raw_score": 0.2,
+    "score_rule": "retrieval_residual_proxy_1mf1",
+    "robust_z_score": NaN,
+    "family_local_weight": NaN,
+    "bma_family_confident": false,
+    "judge_facing": false,
+    "generated_at": "2026-06-19T10:34:30Z"
+  },
+  {
+    "model": "scenario_surrogate",
+    "family": "surrogate",
+    "raw_score": 0.699734,
+    "score_rule": "crps_gaussian_logspace_l5surrogate",
+    "robust_z_score": NaN,
+    "family_local_weight": NaN,
+    "bma_family_confident": false,
+    "judge_facing": false,
+    "generated_at": "2026-06-19T10:34:30Z"
+  }
+]

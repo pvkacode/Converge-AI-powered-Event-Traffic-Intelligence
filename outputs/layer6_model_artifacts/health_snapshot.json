@@ -1,0 +1,206 @@
+{
+  "overall": "CRITICAL",
+  "metrics": [
+    {
+      "metric_group": "duration",
+      "metric": "duration_rmse",
+      "holdout_value": 6038.9789,
+      "feedback_value": 6052.3142,
+      "relative_change": 0.0022,
+      "status": "healthy",
+      "note": "",
+      "overall_health": "CRITICAL"
+    },
+    {
+      "metric_group": "duration",
+      "metric": "duration_mae",
+      "holdout_value": 2362.8005,
+      "feedback_value": 2367.0735,
+      "relative_change": 0.0018,
+      "status": "healthy",
+      "note": "",
+      "overall_health": "CRITICAL"
+    },
+    {
+      "metric_group": "duration",
+      "metric": "duration_medae",
+      "holdout_value": 78.124,
+      "feedback_value": 78.592,
+      "relative_change": 0.006,
+      "status": "healthy",
+      "note": "",
+      "overall_health": "CRITICAL"
+    },
+    {
+      "metric_group": "duration",
+      "metric": "duration_rmsle",
+      "holdout_value": 1.7266,
+      "feedback_value": 1.7276,
+      "relative_change": 0.0006,
+      "status": "healthy",
+      "note": "",
+      "overall_health": "CRITICAL"
+    },
+    {
+      "metric_group": "probability_calibration",
+      "metric": "high_impact_brier",
+      "holdout_value": 0.108406,
+      "feedback_value": 0.108406,
+      "relative_change": -0.0,
+      "status": "healthy",
+      "note": "",
+      "overall_health": "CRITICAL"
+    },
+    {
+      "metric_group": "probability_calibration",
+      "metric": "high_impact_ece",
+      "holdout_value": 0.0,
+      "feedback_value": 0.0,
+      "relative_change": NaN,
+      "status": "healthy",
+      "note": "",
+      "overall_health": "CRITICAL"
+    },
+    {
+      "metric_group": "layer5_optimization",
+      "metric": "cvar_reduction_pct",
+      "holdout_value": NaN,
+      "feedback_value": 46.5604,
+      "relative_change": NaN,
+      "status": "healthy",
+      "note": "L5 optimization metrics (no holdout baseline)",
+      "overall_health": "CRITICAL"
+    },
+    {
+      "metric_group": "layer5_optimization",
+      "metric": "cc_satisfaction_mean",
+      "holdout_value": NaN,
+      "feedback_value": 0.9592,
+      "relative_change": NaN,
+      "status": "healthy",
+      "note": "L5 optimization metrics (no holdout baseline)",
+      "overall_health": "CRITICAL"
+    },
+    {
+      "metric_group": "drift",
+      "metric": "page_hinkley_log_duration",
+      "holdout_value": NaN,
+      "feedback_value": 326.8316,
+      "relative_change": NaN,
+      "status": "critical",
+      "note": "max_PH=326.832, first_alert_at_index=5",
+      "overall_health": "CRITICAL"
+    },
+    {
+      "metric_group": "drift",
+      "metric": "psi_log_duration",
+      "holdout_value": NaN,
+      "feedback_value": 0.0503,
+      "relative_change": NaN,
+      "status": "healthy",
+      "note": "PSI=0.0503 (baseline n=2451, feedback n=1095)",
+      "overall_health": "CRITICAL"
+    },
+    {
+      "metric_group": "drift",
+      "metric": "psi_trust_score",
+      "holdout_value": NaN,
+      "feedback_value": 0.0124,
+      "relative_change": NaN,
+      "status": "healthy",
+      "note": "PSI=0.0124",
+      "overall_health": "CRITICAL"
+    },
+    {
+      "metric_group": "drift",
+      "metric": "psi_iso_anomaly_score",
+      "holdout_value": NaN,
+      "feedback_value": 0.0266,
+      "relative_change": NaN,
+      "status": "healthy",
+      "note": "PSI=0.0266",
+      "overall_health": "CRITICAL"
+    },
+    {
+      "metric_group": "drift",
+      "metric": "psi_hour_local",
+      "holdout_value": NaN,
+      "feedback_value": 0.1526,
+      "relative_change": NaN,
+      "status": "warning",
+      "note": "PSI=0.1526",
+      "overall_health": "CRITICAL"
+    },
+    {
+      "metric_group": "drift",
+      "metric": "ods_weekly_log_duration",
+      "holdout_value": NaN,
+      "feedback_value": 0.5667,
+      "relative_change": NaN,
+      "status": "healthy",
+      "note": "max_ODS=0.567 across 7 weeks; alert weeks: []",
+      "overall_health": "CRITICAL"
+    },
+    {
+      "metric_group": "drift",
+      "metric": "mean_shift_ztest_log_duration",
+      "holdout_value": NaN,
+      "feedback_value": 3.2097,
+      "relative_change": NaN,
+      "status": "critical",
+      "note": "baseline_mu=4.929, feedback_mu=5.194, z=3.210",
+      "overall_health": "CRITICAL"
+    },
+    {
+      "metric_group": "posterior_uncertainty",
+      "metric": "mean_ci95_width_log",
+      "holdout_value": NaN,
+      "feedback_value": 1.1625,
+      "relative_change": NaN,
+      "status": "healthy",
+      "note": "Mean 95% CI width in log-duration space across 118 strata",
+      "overall_health": "CRITICAL"
+    },
+    {
+      "metric_group": "prototype_trust",
+      "metric": "mean_abs_trust_delta",
+      "holdout_value": NaN,
+      "feedback_value": 0.001,
+      "relative_change": NaN,
+      "status": "warning",
+      "note": "2 prototypes degraded below 0.5 trust",
+      "overall_health": "CRITICAL"
+    },
+    {
+      "metric_group": "retrain_triggers",
+      "metric": "n_critical_triggers",
+      "holdout_value": NaN,
+      "feedback_value": 8.0,
+      "relative_change": NaN,
+      "status": "critical",
+      "note": "8 critical + 23 moderate triggers in this batch",
+      "overall_health": "CRITICAL"
+    },
+    {
+      "metric_group": "predictive_calibration",
+      "metric": "predictive_coverage_95pct",
+      "holdout_value": NaN,
+      "feedback_value": 0.8658,
+      "relative_change": 0.0842,
+      "status": "warning",
+      "note": "Future-observation metric: sequential LOO at sqrt(var_post+var_obs)",
+      "overall_health": "CRITICAL"
+    },
+    {
+      "metric_group": "predictive_calibration",
+      "metric": "parameter_coverage_95pct_audit",
+      "holdout_value": NaN,
+      "feedback_value": 0.3342,
+      "relative_change": 0.6158,
+      "status": "healthy",
+      "note": "Audit only: parameter SD coverage; NOT used for future-observation scoring",
+      "overall_health": "CRITICAL"
+    }
+  ],
+  "generated_at": "2026-06-19T10:34:30Z"
+}

@@ -1,0 +1,5 @@
+family,n_models_total,n_models_valid,bma_family_confident,judge_facing,reason,models_in_family,generated_at
+duration,2,2,True,True,2 models; scoring rule: crps_gaussian_logspace,"duration_catboost,corridor_cause_prior",2026-06-19T10:34:30Z
+calibration,1,1,False,False,fewer than 2 comparable models with valid scores (1/1),calibration_estimator,2026-06-19T10:34:30Z
+retrieval,1,1,False,False,fewer than 2 comparable models with valid scores (1/1),retrieval_estimator,2026-06-19T10:34:30Z
+surrogate,1,1,False,False,fewer than 2 comparable models with valid scores (1/1),scenario_surrogate,2026-06-19T10:34:30Z

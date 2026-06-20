@@ -1,0 +1,11 @@
+bin_idx,bin_lo,bin_hi,n_events,n_successes,mean_raw_pred,fraction_positive,posterior_mean,ci95_lo,ci95_hi,calibration_shift,abs_shift,priority,recommendation
+1,0.1,0.2,0,0,0.15,,0.5,0.025,0.975,0.35,0.35,1,HIGH: Posterior mean 0.500 vs raw 0.150 (shift +0.350). Recalibrate bin.
+7,0.7000000000000001,0.8,0,0,0.75,,0.5,0.025,0.975,-0.25,0.25,2,HIGH: Posterior mean 0.500 vs raw 0.750 (shift -0.250). Recalibrate bin.
+3,0.30000000000000004,0.4,0,0,0.35,,0.5,0.025,0.975,0.15,0.15,3,HIGH: Posterior mean 0.500 vs raw 0.350 (shift +0.150). Recalibrate bin.
+6,0.6000000000000001,0.7000000000000001,0,0,0.65,,0.5,0.025,0.975,-0.15,0.15,3,HIGH: Posterior mean 0.500 vs raw 0.650 (shift -0.150). Recalibrate bin.
+5,0.5,0.6000000000000001,0,0,0.55,,0.5,0.025,0.975,-0.05,0.05,5,LOW: Shift -0.050 — monitor only.
+9,0.9,1.0,31,31,1.0,1.0,0.969697,0.891119,0.999209,-0.030303,0.030303,6,LOW: Shift -0.030 — monitor only.
+8,0.8,0.9,33,27,0.818182,0.818182,0.8,0.654685,0.912979,-0.018182,0.018182,7,LOW: Shift -0.018 — monitor only.
+4,0.4,0.5,23,10,0.434783,0.434783,0.44,0.25553,0.633569,0.005217,0.005217,8,LOW: Shift +0.005 — monitor only.
+0,0.0,0.1,450,5,0.011111,0.011111,0.013274,0.004897,0.025681,0.002163,0.002163,9,LOW: Shift +0.002 — monitor only.
+2,0.2,0.30000000000000004,557,137,0.245961,0.245961,0.246869,0.212036,0.283419,0.000909,0.000909,10,LOW: Shift +0.001 — monitor only.

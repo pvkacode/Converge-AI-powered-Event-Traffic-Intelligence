@@ -1,0 +1,6 @@
+model,family,raw_score,score_rule,robust_z_score,family_local_weight,bma_family_confident,judge_facing,generated_at
+duration_catboost,duration,0.933194,crps_gaussian_logspace,-0.6745,0.793963,True,True,2026-06-19T10:34:30Z
+corridor_cause_prior,duration,1.17741,crps_gaussian_logspace,0.6745,0.206037,True,True,2026-06-19T10:34:30Z
+calibration_estimator,calibration,0.108406,brier_score,,,False,False,2026-06-19T10:34:30Z
+retrieval_estimator,retrieval,0.2,retrieval_residual_proxy_1mf1,,,False,False,2026-06-19T10:34:30Z
+scenario_surrogate,surrogate,0.699734,crps_gaussian_logspace_l5surrogate,,,False,False,2026-06-19T10:34:30Z

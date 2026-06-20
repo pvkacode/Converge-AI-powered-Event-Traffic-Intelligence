@@ -1,0 +1,14 @@
+category,question,value,flag,detail,generated_at
+quarantine_summary,total_uncensored_candidates,1097.0,info,All uncensored feedback rows evaluated by the quality gate,2026-06-19T10:34:30Z
+quarantine_summary,n_quarantined,163.0,info,Rows excluded from posterior; 14.9% of uncensored candidates,2026-06-19T10:34:30Z
+quarantine_summary,n_clean_for_posterior,934.0,ok,Rows that passed the quality gate and entered posterior estimation,2026-06-19T10:34:30Z
+quarantine_summary,n_quarantined_already_duration_anomaly,116.0,info,Quarantined rows that were ALSO flagged by the stratified MAD detector,2026-06-19T10:34:30Z
+quarantine_summary,n_quarantined_already_iso_flagged,78.0,info,Quarantined rows that were ALSO flagged by Isolation Forest,2026-06-19T10:34:30Z
+quarantine_summary,n_quarantined_flagged_by_any_upstream,161.0,info,Quarantined rows caught by at least one upstream anomaly detector,2026-06-19T10:34:30Z
+quarantine_summary,n_quarantined_not_caught_by_upstream,2.0,warning,Quarantined by quality gate ONLY (NaN/non-positive/missing-key). These had invalid values not surfaced by duration_anomaly or iso_flagged. Non-zero is expected and does NOT indicate a bug — the quality gate deliberately catches cases that anomaly detectors are not designed for.,2026-06-19T10:34:30Z
+global_posterior_validity,global_posterior_valid,1.0,ok,robust_trimmed_mean; n_clean=934; n_trimmed=842,2026-06-19T10:34:30Z
+global_posterior_validity,global_posterior_n_eff_feedback,874.14,ok,Kish ESS feeding into the global posterior update,2026-06-19T10:34:30Z
+nan_taint_check,nan_tainted_rows_reached_posterior,0.0,ok,Quarantine gate runs before posterior update; NaN rows excluded by design.,2026-06-19T10:34:30Z
+posterior_repair,n_strata_nan_guard_triggered,40.0,warning,40 strata had posterior sigma floored to sqrt(MIN_VAR=1e-6). Posterior is valid; uncertainty is underestimated for these strata.,2026-06-19T10:34:30Z
+posterior_repair,n_invalid_strata,1.0,warning,1 strata with non-finite posterior mean or sigma. These strata must not be used for prediction.,2026-06-19T10:34:30Z
+global_fallback_integrity,global_posterior_used_as_fallback_when_invalid,0.0,ok,Global posterior is VALID. 0 strata used global as prior. No integrity issue: global posterior is valid or no global-fallback strata.,2026-06-19T10:34:30Z

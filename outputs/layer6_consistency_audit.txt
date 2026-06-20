@@ -1,0 +1,124 @@
+================================================================================
+LAYER 6 CONSISTENCY AUDIT (PART C)
+================================================================================
+Audit date: 2026-06-19
+Workspace: /Users/shrijatewari/converge/outputs/
+Scope: Compare claimed vs implemented vs executed vs on-disk vs mathematical
+       correctness. Read-only — no patches, no recompute.
+
+Legend:
+  CLAIMED     = documented in README.md and/or module docstring
+  IMPLEMENTED = generator function or write call exists in Layer 6 source
+  EXECUTED    = inferred from successful run evidence (non-trivial files, timestamps)
+  ON_DISK     = physically present at audit path (ls verified)
+  CORRECT     = mathematical / semantic correctness assessment
+
+================================================================================
+ARTIFACT CONSISTENCY TABLE
+================================================================================
+
+artifact                                      | CLAIMED | IMPL | EXEC | ON_DISK | CORRECT | notes
+----------------------------------------------|---------|------|------|---------|---------|------
+layer6_posterior_duration_priors.json         | YES     | YES  | YES  | YES     | YES     | parameter posteriors; sigma_log is posterior_sd_mu
+layer6_duration_posterior_summary.csv         | YES     | YES  | YES  | YES     | YES     | parameter-level columns correct
+layer6_global_posterior_summary.csv           | YES     | YES  | YES  | YES     | YES     | not in module docstring header but written in main
+layer6_calibration_posteriors.csv             | YES     | YES  | YES  | YES     | YES     | separate calibration module
+layer6_drift_report.csv                       | YES     | YES  | YES  | YES     | YES     |
+layer6_retrain_triggers.csv                   | YES     | YES  | YES  | YES     | YES     |
+layer6_prototype_trust_updates.csv            | YES     | YES  | YES  | YES     | YES     |
+layer6_feedback_log.csv                       | YES     | YES  | YES  | YES     | YES     |
+layer6_resource_effectiveness_posteriors.json | YES     | YES  | YES  | YES     | YES     | confidence-gated; saturated batch
+layer6_shadow_price_diagnostics.csv           | YES     | YES  | YES  | YES     | YES     |
+layer6_bma_weights.csv                        | YES     | YES  | YES  | YES     | YES     | duration family judge-facing only
+layer6_bma_diagnostics.csv                    | YES     | YES  | YES  | YES     | YES     |
+layer6_score_normalization.csv                | YES     | YES  | YES  | YES     | YES     |
+layer6_model_health_summary.csv               | YES     | YES  | YES  | YES     | YES     | includes predictive coverage metrics post-patch
+layer6_monitoring_diagnostics.csv             | YES     | YES  | YES  | YES     | YES     | parameter entropy rows correct
+layer6_versioned_knowledge_base.json          | YES     | YES  | YES  | YES     | YES     |
+layer6_recalibration_recommendations.csv      | YES     | YES  | YES  | YES     | YES     |
+layer6_active_alerts.csv                      | YES     | YES  | YES  | YES     | YES     |
+layer6_posterior_uncertainty.csv              | YES     | YES  | YES  | YES     | YES     | parameter CI width; correct for mu
+layer6_prototype_diagnostics.csv              | YES     | YES  | YES  | YES     | YES     |
+layer6_learning_summary.txt                   | YES     | YES  | YES  | YES     | YES     | documents predictive vs parameter scale
+layer6_model_artifacts/ (5 JSON files)        | YES     | YES  | YES  | YES     | YES     |
+layer6_quarantine_report.csv                  | YES     | YES  | YES  | YES     | YES     | Part A quarantine
+layer6_quarantine_summary.csv                 | YES     | YES  | YES  | YES     | YES     |
+layer6_entropy_summary.csv                    | YES     | YES  | YES  | YES     | YES     | parameter entropy; same-level only
+layer6_posterior_residuals.csv                | YES     | YES  | YES  | YES     | YES     | predictive scale post-patch; WAS missing pre-run
+layer6_posterior_coverage_report.csv          | YES     | YES  | YES  | YES     | YES     | predictive scale post-patch
+layer6_posterior_predictive_checks.csv        | YES     | YES  | YES  | YES     | YES     | predictive scale post-patch
+layer6_prior_influence_summary.csv            | YES     | YES  | YES  | YES     | YES     | lambda = var_post/var_prior correct
+layer6_ess_summary.csv                        | YES     | YES  | YES  | YES     | YES     | ESS count correct; ci95_width is parameter CI
+layer6_posterior_integrity_report.csv         | YES     | YES  | YES  | YES     | YES     |
+layer6_posterior_predictive_report.csv        | NO*     | YES  | YES  | YES     | YES     | *not in README table; written in main line 3414
+layer6_posterior_predictive_metrics.csv       | NO*     | YES  | YES  | YES     | YES     | *not in README table; aggregates + weekly
+layer6_sigma_audit.txt                        | NO      | N/A  | N/A  | YES     | N/A     | manual audit artifact from prior session
+
+================================================================================
+USER-QUESTIONED FILES (six reported missing)
+================================================================================
+
+All six ARE ON DISK at audit time with Layer 6 run timestamp 2026-06-19 14:22.
+
+Prior "missing" claim vs current state:
+  CLAIMED in docs/code: YES for all six
+  IMPLEMENTED: YES for all six
+  EXECUTED: YES (evidence: non-empty CSVs, consistent row counts)
+  ON_DISK: YES (contradicts prior missing-file report for THIS workspace)
+  CORRECT: YES (predictive outputs use sqrt(var_post+var_obs) after patch)
+
+Failure reason if user saw absence: pipeline not yet run (not a missing function).
+
+================================================================================
+MATHEMATICAL CORRECTNESS SUMMARY
+================================================================================
+
+CORRECT (parameter-level — uses sigma_log / var_post):
+  - entropy summary, KL divergence
+  - prior influence lambda
+  - ESS ci95_width (credible interval on mu)
+  - posterior uncertainty report
+  - global/stratum credible intervals in JSON/CSV
+
+CORRECT (predictive-level — after predictive-scale patch):
+  - sequential LOO CRPS, coverage, residuals
+  - PPC coverage and simulation draws
+  - model health predictive_coverage_95pct
+
+REMAINING SEMANTIC CAVEATS (not regeneration blockers for parameter outputs):
+  - log_to_minute_quantiles() in update_duration_posteriors still uses parameter
+    SD only for posterior_p80_min / posterior_p95_min in JSON — parameter quantiles,
+    not full predictive quantiles (documented in prior sigma audit)
+  - Field name sigma_log could be renamed posterior_sd_mu for clarity (Q9)
+
+INCORRECT if sigma_log used alone for future y:
+  - Would under-cover (parameter SD << observation SD)
+  - Predictive patch addressed this for PPC/LOO/residuals
+
+================================================================================
+WHAT SUMMARIES CLAIMED vs REALITY
+================================================================================
+
+1. Conversation / run log claimed all six CSVs written — CONFIRMED on disk.
+2. User report of missing files — NOT confirmed in current workspace (stale state).
+3. Previous sigma audit verdict POSTERIOR_SD — CONFIRMED with refinement:
+   POSTERIOR_SD_OF_MU; sigma*sqrt(n_eff)≈sqrt(var_data) is expected identity.
+4. Predictive-scale patch claimed applied — CONFIRMED in code and output columns
+   (predictive_scale_source, posterior_sd, obs_sd, predictive_sd in residuals).
+
+================================================================================
+REGENERATION RECOMMENDATIONS (audit only — do NOT execute here)
+================================================================================
+
+No regeneration required for parameter-level artifacts (entropy, ESS, lambda,
+global posterior) — mathematically correct as parameter summaries.
+
+Regenerate ONLY if:
+  - User workspace lacks Layer 6 run (run python src/layer6_adaptive_learning.py)
+  - Predictive outputs predate predictive-scale patch (check for predictive_sd column)
+
+Current workspace outputs appear post-patch (predictive provenance columns present).
+
+================================================================================
+END PART C
+================================================================================

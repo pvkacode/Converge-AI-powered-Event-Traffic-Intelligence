@@ -1,0 +1,21 @@
+metric_group,metric,holdout_value,feedback_value,relative_change,status,note,overall_health
+duration,duration_rmse,6038.9789,6052.3142,0.0022,healthy,,CRITICAL
+duration,duration_mae,2362.8005,2367.0735,0.0018,healthy,,CRITICAL
+duration,duration_medae,78.124,78.592,0.006,healthy,,CRITICAL
+duration,duration_rmsle,1.7266,1.7276,0.0006,healthy,,CRITICAL
+probability_calibration,high_impact_brier,0.108406,0.108406,-0.0,healthy,,CRITICAL
+probability_calibration,high_impact_ece,0.0,0.0,,healthy,,CRITICAL
+layer5_optimization,cvar_reduction_pct,,46.5604,,healthy,L5 optimization metrics (no holdout baseline),CRITICAL
+layer5_optimization,cc_satisfaction_mean,,0.9592,,healthy,L5 optimization metrics (no holdout baseline),CRITICAL
+drift,page_hinkley_log_duration,,326.8316,,critical,"max_PH=326.832, first_alert_at_index=5",CRITICAL
+drift,psi_log_duration,,0.0503,,healthy,"PSI=0.0503 (baseline n=2451, feedback n=1095)",CRITICAL
+drift,psi_trust_score,,0.0124,,healthy,PSI=0.0124,CRITICAL
+drift,psi_iso_anomaly_score,,0.0266,,healthy,PSI=0.0266,CRITICAL
+drift,psi_hour_local,,0.1526,,warning,PSI=0.1526,CRITICAL
+drift,ods_weekly_log_duration,,0.5667,,healthy,max_ODS=0.567 across 7 weeks; alert weeks: [],CRITICAL
+drift,mean_shift_ztest_log_duration,,3.2097,,critical,"baseline_mu=4.929, feedback_mu=5.194, z=3.210",CRITICAL
+posterior_uncertainty,mean_ci95_width_log,,1.1625,,healthy,Mean 95% CI width in log-duration space across 118 strata,CRITICAL
+prototype_trust,mean_abs_trust_delta,,0.001,,warning,2 prototypes degraded below 0.5 trust,CRITICAL
+retrain_triggers,n_critical_triggers,,8.0,,critical,8 critical + 23 moderate triggers in this batch,CRITICAL
+predictive_calibration,predictive_coverage_95pct,,0.8658,0.0842,warning,Future-observation metric: sequential LOO at sqrt(var_post+var_obs),CRITICAL
+predictive_calibration,parameter_coverage_95pct_audit,,0.3342,0.6158,healthy,Audit only: parameter SD coverage; NOT used for future-observation scoring,CRITICAL

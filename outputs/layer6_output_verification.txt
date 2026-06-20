@@ -1,0 +1,151 @@
+================================================================================
+LAYER 6 OUTPUT VERIFICATION (PART A)
+================================================================================
+Audit date: 2026-06-19
+Workspace: /Users/shrijatewari/converge
+Scope: Read-only forensic verification. No code modified. No outputs regenerated.
+Auditor action: Physical disk inspection + static code trace of main() in
+  src/layer6_adaptive_learning.py
+
+USER CLAIM UNDER INVESTIGATION
+------------------------------
+Six files were reported as missing from disk. This audit verifies each against
+the actual filesystem at audit time.
+
+IMPORTANT DISK FINDING
+----------------------
+At audit time ALL SIX files ARE PRESENT under:
+  /Users/shrijatewari/converge/outputs/
+
+If a user session previously showed them missing, plausible explanations are:
+  (1) Layer 6 had not been run yet in that workspace state
+  (2) outputs/ was inspected before the Jun 19 2026 pipeline run
+  (3) a different clone/path was inspected
+  (4) IDE/file browser cache lag
+
+This audit does NOT claim files exist unless physically found. They were found.
+
+OUTPUT PATH CONSTANT (all Layer 6 CSVs)
+---------------------------------------
+  BASE_DIR / "outputs"  where BASE_DIR = repo root
+  Defined: src/layer6_adaptive_learning.py lines 98-101
+
+================================================================================
+VERIFICATION TABLE
+================================================================================
+
+file                              | function                          | src:lines      | exists | called | executed* | csv_written | output_found | failure_reason
+----------------------------------|-----------------------------------|----------------|--------|--------|-----------|-------------|--------------|---------------
+layer6_ess_summary.csv            | _compute_ess_summary              | 2639-2681      | YES    | YES    | YES       | YES         | YES          | none — file on disk (18882 B, 120 lines, mtime 2026-06-19 14:22)
+                                  | + main() to_csv                   | 3476-3477      |        |        |           |             |              |
+layer6_prior_influence_summary.csv| _compute_prior_influence_summary  | 2593-2636      | YES    | YES    | YES       | YES         | YES          | none — file on disk (17301 B, 120 lines)
+                                  | + main() to_csv                   | 3474-3475      |        |        |           |             |              |
+layer6_posterior_residuals.csv    | _write_posterior_residuals         | 2196-2219      | YES    | YES    | YES       | YES         | YES          | none — file on disk (347157 B, 1096 lines)
+                                  | + main() call                     | 3421           |        |        |           |             |              |
+layer6_posterior_coverage_report.csv | _write_posterior_coverage_report | 2222-2270   | YES    | YES    | YES       | YES         | YES          | none — file on disk (1346 B, 10 lines)
+                                  | + main() call                     | 3422           |        |        |           |             |              |
+layer6_posterior_predictive_checks.csv | _compute_posterior_predictive_checks | 2382-2586 | YES | YES    | YES       | YES         | YES          | none — file on disk (41603 B, 121 lines)
+                                  | + main() to_csv                   | 3464-3465      |        |        |           |             |              |
+layer6_posterior_integrity_report.csv | _compute_posterior_integrity_report | 2688-2805 | YES | YES    | YES       | YES         | YES          | none — file on disk (2307 B, 14 lines)
+                                  | + main() to_csv                   | 3511-3512      |        |        |           |             |              |
+
+*executed = inferred from non-empty output files with content consistent with a
+ successful Layer 6 run (2026-06-19T10:22:12Z per global_posterior_summary.csv).
+This audit did NOT re-run the pipeline (per instructions).
+
+================================================================================
+PER-FILE DETAIL
+================================================================================
+
+1. layer6_ess_summary.csv
+-------------------------
+Function definition:
+  src/layer6_adaptive_learning.py lines 2639-2681
+  def _compute_ess_summary(dur_summary_df: pd.DataFrame) -> pd.DataFrame
+
+Main-path call:
+  ess_df_out = _compute_ess_summary(dur_summary_df)          # line 3476
+  ess_df_out.to_csv(OUTPUTS_DIR / "layer6_ess_summary.csv")  # line 3477
+
+Call conditions: Unconditional in main() after dur_summary_df is built.
+Empty-data behavior: Returns empty DataFrame if dur_summary_df empty; would still
+  write header-only CSV. Actual file has 119 data rows + header.
+
+Disk evidence:
+  Path: outputs/layer6_ess_summary.csv
+  Size: 18882 bytes | Lines: 120 | mtime: Jun 19 14:22
+
+2. layer6_prior_influence_summary.csv
+-------------------------------------
+Function: _compute_prior_influence_summary  lines 2593-2636
+Call: lines 3474-3475 (unconditional)
+Disk: 17301 bytes, 120 lines, present
+
+3. layer6_posterior_residuals.csv
+---------------------------------
+Function: _write_posterior_residuals  lines 2196-2219
+Call: line 3421 — _write_posterior_residuals(pp_event_df, OUTPUTS_DIR / ...)
+  Depends on pp_event_df from _compute_sequential_posterior_predictive (3405)
+Empty-data behavior: Writes empty CSV if pp_event_df.empty (line 2198-2199)
+Actual file: 1096 lines (1095 events + header) — NOT empty
+
+4. layer6_posterior_coverage_report.csv
+---------------------------------------
+Function: _write_posterior_coverage_report  lines 2222-2270
+Call: line 3422 (same pp_event_df dependency)
+Actual file: 10 lines (9 coverage rows + header)
+
+5. layer6_posterior_predictive_checks.csv
+-----------------------------------------
+Function: _compute_posterior_predictive_checks  lines 2382-2586
+Call: lines 3463-3465 (unconditional to_csv after compute)
+Actual file: 121 lines (120 PPC rows + header)
+
+6. layer6_posterior_integrity_report.csv
+----------------------------------------
+Function: _compute_posterior_integrity_report  lines 2688-2805
+Call: lines 3509-3512 (unconditional)
+Actual file: 14 lines (13 integrity checks + header)
+
+================================================================================
+MAIN EXECUTION ORDER (relevant segment)
+================================================================================
+  line 3405  _compute_sequential_posterior_predictive(...)
+  line 3421  _write_posterior_residuals(...)
+  line 3422  _write_posterior_coverage_report(...)
+  line 3463  _compute_posterior_predictive_checks(...)
+  line 3465  ppc_df.to_csv(...layer6_posterior_predictive_checks.csv)
+  line 3474  _compute_prior_influence_summary(...)
+  line 3477  ess_df_out.to_csv(...layer6_ess_summary.csv)
+  line 3509  _compute_posterior_integrity_report(...)
+  line 3512  integrity_df.to_csv(...layer6_posterior_integrity_report.csv)
+
+None of these writes are behind feature flags. All are in main() after Component 1
+builds dur_summary_df. Residuals/coverage require sequential LOO to complete first;
+if main() reaches line 3421 without exception, writes proceed.
+
+================================================================================
+WHY FILES MIGHT HAVE APPEARED MISSING (if user saw absence)
+================================================================================
+Category (a) function never existed        — NO for all six; all functions exist
+Category (b) exists but never called       — NO; all called in main()
+Category (c) called but errored            — NO evidence at audit time; files exist
+Category (d) written to different location — NO; all use OUTPUTS_DIR / "layer6_*.csv"
+Category (e) overwritten later           — N/A; files present with Layer 6 mtime
+
+Most likely prior absence: Layer 6 pipeline not yet executed in the workspace
+state under inspection (category b in time, not in code — never called YET).
+
+================================================================================
+CONCLUSION (PART A)
+================================================================================
+All six questioned files:
+  - HAVE generator functions in src/layer6_adaptive_learning.py
+  - ARE called unconditionally from main() (residuals/coverage after LOO)
+  - ARE physically present on disk at audit time with substantive content
+
+No missing-output bug is confirmed in the current workspace state.
+
+================================================================================
+END PART A
+================================================================================
