@@ -62,14 +62,14 @@ $$
 | Silk Board Junction | L2 | Significant hotspot (p_sim = 0.006) |
 | **Layer 3 (next)** | — | Pre-position tow + patrol; plan ~40–80 min disruption window; prioritize alternate ORR arm |
 
-### What Layers 1 & 2 do not do yet
+### What Layers 1 & 2 deliver, and what later layers add
 
 | Problem piece | Status |
 |---------------|--------|
 | Forecast duration / spatial risk | **Done** (L1 + L2) |
-| Recommend specific manpower counts | Layer 3 (planned) |
-| Barricade coordinates / diversion routes | Layer 3 (planned) |
-| Post-event learning loop | Layer 6 (planned) |
+| Recommend specific manpower counts | **Done** (Layer 3 — see Layer 3 Resource Optimization section) |
+| Barricade coordinates / diversion routes | **Done** (Layer 3 — see Layer 3 Resource Optimization section) |
+| Post-event learning loop | **Done** (Layer 6 — see Layer 6 Adaptive Learning section) |
 
 ## Dataset
 
