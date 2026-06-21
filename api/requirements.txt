@@ -1,0 +1,18 @@
+# Thin inference API for the Converge / ASTraM dashboard.
+# These are the ONLY packages strictly required to boot the API and serve the
+# precomputed-lookup path. The live Layer 1 engine additionally needs the full
+# pipeline environment (lifelines, pyarrow, scikit-learn, scipy) and the cleaned
+# dataset data/events_clean.parquet; when those are present the API calls the
+# real src/layer1_survival.py functions, otherwise it falls back to the
+# precomputed CSV and labels the layer accordingly.
+fastapi>=0.110
+uvicorn[standard]>=0.27
+pandas>=2.0
+numpy>=1.24
+
+# Optional (enable genuine live Layer 1 inference). Already part of the root
+# requirements.txt used to run the pipeline:
+#   lifelines>=0.27
+#   pyarrow>=14.0
+#   scikit-learn>=1.3
+#   scipy>=1.11
