@@ -4,10 +4,11 @@
   "private": true,
   "description": "Converge / ASTraM read-only frontend for the Bengaluru traffic disruption ML pipeline outputs.",
   "scripts": {
-    "dev": "next dev -p 3000",
-    "dev:clean": "lsof -ti :3000 | xargs kill -9 2>/dev/null || true; rm -rf .next && next dev -p 3000",
+    "dev": "next dev -p ${PORT:-3000}",
+    "dev:clean": "lsof -ti :3000 | xargs kill -9 2>/dev/null || true; rm -rf .next && next dev -p ${PORT:-3000}",
+    "prebuild": "node scripts/sync-outputs.mjs",
     "build": "next build",
-    "start": "next start -p 3000",
+    "start": "next start -p ${PORT:-3000}",
     "lint": "next lint"
   },
   "dependencies": {

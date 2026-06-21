@@ -21,6 +21,7 @@ Every layer in the response carries a `provenance` flag:
 """
 from __future__ import annotations
 
+import os
 import sys
 import math
 from pathlib import Path
@@ -33,16 +34,19 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(os.environ.get("ASTRAM_ROOT", Path(__file__).resolve().parent.parent))
 SRC = ROOT / "src"
-OUT = ROOT / "outputs"
+OUT = Path(os.environ.get("OUTPUTS_DIR", ROOT / "outputs"))
 FRONTEND = OUT / "frontend"
-DATA = ROOT / "data"
+DATA = Path(os.environ.get("DATA_DIR", ROOT / "data"))
+
+_cors_raw = os.environ.get("CORS_ORIGINS", "*").strip()
+CORS_ORIGINS = ["*"] if _cors_raw == "*" else [o.strip() for o in _cors_raw.split(",") if o.strip()]
 
 app = FastAPI(title="Converge / ASTraM Inference API", version="1.0")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=CORS_ORIGINS,
     allow_methods=["*"],
     allow_headers=["*"],
 )

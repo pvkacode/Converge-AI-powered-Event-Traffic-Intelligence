@@ -4,5 +4,8 @@
 next-env.d.ts
 *.tsbuildinfo
 .DS_Store
+.env.local
+.env*.local
+/outputs
 
 /dev.log

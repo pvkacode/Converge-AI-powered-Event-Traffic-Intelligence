@@ -13,6 +13,11 @@ export interface EventsCleanStats {
 let cached: { mtimeMs: number; stats: EventsCleanStats } | null = null;
 
 function dataPath(): string | null {
+  const envDir = process.env.DATA_DIR?.trim();
+  if (envDir) {
+    const p = path.join(envDir, "events_clean.csv");
+    if (fs.existsSync(p)) return p;
+  }
   const candidates = [
     path.join(process.cwd(), "..", "data", "events_clean.csv"),
     path.join(process.cwd(), "data", "events_clean.csv"),

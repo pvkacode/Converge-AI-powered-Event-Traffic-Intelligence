@@ -18,6 +18,11 @@ export interface ParsedFile {
 let cachedOutputsDir: string | null = null;
 export function outputsDir(): string {
   if (cachedOutputsDir) return cachedOutputsDir;
+  const envDir = process.env.OUTPUTS_DIR?.trim();
+  if (envDir && fs.existsSync(path.join(envDir, "frontend"))) {
+    cachedOutputsDir = path.resolve(envDir);
+    return cachedOutputsDir;
+  }
   const candidates = [
     path.join(process.cwd(), "outputs"),
     path.join(process.cwd(), "..", "outputs"),

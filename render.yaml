@@ -1,0 +1,24 @@
+# Render Blueprint — ASTraM / Converge inference API
+# Deploy: Dashboard → Vercel (dashboard/), API → Render (this file)
+#
+# In Render dashboard you can also create the service manually; see RENDER_DEPLOYMENT.md
+
+services:
+  - type: web
+    name: astram-api
+    runtime: python
+    region: singapore
+    plan: free
+    rootDir: .
+    buildCommand: pip install -r api/requirements.txt
+    startCommand: cd api && uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.11.9"
+      - key: CORS_ORIGINS
+        sync: false
+      - key: OUTPUTS_DIR
+        value: /opt/render/project/src/outputs
+      - key: ASTRAM_ROOT
+        value: /opt/render/project/src

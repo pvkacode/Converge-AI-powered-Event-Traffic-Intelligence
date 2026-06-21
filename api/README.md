@@ -17,6 +17,12 @@ python -m uvicorn main:app --port 8000
 The dashboard (Next.js, port 3000) calls this service at `http://127.0.0.1:8000` by
 default. Override with `NEXT_PUBLIC_API_URL` in `dashboard/.env.local` if needed.
 
+## Production (Render)
+
+See [RENDER_DEPLOYMENT.md](../RENDER_DEPLOYMENT.md). Set `CORS_ORIGINS` to your Vercel URL.
+
+Environment variables: `OUTPUTS_DIR`, `ASTRAM_ROOT`, `DATA_DIR`, `CORS_ORIGINS` (see `api/.env.example`).
+
 Start order does not matter; the dashboard shows a clear "start the inference API"
 state if the service is down, and the rest of the read-only dashboard keeps working.
 
