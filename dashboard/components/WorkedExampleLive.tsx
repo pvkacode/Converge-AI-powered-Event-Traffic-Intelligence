@@ -252,6 +252,21 @@ python -m uvicorn main:app --port 8000`}
                     </div>
                   ))}
                 </div>
+                {result.layer1_duration.tail_trustworthy === false ? (
+                  <p className="dim" style={{ fontSize: 12, marginTop: 10, lineHeight: 1.45 }}>
+                    {String(result.layer1_duration.tail_note || "P80/P95 are censored KM estimates — not used for planning.")}
+                    {result.recommendation.duration_plan?.minutes != null ? (
+                      <> Planning uses{" "}
+                        <strong>{fmtMinutes(result.recommendation.duration_plan.minutes)}</strong>
+                        {" "}({result.recommendation.duration_plan.quantile?.toUpperCase()} ·{" "}
+                        {result.recommendation.duration_plan.source === "layer45_guarded"
+                          ? "Layer 4.5 guarded"
+                          : "Layer 1"}
+                        ).
+                      </>
+                    ) : null}
+                  </p>
+                ) : null}
                 <div style={{ marginTop: 10 }}>
                   <Rows rows={[["Source", result.layer1_duration.source], ["Sample n", result.layer1_duration.n], ["Confidence", result.layer1_duration.confidence]]} />
                 </div>
@@ -342,6 +357,12 @@ python -m uvicorn main:app --port 8000`}
                 <p style={{ fontSize: 15.5, lineHeight: 1.55, margin: "8px 0 0", fontWeight: 500 }}>
                   {result.recommendation.headline}
                 </p>
+                {result.recommendation.duration_plan?.note &&
+                 result.recommendation.duration_plan.source !== "layer1" ? (
+                  <p className="dim" style={{ fontSize: 12, marginTop: 8, lineHeight: 1.45 }}>
+                    {result.recommendation.duration_plan.note}
+                  </p>
+                ) : null}
               </div>
             </div>
           </>

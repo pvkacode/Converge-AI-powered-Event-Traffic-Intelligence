@@ -41,7 +41,17 @@ export interface WorkedExampleResult {
   layer5_optimization: LayerSection;
   layer6_learning: LayerSection;
   layer7_spillover: LayerSection;
-  recommendation: { headline: string; scenario: ScenarioInput };
+  recommendation: {
+    headline: string;
+    scenario: ScenarioInput;
+    duration_plan?: {
+      quantile: string;
+      minutes: number;
+      source: string;
+      note?: string;
+    } | null;
+    officer_plan?: { count: number; source: string } | null;
+  };
   provenance: Record<string, Provenance>;
 }
 

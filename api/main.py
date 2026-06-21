@@ -173,6 +173,164 @@ def _tier(score: Optional[float]) -> Optional[str]:
     return "Low"
 
 
+# ---------------------------------------------------------------------------
+# Duration sanity (Kaplan-Meier tails often clamp to last censored follow-up)
+# ---------------------------------------------------------------------------
+MAX_PLAUSIBLE_DURATION_MIN = 7 * 24 * 60  # one week
+TAIL_INFLATION_RATIO = 15.0               # p80 > 15× p50 and > 4 h → suspect
+
+
+def _quantile_sane(p50: Optional[float], p80: Optional[float], p95: Optional[float]) -> bool:
+    """Return False when KM tail quantiles are censored or operationally implausible."""
+    if p50 is not None and p50 > MAX_PLAUSIBLE_DURATION_MIN:
+        return False
+    for tail in (p80, p95):
+        if tail is None:
+            continue
+        if tail > MAX_PLAUSIBLE_DURATION_MIN:
+            return False
+        if p50 is not None and p50 > 0 and tail > max(240.0, TAIL_INFLATION_RATIO * p50):
+            return False
+    if (
+        p80 is not None
+        and p95 is not None
+        and abs(p80 - p95) < 1.0
+        and max(p80, p95) > 1440.0
+    ):
+        return False
+    return True
+
+
+def _minutes_plausible(mins: Optional[float]) -> bool:
+    return mins is not None and mins <= MAX_PLAUSIBLE_DURATION_MIN
+
+
+def _fmt_duration_min(mins: float) -> str:
+    if mins < 120:
+        return f"{mins:.0f} min"
+    if mins < 48 * 60:
+        return f"{mins / 60:.1f} h"
+    return f"{mins / 1440:.1f} d"
+
+
+def _layer45_quantiles(section: dict) -> dict[str, Optional[float]]:
+    dq = section.get("duration_quantiles") or {}
+    return {
+        "p50": _f(dq.get("p50")),
+        "p80": _f(dq.get("p80")),
+        "p95": _f(dq.get("p95")),
+    }
+
+
+def _resolve_duration_plan(sections: dict) -> Optional[dict[str, Any]]:
+    """Pick operational planning quantiles; prefer guarded L4.5 when L1 tails are censored."""
+    l1 = sections["layer1_duration"]
+    l45 = sections.get("layer45_fusion") or {}
+    guarded = _layer45_quantiles(l45)
+    p50, p80, p95 = l1.get("p50"), l1.get("p80"), l1.get("p95")
+    tails_ok = _quantile_sane(p50, p80, p95)
+
+    if guarded.get("p80") is not None and (not tails_ok or p80 is None):
+        return {
+            "quantile": "p80",
+            "minutes": guarded["p80"],
+            "source": "layer45_guarded",
+            "note": (
+                "Layer 1 Kaplan-Meier tail quantiles are censored or implausible for this "
+                "cause/corridor; planning uses Layer 4.5 guarded P80."
+            ),
+            "p50": guarded.get("p50") or (p50 if _minutes_plausible(p50) else None),
+            "p80": guarded["p80"],
+            "p95": guarded.get("p95"),
+        }
+    if p80 is not None and tails_ok:
+        return {
+            "quantile": "p80",
+            "minutes": p80,
+            "source": "layer1",
+            "note": "Planning uses Layer 1 Kaplan-Meier P80.",
+            "p50": p50,
+            "p80": p80,
+            "p95": p95,
+        }
+    if guarded.get("p50") is not None:
+        return {
+            "quantile": "p50",
+            "minutes": guarded["p50"],
+            "source": "layer45_guarded",
+            "note": "No trustworthy P80; planning uses Layer 4.5 guarded P50.",
+            "p50": guarded["p50"],
+            "p80": guarded.get("p80"),
+            "p95": guarded.get("p95"),
+        }
+    if _minutes_plausible(p50):
+        return {
+            "quantile": "p50",
+            "minutes": p50,
+            "source": "layer1",
+            "note": "No trustworthy P80; planning uses Layer 1 P50 only.",
+            "p50": p50,
+            "p80": None,
+            "p95": None,
+        }
+    return None
+
+
+def _layer1_payload(
+    *,
+    provenance: str,
+    p50: Optional[float],
+    p80: Optional[float],
+    p95: Optional[float],
+    source: Optional[str],
+    n: Optional[int],
+    confidence: Optional[str],
+    note: str,
+    trustworthy_flag: bool,
+) -> dict[str, Any]:
+    tail_trustworthy = _quantile_sane(p50, p80, p95)
+    out: dict[str, Any] = {
+        "provenance": provenance,
+        "p50": p50,
+        "p80": p80,
+        "p95": p95,
+        "source": source,
+        "n": n,
+        "confidence": confidence,
+        "trustworthy_flag": trustworthy_flag,
+        "tail_trustworthy": tail_trustworthy,
+        "note": note,
+    }
+    if not tail_trustworthy:
+        out["tail_note"] = (
+            "P80/P95 are right-censored Kaplan-Meier estimates (survival never reached the "
+            "target probability). Do not use them for operational planning — the synthesised "
+            "recommendation falls back to Layer 4.5 guarded quantiles when available."
+        )
+    return out
+
+
+def _resolve_officer_count(sections: dict) -> tuple[Optional[float], Optional[str]]:
+    """Prefer positive L3 junction allocation; else L4 retrieval; else L5 MILP export."""
+    l3 = sections.get("layer3_resources") or {}
+    l4 = sections.get("layer4_event") or {}
+    l5 = sections.get("layer5_optimization") or {}
+
+    l3_off = _f(l3.get("officers"))
+    if l3_off is not None and l3_off > 0:
+        return l3_off, "layer3"
+
+    l4_off = _f((l4.get("recommended") or {}).get("officers"))
+    if l4_off is not None and l4_off > 0:
+        return l4_off, "layer4"
+
+    l5_off = _f((l5.get("allocation") or {}).get("officers"))
+    if l5_off is not None and l5_off > 0:
+        return l5_off, "layer5"
+
+    return None, None
+
+
 def _junction_for_corridor(corridor: str) -> Optional[str]:
     """Pick the highest-burden junction observed on a corridor, using the
     risk_scores corridor->junction mapping joined to the burden index."""
@@ -200,13 +358,17 @@ def layer1_section(cause: str, corridor: str) -> dict:
     live = eng.lookup(cause, corridor) if eng.ok else None
     if live is not None:
         trustworthy = live.get("confidence") in ("high", "moderate")
-        return {
-            "provenance": "live",
-            "p50": live["p50"], "p80": live["p80"], "p95": live["p95"],
-            "source": live["source"], "n": live["n"], "confidence": live["confidence"],
-            "trustworthy_flag": trustworthy,
-            "note": "Kaplan-Meier survival quantiles recomputed live from data/events_clean.parquet.",
-        }
+        return _layer1_payload(
+            provenance="live",
+            p50=live["p50"],
+            p80=live["p80"],
+            p95=live["p95"],
+            source=live["source"],
+            n=live["n"],
+            confidence=live["confidence"],
+            trustworthy_flag=trustworthy,
+            note="Kaplan-Meier survival quantiles recomputed live from data/events_clean.parquet.",
+        )
     # ---- fallback to precomputed duration_lookup.csv ----
     dl = csv("frontend/duration_lookup.csv")
     reason = eng.reason or "live engine returned no match"
@@ -220,19 +382,28 @@ def layer1_section(cause: str, corridor: str) -> dict:
         if not m.empty:
             row = m.iloc[0]
             n = _f(row.get("n"))
-            return {
-                "provenance": "fallback",
-                "p50": _f(row.get("p50_min")), "p80": _f(row.get("p80_min")), "p95": _f(row.get("p95_min")),
-                "source": src, "n": int(n) if n is not None else None,
-                "confidence": "moderate",
-                "trustworthy_flag": True,
-                "note": f"Live survival engine unavailable ({reason}). Served from duration_lookup.csv.",
-            }
-    return {
-        "provenance": "fallback", "p50": None, "p80": None, "p95": None,
-        "source": None, "n": None, "confidence": None, "trustworthy_flag": False,
-        "note": f"No duration available for {cause} on {corridor}. Live engine: {reason}.",
-    }
+            return _layer1_payload(
+                provenance="fallback",
+                p50=_f(row.get("p50_min")),
+                p80=_f(row.get("p80_min")),
+                p95=_f(row.get("p95_min")),
+                source=src,
+                n=int(n) if n is not None else None,
+                confidence="moderate",
+                trustworthy_flag=True,
+                note=f"Live survival engine unavailable ({reason}). Served from duration_lookup.csv.",
+            )
+    return _layer1_payload(
+        provenance="fallback",
+        p50=None,
+        p80=None,
+        p95=None,
+        source=None,
+        n=None,
+        confidence=None,
+        trustworthy_flag=False,
+        note=f"No duration available for {cause} on {corridor}. Live engine: {reason}.",
+    )
 
 
 def layer2_section(corridor: str) -> dict:
@@ -451,28 +622,43 @@ def layer7_section(hour_local: int) -> dict:
 
 
 def synthesize(sections: dict, scenario: dict) -> dict:
-    l1 = sections["layer1_duration"]
     l3 = sections["layer3_resources"]
-    l45 = sections["layer45_fusion"]
     l7 = sections["layer7_spillover"]
-    parts = []
-    if l1.get("p80") is not None:
-        mins = l1["p80"]
-        dur = f"{mins:.0f} min" if mins < 120 else f"{mins/60:.1f} h"
-        parts.append(f"Plan for a P80 clearance of about {dur}")
+    duration_plan = _resolve_duration_plan(sections)
+    parts: list[str] = []
+
+    if duration_plan is not None:
+        q = str(duration_plan["quantile"]).upper()
+        dur = _fmt_duration_min(float(duration_plan["minutes"]))
+        parts.append(f"Plan for a {q} clearance of about {dur}")
+
     if l3.get("risk_tier"):
         parts.append(f"risk tier {l3['risk_tier']}")
-    off = l3.get("officers")
-    if off:
-        parts.append(f"deploy ~{off:.0f} officers at {sections['layer2_spatial'].get('matched_hotspot')}")
+
+    officers, officer_source = _resolve_officer_count(sections)
+    hotspot = sections["layer2_spatial"].get("matched_hotspot")
+    if officers is not None and officers > 0:
+        loc = f" at {hotspot}" if hotspot else ""
+        src_label = {"layer3": "L3", "layer4": "L4 retrieval", "layer5": "L5"}.get(
+            officer_source or "", officer_source or ""
+        )
+        parts.append(f"deploy ~{officers:.0f} officers{loc} ({src_label})")
+
     if l3.get("diversion_routes"):
         parts.append("activate the recommended diversion")
     if l7.get("zone"):
         parts.append(f"watch {l7['zone']} for spillover")
+
     headline = "; ".join(parts) + "." if parts else "Insufficient matching data for a synthesised recommendation."
     return {
         "headline": headline,
         "scenario": scenario,
+        "duration_plan": duration_plan,
+        "officer_plan": (
+            {"count": officers, "source": officer_source}
+            if officers is not None and officers > 0
+            else None
+        ),
     }
 
 
