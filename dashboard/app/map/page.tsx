@@ -26,7 +26,6 @@ export default function MapPage() {
 
   const sigCount = hs ? countWhere(hs.rows, (r) => ["true", "1"].includes((r["is_significant"] ?? "").toLowerCase())) : 0;
   const maxProb = points.length ? Math.max(...points.map((p) => p.prob)) : NaN;
-  const envKey = process.env.NEXT_PUBLIC_MAPPLS_KEY;
 
   return (
     <>
@@ -44,11 +43,11 @@ export default function MapPage() {
             <Kpi label="Junctions mapped" value={fmtNum(points.length)} sub="with valid coordinates" />
             <Kpi label="Significant hotspots" value={fmtNum(sigCount)} sub="bootstrap is_significant" />
             <Kpi label="Peak hotspot prob." value={Number.isNaN(maxProb) ? "-" : fmtNum(maxProb)} sub="max bootstrap probability" />
-            <Kpi label="Basemap" isText value="Mappls" sub="MapmyIndia vector SDK" accent />
+            <Kpi label="Basemap" isText value="Leaflet" sub="CartoDB dark tiles · no API key" accent />
           </div>
 
           <div style={{ marginBottom: 24 }}>
-            <MapplsMap points={points} envKey={envKey} />
+            <MapplsMap points={points} />
           </div>
 
           <DataTable
@@ -60,9 +59,8 @@ export default function MapPage() {
 
           <div style={{ marginTop: 20 }}>
             <Note>
-              Coordinates come from <span className="mono">layer2_hotspots.csv</span>. The map needs a
-              Mappls (MapmyIndia) API key to draw tiles; the ranked table above always renders the same
-              data without a key.
+              Coordinates come from <span className="mono">layer2_hotspots.csv</span>. The map uses
+              Leaflet with CartoDB dark tiles — no API key required.
             </Note>
           </div>
         </>

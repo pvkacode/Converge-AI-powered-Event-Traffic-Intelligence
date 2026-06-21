@@ -42,6 +42,13 @@ export const DATASETS: Record<string, DatasetSpec> = {
     defaultSort: { col: "sps", dir: "desc" },
     pageSize: 15,
   },
+  layer2_hotspots_geo: {
+    key: "layer2_hotspots_geo",
+    file: "layer2_hotspots.csv",
+    badgeCols: ["is_significant"],
+    defaultSort: { col: "hotspot_probability", dir: "desc" },
+    pageSize: 15,
+  },
   operational_burden: {
     key: "operational_burden",
     file: "frontend/operational_burden.csv",

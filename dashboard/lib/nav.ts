@@ -17,6 +17,7 @@ export const NAV: NavItem[] = [
   { href: "/layer5", label: "Robust Optimization", idx: "L5", step: "Optimize", short: "Layer 5" },
   { href: "/layer6", label: "Adaptive Learning", idx: "L6", step: "Learn", short: "Layer 6" },
   { href: "/layer7", label: "Cross-Zone Spillover", idx: "L7", step: "Spillover", short: "Layer 7" },
+  { href: "/map", label: "Hotspot Map", idx: "MAP", short: "Hotspot Map" },
   { href: "/worked-example", label: "Worked Example", idx: "WX", short: "Worked Example" },
 ];
 
