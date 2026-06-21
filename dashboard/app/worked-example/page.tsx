@@ -1,9 +1,12 @@
 import { PageHeader, Note } from "@/components/ui";
+import { buildWxMapData } from "@/lib/map-junctions";
 import { WorkedExampleLive } from "@/components/WorkedExampleLive";
 
 export const dynamic = "force-dynamic";
 
 export default function WorkedExamplePage() {
+  const wxMapData = buildWxMapData();
+
   return (
     <>
       <PageHeader
@@ -22,7 +25,7 @@ export default function WorkedExamplePage() {
         </div>
       </PageHeader>
 
-      <WorkedExampleLive />
+      <WorkedExampleLive mapData={wxMapData} />
     </>
   );
 }

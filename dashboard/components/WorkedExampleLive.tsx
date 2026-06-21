@@ -1,4 +1,5 @@
 "use client";
+import nextDynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Lightning, WarningCircle, ArrowClockwise } from "@phosphor-icons/react";
 import {
@@ -12,8 +13,15 @@ import {
   type Provenance,
   API_BASE,
 } from "@/lib/api";
+import type { WxMapData } from "@/lib/map-junctions";
 import { fmtNum, fmtMinutes, titleCaseValue } from "@/lib/format";
 import { Badge, MetricLine } from "./ui";
+import { MapPlaceholder } from "@/components/maps/map-ui";
+
+const WorkedExampleMap = nextDynamic(() => import("@/components/maps/WorkedExampleMap"), {
+  ssr: false,
+  loading: () => <MapPlaceholder height={300} message="Loading map…" />,
+});
 
 const DEFAULT_INPUT: ScenarioInput = {
   cause: "vehicle_breakdown",
@@ -80,7 +88,7 @@ function PipeItem({
   );
 }
 
-export function WorkedExampleLive() {
+export function WorkedExampleLive({ mapData }: { mapData: WxMapData | null }) {
   const [options, setOptions] = useState<Options | null>(null);
   const [input, setInput] = useState<ScenarioInput>(DEFAULT_INPUT);
   const [result, setResult] = useState<WorkedExampleResult | null>(null);
@@ -270,6 +278,11 @@ python -m uvicorn main:app --port 8000`}
                 <div style={{ marginTop: 10 }}>
                   <Rows rows={[["Source", result.layer1_duration.source], ["Sample n", result.layer1_duration.n], ["Confidence", result.layer1_duration.confidence]]} />
                 </div>
+                {mapData ? (
+                  <WorkedExampleMap mapData={mapData} input={input} />
+                ) : (
+                  <MapPlaceholder height={300} message="Map unavailable — check outputs/frontend/ exports" />
+                )}
               </PipeItem>
 
               <PipeItem idx="L2" title="Spatial" layerTag="Layer 2 · hotspot match" section={result.layer2_spatial}>

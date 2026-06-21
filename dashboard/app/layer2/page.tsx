@@ -1,7 +1,10 @@
 import { tryLoadCsv } from "@/lib/csv";
+import { buildJunctionMapData } from "@/lib/map-junctions";
 import { countWhere, nums } from "@/lib/stats";
 import { toNum, fmtNum } from "@/lib/format";
 import { Kpi, PageHeader, Panel, Note } from "@/components/ui";
+import { MapPlaceholder } from "@/components/maps/map-ui";
+import { L2HotspotMap } from "@/components/maps/DynamicMaps";
 import { DataTable } from "@/components/DataTable";
 import { BurdenExplorer, type ObiRow, type HotRow } from "@/components/BurdenExplorer";
 
@@ -10,6 +13,7 @@ export const dynamic = "force-dynamic";
 export default function Layer2Page() {
   const hs = tryLoadCsv("frontend/hotspot_rankings.csv");
   const ob = tryLoadCsv("frontend/operational_burden.csv");
+  const mapData = buildJunctionMapData();
 
   const total = hs?.rows.length ?? 0;
   const giHot = hs
@@ -36,13 +40,18 @@ export default function Layer2Page() {
       </div>
 
       {ob && hs && (
-        <div style={{ marginBottom: 24 }}>
+        <div className="grid grid-2" style={{ marginBottom: 24, alignItems: "start" }}>
           <Panel title="Operational burden explorer" meta="Adjust Top-N and the Gi* threshold to re-slice the ranking">
             <BurdenExplorer
               obi={ob.rows as unknown as ObiRow[]}
               hot={hs.rows as unknown as HotRow[]}
             />
           </Panel>
+          {mapData ? (
+            <L2HotspotMap points={mapData.points} stats={mapData.stats} />
+          ) : (
+            <MapPlaceholder height={480} message="Map unavailable — check outputs/frontend/ exports" />
+          )}
         </div>
       )}
 

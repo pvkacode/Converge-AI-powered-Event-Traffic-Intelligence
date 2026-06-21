@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { tryLoadCsv } from "@/lib/csv";
+import { buildJunctionMapData, topJunctionsByObi } from "@/lib/map-junctions";
 import { nums, median, countWhere, valueCounts, topBy } from "@/lib/stats";
 import { toNum, fmtNum, fmtMinutes } from "@/lib/format";
 import { Kpi, PageHeader, Panel, Badge, MetricLine, Note } from "@/components/ui";
+import { MapPlaceholder } from "@/components/maps/map-ui";
+import { OverviewMiniMap } from "@/components/maps/DynamicMaps";
 import { FlowDiagram } from "@/components/FlowDiagram";
 import { HBar } from "@/components/charts";
 import { healthVariant } from "@/lib/badges";
@@ -11,6 +14,8 @@ export const dynamic = "force-dynamic";
 
 export default function OverviewPage() {
   const hotspots = tryLoadCsv("frontend/hotspot_rankings.csv");
+  const mapData = buildJunctionMapData();
+  const miniPoints = mapData ? topJunctionsByObi(mapData, 10) : [];
   const scenario = tryLoadCsv("layer45_scenario_ready_duration.csv");
   const health = tryLoadCsv("layer6_model_health_summary.csv");
   const alerts = tryLoadCsv("layer6_active_alerts.csv");
@@ -89,6 +94,14 @@ export default function OverviewPage() {
           value={spillTop?.name ?? "-"}
           sub={spillTop ? `SSC centrality ${fmtNum(spillTop.value)}` : undefined}
         />
+      </div>
+
+      <div style={{ marginBottom: 24 }}>
+        {mapData && miniPoints.length ? (
+          <OverviewMiniMap points={miniPoints} stats={mapData.stats} />
+        ) : (
+          <MapPlaceholder height={260} message="Map unavailable — check outputs/frontend/ exports" />
+        )}
       </div>
 
       <div style={{ marginBottom: 24 }}>

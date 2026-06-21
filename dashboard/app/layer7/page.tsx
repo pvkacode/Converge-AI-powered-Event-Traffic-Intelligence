@@ -1,7 +1,10 @@
 import { tryLoadCsv } from "@/lib/csv";
+import { buildZoneMapData } from "@/lib/map-zones";
 import { topBy } from "@/lib/stats";
 import { toNum, fmtNum } from "@/lib/format";
 import { Kpi, PageHeader, Panel, Note, EmptyState } from "@/components/ui";
+import { MapPlaceholder } from "@/components/maps/map-ui";
+import { SpilloverZoneMap } from "@/components/maps/DynamicMaps";
 import { DataTable } from "@/components/DataTable";
 import { HBar, ReliabilityChart } from "@/components/charts";
 
@@ -9,6 +12,7 @@ export const dynamic = "force-dynamic";
 
 export default function Layer7Page() {
   const spill = tryLoadCsv("layer7_spillover_centrality.csv");
+  const zoneMapData = buildZoneMapData();
   const eri = tryLoadCsv("layer7_expected_risk_index.csv");
   const topk = tryLoadCsv("layer7_top_k_early_warning.csv");
   const alerts = tryLoadCsv("layer7_operational_alerts.csv");
@@ -62,6 +66,14 @@ export default function Layer7Page() {
           value={auc3 ? fmtNum(auc3) : "-"}
           sub="calibrated CatBoost"
         />
+      </div>
+
+      <div style={{ marginBottom: 24 }}>
+        {zoneMapData ? (
+          <SpilloverZoneMap zones={zoneMapData} />
+        ) : (
+          <MapPlaceholder height={400} message="Map unavailable — check outputs/frontend/ exports" />
+        )}
       </div>
 
       <div className="grid grid-2" style={{ marginBottom: 24, alignItems: "start" }}>
