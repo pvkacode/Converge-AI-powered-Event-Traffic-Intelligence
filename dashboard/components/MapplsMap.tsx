@@ -143,7 +143,7 @@ export function MapplsMap({ points }: { points: HotPoint[]; envKey?: string }) {
           weight: 2,
         });
 
-        marker.bindPopup(`
+        marker.bindTooltip(`
           <div style="font-family:monospace;min-width:180px;font-size:12px">
             <div style="font-weight:700;margin-bottom:6px;font-size:13px">
               ${p.name}
@@ -157,7 +157,7 @@ export function MapplsMap({ points }: { points: HotPoint[]; envKey?: string }) {
               </span>
             </div>
           </div>
-        `);
+        `, { direction: "top", offset: [0, -4] });
 
         marker.addTo(map);
         markersRef.current.push(marker);

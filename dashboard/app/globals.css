@@ -461,6 +461,22 @@ table.data tbody tr:last-child td { border-bottom: none; }
 .metric-line .ml-k { color: var(--ink-2); font-size: 13px; }
 .metric-line .ml-v { font-family: var(--font-mono); font-weight: 600; font-variant-numeric: tabular-nums; }
 
+/* ------------------------------ map markers ----------------------------- */
+/* Applies to all Leaflet SVG interactable elements (CircleMarker, Circle,
+   Polyline, raw L.circleMarker). Suppressed automatically by the
+   prefers-reduced-motion rule below. */
+.leaflet-interactive {
+  /* transform-box: fill-box makes transform-origin: center use the SVG path's
+     own bounding box, not the CSS layout box. Without it, scaling an arc path
+     shifts its visual position, toggling the hover zone in a flicker loop. */
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.15s ease-out;
+}
+.leaflet-interactive:hover {
+  transform: scale(1.15);
+}
+
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
 }

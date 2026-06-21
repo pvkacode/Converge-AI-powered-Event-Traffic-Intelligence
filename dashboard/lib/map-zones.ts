@@ -24,6 +24,44 @@ export const ZONE_GEOMETRY: Record<string, { center: [number, number]; radius: n
   "West Zone 2": { center: [12.9166, 77.4849], radius: 2800 },
 };
 
+export interface ZoneEdge {
+  source: string;
+  dest: string;
+  from: [number, number];
+  to: [number, number];
+  alpha: number;
+  ci_lower: number;
+  ci_upper: number;
+  half_life_hours: number;
+}
+
+export function buildZoneEdgeData(): ZoneEdge[] {
+  const matrix = tryLoadCsv("layer7_cross_excitation_matrix.csv");
+  if (!matrix) return [];
+
+  const edges: ZoneEdge[] = [];
+  for (const r of matrix.rows) {
+    const src = String(r["source_zone"] ?? "").trim();
+    const dst = String(r["receiver_zone"] ?? "").trim();
+    const ci_lower = toNum(r["ci_lower_95"]);
+    if (ci_lower <= 0) continue;
+    const fromGeom = ZONE_GEOMETRY[src];
+    const toGeom = ZONE_GEOMETRY[dst];
+    if (!fromGeom || !toGeom) continue;
+    edges.push({
+      source: src,
+      dest: dst,
+      from: fromGeom.center,
+      to: toGeom.center,
+      alpha: toNum(r["alpha"]),
+      ci_lower,
+      ci_upper: toNum(r["ci_upper_95"]),
+      half_life_hours: toNum(r["half_life_hours"]),
+    });
+  }
+  return edges;
+}
+
 export function buildZoneMapData(): ZoneMapCircle[] | null {
   const spill = tryLoadCsv("layer7_spillover_centrality.csv");
   if (!spill) return null;

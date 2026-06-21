@@ -2,8 +2,9 @@ import Link from "next/link";
 import { tryLoadCsv } from "@/lib/csv";
 import { buildJunctionMapData, topJunctionsByObi } from "@/lib/map-junctions";
 import { nums, median, countWhere, valueCounts, topBy } from "@/lib/stats";
-import { toNum, fmtNum, fmtMinutes } from "@/lib/format";
-import { Kpi, PageHeader, Panel, Badge, MetricLine, Note } from "@/components/ui";
+import { toNum } from "@/lib/format";
+import { PageHeader, Panel, Badge, MetricLine, Note } from "@/components/ui";
+import { HeroKpis } from "@/components/HeroKpis";
 import { MapPlaceholder } from "@/components/maps/map-ui";
 import { OverviewMiniMap } from "@/components/maps/DynamicMaps";
 import { FlowDiagram } from "@/components/FlowDiagram";
@@ -52,6 +53,7 @@ export default function OverviewPage() {
   const sevEntries = Object.entries(sev).sort(
     (a, b) => (sevOrder.indexOf(a[0]) + 10) - (sevOrder.indexOf(b[0]) + 10) || b[1] - a[1]
   );
+  const sevSummary = sevEntries.map(([k, v]) => `${v} ${k}`).join(", ");
 
   return (
     <>
@@ -61,40 +63,18 @@ export default function OverviewPage() {
         lede="A read-only view over the Bengaluru traffic disruption pipeline. Seven model layers turn raw incident data into duration estimates, spatial hotspots, retrieved precedents, robust resource plans, and cross-zone spillover early-warning. Every number below is read live from the pipeline's outputs/ exports."
       />
 
-      <div className="grid grid-5" style={{ marginBottom: 24 }}>
-        <Kpi
-          label="Ranked hotspots"
-          value={fmtNum(hsTotal)}
-          sub={`${giHot} with positive Gi* clustering`}
-        />
-        <Kpi
-          label="Median safe duration"
-          value={Number.isNaN(safe) ? "-" : fmtMinutes(safe)}
-          sub="P50, Layer 4.5 sanitized"
-        />
-        <Kpi
-          label="Model health"
-          isText
-          value={
-            <span style={{ color: `var(--${overall.toLowerCase().includes("crit") ? "critical" : overall.toLowerCase().includes("warn") ? "warning" : "ok"})` }}>
-              {overall}
-            </span>
-          }
-          sub={`${criticalChecks} of ${totalChecks} checks critical`}
-        />
-        <Kpi
-          label="Active alerts"
-          value={fmtNum(alertTotal)}
-          sub={sevEntries.map(([k, v]) => `${v} ${k}`).join(", ") || "none"}
-        />
-        <Kpi
-          label="Top spillover zone"
-          isText
-          accent
-          value={spillTop?.name ?? "-"}
-          sub={spillTop ? `SSC centrality ${fmtNum(spillTop.value)}` : undefined}
-        />
-      </div>
+      <HeroKpis
+        hsTotal={hsTotal}
+        giHot={giHot}
+        safe={safe}
+        overall={overall}
+        criticalChecks={criticalChecks}
+        totalChecks={totalChecks}
+        alertTotal={alertTotal}
+        sevSummary={sevSummary}
+        spillZone={spillTop?.name ?? ""}
+        spillCentrality={spillTop ? spillTop.value : NaN}
+      />
 
       <div style={{ marginBottom: 24 }}>
         {mapData && miniPoints.length ? (

@@ -3,7 +3,7 @@
 import nextDynamic from "next/dynamic";
 import { MapPlaceholder } from "./map-ui";
 import type { JunctionMapPoint } from "@/lib/map-junctions";
-import type { ZoneMapCircle } from "@/lib/map-zones";
+import type { ZoneMapCircle, ZoneEdge } from "@/lib/map-zones";
 
 const L2HotspotMapInner = nextDynamic(() => import("./L2HotspotMap"), {
   ssr: false,
@@ -34,6 +34,6 @@ export function OverviewMiniMap(props: {
   return <OverviewMiniMapInner {...props} />;
 }
 
-export function SpilloverZoneMap(props: { zones: ZoneMapCircle[] }) {
+export function SpilloverZoneMap(props: { zones: ZoneMapCircle[]; edges?: ZoneEdge[] }) {
   return <SpilloverZoneMapInner {...props} />;
 }

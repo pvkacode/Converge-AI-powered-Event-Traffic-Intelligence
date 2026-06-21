@@ -181,6 +181,12 @@ export const DATASETS: Record<string, DatasetSpec> = {
     defaultSort: { col: "horizon_h", dir: "asc" },
     pageSize: 12,
   },
+  layer7_cross_excitation_matrix: {
+    key: "layer7_cross_excitation_matrix",
+    file: "layer7_cross_excitation_matrix.csv",
+    defaultSort: { col: "alpha", dir: "desc" },
+    pageSize: 15,
+  },
 };
 
 export function getDataset(key: string): DatasetSpec | undefined {
