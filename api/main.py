@@ -179,6 +179,52 @@ def _tier(score: Optional[float]) -> Optional[str]:
 MAX_PLAUSIBLE_DURATION_MIN = 7 * 24 * 60  # one week
 TAIL_INFLATION_RATIO = 15.0               # p80 > 15× p50 and > 4 h → suspect
 
+# Layer 4 retrieval is trained on true planned-event causes only.
+PLANNED_CAUSES = frozenset({"public_event", "procession", "protest", "vip_movement"})
+NON_CORRIDOR = frozenset({"", "non-corridor"})
+
+
+def _norm(value: Any) -> str:
+    return str(value or "").strip().lower()
+
+
+def _is_non_corridor(corridor: str) -> bool:
+    return _norm(corridor) in NON_CORRIDOR
+
+
+def _match_col(df: pd.DataFrame, col: str, value: str) -> pd.Series:
+    if col not in df.columns:
+        return pd.Series(False, index=df.index)
+    return df[col].astype(str).str.strip().str.lower() == _norm(value)
+
+
+def _first_positive(*values: Any) -> Optional[float]:
+    for v in values:
+        f = _f(v)
+        if f is not None and f > 0:
+            return f
+    for v in values:
+        f = _f(v)
+        if f is not None:
+            return f
+    return None
+
+
+def _resources_from_row(r: pd.Series) -> dict[str, Optional[float]]:
+    """Prefer LP-allocated counts when positive; fall back to ODS manpower estimates."""
+    return {
+        "officers": _first_positive(r.get("allocated_officers"), r.get("officers")),
+        "barricades": _first_positive(
+            r.get("allocated_barricades"), r.get("barricades_from_ods"), r.get("barricades")
+        ),
+        "tow": _first_positive(r.get("allocated_tow"), r.get("tow_vehicles"), r.get("tow_unit")),
+        "supervisors": _first_positive(r.get("allocated_supervisors"), r.get("supervisors")),
+    }
+
+
+def _resources_all_zero(res: dict[str, Optional[float]]) -> bool:
+    return all((res.get(k) or 0) == 0 for k in ("officers", "barricades", "tow"))
+
 
 def _quantile_sane(p50: Optional[float], p80: Optional[float], p95: Optional[float]) -> bool:
     """Return False when KM tail quantiles are censored or operationally implausible."""
@@ -331,22 +377,45 @@ def _resolve_officer_count(sections: dict) -> tuple[Optional[float], Optional[st
     return None, None
 
 
-def _junction_for_corridor(corridor: str) -> Optional[str]:
-    """Pick the highest-burden junction observed on a corridor, using the
-    risk_scores corridor->junction mapping joined to the burden index."""
+def _junction_for_corridor(corridor: str, cause: Optional[str] = None) -> Optional[str]:
+    """Pick the highest-burden junction on a corridor (optionally cause-filtered).
+
+    For Non-corridor, prefer junctions with non-zero ODS manpower on the selected
+    cause rather than the single highest-OBI junction (which may have LP alloc=0).
+    """
     rs = csv("frontend/risk_scores.csv")
     ob = csv("frontend/operational_burden.csv")
+    mp = csv("layer3_manpower_recommendations.csv")
     if rs is None:
         return None
-    sub = rs[(rs["corridor"] == corridor) & rs["junction"].notna() & (rs["junction"].astype(str) != "")]
+
+    sub = rs[_match_col(rs, "corridor", corridor) & rs["junction"].notna() & (rs["junction"].astype(str) != "")]
+    if cause and not sub.empty:
+        cause_sub = sub[_match_col(sub, "event_cause", cause)]
+        if not cause_sub.empty:
+            sub = cause_sub
+
     if sub.empty:
         return None
+
     juncs = sub["junction"].astype(str).unique().tolist()
+
+    # Prefer junctions with positive ODS manpower (avoids allocated_officers=0 trap).
+    if mp is not None and "junction" in mp.columns:
+        mp_sub = mp[mp["junction"].astype(str).isin(juncs)].copy()
+        if not mp_sub.empty:
+            mp_sub["officers"] = pd.to_numeric(mp_sub.get("officers"), errors="coerce").fillna(0)
+            mp_sub["ods_score"] = pd.to_numeric(mp_sub.get("ods_score"), errors="coerce").fillna(0)
+            nonzero = mp_sub[mp_sub["officers"] > 0]
+            pick_from = nonzero if not nonzero.empty else mp_sub
+            return str(pick_from.sort_values(["ods_score", "officers"], ascending=False).iloc[0]["junction"])
+
     if ob is not None and "operational_burden_index" in ob.columns:
-        m = ob[ob["junction"].isin(juncs)].copy()
+        m = ob[ob["junction"].astype(str).isin(juncs)].copy()
         if not m.empty:
             m["operational_burden_index"] = pd.to_numeric(m["operational_burden_index"], errors="coerce")
             return str(m.sort_values("operational_burden_index", ascending=False).iloc[0]["junction"])
+
     return juncs[0]
 
 
@@ -406,8 +475,8 @@ def layer1_section(cause: str, corridor: str) -> dict:
     )
 
 
-def layer2_section(corridor: str) -> dict:
-    junction = _junction_for_corridor(corridor)
+def layer2_section(corridor: str, cause: Optional[str] = None) -> dict:
+    junction = _junction_for_corridor(corridor, cause)
     hot = csv("frontend/hotspot_rankings.csv")
     ob = csv("frontend/operational_burden.csv")
     out: dict[str, Any] = {"provenance": "precomputed_lookup", "matched_hotspot": junction}
@@ -435,12 +504,18 @@ def layer3_section(cause: str, corridor: str) -> dict:
     rs = csv("frontend/risk_scores.csv")
     frag = csv("frontend/corridor_fragility.csv")
     dash = csv("layer3_full_dashboard.csv")
-    junction = _junction_for_corridor(corridor)
-    out: dict[str, Any] = {"provenance": "precomputed_lookup"}
+    mp = csv("layer3_manpower_recommendations.csv")
+    junction = _junction_for_corridor(corridor, cause)
+    out: dict[str, Any] = {
+        "provenance": "precomputed_lookup",
+        "lookup_junction": junction,
+        "lookup_corridor": corridor,
+        "lookup_cause": cause,
+    }
 
-    # risk tier for this cause x corridor
+    # risk tier for this cause x corridor (normalized match)
     if rs is not None:
-        sub = rs[(rs["event_cause"] == cause) & (rs["corridor"] == corridor)]
+        sub = rs[_match_col(rs, "event_cause", cause) & _match_col(rs, "corridor", corridor)]
         if not sub.empty:
             scores = pd.to_numeric(sub["survival_risk_score"], errors="coerce").dropna()
             if not scores.empty:
@@ -448,28 +523,53 @@ def layer3_section(cause: str, corridor: str) -> dict:
                 out["risk_tier"] = _tier(float(scores.max()))
                 out["n_events"] = int(len(sub))
 
-    # resource blueprint for the matched junction (precomputed full dashboard)
+    resources: dict[str, Optional[float]] = {}
+    source_row = None
+
     if dash is not None and junction is not None:
-        m = dash[dash["junction"] == junction]
+        m = dash[dash["junction"].astype(str) == str(junction)]
         if not m.empty:
-            r = m.iloc[0]
-            out["officers"] = _f(r.get("allocated_officers") if "allocated_officers" in r else r.get("officers"))
-            out["barricades"] = _f(r.get("allocated_barricades") if "allocated_barricades" in r else r.get("barricades"))
-            out["tow"] = _f(r.get("allocated_tow") if "allocated_tow" in r else r.get("tow_vehicles"))
-            out["supervisors"] = _f(r.get("allocated_supervisors") if "allocated_supervisors" in r else r.get("supervisors"))
-            out["dashboard_risk_level"] = (str(r.get("risk_level")) if r.get("risk_level") is not None else None)
+            source_row = m.iloc[0]
+            resources = _resources_from_row(source_row)
+
+    # Fallback to raw manpower recommendations when dashboard LP allocation is zero.
+    if _resources_all_zero(resources) and mp is not None and junction is not None:
+        m = mp[mp["junction"].astype(str) == str(junction)]
+        if not m.empty:
+            source_row = m.iloc[0]
+            resources = _resources_from_row(source_row)
+
+    # Cause+corridor junction from risk_scores when corridor mapping is weak.
+    if _resources_all_zero(resources) and rs is not None:
+        sub = rs[_match_col(rs, "event_cause", cause) & _match_col(rs, "corridor", corridor)]
+        if not sub.empty and "junction" in sub.columns:
+            junc_counts = sub.groupby("junction").size().sort_values(ascending=False)
+            for junc in junc_counts.index.astype(str):
+                if mp is not None:
+                    m = mp[mp["junction"].astype(str) == junc]
+                    if not m.empty:
+                        cand = _resources_from_row(m.iloc[0])
+                        if not _resources_all_zero(cand):
+                            junction = junc
+                            resources = cand
+                            out["lookup_junction"] = junction
+                            break
+
+    out.update(resources)
+    if source_row is not None and source_row.get("risk_level") is not None:
+        out["dashboard_risk_level"] = str(source_row.get("risk_level"))
 
     # diversion recommendation (precomputed)
     div = csv("layer3_diversion_recommendations.csv")
     if div is not None and junction is not None and "junction" in div.columns:
-        m = div[div["junction"] == junction]
+        m = div[div["junction"].astype(str) == str(junction)]
         if not m.empty:
             cols = [c for c in div.columns if c != "junction"][:4]
             out["diversion_routes"] = {c: (None if pd.isna(m.iloc[0][c]) else str(m.iloc[0][c])) for c in cols}
 
     # corridor fragility (Hawkes cascade) - precomputed
     if frag is not None:
-        m = frag[frag["corridor"] == corridor]
+        m = frag[_match_col(frag, "corridor", corridor)]
         if not m.empty:
             r = m.iloc[0]
             out["fragility"] = {
@@ -477,32 +577,78 @@ def layer3_section(cause: str, corridor: str) -> dict:
                 "current_intensity": _f(r.get("current_intensity")),
                 "fragility_log": _f(r.get("fragility_log")),
             }
-    out["note"] = "Risk tier derived from the survival-risk distribution; resources and fragility from the Layer 3 exports."
+
+    out["insufficient_evidence"] = _resources_all_zero(resources)
+    if out["insufficient_evidence"]:
+        out["note"] = (
+            f"No Layer 3 resource blueprint for {cause} on {corridor}"
+            + (f" (junction {junction})" if junction else "")
+            + ". ODS/LP exports have no positive allocation for this combination."
+        )
+    else:
+        out["note"] = (
+            f"Resources from Layer 3 exports keyed by junction {junction} "
+            f"(highest ODS manpower on {corridor}"
+            + (f", cause-filtered)" if cause else ")")
+            + "; LP allocation used when positive, else ODS estimates."
+        )
     return out
 
 
 def layer4_section(cause: str, corridor: str) -> dict:
     pe = csv("frontend/planned_event_recommendations.csv")
-    out: dict[str, Any] = {"provenance": "precomputed_lookup"}
+    out: dict[str, Any] = {
+        "provenance": "precomputed_lookup",
+        "lookup_cause": cause,
+        "lookup_corridor": corridor,
+        "applicable": _norm(cause) in PLANNED_CAUSES,
+    }
+
+    if not out["applicable"]:
+        out["insufficient_evidence"] = True
+        out["note"] = (
+            "Layer 4 retrieval applies to planned events only "
+            "(procession, protest, public_event, vip_movement). "
+            f"'{cause}' is served by Layers 1–3 survival and resource models."
+        )
+        return out
+
     if pe is not None:
-        m = pe[(pe["cause"] == cause) & (pe["corridor"] == corridor)]
+        m = pe[_match_col(pe, "cause", cause) & _match_col(pe, "corridor", corridor)]
         if m.empty:
-            m = pe[pe["cause"] == cause]
+            m = pe[_match_col(pe, "cause", cause)]
         if not m.empty:
-            r = m.iloc[0]
+            m = m.copy()
+            m["effective_sample_size"] = pd.to_numeric(m.get("effective_sample_size"), errors="coerce").fillna(0)
+            m["confidence"] = pd.to_numeric(m.get("confidence"), errors="coerce").fillna(0)
+            r = m.sort_values(["effective_sample_size", "confidence"], ascending=False).iloc[0]
+            rec_off = _f(r.get("recommended_officers"))
+            rec_bar = _f(r.get("recommended_barricades"))
+            rec_tow = _f(r.get("recommended_tow_units"))
+            ess = _f(r.get("effective_sample_size"))
             out["confidence_tier"] = str(r.get("confidence_band")) if r.get("confidence_band") is not None else None
             out["confidence"] = _f(r.get("confidence"))
             out["IMS"] = _f(r.get("mean_similarity"))
-            out["evidence_weight"] = _f(r.get("effective_sample_size"))
+            out["evidence_weight"] = ess
             out["recommended"] = {
-                "officers": _f(r.get("recommended_officers")),
-                "barricades": _f(r.get("recommended_barricades")),
-                "tow": _f(r.get("recommended_tow_units")),
+                "officers": rec_off,
+                "barricades": rec_bar,
+                "tow": rec_tow,
             }
             out["abstain"] = str(r.get("abstain_flag"))
-            out["note"] = "Retrieved-precedent recommendation for this cause/corridor."
+            out["matched_corridor"] = str(r.get("corridor"))
+            out["insufficient_evidence"] = (
+                (rec_off or 0) == 0 and (rec_bar or 0) == 0 and (rec_tow or 0) == 0 and (ess or 0) == 0
+            )
+            out["note"] = (
+                f"Best precedent for {cause} on {corridor}"
+                + (f" (matched row corridor: {r.get('corridor')})" if _norm(str(r.get("corridor"))) != _norm(corridor) else "")
+                + "."
+            )
             return out
-    out["note"] = f"No retrieved precedent for {cause} on {corridor}; the live pipeline would abstain or fall back to priors."
+
+    out["insufficient_evidence"] = True
+    out["note"] = f"No retrieved precedent for {cause} on {corridor}; the pipeline would abstain or fall back to Layer 3 priors."
     return out
 
 
@@ -702,6 +848,12 @@ def options() -> dict:
         "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
         "priorities": ["High", "Low", "Unknown"],
         "layer1_live": engine().ok,
+        "suggested_examples": [
+            {"cause": "public_event", "corridor": "Mysore Road", "label": "public_event × Mysore Road"},
+            {"cause": "procession", "corridor": "Mysore Road", "label": "procession × Mysore Road"},
+            {"cause": "procession", "corridor": "Bannerghata Road", "label": "procession × Bannerghata Road"},
+            {"cause": "public_event", "corridor": "Bannerghata Road", "label": "public_event × Bannerghata Road"},
+        ],
     })
 
 
@@ -711,7 +863,7 @@ def worked_example(s: Scenario) -> dict:
     sections = {
         "input": scenario,
         "layer1_duration": layer1_section(s.cause, s.corridor),
-        "layer2_spatial": layer2_section(s.corridor),
+        "layer2_spatial": layer2_section(s.corridor, s.cause),
         "layer3_resources": layer3_section(s.cause, s.corridor),
         "layer4_event": layer4_section(s.cause, s.corridor),
         "layer45_fusion": layer45_section(s.cause),

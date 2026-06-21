@@ -1,6 +1,6 @@
 import { tryLoadCsv } from "@/lib/csv";
 import { toNum, fmtNum, fmtCompact } from "@/lib/format";
-import { Kpi, PageHeader, Panel, Note, EmptyState } from "@/components/ui";
+import { Kpi, PageHeader, Panel, EmptyState } from "@/components/ui";
 import { DataTable } from "@/components/DataTable";
 import { GroupedBar, LineSeries } from "@/components/charts";
 
@@ -84,11 +84,24 @@ export default function Layer5Page() {
           )}
         </Panel>
 
-        <Panel title="Risk frontier" meta="CVaR vs confidence level alpha">
+        <Panel
+          title="Pareto frontier"
+          meta="λ-sensitivity analysis across 6 CVaR/cost weight pairs — post-hoc evaluation of the base MILP allocation."
+        >
           {paretoHasData ? (
             <EmptyState title="Pareto front" message="Rendering the exported Pareto front." />
           ) : frontier.length ? (
             <>
+              <details className="collapsible-details">
+                <summary>CVaR vs deployment cost</summary>
+                <p>
+                  Each point sweeps a different (λ<sub>CVaR</sub>, λ<sub>cost</sub>) weighting from
+                  cost-dominated to risk-dominated priorities. All six pairs evaluate CVaR-90 and
+                  deployment cost for the same base MILP allocation post-hoc — the frontier
+                  documents how the composite objective shifts under different risk–cost emphasis,
+                  not six separate re-solves.
+                </p>
+              </details>
               <LineSeries
                 data={frontier}
                 xKey="alpha"
@@ -99,13 +112,6 @@ export default function Layer5Page() {
                 height={300}
                 xLabel="Confidence level (alpha)"
               />
-              <Note warn>
-                <span className="mono">layer5_pareto_front.csv</span> is present but contains only a
-                header row (no points), so the cost/CVaR Pareto curve cannot be drawn. Shown instead is
-                the real CVaR-vs-alpha risk frontier from{" "}
-                <span className="mono">layer5_cvar_summary.csv</span>: tail risk rises sharply as you
-                demand robustness against rarer worst-case days.
-              </Note>
             </>
           ) : (
             <EmptyState message="No Pareto or CVaR-frontier data available in outputs/." />

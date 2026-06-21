@@ -20,11 +20,25 @@ export function Badge({
   );
 }
 
+function abstainLabel(value: string): string | null {
+  const v = value.trim().toLowerCase();
+  if (["1", "true", "yes"].includes(v)) return "Abstained";
+  if (["0", "false", "no"].includes(v)) return "Recommend";
+  return null;
+}
+
 // Auto-variant badge from a raw cell value (used by tables and inline).
 export function ValueBadge({ value, column }: { value: string; column?: string }) {
   if (value == null || value === "") return <span className="dim">-</span>;
-  const variant = badgeVariant(value, column);
-  return <Badge variant={variant}>{titleCaseValue(value)}</Badge>;
+  const col = column?.toLowerCase() ?? "";
+  const label = col.includes("abstain") ? abstainLabel(value) : null;
+  const variant = badgeVariant(label ?? value, column);
+  const display = label ?? titleCaseValue(value);
+  return (
+    <Badge variant={variant} dot={col.includes("abstain") && label === "Recommend"}>
+      {display}
+    </Badge>
+  );
 }
 
 export function Kpi({

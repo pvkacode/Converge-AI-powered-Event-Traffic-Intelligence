@@ -46,6 +46,12 @@ export function badgeVariant(value: string, column?: string): BadgeVariant {
     if (v === "low") return "ok";
   }
 
+  // Layer 4 abstain decision (raw CSV is 0/1; UI may also show labels).
+  if (col.includes("abstain")) {
+    if (["1", "true", "yes", "abstained"].includes(v)) return "warning";
+    if (["0", "false", "no", "recommend"].includes(v)) return "ok";
+  }
+
   // Boolean-ish flags.
   if (["true", "1", "yes", "flagged", "activated"].includes(v)) return "warning";
   if (["false", "0", "no"].includes(v)) return "muted";

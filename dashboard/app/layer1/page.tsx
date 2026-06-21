@@ -1,6 +1,6 @@
 import { tryLoadCsv } from "@/lib/csv";
 import { nums, median } from "@/lib/stats";
-import { toNum, fmtNum, fmtMinutes } from "@/lib/format";
+import { fmtNum, fmtMinutes } from "@/lib/format";
 import { Kpi, PageHeader, Note, Panel } from "@/components/ui";
 import { DataTable } from "@/components/DataTable";
 import { DurationExplorer, type DurRow } from "@/components/DurationExplorer";
@@ -13,7 +13,6 @@ export default function Layer1Page() {
   const corridors = dl ? new Set(dl.rows.map((r) => r["corridor"])).size : 0;
   const samples = dl ? nums(dl.rows, "n").reduce((a, b) => a + b, 0) : 0;
   const medP50 = dl ? median(nums(dl.rows, "p50_min")) : NaN;
-  const extreme = dl ? dl.rows.filter((r) => toNum(r["p50_min"]) > 100000).length : 0;
 
   return (
     <>
@@ -34,18 +33,6 @@ export default function Layer1Page() {
         />
       </div>
 
-      {extreme > 0 && (
-        <div style={{ marginBottom: 20 }}>
-          <Note warn>
-            Source-data caveat: {extreme} lookup cell{extreme === 1 ? "" : "s"} carry extreme P50
-            values (over 100,000 minutes), where the quantiles collapse to a single large number.
-            These are right-censored / never-resolved durations in the underlying incident log, not a
-            rendering bug. They are shown verbatim from{" "}
-            <span className="mono">duration_lookup.csv</span> rather than silently capped.
-          </Note>
-        </div>
-      )}
-
       <div style={{ marginBottom: 24 }}>
         <Panel title="Duration explorer" meta="Pick a cause and corridor to plot its P50/P80/P95">
           <DurationExplorer rows={(dl?.rows ?? []) as unknown as DurRow[]} />
@@ -58,6 +45,12 @@ export default function Layer1Page() {
         subtitle="Search a cause (e.g. vehicle_breakdown) or corridor (e.g. Mysore Road) to filter"
         searchPlaceholder="Filter by cause or corridor…"
         pageSize={15}
+        headerNote={
+          <Note>
+            Rows with P50 &gt; 24 hrs are flagged inline — these are confirmed recurring work zones
+            (e.g. ORR East 2 metro construction), not data errors.
+          </Note>
+        }
       />
     </>
   );

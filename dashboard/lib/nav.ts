@@ -19,6 +19,7 @@ export const NAV: NavItem[] = [
   { href: "/layer7", label: "Cross-Zone Spillover", idx: "L7", step: "Spillover", short: "Layer 7" },
   { href: "/map", label: "Hotspot Map", idx: "MAP", short: "Hotspot Map" },
   { href: "/worked-example", label: "Worked Example", idx: "WX", short: "Worked Example" },
+  { href: "/methodology", label: "Methodology & Honesty", idx: "MH", short: "Methodology" },
 ];
 
 export function navTitle(pathname: string): string {

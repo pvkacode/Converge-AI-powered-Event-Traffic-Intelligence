@@ -19,6 +19,13 @@ export interface DatasetSpec {
   defaultSort?: { col: string; dir: "asc" | "desc" };
   /** default page size */
   pageSize?: number;
+  /** inline cell badges when a numeric column exceeds a threshold */
+  cellFlags?: {
+    column: string;
+    whenGt: number;
+    badge: string;
+    title: string;
+  }[];
 }
 
 export const DATASETS: Record<string, DatasetSpec> = {
@@ -27,6 +34,21 @@ export const DATASETS: Record<string, DatasetSpec> = {
     file: "frontend/duration_lookup.csv",
     defaultSort: { col: "n", dir: "desc" },
     pageSize: 15,
+    labels: {
+      event_cause: "Cause",
+      p50_min: "P50 (min)",
+      p80_min: "P80 (min)",
+      p95_min: "P95 (min)",
+    },
+    cellFlags: [
+      {
+        column: "p50_min",
+        whenGt: 1440,
+        badge: "multi-day",
+        title:
+          "P50 > 24 hrs — likely recurring work zone, not a data error. See methodology for details.",
+      },
+    ],
   },
   risk_scores: {
     key: "risk_scores",
@@ -71,7 +93,27 @@ export const DATASETS: Record<string, DatasetSpec> = {
     key: "planned_event_recommendations",
     file: "frontend/planned_event_recommendations.csv",
     badgeCols: ["confidence_band", "operator_warning", "abstain_flag"],
-    defaultSort: { col: "confidence", dir: "desc" },
+    labels: {
+      pred_duration_p50: "Duration P50 (min)",
+      pred_duration_p80: "Duration P80 (min)",
+      pred_duration_p95: "Duration P95 (min)",
+      pred_impact_p50: "Impact P50",
+      pred_impact_p80: "Impact P80",
+      pred_impact_p95: "Impact P95",
+      recommended_officers: "Officers",
+      recommended_barricades: "Barricades",
+      recommended_tow_units: "Tow units",
+      recommended_supervisors: "Supervisors",
+      recommended_qru_units: "QRU units",
+      abstain_flag: "Decision",
+      effective_sample_size: "Eff. sample size",
+      mean_similarity: "Mean similarity",
+      max_similarity: "Max similarity",
+      confidence_reason: "Confidence reason",
+      recommendation_source: "Source",
+      operator_warning: "Operator warning",
+    },
+    defaultSort: { col: "cause", dir: "asc" },
     pageSize: 15,
   },
   layer45_scenario_ready_duration: {

@@ -210,6 +210,17 @@ a:hover { text-decoration: underline; }
   font-size: 16px; font-weight: 640; letter-spacing: -0.015em; margin: 0;
 }
 .section-meta { color: var(--ink-3); font-size: 12px; font-family: var(--font-mono); }
+.collapsible-details {
+  font-size: 12px; color: var(--ink-2); line-height: 1.55;
+  margin-bottom: 12px;
+}
+.collapsible-details summary {
+  cursor: pointer; color: var(--ink-3); font-family: var(--font-mono);
+  user-select: none;
+}
+.collapsible-details summary:hover { color: var(--ink-2); }
+.collapsible-details[open] summary { margin-bottom: 6px; }
+.collapsible-details p { margin: 0; max-width: 62ch; }
 .muted { color: var(--ink-2); }
 .dim { color: var(--ink-3); }
 .mono { font-family: var(--font-mono); }

@@ -10,6 +10,7 @@ import { OverviewMiniMap } from "@/components/maps/DynamicMaps";
 import { FlowDiagram } from "@/components/FlowDiagram";
 import { HBar } from "@/components/charts";
 import { healthVariant } from "@/lib/badges";
+import { loadEventsCleanStats } from "@/lib/events-clean";
 
 export const dynamic = "force-dynamic";
 
@@ -21,6 +22,7 @@ export default function OverviewPage() {
   const health = tryLoadCsv("layer6_model_health_summary.csv");
   const alerts = tryLoadCsv("layer6_active_alerts.csv");
   const spill = tryLoadCsv("layer7_spillover_centrality.csv");
+  const eventsStats = loadEventsCleanStats();
 
   // KPI 1 - hotspots
   const hsTotal = hotspots?.rows.length ?? 0;
@@ -74,6 +76,9 @@ export default function OverviewPage() {
         sevSummary={sevSummary}
         spillZone={spillTop?.name ?? ""}
         spillCentrality={spillTop ? spillTop.value : NaN}
+        closedWithoutTimestamp={eventsStats.closedWithoutTimestamp}
+        truePlanned={eventsStats.truePlanned}
+        eventsTotal={eventsStats.total}
       />
 
       <div style={{ marginBottom: 24 }}>

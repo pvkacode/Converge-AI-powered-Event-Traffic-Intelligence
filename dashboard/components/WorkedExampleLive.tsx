@@ -24,13 +24,54 @@ const WorkedExampleMap = nextDynamic(() => import("@/components/maps/WorkedExamp
 });
 
 const DEFAULT_INPUT: ScenarioInput = {
-  cause: "vehicle_breakdown",
+  cause: "public_event",
   corridor: "Mysore Road",
   hour_local: 9,
   dow_local: 0,
   requires_road_closure: false,
   priority: "High",
 };
+
+const EXAMPLE_HINT =
+  "Try: public_event × Mysore Road for a fully traced example (L3 + L4 non-zero).";
+
+function layer3AllZero(section: LayerSection): boolean {
+  if (section.insufficient_evidence === true) return true;
+  const o = section.officers as number | undefined;
+  const b = section.barricades as number | undefined;
+  const t = section.tow as number | undefined;
+  return (o ?? 0) === 0 && (b ?? 0) === 0 && (t ?? 0) === 0;
+}
+
+function layer4Insufficient(section: LayerSection): boolean {
+  if (section.insufficient_evidence === true) return true;
+  if (section.applicable === false) return true;
+  const rec = section.recommended as Record<string, unknown> | undefined;
+  const o = rec?.officers as number | undefined;
+  const ess = section.evidence_weight as number | undefined;
+  return (o ?? 0) === 0 && (ess ?? 0) === 0;
+}
+
+function InsufficientEvidence({
+  layer,
+  corridor,
+}: {
+  layer: "L3" | "L4";
+  corridor?: string;
+}) {
+  return (
+    <div className="empty" style={{ padding: "14px 0 4px" }}>
+      <div className="empty-title" style={{ fontSize: 13.5 }}>
+        Insufficient evidence for this combination
+      </div>
+      <p className="dim" style={{ fontSize: 12, margin: "6px 0 0", lineHeight: 1.5, maxWidth: "52ch" }}>
+        {layer === "L4"
+          ? "Layer 4 retrieval applies to planned events only (procession, protest, public_event, vip_movement). Unplanned causes are covered by Layers 1–3."
+          : `No historical analogs with enough confidence — Layer 3 rule-based estimates unavailable${corridor ? ` for ${corridor}` : ""}.`}
+      </p>
+    </div>
+  );
+}
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
@@ -201,6 +242,10 @@ export function WorkedExampleLive({ mapData }: { mapData: WxMapData | null }) {
           </button>
         </div>
 
+        <p className="dim" style={{ fontSize: 11.5, marginTop: 12, lineHeight: 1.45 }}>
+          {EXAMPLE_HINT}
+        </p>
+
         <div style={{ marginTop: 16, borderTop: "1px solid var(--border)", paddingTop: 12 }}>
           <div className="row gap-2 between">
             <span className="kpi-label" style={{ margin: 0 }}>Layer 1 engine</span>
@@ -302,22 +347,30 @@ python -m uvicorn main:app --port 8000`}
                     </Badge>
                   ) : null}
                 </div>
-                <Rows rows={[
-                  ["Disruption impact (DIS)", result.layer3_resources.dis],
-                  ["Officers", result.layer3_resources.officers],
-                  ["Barricades", result.layer3_resources.barricades],
-                  ["Tow units", result.layer3_resources.tow],
-                  ["Corridor branching ratio", (result.layer3_resources.fragility as Record<string, unknown> | undefined)?.branching_ratio],
-                ]} />
+                {layer3AllZero(result.layer3_resources) ? (
+                  <InsufficientEvidence layer="L3" corridor={input.corridor} />
+                ) : (
+                  <Rows rows={[
+                    ["Disruption impact (DIS)", result.layer3_resources.dis],
+                    ["Officers", result.layer3_resources.officers],
+                    ["Barricades", result.layer3_resources.barricades],
+                    ["Tow units", result.layer3_resources.tow],
+                    ["Corridor branching ratio", (result.layer3_resources.fragility as Record<string, unknown> | undefined)?.branching_ratio],
+                  ]} />
+                )}
               </PipeItem>
 
               <PipeItem idx="L4" title="Event memory" layerTag="Layer 4 · retrieved precedent" section={result.layer4_event}>
-                <Rows rows={[
-                  ["Confidence tier", result.layer4_event.confidence_tier],
-                  ["Institutional memory (IMS)", result.layer4_event.IMS],
-                  ["Evidence weight (ESS)", result.layer4_event.evidence_weight],
-                  ["Recommended officers", (result.layer4_event.recommended as Record<string, unknown> | undefined)?.officers],
-                ]} />
+                {layer4Insufficient(result.layer4_event) ? (
+                  <InsufficientEvidence layer="L4" corridor={input.corridor} />
+                ) : (
+                  <Rows rows={[
+                    ["Confidence tier", result.layer4_event.confidence_tier],
+                    ["Institutional memory (IMS)", result.layer4_event.IMS],
+                    ["Evidence weight (ESS)", result.layer4_event.evidence_weight],
+                    ["Recommended officers", (result.layer4_event.recommended as Record<string, unknown> | undefined)?.officers],
+                  ]} />
+                )}
               </PipeItem>
 
               <PipeItem idx="4.5" title="Predictive fusion" layerTag="Layer 4.5 · guarded quantiles" section={result.layer45_fusion}>

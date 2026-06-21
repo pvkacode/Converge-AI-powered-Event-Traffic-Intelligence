@@ -85,5 +85,6 @@ export async function GET(req: NextRequest) {
     dir: dir === -1 ? "desc" : "asc",
     badgeCols: spec.badgeCols ?? [],
     labels: spec.labels ?? {},
+    cellFlags: spec.cellFlags ?? [],
   });
 }

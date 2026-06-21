@@ -9,8 +9,8 @@ import {
   ArrowsDownUp,
   WarningCircle,
 } from "@phosphor-icons/react";
-import { fmtNum, humanize, isNumeric, titleCaseValue } from "@/lib/format";
-import { ValueBadge } from "./ui";
+import { fmtNum, humanize, isNumeric, titleCaseValue, toNum } from "@/lib/format";
+import { ValueBadge, Note } from "./ui";
 
 interface ApiResp {
   columns: string[];
@@ -22,6 +22,7 @@ interface ApiResp {
   dir: "asc" | "desc";
   badgeCols: string[];
   labels: Record<string, string>;
+  cellFlags?: { column: string; whenGt: number; badge: string; title: string }[];
   error?: string;
   message?: string;
   file?: string;
@@ -37,6 +38,8 @@ interface Props {
   columns?: string[];
   /** pre-seed the free-text filter (used by the worked example) */
   initialQuery?: string;
+  /** optional note rendered below the table title */
+  headerNote?: React.ReactNode;
 }
 
 const PAGE_SIZES = [10, 15, 25, 50, 100];
@@ -49,6 +52,7 @@ export function DataTable({
   searchPlaceholder = "Filter rows…",
   columns: only,
   initialQuery = "",
+  headerNote,
 }: Props) {
   const [q, setQ] = useState(initialQuery);
   const [debouncedQ, setDebouncedQ] = useState(initialQuery);
@@ -126,6 +130,11 @@ export function DataTable({
 
   const badgeSet = useMemo(() => new Set(data?.badgeCols ?? []), [data]);
   const labels = data?.labels ?? {};
+  const cellFlagMap = useMemo(() => {
+    const m = new Map<string, { whenGt: number; badge: string; title: string }>();
+    for (const f of data?.cellFlags ?? []) m.set(f.column, f);
+    return m;
+  }, [data?.cellFlags]);
 
   // numeric column detection from the current page
   const numericCols = useMemo(() => {
@@ -163,6 +172,7 @@ export function DataTable({
           <div className="stack" style={{ gap: 2 }}>
             {title && <h2 className="section-title">{title}</h2>}
             {subtitle && <span className="section-meta">{subtitle}</span>}
+            {headerNote ? <div style={{ marginTop: 10 }}>{headerNote}</div> : null}
           </div>
         </div>
       )}
@@ -281,9 +291,38 @@ export function DataTable({
                           );
                         }
                         if (numericCols.has(c)) {
+                          const flag = cellFlagMap.get(c);
+                          const num = toNum(raw);
+                          const showFlag = flag && !Number.isNaN(num) && num > flag.whenGt;
                           return (
-                            <td key={c} className="num">
-                              {raw === "" ? <span className="dim">-</span> : fmtNum(raw)}
+                            <td
+                              key={c}
+                              className="num"
+                              title={showFlag ? flag.title : undefined}
+                            >
+                              {raw === "" ? (
+                                <span className="dim">-</span>
+                              ) : (
+                                <>
+                                  {fmtNum(raw)}
+                                  {showFlag ? (
+                                    <span
+                                      style={{
+                                        fontSize: 10,
+                                        background: "var(--warning-bg)",
+                                        color: "var(--warning)",
+                                        borderRadius: 4,
+                                        padding: "1px 5px",
+                                        marginLeft: 6,
+                                        fontFamily: "var(--font-mono)",
+                                        whiteSpace: "nowrap",
+                                      }}
+                                    >
+                                      {flag.badge}
+                                    </span>
+                                  ) : null}
+                                </>
+                              )}
                             </td>
                           );
                         }

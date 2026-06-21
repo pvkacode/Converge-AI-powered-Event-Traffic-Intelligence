@@ -12,6 +12,7 @@ export interface Options {
   days: string[];
   priorities: string[];
   layer1_live: boolean;
+  suggested_examples?: { cause: string; corridor: string; label: string }[];
 }
 
 export interface ScenarioInput {

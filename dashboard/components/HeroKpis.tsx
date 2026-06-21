@@ -14,6 +14,9 @@ export interface HeroKpisData {
   sevSummary: string;
   spillZone: string;
   spillCentrality: number;
+  closedWithoutTimestamp: number;
+  truePlanned: number;
+  eventsTotal: number;
 }
 
 const container = {
@@ -46,6 +49,9 @@ export function HeroKpis({
   sevSummary,
   spillZone,
   spillCentrality,
+  closedWithoutTimestamp,
+  truePlanned,
+  eventsTotal,
 }: HeroKpisData) {
   const reduceMotion = useReducedMotion();
   const item = reduceMotion ? itemInstant : itemVariants;
@@ -108,6 +114,24 @@ export function HeroKpis({
               ? `SSC centrality ${fmtNum(spillCentrality)}`
               : undefined
           }
+        />
+      </motion.div>
+
+      <motion.div variants={item}>
+        <Kpi
+          label="Closed without timestamp"
+          isText
+          value={<span style={{ color: "var(--warning)" }}>{fmtNum(closedWithoutTimestamp)}</span>}
+          sub="status=closed rows missing end timestamp — data quality finding"
+        />
+      </motion.div>
+
+      <motion.div variants={item}>
+        <Kpi
+          label="True planned events"
+          isText
+          value={`${fmtNum(truePlanned)} / ${fmtNum(eventsTotal)}`}
+          sub={`${eventsTotal ? ((truePlanned / eventsTotal) * 100).toFixed(1) : "2.3"}% of data — retrieval over forecasting`}
         />
       </motion.div>
     </motion.div>
