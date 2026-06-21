@@ -1,0 +1,28 @@
+{
+  "name": "converge-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Converge / ASTraM read-only frontend for the Bengaluru traffic disruption ML pipeline outputs.",
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@phosphor-icons/react": "^2.1.7",
+    "geist": "^1.3.1",
+    "next": "15.1.6",
+    "papaparse": "^5.4.1",
+    "react": "19.0.0",
+    "react-dom": "19.0.0",
+    "recharts": "^2.15.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@types/papaparse": "^5.3.15",
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
+    "typescript": "^5.7.3"
+  }
+}
