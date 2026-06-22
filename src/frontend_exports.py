@@ -107,6 +107,17 @@ def run_frontend_exports() -> None:
             "abstain_flag",
         ],
     )
+    _export(
+        "layer4_retrieval_diagnostics.csv",
+        "layer4_retrieval_diagnostics.csv",
+        [
+            "query_event_id", "cause", "corridor", "confidence", "effective_sample_size",
+            "mean_similarity", "abstain_flag", "actual_duration", "predicted_duration_median",
+            "abs_error", "rel_error",
+            "geo_radius_2km_count", "geo_radius_nearest_km", "geo_sigma_km",
+        ],
+    )
+    _export("layer4_geo_radius_matches.csv", "layer4_geo_radius_matches.csv")
 
     dis_path = OUT / "layer3_disruption_impact_scores.csv"
     if dis_path.exists() and not (FRONT / "top25_locations.csv").exists():

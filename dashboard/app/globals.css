@@ -122,6 +122,7 @@ a:hover { text-decoration: underline; }
 .landing-shell {
   min-height: 100dvh;
   width: 100%;
+  overflow-x: hidden;
 }
 
 .sidebar {

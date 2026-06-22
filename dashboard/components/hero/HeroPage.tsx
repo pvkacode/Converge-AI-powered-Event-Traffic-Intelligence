@@ -25,7 +25,8 @@ import {
 } from "@phosphor-icons/react";
 import { MiniDemo } from "./MiniDemo";
 import { HeroLayerNav } from "./HeroLayerNav";
-import { HeroScrollPreview } from "./HeroScrollPreview";
+import { ContainerScroll } from "@/components/ui/ContainerScroll";
+import DashboardMockup from "@/components/ui/DashboardMockup";
 import { PIPELINE_LAYERS, LAYER_COLORS } from "./constants";
 import { useCountUp, useInView, scrollToId, useMounted } from "./hooks";
 import "./hero.css";
@@ -276,8 +277,12 @@ export function HeroPage() {
         </div>
       </section>
 
-      {/* ── Scroll-driven preview ── */}
-      <HeroScrollPreview />
+      {/* ── Scroll-driven dashboard preview ── */}
+      <div className="hero-container-scroll-wrap">
+        <ContainerScroll titleComponent={<></>}>
+          <DashboardMockup />
+        </ContainerScroll>
+      </div>
 
       {/* ── Section 2: Pipeline ── */}
       <section className="hero-pipeline" id="hero-system" ref={pipelineView.ref as React.RefObject<HTMLElement>}>

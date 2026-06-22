@@ -438,6 +438,16 @@
   50% { transform: translateY(6px); }
 }
 
+/* ── ContainerScroll section (theme-aware) ── */
+.hero-container-scroll-wrap {
+  overflow-x: hidden;
+  background: linear-gradient(
+    to bottom,
+    var(--bg),
+    color-mix(in srgb, var(--bg) 85%, var(--ink) 15%)
+  );
+}
+
 /* ── Scroll preview section ── */
 .hero-scroll {
   background: var(--hero-bg);
