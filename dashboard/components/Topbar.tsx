@@ -17,9 +17,6 @@ export function Topbar() {
         <span className="topbar-title">{title}</span>
       </div>
       <div className="topbar-actions">
-        <span className="dim mono" style={{ fontSize: 11 }}>
-          read-only frontend
-        </span>
         <button
           className="iconbtn"
           onClick={toggle}

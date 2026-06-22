@@ -172,6 +172,31 @@
   background: color-mix(in srgb, var(--hero-accent) 18%, var(--hero-surface));
 }
 
+.hero-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.hero-top-theme {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--hero-border);
+  background: var(--hero-surface);
+  color: var(--hero-ink);
+  cursor: pointer;
+}
+
+.hero-top-theme:hover {
+  background: var(--surface-2);
+}
+
 @media (min-width: 720px) {
   .hero-top-brand-text {
     display: inline;
