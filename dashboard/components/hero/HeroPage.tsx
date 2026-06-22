@@ -25,6 +25,7 @@ import {
 } from "@phosphor-icons/react";
 import { MiniDemo } from "./MiniDemo";
 import { HeroLayerNav } from "./HeroLayerNav";
+import { HeroScrollPreview } from "./HeroScrollPreview";
 import { PIPELINE_LAYERS, LAYER_COLORS } from "./constants";
 import { useCountUp, useInView, scrollToId, useMounted } from "./hooks";
 import "./hero.css";
@@ -171,9 +172,10 @@ function PValueMetric({ enabled }: { enabled: boolean }) {
 export function HeroPage() {
   const mounted = useMounted(50);
   const titleOn = useMounted(0);
-  const subOn = useMounted(200);
-  const ctaOn = useMounted(400);
-  const statsOn = useMounted(600);
+  const kickerOn = useMounted(250);
+  const subOn = useMounted(450);
+  const ctaOn = useMounted(650);
+  const statsOn = useMounted(850);
 
   const pipelineView = useInView(0.15);
   const diffView = useInView(0.15);
@@ -186,7 +188,9 @@ export function HeroPage() {
       <section className="hero-banner">
         <div className="hero-banner-grid">
           <div>
-            <p className="hero-kicker">Bengaluru Traffic Police · ASTraM · Gridlock 2.0</p>
+            <p className={`hero-kicker${kickerOn ? " is-visible" : ""}`}>
+              Bengaluru Traffic Police · ASTraM · Gridlock 2.0
+            </p>
             <h1 className={`hero-title${titleOn ? " is-visible" : ""}`}>CONVERGE</h1>
             <p className={`hero-subtitle${subOn ? " is-visible" : ""}`}>
               From reactive patrol logs to a predictive, self-improving disruption-intelligence
@@ -272,15 +276,20 @@ export function HeroPage() {
         </div>
       </section>
 
+      {/* ── Scroll-driven preview ── */}
+      <HeroScrollPreview />
+
       {/* ── Section 2: Pipeline ── */}
       <section className="hero-pipeline" id="hero-system" ref={pipelineView.ref as React.RefObject<HTMLElement>}>
         <div className="hero-inner">
-          <p className="hero-eyebrow">The System</p>
-          <h2 className="hero-section-title">Seven layers. One decision.</h2>
-          <p className="hero-section-sub">
+          <p className={`hero-eyebrow hero-fade-up${pipelineView.inView ? " is-visible" : ""}`}>The System</p>
+          <h2 className={`hero-section-title hero-fade-up${pipelineView.inView ? " is-visible" : ""}`}>
+            Seven layers. One decision.
+          </h2>
+          <p className={`hero-section-sub hero-fade-up${pipelineView.inView ? " is-visible" : ""}`}>
             Every layer feeds the next — from raw incident data to a CVaR-bounded operational plan.
           </p>
-          <p className="hero-pipeline-hint">
+          <p className={`hero-pipeline-hint hero-fade-up${pipelineView.inView ? " is-visible" : ""}`}>
             <HandPointing size={16} weight="duotone" aria-hidden />
             Click any layer card to open its full dashboard — outputs, tables, maps, and methodology.
           </p>
@@ -351,8 +360,10 @@ export function HeroPage() {
       {/* ── Section 4: Differentiators ── */}
       <section className="hero-diff" ref={diffView.ref as React.RefObject<HTMLElement>}>
         <div className="hero-inner">
-          <p className="hero-eyebrow">What makes this different</p>
-          <h2 className="hero-section-title">Built for operators, documented for skeptics</h2>
+          <p className={`hero-eyebrow hero-fade-up${diffView.inView ? " is-visible" : ""}`}>What makes this different</p>
+          <h2 className={`hero-section-title hero-fade-up${diffView.inView ? " is-visible" : ""}`}>
+            Built for operators, documented for skeptics
+          </h2>
 
           <div className="hero-diff-grid">
             <div
@@ -412,7 +423,7 @@ export function HeroPage() {
 
       {/* ── Section 5: Results strip ── */}
       <section className="hero-results" ref={resultsView.ref as React.RefObject<HTMLElement>}>
-        <div className="hero-results-row">
+        <div className={`hero-results-row${resultsView.inView ? " is-visible" : ""}`}>
           <CountResult
             icon={<MapPin size={22} weight="duotone" />}
             end={80}
