@@ -1,4 +1,4 @@
-# Converge — ASTraM Bengaluru Traffic Disruption Intelligence
+# Converge — ASTraM Bengaluru Traffic Disruption Intelligence.
 
 **Framing:** From reactive patrol logs to a predictive, self-improving disruption-intelligence system for Bengaluru traffic.
 
