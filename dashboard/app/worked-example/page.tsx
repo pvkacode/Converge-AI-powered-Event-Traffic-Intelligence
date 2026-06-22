@@ -1,11 +1,13 @@
 import { PageHeader, Note } from "@/components/ui";
 import { buildWxMapData } from "@/lib/map-junctions";
 import { WorkedExampleLive } from "@/components/WorkedExampleLive";
+import { getBackendHostLabel, isHostedBackend } from "@/lib/backend-notice";
 
 export const dynamic = "force-dynamic";
 
 export default function WorkedExamplePage() {
   const wxMapData = buildWxMapData();
+  const hosted = isHostedBackend();
 
   return (
     <>
@@ -22,6 +24,13 @@ export default function WorkedExamplePage() {
             served from the precomputed <span className="mono">outputs/</span> exports, keyed by your
             input, and labelled as such. The provenance badges are honest, never faked.
           </Note>
+          {hosted ? (
+            <Note warn>
+              Live inference is served from our Render backend ({getBackendHostLabel()}). After idle
+              time the server sleeps — the first pipeline run may take <strong>30–60 seconds</strong>.
+              If loading stalls, use the wake-up link in the notice that appears, then retry.
+            </Note>
+          ) : null}
         </div>
       </PageHeader>
 
