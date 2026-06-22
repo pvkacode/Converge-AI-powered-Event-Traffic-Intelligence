@@ -3,8 +3,7 @@ import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import { Sidebar } from "@/components/Sidebar";
-import { Topbar } from "@/components/Topbar";
+import { AppShell } from "@/components/AppShell";
 
 export const metadata: Metadata = {
   title: "Converge · ASTraM Traffic Intelligence",
@@ -17,13 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" data-theme="light" className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <body>
         <ThemeProvider>
-          <div className="app">
-            <Sidebar />
-            <div className="main">
-              <Topbar />
-              <main className="content">{children}</main>
-            </div>
-          </div>
+          <AppShell>{children}</AppShell>
         </ThemeProvider>
       </body>
     </html>

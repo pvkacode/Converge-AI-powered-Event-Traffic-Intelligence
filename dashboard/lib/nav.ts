@@ -8,7 +8,8 @@ export interface NavItem {
 }
 
 export const NAV: NavItem[] = [
-  { href: "/", label: "Overview", idx: "00", short: "Overview" },
+  { href: "/", label: "Home", idx: "H", short: "Home" },
+  { href: "/overview", label: "Overview", idx: "00", short: "Overview" },
   { href: "/layer1", label: "Duration Intelligence", idx: "L1", step: "Measure", short: "Layer 1" },
   { href: "/layer2", label: "Spatial Intelligence", idx: "L2", step: "Predict", short: "Layer 2" },
   { href: "/layer3", label: "Resource Optimization", idx: "L3", step: "Fuse", short: "Layer 3" },

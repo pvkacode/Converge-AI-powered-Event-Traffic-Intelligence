@@ -119,6 +119,11 @@ a:hover { text-decoration: underline; }
 /* ----------------------------- layout shell ----------------------------- */
 .app { display: flex; min-height: 100dvh; }
 
+.landing-shell {
+  min-height: 100dvh;
+  width: 100%;
+}
+
 .sidebar {
   width: var(--sidebar-w);
   flex: 0 0 var(--sidebar-w);
