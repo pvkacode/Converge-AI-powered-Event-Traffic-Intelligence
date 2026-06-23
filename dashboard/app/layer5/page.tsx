@@ -5,9 +5,8 @@ import { DataTable } from "@/components/DataTable";
 import { GroupedBar, LineSeries } from "@/components/charts";
 import { Layer5Counterfactual } from "@/components/Layer5Counterfactual";
 
-import { PAGE_REVALIDATE_SECONDS } from "@/lib/page-config";
 
-export const revalidate = PAGE_REVALIDATE_SECONDS;
+export const revalidate = 30;
 
 export default function Layer5Page() {
   const metrics = tryLoadCsv("layer5_optimization_metrics.csv");

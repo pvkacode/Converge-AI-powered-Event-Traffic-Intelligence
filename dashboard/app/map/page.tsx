@@ -5,9 +5,8 @@ import { Kpi, PageHeader, Note, EmptyState } from "@/components/ui";
 import { DataTable } from "@/components/DataTable";
 import { MapplsMap, type HotPoint } from "@/components/MapplsMap";
 
-import { PAGE_REVALIDATE_SECONDS } from "@/lib/page-config";
 
-export const revalidate = PAGE_REVALIDATE_SECONDS;
+export const revalidate = 30;
 
 export default function MapPage() {
   const hs = tryLoadCsv("layer2_hotspots.csv");

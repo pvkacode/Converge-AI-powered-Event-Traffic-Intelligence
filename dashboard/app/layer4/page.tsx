@@ -9,9 +9,8 @@ import { Layer4GeoKpi } from "@/components/Layer4GeoKpi";
 import { Layer4TemporalSection, type TemporalMetadata } from "@/components/Layer4TemporalSection";
 import { tryReadText } from "@/lib/csv";
 
-import { PAGE_REVALIDATE_SECONDS } from "@/lib/page-config";
 
-export const revalidate = PAGE_REVALIDATE_SECONDS;
+export const revalidate = 30;
 
 export default function Layer4Page() {
   const pe = tryLoadCsv("frontend/planned_event_recommendations.csv");

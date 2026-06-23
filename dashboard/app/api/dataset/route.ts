@@ -7,9 +7,8 @@ import { getDataset } from "@/lib/datasets";
 import { applyAugment } from "@/lib/server/augment";
 import { toNum } from "@/lib/format";
 
-import { PAGE_REVALIDATE_SECONDS } from "@/lib/page-config";
 
-export const revalidate = PAGE_REVALIDATE_SECONDS;
+export const revalidate = 30;
 
 export async function GET(req: NextRequest) {
   const sp = req.nextUrl.searchParams;

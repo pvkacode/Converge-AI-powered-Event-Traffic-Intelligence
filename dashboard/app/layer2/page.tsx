@@ -8,9 +8,8 @@ import { L2HotspotMap } from "@/components/maps/DynamicMaps";
 import { DataTable } from "@/components/DataTable";
 import { BurdenExplorer, type ObiRow, type HotRow } from "@/components/BurdenExplorer";
 
-import { PAGE_REVALIDATE_SECONDS } from "@/lib/page-config";
 
-export const revalidate = PAGE_REVALIDATE_SECONDS;
+export const revalidate = 30;
 
 export default function Layer2Page() {
   const hs = tryLoadCsv("frontend/hotspot_rankings.csv");

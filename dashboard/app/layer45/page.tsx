@@ -5,9 +5,8 @@ import { Kpi, PageHeader, Panel, Note, EmptyState } from "@/components/ui";
 import { DataTable } from "@/components/DataTable";
 import { ReliabilityChart, VBar, HBar } from "@/components/charts";
 
-import { PAGE_REVALIDATE_SECONDS } from "@/lib/page-config";
 
-export const revalidate = PAGE_REVALIDATE_SECONDS;
+export const revalidate = 30;
 
 function truthy(v: string | undefined): boolean {
   return ["1", "true", "yes"].includes((v ?? "").toLowerCase());
