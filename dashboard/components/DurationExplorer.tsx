@@ -2,7 +2,9 @@
 import { useMemo, useState } from "react";
 import { VBar } from "./charts";
 import { Note } from "./ui";
+import { DurationConfidenceBadge } from "./DurationConfidenceBadge";
 import { fmtNum, fmtMinutes, titleCaseValue, toNum } from "@/lib/format";
+import { allCauses, allCorridors, resolveDurationRow, type FallbackRow } from "@/lib/durationFallback";
 
 export interface DurRow {
   event_cause: string;
@@ -13,27 +15,23 @@ export interface DurRow {
   p95_min: string;
 }
 
-export function DurationExplorer({ rows }: { rows: DurRow[] }) {
-  const causes = useMemo(
-    () => Array.from(new Set(rows.map((r) => r.event_cause))).sort(),
-    [rows]
-  );
+export function DurationExplorer({ rows, fallbackRows = [] }: { rows: DurRow[]; fallbackRows?: FallbackRow[] }) {
+  const causes = useMemo(() => allCauses(rows, fallbackRows), [rows, fallbackRows]);
   const [cause, setCause] = useState(
     causes.includes("vehicle_breakdown") ? "vehicle_breakdown" : causes[0] ?? ""
   );
 
-  const corridorsForCause = useMemo(
-    () => rows.filter((r) => r.event_cause === cause).map((r) => r.corridor).sort(),
-    [rows, cause]
-  );
+  // Every corridor the lookup table has ever resolved, regardless of cause -
+  // sparse causes still let the user pick a corridor to see the fallback value.
+  const corridorsForCause = useMemo(() => allCorridors(rows), [rows]);
   const [corridor, setCorridor] = useState(corridorsForCause[0] ?? "");
 
   // keep corridor valid when cause changes
   const activeCorridor = corridorsForCause.includes(corridor) ? corridor : corridorsForCause[0] ?? "";
 
   const row = useMemo(
-    () => rows.find((r) => r.event_cause === cause && r.corridor === activeCorridor),
-    [rows, cause, activeCorridor]
+    () => resolveDurationRow(cause, activeCorridor, rows, fallbackRows),
+    [rows, fallbackRows, cause, activeCorridor]
   );
 
   const chartData = row
@@ -53,11 +51,7 @@ export function DurationExplorer({ rows }: { rows: DurRow[] }) {
           <select
             className="select"
             value={cause}
-            onChange={(e) => {
-              setCause(e.target.value);
-              const first = rows.filter((r) => r.event_cause === e.target.value).map((r) => r.corridor).sort()[0];
-              if (first) setCorridor(first);
-            }}
+            onChange={(e) => setCause(e.target.value)}
           >
             {causes.map((c) => <option key={c} value={c}>{titleCaseValue(c)}</option>)}
           </select>
@@ -70,6 +64,9 @@ export function DurationExplorer({ rows }: { rows: DurRow[] }) {
         </label>
         {row && (
           <div className="stack gap-2" style={{ marginTop: 4 }}>
+            {(row.isFallback || row.isLowConfidence) && (
+              <DurationConfidenceBadge isFallback={row.isFallback} isLowConfidence={row.isLowConfidence} />
+            )}
             <div className="metric-line"><span className="ml-k">Sample incidents</span><span className="ml-v">{fmtNum(row.n)}</span></div>
             <div className="metric-line"><span className="ml-k">P50</span><span className="ml-v">{fmtMinutes(row.p50_min)}</span></div>
             <div className="metric-line"><span className="ml-k">P80</span><span className="ml-v">{fmtMinutes(row.p80_min)}</span></div>

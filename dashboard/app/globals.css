@@ -556,6 +556,13 @@ table.data tbody tr:last-child td { border-bottom: none; }
   gap: 12px;
   margin-bottom: 14px;
 }
+.wx-exec-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
 .wx-exec-eyebrow {
   margin: 0;
   font-size: 11px;

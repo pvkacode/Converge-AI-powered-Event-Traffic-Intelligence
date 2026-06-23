@@ -4,6 +4,7 @@ import { Clock, Users, MapPin, CaretDown } from "@phosphor-icons/react";
 import type { WorkedExampleResult } from "@/lib/api";
 import { fmtMinutes, titleCaseValue } from "@/lib/format";
 import { Badge } from "@/components/ui";
+import { PlanConfidenceBadge } from "@/components/PlanConfidenceBadge";
 
 const SOURCE_LABEL: Record<string, string> = {
   layer1: "Layer 1 KM",
@@ -62,7 +63,16 @@ export function WorkedExampleExecutiveSummary({ result }: { result: WorkedExampl
             {titleCaseValue(result.input.cause)} · {result.input.corridor}
           </p>
         </div>
-        {riskTier ? <Badge variant={tierVariant(riskTier)}>{riskTier} risk</Badge> : null}
+        <div className="wx-exec-badges">
+          <PlanConfidenceBadge
+            input={{
+              provenance: result.provenance,
+              layer3: result.layer3_resources,
+              layer4: result.layer4_event,
+            }}
+          />
+          {riskTier ? <Badge variant={tierVariant(riskTier)}>{riskTier} risk</Badge> : null}
+        </div>
       </div>
 
       <p className="wx-exec-headline">

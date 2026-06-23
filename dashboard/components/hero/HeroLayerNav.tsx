@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
 import { Sun, Moon } from "@phosphor-icons/react";
 import { useTheme } from "@/components/ThemeProvider";
+import { ApiStatusDot } from "@/components/ApiStatusDot";
 import { ALL_LAYERS, LAYER_COLORS } from "./constants";
 
 const navContainer = {
@@ -60,6 +61,7 @@ export function HeroLayerNav() {
         </motion.div>
 
         <div className="hero-top-actions">
+          <ApiStatusDot />
           <Link href="/worked-example" className="hero-top-wx" title="Worked Example — full inference trace">
             WX
           </Link>

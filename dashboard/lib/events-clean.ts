@@ -4,6 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { cache as reactCache } from "react";
 import Papa from "papaparse";
+import { outputsDir } from "./csv";
 
 export interface EventsCleanStats {
   total: number;
@@ -36,6 +37,7 @@ function truthy(v: string | undefined): boolean {
 
 function statsJsonPath(): string | null {
   const candidates = [
+    path.join(outputsDir(), "frontend", "events_clean_stats.json"),
     path.join(process.cwd(), "..", "outputs", "frontend", "events_clean_stats.json"),
     path.join(process.cwd(), "outputs", "frontend", "events_clean_stats.json"),
     path.join(process.cwd(), "..", "..", "outputs", "frontend", "events_clean_stats.json"),
@@ -46,7 +48,49 @@ function statsJsonPath(): string | null {
   return null;
 }
 
-/** Live counts from events_clean.csv; falls back to documented batch figures. */
+function loadKpiSummaryFromJson(): EventsCleanStats | null {
+  try {
+    const abs = path.join(outputsDir(), "frontend", "kpi-summary.json");
+    if (!fs.existsSync(abs)) return null;
+    const parsed = JSON.parse(fs.readFileSync(abs, "utf8")) as Partial<EventsCleanStats>;
+    if (
+      typeof parsed.total === "number" &&
+      typeof parsed.closedWithoutTimestamp === "number" &&
+      typeof parsed.truePlanned === "number"
+    ) {
+      return {
+        total: parsed.total,
+        closedWithoutTimestamp: parsed.closedWithoutTimestamp,
+        truePlanned: parsed.truePlanned,
+      };
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+function parseStatsJson(filePath: string): EventsCleanStats | null {
+  try {
+    const parsed = JSON.parse(fs.readFileSync(filePath, "utf8")) as Partial<EventsCleanStats>;
+    if (
+      typeof parsed.total === "number" &&
+      typeof parsed.closedWithoutTimestamp === "number" &&
+      typeof parsed.truePlanned === "number"
+    ) {
+      return {
+        total: parsed.total,
+        closedWithoutTimestamp: parsed.closedWithoutTimestamp,
+        truePlanned: parsed.truePlanned,
+      };
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/** Live counts from events_clean.csv; falls back to committed JSON exports. */
 function loadEventsCleanStatsUncached(): EventsCleanStats {
   const fallback: EventsCleanStats = {
     total: 8173,
@@ -56,26 +100,12 @@ function loadEventsCleanStatsUncached(): EventsCleanStats {
 
   const statsJson = statsJsonPath();
   if (statsJson) {
-    try {
-      const parsed = JSON.parse(fs.readFileSync(statsJson, "utf8")) as Partial<EventsCleanStats>;
-      if (
-        typeof parsed.total === "number" &&
-        typeof parsed.closedWithoutTimestamp === "number" &&
-        typeof parsed.truePlanned === "number"
-      ) {
-        return {
-          total: parsed.total,
-          closedWithoutTimestamp: parsed.closedWithoutTimestamp,
-          truePlanned: parsed.truePlanned,
-        };
-      }
-    } catch {
-      /* fall through to CSV */
-    }
+    const fromStats = parseStatsJson(statsJson);
+    if (fromStats) return fromStats;
   }
 
   const abs = dataPath();
-  if (!abs) return fallback;
+  if (!abs) return loadKpiSummaryFromJson() ?? fallback;
 
   try {
     const stat = fs.statSync(abs);
@@ -105,7 +135,7 @@ function loadEventsCleanStatsUncached(): EventsCleanStats {
     cached = { mtimeMs: stat.mtimeMs, stats };
     return stats;
   } catch {
-    return fallback;
+    return loadKpiSummaryFromJson() ?? fallback;
   }
 }
 

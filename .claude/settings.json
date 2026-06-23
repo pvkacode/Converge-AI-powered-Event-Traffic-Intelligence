@@ -13,7 +13,13 @@
       "PowerShell($env:PYTHONIOENCODING = \"utf-8\"; cd \"C:\\\\Users\\\\Dell\\\\Desktop\\\\converge\\\\Converge-AI-powered-Event-Traffic-Intelligence\"; python src/layer3_resource_optimization.py 2>&1 | Select-Object -Last 30)",
       "PowerShell($env:PYTHONIOENCODING = \"utf-8\"; cd \"C:\\\\Users\\\\Dell\\\\Desktop\\\\converge\\\\Converge-AI-powered-Event-Traffic-Intelligence\"; python src/layer4_event_intelligence.py 2>&1 | Select-Object -Last 30)",
       "PowerShell($env:PYTHONIOENCODING = \"utf-8\"; cd \"C:\\\\Users\\\\Dell\\\\Desktop\\\\converge\\\\Converge-AI-powered-Event-Traffic-Intelligence\"; python src/layer3_corridor_fragility.py 2>&1 | Select-Object -Last 20)",
-      "PowerShell($env:PYTHONIOENCODING = \"utf-8\"; cd \"C:\\\\Users\\\\Dell\\\\Desktop\\\\converge\\\\Converge-AI-powered-Event-Traffic-Intelligence\"; python src/layer4_planned_event_retrieval.py 2>&1 | Select-Object -Last 20)"
+      "PowerShell($env:PYTHONIOENCODING = \"utf-8\"; cd \"C:\\\\Users\\\\Dell\\\\Desktop\\\\converge\\\\Converge-AI-powered-Event-Traffic-Intelligence\"; python src/layer4_planned_event_retrieval.py 2>&1 | Select-Object -Last 20)",
+      "Bash(npx tsc *)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/)",
+      "Read(//tmp/**)",
+      "Bash(curl -s http://localhost:3000/)"
     ]
   }
 }

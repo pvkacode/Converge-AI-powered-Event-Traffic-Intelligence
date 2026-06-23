@@ -1,0 +1,7 @@
+{
+  "total": 8173,
+  "closedWithoutTimestamp": 3526,
+  "truePlanned": 191,
+  "source": "data/events_clean.csv",
+  "generatedAt": "2026-06-23"
+}

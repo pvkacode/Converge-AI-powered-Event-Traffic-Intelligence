@@ -1,4 +1,5 @@
 import { PageHeader, Note } from "@/components/ui";
+import { ApiStatusDot } from "@/components/ApiStatusDot";
 import { buildWxMapData } from "@/lib/map-junctions";
 import { WorkedExampleLive } from "@/components/WorkedExampleLive";
 import { getBackendHostLabel, isHostedBackend } from "@/lib/backend-notice";
@@ -13,6 +14,9 @@ export default function WorkedExamplePage() {
 
   return (
     <>
+      <div className="row gap-2" style={{ justifyContent: "flex-end", marginBottom: -8 }}>
+        <ApiStatusDot />
+      </div>
       <PageHeader
         eyebrow="Worked Example"
         title="Live pipeline trace"

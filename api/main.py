@@ -40,8 +40,19 @@ OUT = Path(os.environ.get("OUTPUTS_DIR", ROOT / "outputs"))
 FRONTEND = OUT / "frontend"
 DATA = Path(os.environ.get("DATA_DIR", ROOT / "data"))
 
-_cors_raw = os.environ.get("CORS_ORIGINS", "*").strip()
-CORS_ORIGINS = ["*"] if _cors_raw == "*" else [o.strip() for o in _cors_raw.split(",") if o.strip()]
+# Safe default covers the known Vercel deployment + local dev so the live
+# demo and `next dev` both work even if CORS_ORIGINS is never set on Render.
+_DEFAULT_CORS_ORIGINS = [
+    "https://converge-ai-powered-event-traffic-i.vercel.app",
+    "http://localhost:3000",
+]
+_cors_raw = os.environ.get("CORS_ORIGINS", "").strip()
+if not _cors_raw:
+    CORS_ORIGINS = _DEFAULT_CORS_ORIGINS
+elif _cors_raw == "*":
+    CORS_ORIGINS = ["*"]
+else:
+    CORS_ORIGINS = sorted({o.strip().rstrip("/") for o in _cors_raw.split(",") if o.strip()} | {"http://localhost:3000"})
 
 app = FastAPI(title="Converge / ASTraM Inference API", version="1.0")
 app.add_middleware(
