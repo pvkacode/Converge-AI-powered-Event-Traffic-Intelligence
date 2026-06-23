@@ -16,6 +16,7 @@ import {
 import type { WxMapData } from "@/lib/map-junctions";
 import { fmtNum, fmtMinutes, titleCaseValue } from "@/lib/format";
 import { Badge, MetricLine } from "./ui";
+import { PlanConfidenceBadge } from "./PlanConfidenceBadge";
 import { MapPlaceholder } from "@/components/maps/map-ui";
 
 const WorkedExampleMap = nextDynamic(() => import("@/components/maps/WorkedExampleMap"), {
@@ -419,7 +420,16 @@ python -m uvicorn main:app --port 8000`}
             {/* final synthesis */}
             <div className="panel" style={{ marginTop: 8, borderColor: "var(--accent-line)", background: "var(--accent-soft)" }}>
               <div className="panel-body">
-                <span className="kpi-label">Synthesised recommendation</span>
+                <div className="row gap-2 between">
+                  <span className="kpi-label">Synthesised recommendation</span>
+                  <PlanConfidenceBadge
+                    input={{
+                      provenance: result.provenance,
+                      layer3: result.layer3_resources,
+                      layer4: result.layer4_event,
+                    }}
+                  />
+                </div>
                 <p style={{ fontSize: 15.5, lineHeight: 1.55, margin: "8px 0 0", fontWeight: 500 }}>
                   {result.recommendation.headline}
                 </p>

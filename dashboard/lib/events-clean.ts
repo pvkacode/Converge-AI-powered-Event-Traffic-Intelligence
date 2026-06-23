@@ -3,6 +3,7 @@ import "server-only";
 import fs from "node:fs";
 import path from "node:path";
 import Papa from "papaparse";
+import { outputsDir } from "./csv";
 
 export interface EventsCleanStats {
   total: number;
@@ -33,7 +34,39 @@ function truthy(v: string | undefined): boolean {
   return ["true", "1", "yes"].includes(String(v ?? "").trim().toLowerCase());
 }
 
-/** Live counts from events_clean.csv; falls back to documented batch figures. */
+// Committed extract from data/events_clean.csv (outputs/frontend/kpi-summary.json),
+// generated once and checked into the repo so the deployed app — which never has
+// access to the gitignored data/ directory — doesn't silently fall back to the
+// hardcoded literal below. See KPI_SOURCE.md for provenance.
+function loadKpiSummaryFromJson(): EventsCleanStats | null {
+  try {
+    const abs = path.join(outputsDir(), "frontend", "kpi-summary.json");
+    if (!fs.existsSync(abs)) return null;
+    const parsed = JSON.parse(fs.readFileSync(abs, "utf8")) as Partial<EventsCleanStats>;
+    if (
+      typeof parsed.total === "number" &&
+      typeof parsed.closedWithoutTimestamp === "number" &&
+      typeof parsed.truePlanned === "number"
+    ) {
+      return {
+        total: parsed.total,
+        closedWithoutTimestamp: parsed.closedWithoutTimestamp,
+        truePlanned: parsed.truePlanned,
+      };
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Counts behind the overview KPIs, in priority order:
+ *   1. Live recompute from data/events_clean.csv (most accurate, dev-only —
+ *      data/ is gitignored and not deployed).
+ *   2. Committed outputs/frontend/kpi-summary.json extract (deployed source of truth).
+ *   3. Hardcoded literal (last-ditch fallback so this never renders blank).
+ */
 export function loadEventsCleanStats(): EventsCleanStats {
   const fallback: EventsCleanStats = {
     total: 8173,
@@ -42,7 +75,7 @@ export function loadEventsCleanStats(): EventsCleanStats {
   };
 
   const abs = dataPath();
-  if (!abs) return fallback;
+  if (!abs) return loadKpiSummaryFromJson() ?? fallback;
 
   try {
     const stat = fs.statSync(abs);
@@ -72,6 +105,6 @@ export function loadEventsCleanStats(): EventsCleanStats {
     cached = { mtimeMs: stat.mtimeMs, stats };
     return stats;
   } catch {
-    return fallback;
+    return loadKpiSummaryFromJson() ?? fallback;
   }
 }

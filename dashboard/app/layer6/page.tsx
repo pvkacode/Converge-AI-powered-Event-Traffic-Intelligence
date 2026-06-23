@@ -5,6 +5,7 @@ import { Kpi, PageHeader, Panel, Badge, Note } from "@/components/ui";
 import { DataTable } from "@/components/DataTable";
 import { VBar } from "@/components/charts";
 import { healthVariant } from "@/lib/badges";
+import { Layer6TriggerPanel } from "@/components/Layer6TriggerPanel";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +13,7 @@ export default function Layer6Page() {
   const health = tryLoadCsv("layer6_model_health_summary.csv");
   const alerts = tryLoadCsv("layer6_active_alerts.csv");
   const drift = tryLoadCsv("layer6_drift_report.csv");
+  const triggers = tryLoadCsv("layer6_retrain_triggers.csv");
 
   const overall =
     health?.rows.map((r) => r["overall_health"]).find((v) => v && v.trim() !== "") ?? "UNKNOWN";
@@ -117,11 +119,9 @@ export default function Layer6Page() {
           subtitle="Holdout vs feedback value, relative change and status per metric"
           searchPlaceholder="Filter by metric or group…"
         />
-        <DataTable
-          dataset="layer6_active_alerts"
-          title="Active alerts"
-          subtitle="Open alerts by source, severity and affected layer"
-          searchPlaceholder="Filter by source, layer or description…"
+        <Layer6TriggerPanel
+          triggers={(triggers?.rows ?? []) as Record<string, string>[]}
+          alerts={alerts ? (alerts.rows as Record<string, string>[]) : null}
         />
         <DataTable
           dataset="layer6_drift_report"

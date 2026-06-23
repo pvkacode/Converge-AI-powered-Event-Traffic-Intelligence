@@ -5,6 +5,7 @@ import { useState, useCallback } from "react";
 import { Lightning, CircleNotch } from "@phosphor-icons/react";
 import { runWorkedExample, type WorkedExampleResult, type ScenarioInput } from "@/lib/api";
 import { fmtMinutes } from "@/lib/format";
+import { PlanConfidenceBadge } from "@/components/PlanConfidenceBadge";
 import { CAUSES, CORRIDORS, DOW_MAP } from "./constants";
 import { useTypewriter } from "./hooks";
 
@@ -50,7 +51,12 @@ function extractOutputs(result: WorkedExampleResult) {
   const riskTier = (l3.risk_tier as string | undefined) ?? "—";
   const headline = result.recommendation.headline ?? "";
 
-  return { p80, quantile, officers, barricades, tow, junction, obi, isHotspot, riskTier, headline };
+  return {
+    p80, quantile, officers, barricades, tow, junction, obi, isHotspot, riskTier, headline,
+    provenance: result.provenance,
+    layer3: l3,
+    layer4: result.layer4_event,
+  };
 }
 
 export function MiniDemo() {
@@ -239,8 +245,13 @@ export function MiniDemo() {
                 </div>
 
                 <div className={`hero-out-field${revealStep >= 4 ? " is-visible" : ""}`} style={{ marginTop: 20 }}>
-                  <p className="hero-out-label">Synthesised recommendation</p>
-                  <p style={{ fontSize: 15, fontStyle: "italic", lineHeight: 1.55, margin: 0, color: "var(--hero-ink)" }}>
+                  <div className="row gap-2 between">
+                    <p className="hero-out-label" style={{ margin: 0 }}>Synthesised recommendation</p>
+                    <PlanConfidenceBadge
+                      input={{ provenance: result.provenance, layer3: result.layer3, layer4: result.layer4 }}
+                    />
+                  </div>
+                  <p style={{ fontSize: 15, fontStyle: "italic", lineHeight: 1.55, margin: "8px 0 0", color: "var(--hero-ink)" }}>
                     {typedHeadline || result.headline}
                   </p>
                 </div>

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Sun, Moon } from "@phosphor-icons/react";
 import { useTheme } from "@/components/ThemeProvider";
+import { ApiStatusDot } from "@/components/ApiStatusDot";
 import { ALL_LAYERS, LAYER_COLORS } from "./constants";
 
 export function HeroLayerNav() {
@@ -40,6 +41,7 @@ export function HeroLayerNav() {
         </div>
 
         <div className="hero-top-actions">
+          <ApiStatusDot />
           <Link href="/worked-example" className="hero-top-wx" title="Worked Example — full inference trace">
             WX
           </Link>

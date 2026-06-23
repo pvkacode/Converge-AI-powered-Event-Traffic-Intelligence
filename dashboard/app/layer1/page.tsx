@@ -4,11 +4,16 @@ import { fmtNum, fmtMinutes } from "@/lib/format";
 import { Kpi, PageHeader, Note, Panel } from "@/components/ui";
 import { DataTable } from "@/components/DataTable";
 import { DurationExplorer, type DurRow } from "@/components/DurationExplorer";
+import type { FallbackRow } from "@/lib/durationFallback";
 
 export const dynamic = "force-dynamic";
 
 export default function Layer1Page() {
   const dl = tryLoadCsv("frontend/duration_lookup.csv");
+  // Cause-only quantiles used by the live pipeline's fallback when a
+  // (cause, corridor) pair doesn't clear MIN_GROUP_SIZE - see
+  // src/layer1_survival.py:lookup_expected_duration().
+  const dlFallback = tryLoadCsv("layer1_survival_fallback.csv");
   const causes = dl ? new Set(dl.rows.map((r) => r["event_cause"])).size : 0;
   const corridors = dl ? new Set(dl.rows.map((r) => r["corridor"])).size : 0;
   const samples = dl ? nums(dl.rows, "n").reduce((a, b) => a + b, 0) : 0;
@@ -35,7 +40,10 @@ export default function Layer1Page() {
 
       <div style={{ marginBottom: 24 }}>
         <Panel title="Duration explorer" meta="Pick a cause and corridor to plot its P50/P80/P95">
-          <DurationExplorer rows={(dl?.rows ?? []) as unknown as DurRow[]} />
+          <DurationExplorer
+            rows={(dl?.rows ?? []) as unknown as DurRow[]}
+            fallbackRows={(dlFallback?.rows ?? []) as unknown as FallbackRow[]}
+          />
         </Panel>
       </div>
 

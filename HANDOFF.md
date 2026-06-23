@@ -1,4 +1,4 @@
-# ASTraM Day 1 — Cursor Handoff Context
+# ASTraM Day 1- Cursor Handoff Context
 
 **Framing:** From reactive patrol logs to a predictive, self-improving disruption-intelligence system for Bengaluru traffic.
 
