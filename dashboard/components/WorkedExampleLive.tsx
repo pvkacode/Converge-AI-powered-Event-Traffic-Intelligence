@@ -1,7 +1,7 @@
 "use client";
 import nextDynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Lightning, WarningCircle, ArrowClockwise } from "@phosphor-icons/react";
+import { Lightning, ArrowClockwise } from "@phosphor-icons/react";
 import {
   fetchOptions,
   fetchHealth,
@@ -11,13 +11,14 @@ import {
   type WorkedExampleResult,
   type LayerSection,
   type Provenance,
-  API_BASE,
 } from "@/lib/api";
 import type { WxMapData } from "@/lib/map-junctions";
 import { fmtNum, fmtMinutes, titleCaseValue } from "@/lib/format";
 import { Badge, MetricLine } from "./ui";
-import { PlanConfidenceBadge } from "./PlanConfidenceBadge";
 import { MapPlaceholder } from "@/components/maps/map-ui";
+import { BackendWakeNotice } from "@/components/BackendWakeNotice";
+import { WorkedExampleExecutiveSummary } from "@/components/WorkedExampleExecutiveSummary";
+import { useSlowLoading } from "@/hooks/useSlowLoading";
 
 const WorkedExampleMap = nextDynamic(() => import("@/components/maps/WorkedExampleMap"), {
   ssr: false,
@@ -138,6 +139,9 @@ export function WorkedExampleLive({ mapData }: { mapData: WxMapData | null }) {
   const [offline, setOffline] = useState(false);
   const [live, setLive] = useState<{ ok: boolean; reason: string } | null>(null);
   const debounce = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const bootstrapping = options == null && !offline;
+  const waiting = loading || bootstrapping;
+  const slow = useSlowLoading(waiting);
 
   const run = useCallback(async (inp: ScenarioInput) => {
     setLoading(true);
@@ -241,6 +245,9 @@ export function WorkedExampleLive({ mapData }: { mapData: WxMapData | null }) {
           <button className="btn btn-accent" onClick={() => run(input)} disabled={loading}>
             {loading ? "Running pipeline…" : "Run pipeline"}
           </button>
+          {waiting && slow ? (
+            <BackendWakeNotice slow compact />
+          ) : null}
         </div>
 
         <p className="dim" style={{ fontSize: 11.5, marginTop: 12, lineHeight: 1.45 }}>
@@ -271,30 +278,30 @@ export function WorkedExampleLive({ mapData }: { mapData: WxMapData | null }) {
       <div>
         {offline ? (
           <div className="panel">
-            <div className="empty" style={{ padding: 36 }}>
-              <WarningCircle size={28} className="empty-icon" />
-              <div className="empty-title">Inference API not reachable</div>
-              <div style={{ maxWidth: 460 }}>
-                The worked example needs the FastAPI service. Start it, then retry:
-              </div>
-              <pre className="mono" style={{ background: "var(--surface-inset)", padding: "10px 14px", borderRadius: "var(--r-sm)", fontSize: 12, marginTop: 6, textAlign: "left", overflowX: "auto" }}>
-{`cd api
-python -m pip install -r requirements.txt
-python -m uvicorn main:app --port 8000`}
-              </pre>
-              <div className="dim" style={{ fontSize: 12 }}>Expected at {API_BASE}</div>
-              <button className="btn btn-sm" style={{ marginTop: 8 }} onClick={() => run(input)}>Retry</button>
+            <div className="panel-body">
+              <BackendWakeNotice offline onRetry={() => run(input)} />
             </div>
           </div>
         ) : !result ? (
           <div className="panel">
-            <div className="empty" style={{ padding: 36 }}>
-              <div className="empty-title">Loading pipeline…</div>
+            <div className="panel-body" style={{ padding: slow ? 18 : 36 }}>
+              {slow ? (
+                <BackendWakeNotice slow />
+              ) : (
+                <div className="empty">
+                  <div className="empty-title">Loading pipeline…</div>
+                  <p className="dim" style={{ fontSize: 13, marginTop: 8 }}>
+                    Connecting to the inference API and running all seven layers.
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         ) : (
           <>
-            <div className="pipe">
+            <WorkedExampleExecutiveSummary result={result} />
+
+            <div className="pipe" id="wx-layer-trace">
               <PipeItem idx="L1" title="Duration" layerTag="Layer 1 · survival quantiles" section={result.layer1_duration}>
                 <div className="grid grid-3" style={{ gap: 10 }}>
                   {(["p50", "p80", "p95"] as const).map((q) => (
@@ -415,31 +422,6 @@ python -m uvicorn main:app --port 8000`}
                   ["Persistence class", result.layer7_spillover.early_warning],
                 ]} />
               </PipeItem>
-            </div>
-
-            {/* final synthesis */}
-            <div className="panel" style={{ marginTop: 8, borderColor: "var(--accent-line)", background: "var(--accent-soft)" }}>
-              <div className="panel-body">
-                <div className="row gap-2 between">
-                  <span className="kpi-label">Synthesised recommendation</span>
-                  <PlanConfidenceBadge
-                    input={{
-                      provenance: result.provenance,
-                      layer3: result.layer3_resources,
-                      layer4: result.layer4_event,
-                    }}
-                  />
-                </div>
-                <p style={{ fontSize: 15.5, lineHeight: 1.55, margin: "8px 0 0", fontWeight: 500 }}>
-                  {result.recommendation.headline}
-                </p>
-                {result.recommendation.duration_plan?.note &&
-                 result.recommendation.duration_plan.source !== "layer1" ? (
-                  <p className="dim" style={{ fontSize: 12, marginTop: 8, lineHeight: 1.45 }}>
-                    {result.recommendation.duration_plan.note}
-                  </p>
-                ) : null}
-              </div>
             </div>
           </>
         )}

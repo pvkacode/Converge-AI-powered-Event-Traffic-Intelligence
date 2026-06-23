@@ -6,7 +6,9 @@ import { DataTable } from "@/components/DataTable";
 import { DurationExplorer, type DurRow } from "@/components/DurationExplorer";
 import type { FallbackRow } from "@/lib/durationFallback";
 
-export const dynamic = "force-dynamic";
+import { PAGE_REVALIDATE_SECONDS } from "@/lib/page-config";
+
+export const revalidate = PAGE_REVALIDATE_SECONDS;
 
 export default function Layer1Page() {
   const dl = tryLoadCsv("frontend/duration_lookup.csv");

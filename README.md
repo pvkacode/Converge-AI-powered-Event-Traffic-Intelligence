@@ -1,8 +1,87 @@
-# Converge — ASTraM Bengaluru Traffic Disruption Intelligence.
+# Converge — ASTraM Bengaluru Traffic Disruption Intelligence
 
-**Framing:** From reactive patrol logs to a predictive, self-improving disruption-intelligence system for Bengaluru traffic.
+**Framing:** From reactive patrol logs to a **seven-layer** predictive, prescriptive, and self-improving disruption-intelligence system for Bengaluru — with a **Next.js ops dashboard** (Vercel) and a **thin FastAPI inference service** (Render) for live worked examples.
 
-This repository implements the **Day 1 foundation** plus **integrated advanced models** in the same Layer 1 and Layer 2 scripts: data cleaning with trust score, survival analysis (KM/Cox + frailty/AFT/RSF/RMST/GMM), and spatial intelligence (Gi* + severity/network/Hawkes/OBI).
+## Architecture (at a glance)
+
+```mermaid
+flowchart TB
+  subgraph DATA["Data layer"]
+    RAW["events_raw.csv<br/>~8,170 incidents"]
+    PIPE["data_pipeline.py"]
+    CLEAN["events_clean.parquet<br/>trust_score + MNAR audit"]
+    RAW --> PIPE --> CLEAN
+  end
+
+  subgraph MEASURE["Measure · L1–L2"]
+    L1["Layer 1 · Duration<br/>KM, Cox, RSF, frailty, RMST"]
+    L2["Layer 2 · Spatial<br/>Gi*, OBI, Hawkes, network"]
+    CLEAN --> L1 --> L2
+  end
+
+  subgraph FUSE["Fuse & retrieve · L3–L4"]
+    L3["Layer 3 · Resources<br/>DIS, LP, diversions, Hawkes fragility"]
+    L4["Layer 4 · Event intelligence<br/>Gower/K-Medoids retrieval, geo-radius, temporal decay"]
+    L2 --> L3
+    L2 --> L4
+    L3 --> L4
+  end
+
+  subgraph PREDICT["Predict · L4.5"]
+    L45["Layer 4.5 · Predictive fusion<br/>leak-free as-of features → CatBoost → JOSV"]
+    L4 --> L45
+  end
+
+  subgraph PRESCRIBE["Prescribe · L5"]
+    L5["Layer 5 · Robust optimization<br/>scenarios → CVaR MILP → allocation + counterfactuals"]
+    L45 --> L5
+  end
+
+  subgraph LEARN["Learn · L6"]
+    L6["Layer 6 · Adaptive learning<br/>posteriors, drift, retrain triggers"]
+    L5 --> L6
+  end
+
+  subgraph SPILLOVER["Spillover · L7"]
+    L7["Layer 7 · Cross-zone Hawkes<br/>ERI, persistence, operational alerts"]
+    L2 --> L7
+    L3 --> L7
+  end
+
+  subgraph CITY["City index"]
+    NRI["network_resilience_index.py<br/>NRI = f(OBI, fragility, spillover)"]
+    L2 --> NRI
+    L3 --> NRI
+    L7 --> NRI
+  end
+
+  subgraph EXPORT["Export"]
+    FE["frontend_exports.py<br/>outputs/frontend/"]
+    L1 & L2 & L3 & L4 & L45 & L5 & L6 & L7 & NRI --> FE
+  end
+
+  subgraph SERVE["Serve operators"]
+    DASH["dashboard/ · Next.js<br/>Vercel"]
+    API["api/main.py · FastAPI<br/>Render"]
+    FE --> DASH
+    API -->|"live L1 + CSV lookups"| DASH
+  end
+
+  DASH --> WX["/worked-example<br/>executive summary → 7-layer trace"]
+```
+
+### Surfaces
+
+| Surface | URL | Who it's for |
+|---------|-----|--------------|
+| **Home** | `/` | Visitors — live KPIs from real exports + mini pipeline demo |
+| **Overview** | `/overview` | Command view — **NRI**, flow diagram, mini-map |
+| **Layers L1–L7** | `/layer1` … `/layer7` | Judges / analysts — methodology depth per layer |
+| **Worked Example** | `/worked-example` | **Operators first** — one recommendation card, then full trace |
+| **Hotspot map** | `/map` | Spatial ops — Layer 2 junction view |
+| **Methodology** | `/methodology` | Honesty page — limitations and caveats |
+
+Deploy: `VERCEL_DEPLOYMENT.md` (dashboard), `RENDER_DEPLOYMENT.md` + `render.yaml` (API).
 
 ## Problem statement
 
@@ -14,7 +93,7 @@ Political rallies, festivals, sports events, construction, and sudden gatherings
 
 **Goal:** Use historical and real-time ASTraM data to forecast event-related traffic impact and recommend optimal manpower, barricading, and diversion plans.
 
-Layers 1 and 2 are the **measurement layer** — they quantify *how long* and *where* disruption concentrates. Layer 3+ turn those numbers into deployment plans and learning loops.
+Layers 1 and 2 are the **measurement layer** — they quantify *how long* and *where* disruption concentrates. Layers 3–5 turn those numbers into deployment plans; Layer 6 monitors and learns; Layer 7 models cross-zone spillover; the **dashboard** surfaces the answer for operators.
 
 ## How Layers 1 & 2 address the problem
 
@@ -57,6 +136,7 @@ $$
 | `vehicle_breakdown`, Mysore Road | L1 | P50 ~39 min, P80 ~74 min |
 | Silk Board Junction | L2 | Significant hotspot (p_sim = 0.006) |
 | **Layer 3 (next)** | — | Pre-position tow + patrol; plan ~40–80 min disruption window; prioritize alternate ORR arm |
+| **Worked Example (live)** | `/worked-example` | Executive summary card (headline + duration + officers) then full L1–L7 trace with provenance |
 
 ### What Layers 1 & 2 deliver, and what later layers add
 
@@ -140,11 +220,56 @@ python src/layer4_operational_upgrades.py   # evidence tiers + quantiles + L3 fa
 python src/layer45_predictive_fusion.py     # leak-free predictive fusion → JOSV (additive)
 python src/layer5_robust_optimization.py   # prescriptive MILP optimization → allocation + diversion (additive)
 python src/layer6_adaptive_learning.py     # adaptive learning → posteriors + triggers (additive, never mutates upstream)
+python src/layer7_cross_zone_hawkes.py     # cross-zone spillover + graph centrality (additive)
+python src/network_resilience_index.py     # city-level NRI from L2/L3/L7 outputs (additive)
 python src/frontend_exports.py              # dashboard-ready copies → outputs/frontend/
 python src/validate_consistency.py
 ```
 
-Each layer script runs **baseline first, then advanced**, writing outputs to `outputs/layer1_*` … `outputs/layer5_*`.
+Each layer script runs **baseline first, then advanced**, writing outputs to `outputs/layer1_*` … `outputs/layer7_*`.
+
+## Dashboard & live inference
+
+### Local development
+
+```bash
+# Terminal 1 — inference API (required for /worked-example and /scenario live runs)
+cd api && pip install -r requirements.txt
+uvicorn main:app --reload --port 8000
+
+# Terminal 2 — dashboard
+cd dashboard && npm install && cp .env.example .env.local   # set NEXT_PUBLIC_API_URL=http://localhost:8000
+npm run dev
+```
+
+Open `http://localhost:3000`. Layer pages read **`outputs/frontend/`** (CSV, 30s revalidate cache). Worked Example POSTs to the API: Layer 1 recomputes live when `data/events_clean.parquet` is present; Layers 2–7 are keyed lookups from `outputs/` with honest provenance badges.
+
+### Dashboard highlights
+
+| Feature | Where | Source |
+|---------|-------|--------|
+| Live hero KPIs | `/` | `loadHeroStats()` — RSF C-index, CVaR reduction, spillover LRT p-value, critical retrain triggers from CSVs |
+| **Network Resilience Index** | `/overview` | `outputs/frontend/network_resilience_index.csv` |
+| Geo-radius retrieval map | `/layer4` | `layer4_geo_radius_matches.csv` |
+| Temporal decay / retrain context | `/layer4` | `layer4_temporal_decay_summary.csv` |
+| MILP counterfactual panel | `/layer5` | `layer5_counterfactual_analysis.csv` |
+| Graph centrality | `/layer7` | `layer7_graph_centrality.csv` |
+| **Executive summary card** | `/worked-example` | API `recommendation.headline` + `duration_plan` + `officer_plan` in one card before the 7-layer pipe |
+
+### Repo layout (runtime)
+
+```
+converge/
+├── data/                    # events_raw.csv, events_clean.parquet (gitignored parquet)
+├── outputs/                 # batch pipeline CSVs (~committed for Vercel)
+│   └── frontend/            # dashboard read path (frontend_exports.py + direct writes)
+├── src/                     # Python pipeline (L1–L7, NRI, exports)
+├── api/                     # FastAPI thin inference (Render)
+├── dashboard/               # Next.js 15 app (Vercel)
+├── render.yaml              # Render blueprint
+├── VERCEL_DEPLOYMENT.md
+└── RENDER_DEPLOYMENT.md
+```
 
 ## Layer 1 outputs (`layer1_survival.py`)
 
@@ -168,7 +293,7 @@ Each layer script runs **baseline first, then advanced**, writing outputs to `ou
 
 | Limitation of baseline | Advanced remedy |
 |------------------------|-----------------|
-| KM ignores covariate interactions | Random Survival Forest (C-index ~0.70 vs Cox ~0.56) |
+| KM ignores covariate interactions | Random Survival Forest (C-index ~0.62 OOB vs Cox ~0.56) |
 | Cox gives hazard ratios, not minutes | AFT models predict median/P90 duration directly |
 | Corridors differ in hidden ops capacity | Frailty / clearance multipliers by corridor |
 | Median hides tail risk for planners | RMST(τ) = expected occupation time up to τ |
@@ -256,9 +381,9 @@ Run **after** main Layer 3/4 scripts. These address judge-facing weaknesses with
 
 #### Frontend — `frontend_exports.py`
 
-Copies canonical outputs to `outputs/frontend/` — **the only path the dashboard should read**:
+Copies canonical outputs to `outputs/frontend/` — **the primary path the dashboard reads** (some layer scripts also write directly to `outputs/frontend/`):
 
-`duration_lookup.csv`, `risk_scores.csv`, `hotspot_rankings.csv`, `operational_burden.csv`, `top25_locations.csv`, `corridor_fragility.csv`, `planned_event_recommendations.csv`
+`duration_lookup.csv`, `risk_scores.csv`, `hotspot_rankings.csv`, `operational_burden.csv`, `top25_locations.csv`, `corridor_fragility.csv`, `planned_event_recommendations.csv`, `layer4_geo_radius_matches.csv`, `layer4_temporal_decay_summary.csv`, `events_clean_stats.json`, plus NRI and L5 counterfactual files when those scripts have run.
 
 ### Layer 4.5 — Predictive Decision Intelligence (`layer45_predictive_fusion.py`)
 
@@ -889,37 +1014,43 @@ $$
 
 ## End-to-End Decision Pipeline
 
+See **Architecture (at a glance)** at the top of this README for the full system diagram (L7, NRI, dashboard, API).
+
 ```
 Historical ASTraM Data (8,173 incidents, Nov 2023 – Apr 2024)
         │
         ▼
-Layer 1 — Duration Intelligence
-(KM, Cox PH, Frailty, AFT, RSF, RMST, GMM archetypes)
-        │
-        ▼
-Layer 2 — Spatial Intelligence
-(Gi*, OBI, Hawkes self-excitation, Future Risk, Persistence index)
+Layer 1 — Duration Intelligence → Layer 2 — Spatial Intelligence
         │
         ├──────────────────────────────┐
         ▼                              ▼
 Layer 3 — Resource Optimization      Layer 3 — Corridor Fragility
-(PCA-learned DIS, LP, Dijkstra)       (marked Hawkes + EB shrinkage + LR test)
         │                              │
         └──────────────┬───────────────┘
                        ▼
-Layer 4 — Event Intelligence + Prototype Retrieval
-(Gower/K-Medoids, evidence tiers, L3 fallback, knowledge base)
+Layer 4 — Event Intelligence + Prototype Retrieval (+ geo-radius, temporal decay)
         │
         ▼
-Layer 4.5 — Predictive Fusion (leak-free)
-(daily as-of features → CatBoost → JOSV → duration quality gate)
+Layer 4.5 — Predictive Fusion (leak-free JOSV)
         │
         ▼
-Layer 5 — Robust Prescriptive Optimization
-(scenario generation → CVaR MILP → allocation + diversion + shadow prices)
+Layer 5 — Robust Prescriptive Optimization (+ counterfactual analysis)
         │
-        ▼
-Operational Action Plan + Dashboard (`outputs/frontend/`, `layer5_frontend_export.csv`)
+        ├──────────────────────────────┐
+        ▼                              ▼
+Layer 6 — Adaptive Learning          Layer 7 — Cross-Zone Spillover + ERI
+(recommendations only)                      │
+        │                              │
+        └──────────────┬───────────────┘
+                       ▼
+        network_resilience_index.py → NRI
+                       │
+                       ▼
+        frontend_exports.py → outputs/frontend/
+                       │
+                       ▼
+        Dashboard (Vercel) + Inference API (Render)
+        Worked Example: executive summary → 7-layer trace
 ```
 
 ## Project structure
@@ -928,50 +1059,42 @@ Operational Action Plan + Dashboard (`outputs/frontend/`, `layer5_frontend_expor
 converge/
 ├── data/
 │   ├── events_raw.csv
-│   ├── events_clean.parquet
-│   └── events_clean.csv                 # written by data_pipeline.py
+│   ├── events_clean.parquet          # gitignored; written by data_pipeline.py
+│   └── events_clean.csv
 ├── outputs/
 │   ├── missingness_test.txt
-│   ├── frontend/                        # dashboard copies (frontend_exports.py)
-│   ├── layer1_*                         # survival quantiles, RSF, frailty, stacked, SHAP, …
-│   ├── layer2_*                         # hotspots, OBI, Hawkes, network, stability, …
-│   ├── layer3_*                         # DIS, LP, barricades, diversions, fragility, …
-│   ├── layer4_*                         # retrieval, prototypes, knowledge base, …
-│   ├── layer45_*                        # as-of features, JOSV, scenario-ready duration, metrics
-│   ├── layer45_model_artifacts/         # CatBoost, calibrator, JOSV scaler, cause τ
-│   ├── layer5_*                         # allocation, diversion, CVaR, shadow prices, …
-│   ├── layer5_model_artifacts/          # hyperparameter JSON snapshot
-│   ├── layer6_*                         # posteriors, calibration, drift, triggers, health, …
-│   └── layer6_model_artifacts/          # JSON snapshots of all posteriors (versioned)
+│   ├── frontend/                     # dashboard copies (frontend_exports.py + layer scripts)
+│   │   ├── duration_lookup.csv, hotspot_rankings.csv, …
+│   │   ├── events_clean_stats.json   # fast overview counts
+│   │   ├── network_resilience_index.csv
+│   │   ├── layer4_geo_radius_matches.csv
+│   │   ├── layer4_temporal_decay_*.csv/json
+│   │   └── layer5_counterfactual_analysis.csv
+│   ├── layer1_* … layer7_*           # canonical batch outputs
+│   ├── layer45_model_artifacts/
+│   ├── layer5_model_artifacts/
+│   ├── layer6_model_artifacts/
+│   └── network_resilience_*.csv
 ├── src/
-│   ├── data_pipeline.py                 # clean + trust_score + MNAR test
-│   ├── layer1_survival.py               # baseline KM/Cox + advanced survival
-│   ├── layer2_hotspots.py               # baseline Gi* + advanced hotspot intelligence
-│   ├── layer1_research_upgrades.py      # frailty LRT + stacked ensemble
-│   ├── layer2_research_upgrades.py      # SPS/NHI + OBI stability + Hawkes validation
-│   ├── layer3_resource_optimization.py  # DIS, manpower, barricades, diversions, tow
-│   ├── layer3_corridor_fragility.py     # marked Hawkes + zone pooling + LR test
-│   ├── layer3_methodology_upgrades.py   # PCA bootstrap + log fragility
-│   ├── layer4_event_intelligence.py     # retrieval, prediction, simulation, KB
-│   ├── layer4_planned_event_retrieval.py
-│   ├── layer4_methodology_upgrades.py   # leakage-free Gower + K-Medoids
-│   ├── layer4_operational_upgrades.py   # evidence tiers + quantiles + L3 fallback
-│   ├── layer45_time_split.py            # chronological backtest split
-│   ├── layer45_asof_features.py         # daily as-of surrogate features
-│   ├── layer45_feature_registry.py      # leakage audit + feature registry
-│   ├── layer45_duration_guard.py        # monotone sanitization + reliability
-│   ├── layer45_tail_models.py           # tail-risk classifier + mixture
-│   ├── layer45_predictive_fusion.py     # CatBoost fusion → JOSV + exports
-│   ├── layer5_robust_optimization.py   # CVaR MILP → allocation + diversion
-│   ├── layer6_adaptive_learning.py     # main orchestrator (8 components, additive)
-│   ├── layer6_feedback_store.py        # data loading / prior-feedback split
-│   ├── layer6_bayesian_duration.py     # hierarchical Bayesian duration update
-│   ├── layer6_calibration_updates.py   # Beta posterior calibration update
-│   ├── layer6_drift_detection.py       # Page-Hinkley, PSI, ODS
-│   ├── layer6_retrain_triggers.py      # retrain recommendation generator
-│   ├── frontend_exports.py              # dashboard export layer
+│   ├── data_pipeline.py
+│   ├── layer1_survival.py … layer7_cross_zone_hawkes.py
+│   ├── layer7b_spillover_forecast_eval.py
+│   ├── network_resilience_index.py   # city-level NRI (additive)
+│   ├── frontend_exports.py
 │   └── validate_consistency.py
-├── .cursorignore
+├── api/
+│   ├── main.py                       # FastAPI — live L1 + CSV lookups
+│   ├── requirements.txt
+│   └── README.md
+├── dashboard/
+│   ├── app/                          # Next.js App Router pages
+│   ├── components/                   # WorkedExampleExecutiveSummary, NriKpiCard, maps, …
+│   ├── lib/                          # csv.ts, hero-stats.ts, api.ts
+│   ├── scripts/sync-outputs.mjs      # Vercel prebuild copy
+│   └── package.json
+├── render.yaml
+├── VERCEL_DEPLOYMENT.md
+├── RENDER_DEPLOYMENT.md
 ├── requirements.txt
 ├── HANDOFF.md
 └── README.md
@@ -1381,45 +1504,42 @@ This patch adds validation and traceability on top of the existing Bayesian lear
 
 ### End-to-End Decision Pipeline (updated)
 
+Canonical diagram: **Architecture (at a glance)** at the top of this README.
+
 ```
 Historical ASTraM Data (8,173 incidents, Nov 2023 - Apr 2024)
         |
         v
-Layer 1 - Duration Intelligence
-(KM, Cox PH, Frailty, AFT, RSF, RMST, GMM archetypes)
-        |
-        v
-Layer 2 - Spatial Intelligence
-(Gi*, OBI, Hawkes self-excitation, Future Risk, Persistence index)
+Layer 1 - Duration  -->  Layer 2 - Spatial
         |
         +------------------------------+
         v                             v
-Layer 3 - Resource Optimization      Layer 3 - Corridor Fragility
-(PCA-learned DIS, LP, Dijkstra)      (marked Hawkes + EB shrinkage)
+Layer 3 - Resources + fragility    Layer 4 - Retrieval (+ geo-radius, temporal decay)
         |                             |
         +-------------+---------------+
                       v
-Layer 4 - Event Intelligence + Prototype Retrieval
-(Gower/K-Medoids, evidence tiers, L3 fallback, knowledge base)
+Layer 4.5 - Predictive Fusion (leak-free JOSV)
         |
         v
-Layer 4.5 - Predictive Fusion (leak-free)
-(daily as-of features -> CatBoost -> JOSV -> duration quality gate)
+Layer 5 - CVaR MILP (+ counterfactual analysis)
         |
-        v
-Layer 5 - Robust Prescriptive Optimization
-(scenario generation -> CVaR MILP -> allocation + diversion + shadow prices)
-        |
-        v
-Operational Action Plan + Dashboard
-        |
-        v  [Mar-Apr 2024 feedback batch]
-Layer 6 - Adaptive Learning (ADDITIVE, recommendations only)
-(Bayesian duration update, calibration posteriors, drift detection,
- prototype trust, BMA, resource effectiveness, model health monitoring)
-        |
-        v
-outputs/layer6_retrain_triggers.csv  (recommendations only -- never mutates upstream)
+        +-------------+---------------+
+        v                             v
+Layer 6 - Adaptive Learning      Layer 7 - Spillover + ERI + alerts
+(recommendations only)                  |
+        |                             |
+        +-------------+---------------+
+                      v
+        network_resilience_index.py -> NRI
+                      |
+                      v
+        frontend_exports.py -> outputs/frontend/
+                      |
+                      v
+        Dashboard + API  |  /worked-example: executive summary -> 7-layer trace
+                      |
+                      v  [Mar-Apr 2024 feedback batch]
+        layer6_retrain_triggers.csv (recommendations only -- never mutates upstream)
 ```
 
 ---
@@ -1536,3 +1656,39 @@ Re-fits the Hawkes model on **Nov 10 – Dec 31** only, then evaluates on the **
 | `layer7_action_policy.csv` | Six-row policy: action, description, threshold triggers, all cutoff values |
 | `layer7_prepositioning_recommendations.csv` | Per (zone, grid_time): recommended action, ERI decomposition, persistence, CI |
 | `layer7_operational_alerts.csv` | Top-30 alerts by urgency, plain-English action label, readable without technical context |
+
+---
+
+## Network Resilience Index (NRI)
+
+**Script:** `src/network_resilience_index.py` (additive — reads L2, L3, L7 only).
+
+City-level composite for the Overview dashboard:
+
+$$
+\text{NRI} = 1 - \frac{w_H H + w_F F + w_S S}{w_H + w_F + w_S}
+$$
+
+| Component | Source | Meaning |
+|-----------|--------|---------|
+| $H$ | Layer 2 OBI (normalized) | Hotspot burden |
+| $F$ | Layer 3 corridor fragility (normalized) | Self-excitation / cascade risk |
+| $S$ | Layer 7 spillover centrality (normalized) | Cross-zone contagion |
+
+Default weights: $w_H{=}0.40$, $w_F{=}0.35$, $w_S{=}0.25$. Five weight variants in `network_resilience_sensitivity.csv`. Classification: **RESILIENT** ≥ 0.80, **MODERATE** ≥ 0.65, **VULNERABLE** ≥ 0.50, else **CRITICAL**.
+
+**Outputs:** `outputs/network_resilience_index.csv`, `outputs/frontend/network_resilience_index.csv`
+
+---
+
+## Additive dashboard modules (post-pipeline)
+
+These blocks run at the end of existing layer scripts — no upstream file mutation.
+
+| Module | Script | Dashboard | Key outputs |
+|--------|--------|-----------|-------------|
+| **Geo-radius retrieval** | `layer4_planned_event_retrieval.py` | `/layer4` map | `layer4_geo_radius_matches.csv` |
+| **Temporal decay** | `layer4_planned_event_retrieval.py` | `/layer4` panel | `layer4_temporal_decay_summary.csv`, half-life from autocorrelation |
+| **MILP counterfactuals** | `layer5_robust_optimization.py` | `/layer5` panel | `layer5_counterfactual_analysis.csv`, `layer5_city_counterfactual_summary.csv` |
+| **Graph centrality** | `layer7_cross_zone_hawkes.py` | `/layer7` | `layer7_graph_centrality.csv` |
+| **Executive summary** | `api/main.py` `synthesize()` | `/worked-example` | `recommendation.headline`, `duration_plan`, `officer_plan` in one card |

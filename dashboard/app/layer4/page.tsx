@@ -4,11 +4,23 @@ import { toNum, fmtNum, titleCaseValue } from "@/lib/format";
 import { Kpi, PageHeader, Panel, Note } from "@/components/ui";
 import { DataTable } from "@/components/DataTable";
 import { VBar } from "@/components/charts";
+import { Layer4GeoSection } from "@/components/Layer4GeoSection";
+import { Layer4GeoKpi } from "@/components/Layer4GeoKpi";
+import { Layer4TemporalSection, type TemporalMetadata } from "@/components/Layer4TemporalSection";
+import { tryReadText } from "@/lib/csv";
 
-export const dynamic = "force-dynamic";
+import { PAGE_REVALIDATE_SECONDS } from "@/lib/page-config";
+
+export const revalidate = PAGE_REVALIDATE_SECONDS;
 
 export default function Layer4Page() {
   const pe = tryLoadCsv("frontend/planned_event_recommendations.csv");
+  const diag = tryLoadCsv("frontend/layer4_retrieval_diagnostics.csv");
+  const geoMatches = tryLoadCsv("frontend/layer4_geo_radius_matches.csv");
+  const temporalMetaRaw = tryReadText("frontend/layer4_temporal_decay_metadata.json");
+  const temporalMeta: TemporalMetadata | null = temporalMetaRaw
+    ? (JSON.parse(temporalMetaRaw) as TemporalMetadata)
+    : null;
 
   const total = pe?.rows.length ?? 0;
   const bands = pe ? valueCounts(pe.rows, "confidence_band") : {};
@@ -16,6 +28,15 @@ export default function Layer4Page() {
     ? countWhere(pe.rows, (r) => ["1", "true", "yes"].includes((r["abstain_flag"] ?? "").toLowerCase()))
     : 0;
   const meanSim = pe ? mean(nums(pe.rows, "mean_similarity")) : NaN;
+
+  const geoCounts = diag ? nums(diag.rows, "geo_radius_2km_count") : [];
+  const totalGeoCount = geoCounts.reduce((a, b) => a + b, 0);
+  const meanGeoCount = geoCounts.length ? mean(geoCounts) : NaN;
+  const nearestVals = diag
+    ? nums(diag.rows, "geo_radius_nearest_km").filter((n) => n > 0)
+    : [];
+  const nearestOverall = nearestVals.length ? Math.min(...nearestVals) : NaN;
+  const geoUnavailable = !diag || geoCounts.length === 0 || geoCounts.every((n) => n === 0);
 
   const bandColorFor = (k: string) => {
     const b = k.toLowerCase();
@@ -37,7 +58,7 @@ export default function Layer4Page() {
         lede="For a planned event (a procession, public gathering, construction window), Layer 4 retrieves the most similar past incidents from an event knowledge base using Gower similarity over mixed features, then turns that institutional memory into a concrete recommendation: expected duration and impact quantiles plus suggested officers, barricades, tow units, supervisors and QRU units. Every recommendation carries a confidence band and an operator warning when evidence is thin."
       />
 
-      <div className="grid grid-4" style={{ marginBottom: 24 }}>
+      <div className="grid grid-5" style={{ marginBottom: 24 }}>
         <Kpi label="Recommendations" value={fmtNum(total)} sub="planned-event rows" />
         <Kpi
           label="Confidence bands"
@@ -47,6 +68,12 @@ export default function Layer4Page() {
         />
         <Kpi label="Abstained" value={fmtNum(abstain)} sub="model declined to recommend" />
         <Kpi label="Mean similarity" value={Number.isNaN(meanSim) ? "-" : fmtNum(meanSim)} sub="avg Gower match to precedents" />
+        <Layer4GeoKpi
+          geoUnavailable={geoUnavailable}
+          totalGeoCount={totalGeoCount}
+          meanGeoCount={meanGeoCount}
+          nearestOverall={nearestOverall}
+        />
       </div>
 
       {bandData.length > 0 && (
@@ -61,6 +88,12 @@ export default function Layer4Page() {
           </Panel>
         </div>
       )}
+
+      {(diag || geoMatches) && (
+        <Layer4GeoSection diagnostics={diag?.rows ?? []} matches={geoMatches?.rows ?? []} />
+      )}
+
+      <Layer4TemporalSection metadata={temporalMeta} />
 
       <DataTable
         dataset="planned_event_recommendations"

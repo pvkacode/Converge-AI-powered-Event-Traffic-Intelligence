@@ -1100,3 +1100,253 @@ with open(OUTPUTS / "layer7_hawkes_fusion_summary.txt", "w", encoding="utf-8") a
     fh.write(summary_text + "\n")
 print("\n  Wrote layer7_hawkes_fusion_summary.txt")
 print("\n=== Layer 7 Part A complete ===")
+
+
+# ─────────────────────────────────────────────────────────────────
+# GRAPH CENTRALITY ANALYSIS (additive — reads existing outputs only)
+# Motivation: cross-excitation matrix already defines a directed
+# weighted graph. Centrality identifies structural propagation hubs
+# beyond pairwise alpha values.
+# ─────────────────────────────────────────────────────────────────
+print("\n=== GRAPH CENTRALITY ANALYSIS ===")
+
+GRAPH_CENTRALITY_COLUMNS = [
+    "zone",
+    "pagerank",
+    "pagerank_normalized",
+    "betweenness_centrality",
+    "betweenness_normalized",
+    "eigenvector_centrality",
+    "eigenvector_normalized",
+    "hub_score",
+    "propagation_role",
+    "ssc",
+    "n_outgoing_edges",
+    "n_incoming_edges",
+    "total_outgoing_alpha",
+    "total_incoming_alpha",
+]
+
+
+def _normalize_dict(d: dict) -> dict:
+    """Min-max normalize a dict of {zone: value} to [0, 1]."""
+    if not d:
+        return {}
+    vals = list(d.values())
+    min_v, max_v = min(vals), max(vals)
+    if max_v == min_v:
+        return {k: 0.5 for k in d}
+    return {k: (v - min_v) / (max_v - min_v) for k, v in d.items()}
+
+
+def _classify_zone(zone, pr_norm, bc_norm, ec_norm, hub_score):
+    pr = pr_norm.get(zone, 0.0)
+    bc = bc_norm.get(zone, 0.0)
+    ec = ec_norm.get(zone, 0.0)
+    hs = hub_score.get(zone, 0.0)
+
+    if hs >= 0.7:
+        return "critical_hub"
+    if pr >= 0.6 and bc < 0.3:
+        return "sink"
+    if bc >= 0.6 and pr < 0.4:
+        return "relay"
+    if ec >= 0.6:
+        return "influential"
+    if hs <= 0.2:
+        return "isolated"
+    return "moderate"
+
+
+try:
+    import networkx as nx
+
+    matrix_path = OUTPUTS / "layer7_cross_excitation_matrix.csv"
+    if not matrix_path.exists():
+        print("[centrality] WARNING: layer7_cross_excitation_matrix.csv not found — skipping")
+    else:
+        cross_excitation_df = pd.read_csv(matrix_path)
+        target_col = (
+            "target_zone"
+            if "target_zone" in cross_excitation_df.columns
+            else "receiver_zone"
+        )
+        if "source_zone" not in cross_excitation_df.columns or target_col not in cross_excitation_df.columns:
+            raise ValueError("cross-excitation matrix missing source/target zone columns")
+
+        cross_excitation_df = cross_excitation_df.copy()
+        cross_excitation_df["alpha"] = pd.to_numeric(
+            cross_excitation_df.get("alpha"), errors="coerce"
+        ).fillna(0.0)
+        cross_excitation_df = cross_excitation_df.rename(columns={target_col: "target_zone"})
+        cross_excitation_df = cross_excitation_df[cross_excitation_df["alpha"] > 0.0]
+
+        all_zones = sorted(
+            set(cross_excitation_df["source_zone"].astype(str).tolist())
+            | set(cross_excitation_df["target_zone"].astype(str).tolist())
+        )
+
+        G = nx.DiGraph()
+        G.add_nodes_from(all_zones)
+        for _, row in cross_excitation_df.iterrows():
+            G.add_edge(
+                str(row["source_zone"]),
+                str(row["target_zone"]),
+                weight=float(row["alpha"]),
+            )
+
+        print(
+            f"[centrality] Graph: {G.number_of_nodes()} nodes, "
+            f"{G.number_of_edges()} edges"
+        )
+
+        if G.number_of_edges() == 0:
+            print("[centrality] WARNING: no positive-alpha edges — writing empty output")
+            pd.DataFrame(columns=GRAPH_CENTRALITY_COLUMNS).to_csv(
+                OUTPUTS / "layer7_graph_centrality.csv", index=False
+            )
+            FRONTEND = OUTPUTS / "frontend"
+            FRONTEND.mkdir(parents=True, exist_ok=True)
+            pd.DataFrame(columns=GRAPH_CENTRALITY_COLUMNS).to_csv(
+                FRONTEND / "layer7_graph_centrality.csv", index=False
+            )
+        else:
+            try:
+                pagerank = nx.pagerank(
+                    G, weight="weight", alpha=0.85, max_iter=1000, tol=1e-6
+                )
+            except nx.PowerIterationFailedConvergence:
+                pagerank = nx.pagerank(G, alpha=0.85, max_iter=1000)
+                print("[centrality] WARNING: PageRank fell back to unweighted")
+
+            G_inv = G.copy()
+            for u, v, data in G_inv.edges(data=True):
+                data["inv_weight"] = 1.0 / (data["weight"] + 1e-9)
+
+            betweenness = nx.betweenness_centrality(
+                G_inv, weight="inv_weight", normalized=True
+            )
+
+            try:
+                eigenvector = nx.eigenvector_centrality(
+                    G, weight="weight", max_iter=1000, tol=1e-6
+                )
+            except nx.PowerIterationFailedConvergence:
+                eigenvector = nx.degree_centrality(G)
+                print(
+                    "[centrality] WARNING: Eigenvector centrality fell back "
+                    "to degree centrality — graph may be too sparse"
+                )
+
+            existing_ssc: dict[str, float] = {}
+            try:
+                ssc_df = pd.read_csv(OUTPUTS / "layer7_spillover_centrality.csv")
+                zone_col = "zone" if "zone" in ssc_df.columns else ssc_df.columns[0]
+                ssc_col = (
+                    "ssc"
+                    if "ssc" in ssc_df.columns
+                    else "SSC_centrality"
+                    if "SSC_centrality" in ssc_df.columns
+                    else "spillover_centrality"
+                )
+                if ssc_col in ssc_df.columns:
+                    existing_ssc = dict(
+                        zip(
+                            ssc_df[zone_col].astype(str),
+                            pd.to_numeric(ssc_df[ssc_col], errors="coerce"),
+                        )
+                    )
+            except Exception as ssc_exc:
+                print(f"[centrality] Could not load existing SSC: {ssc_exc}")
+
+            pr_norm = _normalize_dict(pagerank)
+            bc_norm = _normalize_dict(betweenness)
+            ec_norm = _normalize_dict(eigenvector)
+
+            hub_score = {
+                zone: 0.40 * pr_norm[zone] + 0.35 * bc_norm[zone] + 0.25 * ec_norm[zone]
+                for zone in all_zones
+            }
+            roles = {
+                zone: _classify_zone(zone, pr_norm, bc_norm, ec_norm, hub_score)
+                for zone in all_zones
+            }
+
+            rows = []
+            for zone in all_zones:
+                out_edges = list(G.out_edges(zone, data=True))
+                in_edges = list(G.in_edges(zone, data=True))
+                rows.append({
+                    "zone": zone,
+                    "pagerank": round(float(pagerank.get(zone, 0.0)), 6),
+                    "pagerank_normalized": round(float(pr_norm.get(zone, 0.0)), 6),
+                    "betweenness_centrality": round(float(betweenness.get(zone, 0.0)), 6),
+                    "betweenness_normalized": round(float(bc_norm.get(zone, 0.0)), 6),
+                    "eigenvector_centrality": round(float(eigenvector.get(zone, 0.0)), 6),
+                    "eigenvector_normalized": round(float(ec_norm.get(zone, 0.0)), 6),
+                    "hub_score": round(float(hub_score.get(zone, 0.0)), 6),
+                    "propagation_role": roles[zone],
+                    "ssc": (
+                        round(float(existing_ssc[zone]), 6)
+                        if zone in existing_ssc and pd.notna(existing_ssc[zone])
+                        else float("nan")
+                    ),
+                    "n_outgoing_edges": len(out_edges),
+                    "n_incoming_edges": len(in_edges),
+                    "total_outgoing_alpha": round(
+                        sum(float(d.get("weight", 0.0)) for _, _, d in out_edges), 6
+                    ),
+                    "total_incoming_alpha": round(
+                        sum(float(d.get("weight", 0.0)) for _, _, d in in_edges), 6
+                    ),
+                })
+
+            graph_df = pd.DataFrame(rows).sort_values("hub_score", ascending=False)
+            graph_df.to_csv(OUTPUTS / "layer7_graph_centrality.csv", index=False)
+
+            FRONTEND = OUTPUTS / "frontend"
+            FRONTEND.mkdir(parents=True, exist_ok=True)
+            graph_df.to_csv(FRONTEND / "layer7_graph_centrality.csv", index=False)
+
+            top_hub_zone = graph_df.iloc[0]["zone"]
+            top_relay_zone = graph_df.sort_values(
+                "betweenness_centrality", ascending=False
+            ).iloc[0]["zone"]
+            top_receiver = graph_df.sort_values("pagerank", ascending=False).iloc[0]["zone"]
+            density = G.number_of_edges() / max(10 * 9, 1)
+
+            summary_lines = [
+                "[GRAPH CENTRALITY SUMMARY]",
+                "Zones ranked by Hub Score (PageRank 40% + Betweenness 35% + Eigenvector 25%):",
+                "",
+                f"{'Rank':<5}| {'Zone':<22} | {'Hub Score':<10} | {'Role':<14} | "
+                f"{'PageRank':<10} | {'Betweenness':<12} | {'Eigenvector':<10}",
+            ]
+            for rank, (_, row) in enumerate(graph_df.iterrows(), start=1):
+                summary_lines.append(
+                    f"{rank:<5}| {str(row['zone']):<22} | {row['hub_score']:<10.3f} | "
+                    f"{str(row['propagation_role']):<14} | {row['pagerank']:<10.4f} | "
+                    f"{row['betweenness_centrality']:<12.4f} | {row['eigenvector_centrality']:<10.4f}"
+                )
+            summary_lines += [
+                "",
+                f"Top propagation hub: {top_hub_zone}",
+                f"Most critical relay: {top_relay_zone}",
+                f"Highest risk receiver: {top_receiver}",
+                "",
+                f"Graph density: {density:.3f}",
+            ]
+            summary_text = "\n".join(summary_lines)
+            with open(OUTPUTS / "layer7_centrality_summary.txt", "w", encoding="utf-8") as fh:
+                fh.write(summary_text + "\n")
+
+            print("\n[Layer 7 — Graph Centrality Results]")
+            print(f"Top hub: {top_hub_zone} (score={hub_score[top_hub_zone]:.3f})")
+            print(f"Top relay: {top_relay_zone} (BC={betweenness[top_relay_zone]:.3f})")
+            print(f"Top receiver: {top_receiver} (PR={pagerank[top_receiver]:.3f})")
+            print(f"Graph density: {density:.3f}")
+            print("  Wrote layer7_graph_centrality.csv")
+            print("  Wrote layer7_centrality_summary.txt")
+
+except Exception as centrality_exc:
+    print(f"[centrality] ERROR (non-fatal): {centrality_exc}")

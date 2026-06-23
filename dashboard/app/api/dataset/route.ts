@@ -7,7 +7,9 @@ import { getDataset } from "@/lib/datasets";
 import { applyAugment } from "@/lib/server/augment";
 import { toNum } from "@/lib/format";
 
-export const dynamic = "force-dynamic";
+import { PAGE_REVALIDATE_SECONDS } from "@/lib/page-config";
+
+export const revalidate = PAGE_REVALIDATE_SECONDS;
 
 export async function GET(req: NextRequest) {
   const sp = req.nextUrl.searchParams;

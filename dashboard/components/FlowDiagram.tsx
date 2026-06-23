@@ -8,6 +8,7 @@ interface Node {
   layer: string;
   desc: string;
   href: string;
+  nriBadge?: string;
 }
 
 const NODES: Node[] = [
@@ -20,18 +21,52 @@ const NODES: Node[] = [
   { step: "07 Spillover", name: "Cross-Zone", layer: "Layer 7", desc: "Hawkes spillover, expected-risk index, early-warning zones.", href: "/layer7" },
 ];
 
-export function FlowDiagram() {
+export function FlowDiagram({
+  nriH,
+  nriF,
+  nriS,
+}: {
+  nriH?: number;
+  nriF?: number;
+  nriS?: number;
+}) {
+  const nodes: Node[] = NODES.map((n) => {
+    if (n.href === "/layer2" && nriH != null && !Number.isNaN(nriH)) {
+      return { ...n, nriBadge: `H=${nriH.toFixed(2)}` };
+    }
+    if (n.href === "/layer5" && nriF != null && !Number.isNaN(nriF)) {
+      return { ...n, nriBadge: `F=${nriF.toFixed(2)}` };
+    }
+    if (n.href === "/layer7" && nriS != null && !Number.isNaN(nriS)) {
+      return { ...n, nriBadge: `S=${nriS.toFixed(2)}` };
+    }
+    return n;
+  });
+
   return (
     <div className="flow">
-      {NODES.map((n, i) => (
+      {nodes.map((n, i) => (
         <div key={n.href} style={{ display: "contents" }}>
           <Link href={n.href} className="flow-node">
             <span className="fn-step">{n.step}</span>
             <span className="fn-name">{n.name}</span>
             <span className="fn-layer">{n.layer}</span>
             <span className="fn-desc">{n.desc}</span>
+            {n.nriBadge ? (
+              <span
+                style={{
+                  marginTop: 6,
+                  fontSize: 10,
+                  fontWeight: 600,
+                  color: "#4ECDC4",
+                  letterSpacing: "0.03em",
+                }}
+              >
+                NRI: {n.nriBadge}
+              </span>
+            ) : null}
           </Link>
-          {i < NODES.length - 1 && (
+          {i < nodes.length - 1 && (
             <span className="flow-arrow" aria-hidden>
               <ArrowRight size={16} weight="bold" />
             </span>

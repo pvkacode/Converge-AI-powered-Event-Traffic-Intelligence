@@ -12,7 +12,9 @@ import { HBar } from "@/components/charts";
 import { healthVariant } from "@/lib/badges";
 import { loadEventsCleanStats } from "@/lib/events-clean";
 
-export const dynamic = "force-dynamic";
+import { PAGE_REVALIDATE_SECONDS } from "@/lib/page-config";
+
+export const revalidate = PAGE_REVALIDATE_SECONDS;
 
 export default function OverviewPage() {
   const hotspots = tryLoadCsv("frontend/hotspot_rankings.csv");
@@ -22,6 +24,7 @@ export default function OverviewPage() {
   const health = tryLoadCsv("layer6_model_health_summary.csv");
   const alerts = tryLoadCsv("layer6_active_alerts.csv");
   const spill = tryLoadCsv("layer7_spillover_centrality.csv");
+  const nri = tryLoadCsv("frontend/network_resilience_index.csv");
   const eventsStats = loadEventsCleanStats();
 
   const hsTotal = hotspots?.rows.length ?? 0;
@@ -45,6 +48,11 @@ export default function OverviewPage() {
     ? topBy(spill.rows, "zone", "SSC_centrality", 1)[0]
     : undefined;
   const spillBars = spill ? topBy(spill.rows, "zone", "SSC_centrality", 8) : [];
+
+  const nriRow = nri?.rows[0];
+  const nriH = toNum(nriRow?.H_normalized);
+  const nriF = toNum(nriRow?.F_normalized);
+  const nriS = toNum(nriRow?.S_normalized);
 
   const sevOrder = ["critical", "warning", "moderate"];
   const sevEntries = Object.entries(sev).sort(
@@ -71,6 +79,7 @@ export default function OverviewPage() {
         sevSummary={sevSummary}
         spillZone={spillTop?.name ?? ""}
         spillCentrality={spillTop ? spillTop.value : NaN}
+        nriRow={nriRow}
         closedWithoutTimestamp={eventsStats.closedWithoutTimestamp}
         truePlanned={eventsStats.truePlanned}
         eventsTotal={eventsStats.total}
@@ -90,7 +99,7 @@ export default function OverviewPage() {
             Each stage is a separate model layer. Click any node to open that layer with its real
             outputs, methodology, and tables.
           </p>
-          <FlowDiagram />
+          <FlowDiagram nriH={nriH} nriF={nriF} nriS={nriS} />
         </Panel>
       </div>
 

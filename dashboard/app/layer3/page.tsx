@@ -5,7 +5,9 @@ import { Kpi, PageHeader, Panel, Note } from "@/components/ui";
 import { DataTable } from "@/components/DataTable";
 import { HBar } from "@/components/charts";
 
-export const dynamic = "force-dynamic";
+import { PAGE_REVALIDATE_SECONDS } from "@/lib/page-config";
+
+export const revalidate = PAGE_REVALIDATE_SECONDS;
 
 export default function Layer3Page() {
   const rs = tryLoadCsv("frontend/risk_scores.csv");

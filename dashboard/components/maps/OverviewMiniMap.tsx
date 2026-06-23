@@ -50,8 +50,6 @@ export default function OverviewMiniMap({
         zoom={11}
         style={{ height: "260px", width: "100%", ...MAP_BORDER }}
         scrollWheelZoom={false}
-        zoomControl={false}
-        dragging={false}
         attributionControl={false}
       >
         <TileLayer

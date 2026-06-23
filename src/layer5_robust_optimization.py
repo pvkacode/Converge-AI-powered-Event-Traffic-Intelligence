@@ -1938,5 +1938,233 @@ def main() -> None:
     logger.info("Layer 5 complete.")
 
 
+# ─────────────────────────────────────────────────────────────────
+# COUNTERFACTUAL IMPACT ANALYSIS (additive post-processing)
+# Evaluates existing effectiveness function at discrete resource
+# levels to answer: "what does adding N more units actually buy?"
+# No MILP re-solve. Uses γ parameters and E(u) already defined above.
+# ─────────────────────────────────────────────────────────────────
+
+def _run_counterfactual_analysis() -> None:
+    print("\n=== COUNTERFACTUAL IMPACT ANALYSIS ===")
+    alloc_path = OUT / "layer5_resource_allocation.csv"
+    if not alloc_path.exists():
+        print("[counterfactual] WARNING: layer5_resource_allocation.csv not found — skipping")
+        return
+
+    alloc_df = pd.read_csv(alloc_path)
+    if alloc_df.empty:
+        print("[counterfactual] WARNING: allocation file is empty — skipping")
+        return
+
+    site_col = "site_id" if "site_id" in alloc_df.columns else "event_id"
+    if site_col not in alloc_df.columns:
+        print("[counterfactual] WARNING: no site/event id column — skipping")
+        return
+
+    GAMMA = {"p": GAMMA_P, "b": GAMMA_B, "t": GAMMA_T, "q": GAMMA_Q}
+
+    def effectiveness(p, b, t, q, gamma=GAMMA):
+        u = gamma["p"] * p + gamma["b"] * b + gamma["t"] * t + gamma["q"] * q
+        return min(E_MAX, 1.0 - math.exp(-u))
+
+    def delay_reduction_pct(e_with, e_without=0.0):
+        if e_without >= E_MAX:
+            return 0.0
+        return (e_with - e_without) / (1.0 - e_without) * 100.0
+
+    SCENARIOS = [
+        {"label": "baseline", "delta_p": 0, "delta_b": 0, "delta_t": 0, "delta_q": 0},
+        {"label": "+2 officers", "delta_p": 2, "delta_b": 0, "delta_t": 0, "delta_q": 0},
+        {"label": "+5 officers", "delta_p": 5, "delta_b": 0, "delta_t": 0, "delta_q": 0},
+        {"label": "+3 barricades", "delta_p": 0, "delta_b": 3, "delta_t": 0, "delta_q": 0},
+        {"label": "+1 tow unit", "delta_p": 0, "delta_b": 0, "delta_t": 1, "delta_q": 0},
+        {"label": "+1 QRU", "delta_p": 0, "delta_b": 0, "delta_t": 0, "delta_q": 1},
+        {"label": "diversion activated", "delta_p": 0, "delta_b": 2, "delta_t": 0, "delta_q": 0},
+        {"label": "full surge (+5p +5b +1t)", "delta_p": 5, "delta_b": 5, "delta_t": 1, "delta_q": 0},
+    ]
+    SINGLE_SCENARIOS = {
+        s["label"] for s in SCENARIOS if s["label"] not in ("baseline", "full surge (+5p +5b +1t)")
+    }
+
+    def mean_duration_for_row(row: pd.Series) -> float:
+        e = float(pd.to_numeric(row.get("effectiveness"), errors="coerce") or 0.0)
+        w = float(pd.to_numeric(row.get("site_weight"), errors="coerce") or 1.0)
+        edr = pd.to_numeric(row.get("expected_delay_reduction_min"), errors="coerce")
+        if pd.notna(edr) and e > 1e-9 and w > 1e-9:
+            return float(edr) / (e * w)
+        p50 = pd.to_numeric(row.get("safe_duration_p50"), errors="coerce")
+        if pd.notna(p50):
+            return float(p50)
+        p80 = pd.to_numeric(row.get("safe_duration_p80"), errors="coerce")
+        return float(p80) if pd.notna(p80) else 100.0
+
+    counterfactual_rows: list[dict] = []
+    best_rows: list[dict] = []
+    n_sites = len(alloc_df)
+
+    for _, site in alloc_df.iterrows():
+        site_id = str(site[site_col])
+        current_p = int(pd.to_numeric(site.get("officers_allocated"), errors="coerce") or 0)
+        current_b = int(pd.to_numeric(site.get("barricades_allocated"), errors="coerce") or 0)
+        current_t = int(pd.to_numeric(site.get("tow_trucks_allocated"), errors="coerce") or 0)
+        current_q = int(pd.to_numeric(site.get("qru_allocated"), errors="coerce") or 0)
+        service_tier = str(site.get("service_tier", ""))
+        site_weight = float(pd.to_numeric(site.get("site_weight"), errors="coerce") or 1.0)
+        mean_duration_min = mean_duration_for_row(site)
+
+        e_current = effectiveness(current_p, current_b, current_t, current_q)
+        csv_eff = pd.to_numeric(site.get("effectiveness"), errors="coerce")
+        if pd.notna(csv_eff) and abs(float(csv_eff) - e_current) > 0.05:
+            e_current = float(csv_eff)
+
+        at_max = e_current >= E_MAX - 1e-6
+        best_label = "at_max_effectiveness" if at_max else None
+        best_delta = 0.0
+        best_abs = 0.0
+        best_cost = float("inf")
+
+        for scenario in SCENARIOS:
+            dp, db, dt, dq = scenario["delta_p"], scenario["delta_b"], scenario["delta_t"], scenario["delta_q"]
+            new_p = min(MAX_P, current_p + dp)
+            new_b = min(MAX_B, current_b + db)
+            new_t = min(MAX_T, current_t + dt)
+            new_q = min(MAX_Q, current_q + dq)
+
+            if (new_p, new_b, new_t, new_q) != (current_p + dp, current_b + db, current_t + dt, current_q + dq):
+                print(
+                    f"[counterfactual] WARNING: caps clipped for {site_id} "
+                    f"scenario '{scenario['label']}'"
+                )
+
+            if at_max:
+                e_cf = e_current
+                marginal_pct = 0.0
+                abs_red = 0.0
+                cost_per_pct = float("inf")
+            else:
+                e_cf = effectiveness(new_p, new_b, new_t, new_q)
+                marginal_pct = delay_reduction_pct(e_cf, e_current)
+                abs_red = mean_duration_min * site_weight * (e_cf - e_current)
+                resource_cost = dp + db + dt + dq
+                cost_per_pct = (
+                    resource_cost / marginal_pct if marginal_pct > 1e-9 else float("inf")
+                )
+
+            counterfactual_rows.append({
+                "site_id": site_id,
+                "service_tier": service_tier,
+                "scenario_label": scenario["label"],
+                "current_p": current_p,
+                "current_b": current_b,
+                "current_t": current_t,
+                "current_q": current_q,
+                "delta_p": dp,
+                "delta_b": db,
+                "delta_t": dt,
+                "delta_q": dq,
+                "e_current": round(e_current, 6),
+                "e_counterfactual": round(e_cf, 6),
+                "delta_effectiveness": round(e_cf - e_current, 6),
+                "marginal_delay_reduction_pct": round(marginal_pct, 4),
+                "absolute_reduction_min": round(abs_red, 4),
+                "cost_per_pct_reduction": round(cost_per_pct, 6) if math.isfinite(cost_per_pct) else float("inf"),
+                "at_max_effectiveness": at_max,
+                "mean_duration_min": round(mean_duration_min, 4),
+            })
+
+            if (
+                not at_max
+                and scenario["label"] in SINGLE_SCENARIOS
+                and (e_cf - e_current) > best_delta
+            ):
+                best_delta = e_cf - e_current
+                best_label = scenario["label"]
+                best_abs = abs_red
+                best_cost = cost_per_pct
+
+        if best_label is None:
+            best_label = "none"
+
+        best_rows.append({
+            "site_id": site_id,
+            "service_tier": service_tier,
+            "e_current": round(e_current, 6),
+            "best_intervention_label": best_label,
+            "best_delta_effectiveness": round(best_delta, 6),
+            "best_absolute_reduction_min": round(best_abs, 4),
+            "best_cost_per_pct": round(best_cost, 6) if math.isfinite(best_cost) else float("inf"),
+            "at_max_effectiveness": at_max,
+        })
+
+    cf_df = pd.DataFrame(counterfactual_rows)
+    scenario_order = {s["label"]: i for i, s in enumerate(SCENARIOS)}
+    cf_df["_ord"] = cf_df["scenario_label"].map(scenario_order)
+    cf_df = cf_df.sort_values(["site_id", "_ord"]).drop(columns=["_ord"])
+    cf_df.to_csv(OUT / "layer5_counterfactual_analysis.csv", index=False)
+
+    best_df = pd.DataFrame(best_rows)
+    best_df.to_csv(OUT / "layer5_best_interventions.csv", index=False)
+
+    reducible_by_site = []
+    for _, site in alloc_df.iterrows():
+        e0 = float(pd.to_numeric(site.get("effectiveness"), errors="coerce") or 0.0)
+        md = mean_duration_for_row(site)
+        w = float(pd.to_numeric(site.get("site_weight"), errors="coerce") or 1.0)
+        reducible_by_site.append(md * w * max(0.0, E_MAX - e0))
+    total_reducible = float(np.sum(reducible_by_site))
+
+    city_rows = []
+    best_overall = "baseline"
+    best_efficiency = -1.0
+    for scenario in SCENARIOS:
+        label = scenario["label"]
+        sub = cf_df[cf_df["scenario_label"] == label]
+        total_abs = float(sub["absolute_reduction_min"].sum())
+        pct_reducible = (total_abs / total_reducible * 100.0) if total_reducible > 1e-9 else 0.0
+        n_improved = int((sub["delta_effectiveness"] > 0.01).sum())
+        resource_units = (
+            scenario["delta_p"] + scenario["delta_b"] + scenario["delta_t"] + scenario["delta_q"]
+        )
+        efficiency = pct_reducible / resource_units if resource_units > 0 else 0.0
+        if label != "baseline" and efficiency > best_efficiency:
+            best_efficiency = efficiency
+            best_overall = label
+        city_rows.append({
+            "scenario_label": label,
+            "total_absolute_reduction_min_citywide": round(total_abs, 4),
+            "pct_of_reducible_delay_citywide": round(pct_reducible, 4),
+            "n_sites_improved": n_improved,
+        })
+
+    city_df = pd.DataFrame(city_rows)
+    city_df.to_csv(OUT / "layer5_city_counterfactual_summary.csv", index=False)
+
+    FRONTEND = OUT / "frontend"
+    FRONTEND.mkdir(parents=True, exist_ok=True)
+    cf_df.to_csv(FRONTEND / "layer5_counterfactual_analysis.csv", index=False)
+    best_df.to_csv(FRONTEND / "layer5_best_interventions.csv", index=False)
+    city_df.to_csv(FRONTEND / "layer5_city_counterfactual_summary.csv", index=False)
+
+    print("\n[Layer 5 — Counterfactual Impact Analysis]")
+    print(f"Scenarios evaluated: {len(SCENARIOS)} × {n_sites} sites")
+    print(f"City-wide reducible delay remaining: {total_reducible:.0f} min")
+    for row in city_rows:
+        print(
+            f"  {row['scenario_label']}: "
+            f"{row['pct_of_reducible_delay_citywide']:.1f}% of reducible delay eliminated"
+        )
+    print(f"Most cost-effective intervention: {best_overall}")
+    print("  Wrote layer5_counterfactual_analysis.csv")
+    print("  Wrote layer5_best_interventions.csv")
+    print("  Wrote layer5_city_counterfactual_summary.csv")
+
+
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    finally:
+        try:
+            _run_counterfactual_analysis()
+        except Exception as cf_exc:
+            print(f"[counterfactual] ERROR (non-fatal): {cf_exc}")

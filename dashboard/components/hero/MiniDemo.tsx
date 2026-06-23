@@ -8,6 +8,9 @@ import { fmtMinutes } from "@/lib/format";
 import { PlanConfidenceBadge } from "@/components/PlanConfidenceBadge";
 import { CAUSES, CORRIDORS, DOW_MAP } from "./constants";
 import { useTypewriter } from "./hooks";
+import { BackendWakeNotice } from "@/components/BackendWakeNotice";
+import { useSlowLoading } from "@/hooks/useSlowLoading";
+import { isHostedBackend } from "@/lib/backend-notice";
 
 const DEFAULT_INPUT = {
   cause: "vehicle_breakdown",
@@ -74,6 +77,7 @@ export function MiniDemo() {
     20,
     revealStep >= 4 && !!result?.headline
   );
+  const slow = useSlowLoading(loading);
 
   const run = useCallback(async () => {
     setLoading(true);
@@ -99,7 +103,11 @@ export function MiniDemo() {
       window.setTimeout(() => setRevealStep(3), 160);
       window.setTimeout(() => setRevealStep(4), 240);
     } catch {
-      setError("Inference API unavailable. Start the FastAPI service or set NEXT_PUBLIC_API_URL.");
+      setError(
+        isHostedBackend()
+          ? "Inference API is waking up or unreachable. See the notice below — open the health check link if needed, then retry."
+          : "Inference API unavailable. Start the FastAPI service or set NEXT_PUBLIC_API_URL."
+      );
     } finally {
       setLoading(false);
     }
@@ -118,6 +126,11 @@ export function MiniDemo() {
               Run a real scenario through the pipeline. Powered by the same API as the full Worked
               Example.
             </p>
+            {isHostedBackend() ? (
+              <p className="dim" style={{ marginTop: 8, fontSize: 12, lineHeight: 1.45 }}>
+                Backend on Render — first run after idle may take up to a minute while the server wakes.
+              </p>
+            ) : null}
           </div>
         </div>
 
@@ -169,13 +182,17 @@ export function MiniDemo() {
               {loading ? <CircleNotch size={18} className="spin" weight="bold" /> : <Lightning size={18} weight="fill" />}
               Run Pipeline
             </button>
-            {loading ? (
+            {loading && !slow ? (
               <p className="dim" style={{ fontSize: 12, textAlign: "center", margin: 0 }}>
                 Running 7 layers…
               </p>
             ) : null}
+            {loading && slow ? <BackendWakeNotice slow compact /> : null}
             {error ? (
-              <p style={{ color: "var(--critical)", fontSize: 13, margin: 0 }}>{error}</p>
+              <>
+                <p style={{ color: "var(--critical)", fontSize: 13, margin: 0 }}>{error}</p>
+                <BackendWakeNotice offline onRetry={run} compact />
+              </>
             ) : null}
           </div>
 
@@ -186,10 +203,16 @@ export function MiniDemo() {
 
             {loading && (
               <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                <div className="hero-shimmer" style={{ height: 48 }} />
-                <div className="hero-shimmer" style={{ height: 80 }} />
-                <div className="hero-shimmer" style={{ height: 40 }} />
-                <div className="hero-shimmer" style={{ height: 24 }} />
+                {slow ? (
+                  <BackendWakeNotice slow compact />
+                ) : (
+                  <>
+                    <div className="hero-shimmer" style={{ height: 48 }} />
+                    <div className="hero-shimmer" style={{ height: 80 }} />
+                    <div className="hero-shimmer" style={{ height: 40 }} />
+                    <div className="hero-shimmer" style={{ height: 24 }} />
+                  </>
+                )}
               </div>
             )}
 

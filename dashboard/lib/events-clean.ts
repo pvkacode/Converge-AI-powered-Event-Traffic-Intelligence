@@ -2,6 +2,7 @@
 import "server-only";
 import fs from "node:fs";
 import path from "node:path";
+import { cache as reactCache } from "react";
 import Papa from "papaparse";
 import { outputsDir } from "./csv";
 
@@ -34,10 +35,19 @@ function truthy(v: string | undefined): boolean {
   return ["true", "1", "yes"].includes(String(v ?? "").trim().toLowerCase());
 }
 
-// Committed extract from data/events_clean.csv (outputs/frontend/kpi-summary.json),
-// generated once and checked into the repo so the deployed app — which never has
-// access to the gitignored data/ directory — doesn't silently fall back to the
-// hardcoded literal below. See KPI_SOURCE.md for provenance.
+function statsJsonPath(): string | null {
+  const candidates = [
+    path.join(outputsDir(), "frontend", "events_clean_stats.json"),
+    path.join(process.cwd(), "..", "outputs", "frontend", "events_clean_stats.json"),
+    path.join(process.cwd(), "outputs", "frontend", "events_clean_stats.json"),
+    path.join(process.cwd(), "..", "..", "outputs", "frontend", "events_clean_stats.json"),
+  ];
+  for (const p of candidates) {
+    if (fs.existsSync(p)) return p;
+  }
+  return null;
+}
+
 function loadKpiSummaryFromJson(): EventsCleanStats | null {
   try {
     const abs = path.join(outputsDir(), "frontend", "kpi-summary.json");
@@ -60,19 +70,39 @@ function loadKpiSummaryFromJson(): EventsCleanStats | null {
   }
 }
 
-/**
- * Counts behind the overview KPIs, in priority order:
- *   1. Live recompute from data/events_clean.csv (most accurate, dev-only —
- *      data/ is gitignored and not deployed).
- *   2. Committed outputs/frontend/kpi-summary.json extract (deployed source of truth).
- *   3. Hardcoded literal (last-ditch fallback so this never renders blank).
- */
-export function loadEventsCleanStats(): EventsCleanStats {
+function parseStatsJson(filePath: string): EventsCleanStats | null {
+  try {
+    const parsed = JSON.parse(fs.readFileSync(filePath, "utf8")) as Partial<EventsCleanStats>;
+    if (
+      typeof parsed.total === "number" &&
+      typeof parsed.closedWithoutTimestamp === "number" &&
+      typeof parsed.truePlanned === "number"
+    ) {
+      return {
+        total: parsed.total,
+        closedWithoutTimestamp: parsed.closedWithoutTimestamp,
+        truePlanned: parsed.truePlanned,
+      };
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+/** Live counts from events_clean.csv; falls back to committed JSON exports. */
+function loadEventsCleanStatsUncached(): EventsCleanStats {
   const fallback: EventsCleanStats = {
     total: 8173,
     closedWithoutTimestamp: 3526,
     truePlanned: 191,
   };
+
+  const statsJson = statsJsonPath();
+  if (statsJson) {
+    const fromStats = parseStatsJson(statsJson);
+    if (fromStats) return fromStats;
+  }
 
   const abs = dataPath();
   if (!abs) return loadKpiSummaryFromJson() ?? fallback;
@@ -108,3 +138,5 @@ export function loadEventsCleanStats(): EventsCleanStats {
     return loadKpiSummaryFromJson() ?? fallback;
   }
 }
+
+export const loadEventsCleanStats = reactCache(loadEventsCleanStatsUncached);
