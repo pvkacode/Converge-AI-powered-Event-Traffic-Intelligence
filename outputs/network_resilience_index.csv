@@ -1,0 +1,2 @@
+computed_at,NRI,NRI_class,NRI_color,NRI_range_low,NRI_range_high,H_raw,H_normalized,H_weight,F_raw,F_normalized,F_weight,S_raw,S_normalized,S_weight,burden_score,H_n_critical_junctions,F_n_elevated_corridors,S_max_zone,weights_source,components_available
+2026-06-23T10:40:33.715781+00:00,0.6836,MODERATE,#E8A53D,0.6711,0.6935,0.154101,0.262073,0.4,31.0106,0.310106,0.35,0.374578,0.41196,0.25,0.316356,3,18,Central Zone 2,base,"H,F,S"

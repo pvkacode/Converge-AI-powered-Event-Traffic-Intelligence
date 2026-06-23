@@ -1,3 +1,5 @@
+import type { HeroStats } from "@/lib/hero-stats-types";
+import { formatHotspotsRatio, formatIncidents } from "@/lib/hero-stats-format";
 import "./container-scroll.css";
 
 const BAR_HEIGHTS = [55, 75, 60, 50, 85, 65, 72, 55, 90, 70, 80, 65, 85, 72];
@@ -47,14 +49,28 @@ function BoltIcon() {
   );
 }
 
-const STAT_CARDS = [
-  { icon: <MapPinIcon />, value: "8,173", label: "real incidents" },
-  { icon: <TargetIcon />, value: "80 / 294", label: "hotspots ranked" },
-  { icon: <TrendIcon />, value: "49.81%", label: "CVaR reduction" },
-  { icon: <BoltIcon />, value: "7", label: "critical triggers" },
-] as const;
+export default function DashboardMockup({ stats }: { stats: HeroStats }) {
+  const statCards = [
+    { icon: <MapPinIcon />, value: formatIncidents(stats.incidentsTotal), label: "real incidents" },
+    {
+      icon: <TargetIcon />,
+      value: formatHotspotsRatio(stats.hotspotsSignificant, stats.junctionsTotal),
+      label: "hotspots ranked",
+    },
+    {
+      icon: <TrendIcon />,
+      value: Number.isFinite(stats.cvarReductionPct)
+        ? `${stats.cvarReductionPct.toFixed(2)}%`
+        : "—",
+      label: "CVaR reduction",
+    },
+    {
+      icon: <BoltIcon />,
+      value: String(stats.criticalRetrainTriggers),
+      label: "critical triggers",
+    },
+  ] as const;
 
-export default function DashboardMockup() {
   return (
     <div
       style={{
@@ -98,7 +114,7 @@ export default function DashboardMockup() {
       </div>
 
       <div className="dm-stats">
-        {STAT_CARDS.map((card) => (
+        {statCards.map((card) => (
           <div
             key={card.label}
             style={{

@@ -1,48 +1,48 @@
-prototype_id,representative_event_id,support_count,corridor,cause,median_duration,mean_trust,closure_rate,prototype_quality_score,event_cause,closure_binary,hour_of_day,day_of_week,priority_numeric,month
-0,FKID004161,3,Non-corridor,protest,67.59724811666666,0.9,0.0,0.9612,protest,0,9,1,1.0,11
-1,FKID001647,7,Non-corridor,procession,59.906866666666666,0.9571428571428572,0.0,0.9481,procession,0,13,1,1.0,2
-2,FKID005098,3,Non-corridor,public_event,111.208,1.0,0.0,0.9831,public_event,0,13,0,1.0,1
-3,FKID000008,9,CBD 2,public_event,67.59724811666666,1.0,0.0,0.9073,public_event,0,12,2,3.0,3
-4,FKID000361,4,Non-corridor,procession,67.59724811666666,0.925,0.0,0.8603,procession,0,2,5,1.0,3
-5,FKID006838,3,Non-corridor,procession,67.59724811666666,1.0,0.0,0.9505,procession,0,2,5,1.0,12
-6,FKID007487,1,Non-corridor,public_event,119.51389999999999,1.0,1.0,1.0,public_event,1,2,4,1.0,1
-7,FKID000949,5,Non-corridor,procession,67.59724811666666,1.0,0.0,0.9736,procession,0,13,6,1.0,2
-8,FKID004711,1,Non-corridor,public_event,1440.0,0.48999999999999994,1.0,1.0,public_event,1,10,6,1.0,12
-9,FKID003704,9,Mysore Road,public_event,67.59724811666666,0.9666666666666666,1.0,0.7793,public_event,1,12,2,3.0,3
-10,FKID003763,2,ORR West 1,public_event,67.59724811666666,1.0,1.0,1.0,public_event,1,12,2,3.0,3
-11,FKID005473,1,Bannerghata Road,public_event,67.59724811666666,0.7,1.0,1.0,public_event,1,12,2,3.0,3
-12,FKID000433,18,Non-corridor,public_event,67.59724811666666,0.9333333333333333,1.0,0.9979,public_event,1,12,2,1.0,3
-13,FKID006633,11,Bellary Road 2,public_event,5.945583333333333,0.9727272727272727,0.09090909090909091,0.7505,public_event,0,4,5,3.0,12
-14,FKID002282,6,Hennur Main Road,procession,67.59724811666666,0.9500000000000001,0.0,0.7815,procession,0,6,2,3.0,3
-15,FKID004386,3,Magadi Road,public_event,239.7753,1.0,0.0,0.9763,public_event,0,11,6,3.0,12
-16,FKID004703,7,Magadi Road,procession,67.59724811666666,1.0,0.0,0.7913,procession,0,12,2,3.0,3
-17,FKID007416,1,CBD 2,protest,67.59724811666666,1.0,1.0,1.0,protest,1,10,1,3.0,1
-18,FKID004426,0,Non-corridor,public_event,,0.7,,0.0,public_event,1,12,2,1.0,3
-19,FKID004771,0,Non-corridor,public_event,,0.7,,0.0,public_event,1,12,2,1.0,3
-20,FKID001492,1,Non-corridor,procession,67.59724811666666,1.0,0.0,1.0,procession,0,6,6,1.0,2
-21,FKID008080,4,Mysore Road,protest,753.7986240583333,0.85,0.0,0.8059,protest,0,12,2,3.0,3
-22,FKID006105,1,Non-corridor,public_event,0.0,1.0,0.0,1.0,public_event,0,5,1,1.0,11
-23,FKID004747,13,Non-corridor,procession,67.59724811666666,0.9538461538461539,0.23076923076923078,0.8837,procession,0,9,0,1.0,12
-24,FKID002408,4,Old Airport Road,public_event,409.73900000000003,1.0,0.0,1.0,public_event,0,18,6,3.0,3
-25,FKID004671,3,Magadi Road,procession,85.82538333333333,1.0,0.0,0.8916,procession,0,14,6,3.0,11
-26,FKID001970,5,Mysore Road,vip_movement,67.59724811666666,0.76,1.0,0.9503,vip_movement,1,12,2,3.0,3
-27,FKID004641,2,Non-corridor,public_event,720.0,0.745,1.0,0.9425,public_event,1,13,1,1.0,1
-28,FKID000920,5,Non-corridor,protest,2.677833333333333,1.0,1.0,0.9481,protest,1,3,6,1.0,2
-29,FKID004721,2,Non-corridor,vip_movement,1440.0,0.7,0.0,0.9019,vip_movement,0,10,1,1.0,11
-30,FKID003127,1,Non-corridor,public_event,2.5198166666666664,0.7,1.0,1.0,public_event,1,15,2,1.0,3
-31,FKID001167,4,Non-corridor,procession,67.59724811666666,0.85,1.0,0.9476,procession,1,12,2,1.0,3
-32,FKID005136,1,Non-corridor,public_event,1440.0,0.48999999999999994,1.0,1.0,public_event,1,11,6,1.0,1
-33,FKID008130,0,Non-corridor,public_event,,0.7,,0.0,public_event,1,12,2,1.0,3
-34,FKID005291,5,Non-corridor,public_event,180.2073,0.9400000000000001,0.0,0.9409,public_event,0,6,4,1.0,12
-35,FKID002411,1,Old Airport Road,public_event,384.93605,1.0,0.0,1.0,public_event,0,19,6,3.0,3
-36,FKID004906,3,Non-corridor,public_event,1440.0,0.7999999999999999,0.0,0.968,public_event,0,11,0,1.0,11
-37,FKID002445,3,Non-corridor,public_event,67.59724811666666,0.9,0.0,0.909,public_event,0,12,2,1.0,3
-38,FKID007213,5,Magadi Road,procession,67.59724811666666,1.0,1.0,0.8448,procession,1,7,1,3.0,12
-39,FKID004509,4,Non-corridor,procession,86.49107500000001,0.7749999999999999,1.0,0.9255,procession,1,5,0,1.0,1
-40,FKID000717,6,Non-corridor,procession,24.045273416666667,1.0,0.0,0.9353,procession,0,3,0,1.0,3
-41,FKID004884,3,Non-corridor,public_event,52.773133333333334,1.0,0.0,1.0,public_event,0,16,6,1.0,11
-42,FKID001573,4,Old Madras Road,public_event,67.59724811666666,1.0,1.0,1.0,public_event,1,12,2,3.0,3
-43,FKID004127,4,Non-corridor,procession,67.59724811666666,0.925,0.25,0.9022,procession,0,9,1,1.0,11
-44,FKID000737,0,Non-corridor,public_event,,0.7,,0.0,public_event,1,12,2,1.0,3
-45,FKID001641,11,Non-corridor,vip_movement,67.59724811666666,0.7545454545454544,1.0,1.0,vip_movement,1,12,2,1.0,3
-46,FKID000241,2,Mysore Road,vip_movement,11.090041666666668,1.0,0.0,0.9429,vip_movement,0,2,4,3.0,2
+prototype_id,support_count,representative_event_id,cause,corridor,median_duration,p80_duration,p95_duration,mean_severity,closure_rate,trust_mean,hour_mode,dow_mode,cause_diversity,corridor_diversity,outcome_summary
+0,3,FKID005659,procession,Hennur Main Road,104.52003925000001,113.91997570000001,118.619943925,3.0,0.0,1.0,10,0,1,2,"Duration: 105min, Closure: 0%"
+1,22,FKID000433,public_event,Non-corridor,67.59724811666666,67.59724811666666,160.09043740583328,1.0,1.0,0.9181818181818181,12,2,2,1,"Duration: 68min, Closure: 100%"
+2,1,FKID003731,procession,Non-corridor,1440.0,1440.0,1440.0,1.0,0.0,0.7,9,1,1,1,"Duration: 1440min, Closure: 0%"
+3,5,FKID002416,public_event,Old Airport Road,409.17351666666667,411.01451,413.14459,3.0,0.0,1.0,18,6,1,1,"Duration: 409min, Closure: 0%"
+4,4,FKID002282,procession,Hosur Road,67.59724811666666,67.59724811666666,67.59724811666666,3.0,0.0,1.0,6,2,2,3,"Duration: 68min, Closure: 0%"
+5,1,FKID004801,procession,Magadi Road,120.45697526666666,120.45697526666666,120.45697526666666,3.0,0.0,1.0,10,3,1,1,"Duration: 120min, Closure: 0%"
+6,3,FKID002639,procession,Non-corridor,67.59724811666666,67.59724811666666,67.59724811666666,1.0,0.0,1.0,2,5,2,1,"Duration: 68min, Closure: 0%"
+7,9,FKID004901,procession,Non-corridor,67.59724811666666,118.80791640666669,211.62355640666664,1.0,0.0,1.0,9,0,3,1,"Duration: 68min, Closure: 0%"
+8,7,FKID003763,public_event,Old Madras Road,67.59724811666666,67.59724811666666,67.59724811666666,3.0,1.0,1.0,12,2,1,3,"Duration: 68min, Closure: 100%"
+9,10,FKID001647,procession,Non-corridor,67.59724811666666,76.31939849333334,112.2442275,1.0,0.0,1.0,13,0,2,1,"Duration: 68min, Closure: 0%"
+10,1,FKID004711,public_event,Non-corridor,1440.0,1440.0,1440.0,1.0,1.0,0.48999999999999994,10,6,1,1,"Duration: 1440min, Closure: 100%"
+11,11,FKID001641,vip_movement,Non-corridor,67.59724811666666,67.59724811666666,67.59724811666666,1.0,1.0,0.7545454545454544,12,2,1,1,"Duration: 68min, Closure: 100%"
+12,5,FKID004509,procession,Non-corridor,6.63138725,204.38247666666672,306.3477066666666,1.0,1.0,0.82,3,0,2,1,"Duration: 7min, Closure: 100%"
+13,4,FKID004165,public_event,Non-corridor,1440.0,1440.0,1440.0,1.0,0.0,0.7,10,1,3,1,"Duration: 1440min, Closure: 0%"
+14,4,FKID001865,procession,Non-corridor,35.836165083333334,60.236020526666685,83.78765611916666,1.0,0.0,1.0,2,0,1,1,"Duration: 36min, Closure: 0%"
+15,4,FKID007012,public_event,West of Chord Road,36.771415725,89.02134220333335,113.12344805083332,3.0,0.25,1.0,8,0,2,1,"Duration: 37min, Closure: 25%"
+16,4,FKID003704,procession,Mysore Road,67.59724811666666,67.59724811666666,67.59724811666666,3.0,1.0,0.925,12,2,2,2,"Duration: 68min, Closure: 100%"
+17,3,FKID004884,public_event,Non-corridor,52.773133333333334,57.129873333333336,59.30824333333333,1.0,0.0,1.0,16,6,1,1,"Duration: 53min, Closure: 0%"
+18,2,FKID006635,public_event,Bellary Road 2,1080.0697666666667,1296.0279066666667,1404.0069766666666,3.0,0.0,0.85,4,5,1,1,"Duration: 1080min, Closure: 0%"
+19,2,FKID007967,vip_movement,Mysore Road,11.090041666666668,17.02405666666667,19.991064166666668,3.0,0.0,1.0,2,4,1,1,"Duration: 11min, Closure: 0%"
+20,10,FKID001064,public_event,CBD 2,67.59724811666666,67.59724811666666,67.59724811666666,3.0,0.0,1.0,12,2,2,4,"Duration: 68min, Closure: 0%"
+21,5,FKID001970,vip_movement,Mysore Road,67.59724811666666,67.59724811666666,67.59724811666666,3.0,1.0,0.76,12,2,1,2,"Duration: 68min, Closure: 100%"
+22,6,FKID000878,procession,Non-corridor,67.59724811666666,67.59724811666666,67.59724811666666,1.0,0.0,1.0,10,6,1,1,"Duration: 68min, Closure: 0%"
+23,4,FKID006547,public_event,Non-corridor,106.89524905833332,159.79887,175.1051925,1.0,0.0,1.0,3,3,3,1,"Duration: 107min, Closure: 0%"
+24,2,FKID006666,procession,Magadi Road,44.606225,69.33772,81.7034675,3.0,0.0,1.0,3,6,2,2,"Duration: 45min, Closure: 0%"
+25,5,FKID004750,procession,Non-corridor,10.737449999999999,44.24644259666667,61.75954673666666,1.0,1.0,0.82,3,0,1,1,"Duration: 11min, Closure: 100%"
+26,6,FKID000920,protest,Non-corridor,35.137540725,67.59724811666666,106.53473702916666,1.0,1.0,1.0,3,6,2,1,"Duration: 35min, Closure: 100%"
+27,2,FKID004486,public_event,Bannerghata Road,67.59724811666666,67.59724811666666,67.59724811666666,3.0,1.0,0.85,12,2,1,2,"Duration: 68min, Closure: 100%"
+28,2,FKID005291,protest,Mysore Road,1440.0,1440.0,1440.0,2.0,0.0,0.7,6,4,2,2,"Duration: 1440min, Closure: 0%"
+29,5,FKID002292,procession,Magadi Road,67.59724811666666,67.59724811666666,67.59724811666666,3.0,0.0,1.0,12,2,2,2,"Duration: 68min, Closure: 0%"
+30,4,FKID007248,procession,Magadi Road,90.06199166666667,176.13813666666672,238.59905916666665,3.0,1.0,1.0,10,2,1,2,"Duration: 90min, Closure: 100%"
+31,1,FKID006401,public_event,Old Airport Road,0.0,0.0,0.0,3.0,1.0,1.0,2,5,1,1,"Duration: 0min, Closure: 100%"
+32,2,FKID005292,vip_movement,Non-corridor,1440.0,1440.0,1440.0,1.0,0.0,0.7,6,1,1,1,"Duration: 1440min, Closure: 0%"
+33,1,FKID002883,public_event,Hennur Main Road,1440.0,1440.0,1440.0,3.0,0.0,0.7,3,0,1,1,"Duration: 1440min, Closure: 0%"
+34,1,FKID004430,public_event,Non-corridor,1333.8602166666667,1333.8602166666667,1333.8602166666667,1.0,0.0,0.7,2,5,1,1,"Duration: 1334min, Closure: 0%"
+35,3,FKID006703,procession,Bellary Road 2,67.59724811666666,141.01977924666667,177.73104481166666,3.0,0.0,1.0,10,0,2,3,"Duration: 68min, Closure: 0%"
+36,2,FKID006633,public_event,Bellary Road 2,0.0,0.0,0.0,3.0,0.0,1.0,4,5,1,1,"Duration: 0min, Closure: 0%"
+37,4,FKID002110,procession,Non-corridor,1.5069568666666666,152.42054157333348,320.5029978933332,1.0,0.0,0.925,5,2,1,1,"Duration: 2min, Closure: 0%"
+38,4,FKID004386,public_event,Magadi Road,161.4022,240.08611333333332,240.43577833333333,3.0,0.0,1.0,11,6,2,1,"Duration: 161min, Closure: 0%"
+39,4,FKID004471,procession,Non-corridor,67.59724811666666,67.59724811666666,67.59724811666666,1.0,0.0,1.0,5,0,2,1,"Duration: 68min, Closure: 0%"
+40,1,FKID005136,public_event,Non-corridor,1440.0,1440.0,1440.0,1.0,1.0,0.48999999999999994,11,6,1,1,"Duration: 1440min, Closure: 100%"
+41,2,FKID005271,procession,Non-corridor,42.437891666666665,67.81621666666668,80.50537916666667,1.0,0.0,1.0,2,5,1,1,"Duration: 42min, Closure: 0%"
+42,1,FKID002005,protest,Tumkur Road,1440.0,1440.0,1440.0,3.0,0.0,0.7,6,0,1,1,"Duration: 1440min, Closure: 0%"
+43,3,FKID006650,public_event,Non-corridor,67.59724811666666,171.22234924666668,223.03489981166663,1.0,0.0,1.0,8,3,2,1,"Duration: 68min, Closure: 0%"
+44,1,FKID007303,protest,Old Airport Road,67.59724811666666,67.59724811666666,67.59724811666666,3.0,0.0,1.0,3,4,1,1,"Duration: 68min, Closure: 0%"
+45,1,FKID004641,public_event,Non-corridor,1440.0,1440.0,1440.0,1.0,1.0,0.48999999999999994,13,1,1,1,"Duration: 1440min, Closure: 100%"
+46,4,FKID006283,public_event,CBD 2,67.59724811666666,67.59724811666666,67.59724811666666,3.0,1.0,1.0,12,1,2,4,"Duration: 68min, Closure: 100%"

@@ -88,7 +88,7 @@
       "predicted_severity": 1.375,
       "crowd_factor": 0.095
     },
-    "delta_obi": 0.1391,
+    "delta_obi": 0.1296,
     "top_prototypes": [
       {
         "prototype_id": 9,
@@ -119,9 +119,9 @@
         "gower_dist": 0.1298
       },
       {
-        "prototype_id": 20,
-        "cause": "public_event",
-        "corridor": "CBD 2",
+        "prototype_id": 29,
+        "cause": "procession",
+        "corridor": "Magadi Road",
         "similarity": 0.7313,
         "gower_dist": 0.1564
       }

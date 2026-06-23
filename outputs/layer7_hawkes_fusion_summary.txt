@@ -36,13 +36,13 @@ Spillover effect : STRONG
 
 --- Spillover Centrality (top zones) ---
   Central Zone 2          SSC=3.7047  S=0.9674  V=2.7373
-  Central Zone 1          SSC=3.4681  S=2.2669  V=1.2011
-  North Zone 2            SSC=3.0926  S=1.6172  V=1.4754
+  Central Zone 1          SSC=3.4681  S=2.2670  V=1.2011
+  North Zone 2            SSC=3.0927  S=1.6172  V=1.4755
   West Zone 1             SSC=2.7147  S=1.0057  V=1.7090
   East Zone 2             SSC=2.3757  S=1.6485  V=0.7272
   North Zone 1            SSC=2.3348  S=1.2865  V=1.0483
   South Zone 2            SSC=2.2483  S=0.8438  V=1.4046
-  East Zone 1             SSC=2.1120  S=1.2627  V=0.8493
+  East Zone 1             SSC=2.1121  S=1.2628  V=0.8493
   West Zone 2             SSC=1.1916  S=0.8034  V=0.3882
   South Zone 1            SSC=0.8880  S=0.3631  V=0.5248
 
@@ -54,15 +54,15 @@ Spillover effect : STRONG
   East Zone 1 -> South Zone 2: alpha=0.5779 [0.2990, 0.8569]
   North Zone 1 -> West Zone 1: alpha=0.5714 [0.2765, 0.8663]
   South Zone 2 -> Central Zone 2: alpha=0.5156 [0.2599, 0.7714]
-  North Zone 1 -> North Zone 2: alpha=0.4874 [0.2038, 0.7711]
-  Central Zone 1 -> North Zone 2: alpha=0.4851 [0.1715, 0.7988]
+  North Zone 1 -> North Zone 2: alpha=0.4874 [0.2038, 0.7710]
+  Central Zone 1 -> North Zone 2: alpha=0.4852 [0.1715, 0.7988]
   East Zone 1 -> East Zone 2: alpha=0.4552 [0.2149, 0.6954]
   East Zone 2 -> East Zone 1: alpha=0.4459 [0.1604, 0.7315]
   North Zone 2 -> North Zone 1: alpha=0.4373 [0.2328, 0.6418]
   Central Zone 1 -> West Zone 1: alpha=0.4210 [0.1191, 0.7230]
   West Zone 1 -> West Zone 2: alpha=0.3876 [0.1982, 0.5771]
   North Zone 2 -> East Zone 1: alpha=0.3772 [0.1921, 0.5622]
-  West Zone 1 -> Central Zone 1: alpha=0.3493 [0.1867, 0.5118]
+  West Zone 1 -> Central Zone 1: alpha=0.3493 [0.1868, 0.5118]
   East Zone 2 -> South Zone 2: alpha=0.3477 [0.0834, 0.6120]
   Central Zone 2 -> Central Zone 1: alpha=0.3428 [0.2203, 0.4653]
   Central Zone 1 -> North Zone 1: alpha=0.3423 [0.0829, 0.6016]
@@ -71,7 +71,7 @@ Spillover effect : STRONG
   West Zone 1 -> North Zone 1: alpha=0.2688 [0.1005, 0.4371]
   Central Zone 1 -> South Zone 1: alpha=0.2349 [0.0597, 0.4101]
   North Zone 1 -> Central Zone 1: alpha=0.2276 [0.0155, 0.4397]
-  North Zone 2 -> Central Zone 1: alpha=0.2196 [0.0490, 0.3901]
+  North Zone 2 -> Central Zone 1: alpha=0.2195 [0.0490, 0.3901]
   South Zone 2 -> South Zone 1: alpha=0.2031 [0.0510, 0.3552]
   Central Zone 2 -> South Zone 2: alpha=0.1783 [0.0760, 0.2805]
   Central Zone 2 -> East Zone 2: alpha=0.1731 [0.0781, 0.2682]

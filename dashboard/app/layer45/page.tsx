@@ -5,7 +5,9 @@ import { Kpi, PageHeader, Panel, Note, EmptyState } from "@/components/ui";
 import { DataTable } from "@/components/DataTable";
 import { ReliabilityChart, VBar, HBar } from "@/components/charts";
 
-export const dynamic = "force-dynamic";
+import { PAGE_REVALIDATE_SECONDS } from "@/lib/page-config";
+
+export const revalidate = PAGE_REVALIDATE_SECONDS;
 
 function truthy(v: string | undefined): boolean {
   return ["1", "true", "yes"].includes((v ?? "").toLowerCase());

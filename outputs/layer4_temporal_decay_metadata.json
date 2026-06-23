@@ -1,0 +1,17 @@
+{
+  "half_life_days": 1.0,
+  "lambda_decay": 0.6931471805599453,
+  "derivation_method": "autocorrelation_daily_duration_series",
+  "autocorr_threshold": 0.5,
+  "fallback_used": false,
+  "layer6_half_life_days": 30.0,
+  "comparison_note": "Layer 6 uses 30-day half-life for Bayesian forgetting. Derived value of 1.0 days from duration autocorrelation differs from this.",
+  "n_retrievals_processed": 955,
+  "n_rank_changes": 458,
+  "pct_recency_matters": 47.9581,
+  "mean_rank_change": 0.8377,
+  "mean_phi_t_top1": 0.6836,
+  "oldest_top1_days": 53.0,
+  "newest_top1_days": 0.0,
+  "score_formula": "s_gower \u00b7 \u03c6_space \u00b7 \u03c6_time \u00b7 \u03c4"
+}

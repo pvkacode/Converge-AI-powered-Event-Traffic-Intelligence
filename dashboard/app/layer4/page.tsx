@@ -6,13 +6,21 @@ import { DataTable } from "@/components/DataTable";
 import { VBar } from "@/components/charts";
 import { Layer4GeoSection } from "@/components/Layer4GeoSection";
 import { Layer4GeoKpi } from "@/components/Layer4GeoKpi";
+import { Layer4TemporalSection, type TemporalMetadata } from "@/components/Layer4TemporalSection";
+import { tryReadText } from "@/lib/csv";
 
-export const dynamic = "force-dynamic";
+import { PAGE_REVALIDATE_SECONDS } from "@/lib/page-config";
+
+export const revalidate = PAGE_REVALIDATE_SECONDS;
 
 export default function Layer4Page() {
   const pe = tryLoadCsv("frontend/planned_event_recommendations.csv");
   const diag = tryLoadCsv("frontend/layer4_retrieval_diagnostics.csv");
   const geoMatches = tryLoadCsv("frontend/layer4_geo_radius_matches.csv");
+  const temporalMetaRaw = tryReadText("frontend/layer4_temporal_decay_metadata.json");
+  const temporalMeta: TemporalMetadata | null = temporalMetaRaw
+    ? (JSON.parse(temporalMetaRaw) as TemporalMetadata)
+    : null;
 
   const total = pe?.rows.length ?? 0;
   const bands = pe ? valueCounts(pe.rows, "confidence_band") : {};
@@ -84,6 +92,8 @@ export default function Layer4Page() {
       {(diag || geoMatches) && (
         <Layer4GeoSection diagnostics={diag?.rows ?? []} matches={geoMatches?.rows ?? []} />
       )}
+
+      <Layer4TemporalSection metadata={temporalMeta} />
 
       <DataTable
         dataset="planned_event_recommendations"

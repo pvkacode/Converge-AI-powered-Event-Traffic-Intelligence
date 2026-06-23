@@ -1,0 +1,20 @@
+[GRAPH CENTRALITY SUMMARY]
+Zones ranked by Hub Score (PageRank 40% + Betweenness 35% + Eigenvector 25%):
+
+Rank | Zone                   | Hub Score  | Role           | PageRank   | Betweenness  | Eigenvector
+1    | Central Zone 2         | 0.909      | critical_hub   | 0.1880     | 0.2778       | 0.6116    
+2    | Central Zone 1         | 0.740      | critical_hub   | 0.1382     | 0.3750       | 0.3716    
+3    | North Zone 2           | 0.609      | influential    | 0.1218     | 0.2639       | 0.4132    
+4    | West Zone 1            | 0.474      | moderate       | 0.1069     | 0.2222       | 0.3035    
+5    | South Zone 2           | 0.403      | moderate       | 0.1204     | 0.1389       | 0.2343    
+6    | North Zone 1           | 0.254      | moderate       | 0.0850     | 0.0556       | 0.3005    
+7    | East Zone 1            | 0.200      | isolated       | 0.0593     | 0.1389       | 0.1812    
+8    | East Zone 2            | 0.129      | isolated       | 0.0738     | 0.0278       | 0.1632    
+9    | South Zone 1           | 0.028      | isolated       | 0.0564     | 0.0000       | 0.1102    
+10   | West Zone 2            | 0.000      | isolated       | 0.0501     | 0.0000       | 0.0908    
+
+Top propagation hub: Central Zone 2
+Most critical relay: Central Zone 1
+Highest risk receiver: Central Zone 2
+
+Graph density: 0.378
