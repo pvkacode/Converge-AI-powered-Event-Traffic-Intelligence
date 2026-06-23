@@ -12,9 +12,8 @@ import { HBar } from "@/components/charts";
 import { healthVariant } from "@/lib/badges";
 import { loadEventsCleanStats } from "@/lib/events-clean";
 
-import { PAGE_REVALIDATE_SECONDS } from "@/lib/page-config";
 
-export const revalidate = PAGE_REVALIDATE_SECONDS;
+export const revalidate = 30;
 
 export default function OverviewPage() {
   const hotspots = tryLoadCsv("frontend/hotspot_rankings.csv");

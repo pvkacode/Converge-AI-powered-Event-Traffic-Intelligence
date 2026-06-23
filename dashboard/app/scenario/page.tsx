@@ -4,9 +4,8 @@ import { toNum } from "@/lib/format";
 import { PageHeader, EmptyState } from "@/components/ui";
 import { ScenarioBuilder, type ScenarioData } from "@/components/ScenarioBuilder";
 
-import { PAGE_REVALIDATE_SECONDS } from "@/lib/page-config";
 
-export const revalidate = PAGE_REVALIDATE_SECONDS;
+export const revalidate = 30;
 
 export default function ScenarioPage() {
   const dl = tryLoadCsv("frontend/duration_lookup.csv");

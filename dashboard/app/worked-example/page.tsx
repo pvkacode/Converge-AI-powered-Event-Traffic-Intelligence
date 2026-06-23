@@ -4,9 +4,8 @@ import { buildWxMapData } from "@/lib/map-junctions";
 import { WorkedExampleLive } from "@/components/WorkedExampleLive";
 import { getBackendHostLabel, isHostedBackend } from "@/lib/backend-notice";
 
-import { PAGE_REVALIDATE_SECONDS } from "@/lib/page-config";
 
-export const revalidate = PAGE_REVALIDATE_SECONDS;
+export const revalidate = 30;
 
 export default function WorkedExamplePage() {
   const wxMapData = buildWxMapData();

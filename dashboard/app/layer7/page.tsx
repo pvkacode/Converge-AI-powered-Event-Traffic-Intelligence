@@ -9,9 +9,8 @@ import { DataTable } from "@/components/DataTable";
 import { HBar, ReliabilityChart } from "@/components/charts";
 import { Layer7GraphCentrality } from "@/components/Layer7GraphCentrality";
 
-import { PAGE_REVALIDATE_SECONDS } from "@/lib/page-config";
 
-export const revalidate = PAGE_REVALIDATE_SECONDS;
+export const revalidate = 30;
 
 export default function Layer7Page() {
   const spill = tryLoadCsv("layer7_spillover_centrality.csv");

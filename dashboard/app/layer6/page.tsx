@@ -7,9 +7,8 @@ import { VBar } from "@/components/charts";
 import { healthVariant } from "@/lib/badges";
 import { Layer6TriggerPanel } from "@/components/Layer6TriggerPanel";
 
-import { PAGE_REVALIDATE_SECONDS } from "@/lib/page-config";
 
-export const revalidate = PAGE_REVALIDATE_SECONDS;
+export const revalidate = 30;
 
 export default function Layer6Page() {
   const health = tryLoadCsv("layer6_model_health_summary.csv");
