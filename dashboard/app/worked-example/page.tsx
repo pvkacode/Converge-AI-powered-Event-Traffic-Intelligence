@@ -3,7 +3,9 @@ import { buildWxMapData } from "@/lib/map-junctions";
 import { WorkedExampleLive } from "@/components/WorkedExampleLive";
 import { getBackendHostLabel, isHostedBackend } from "@/lib/backend-notice";
 
-export const dynamic = "force-dynamic";
+import { PAGE_REVALIDATE_SECONDS } from "@/lib/page-config";
+
+export const revalidate = PAGE_REVALIDATE_SECONDS;
 
 export default function WorkedExamplePage() {
   const wxMapData = buildWxMapData();

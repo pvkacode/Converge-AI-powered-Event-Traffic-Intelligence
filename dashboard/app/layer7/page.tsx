@@ -7,18 +7,20 @@ import { MapPlaceholder } from "@/components/maps/map-ui";
 import { SpilloverZoneMap } from "@/components/maps/DynamicMaps";
 import { DataTable } from "@/components/DataTable";
 import { HBar, ReliabilityChart } from "@/components/charts";
+import { Layer7GraphCentrality } from "@/components/Layer7GraphCentrality";
 
-export const dynamic = "force-dynamic";
+import { PAGE_REVALIDATE_SECONDS } from "@/lib/page-config";
+
+export const revalidate = PAGE_REVALIDATE_SECONDS;
 
 export default function Layer7Page() {
   const spill = tryLoadCsv("layer7_spillover_centrality.csv");
   const zoneMapData = buildZoneMapData();
   const zoneEdges = buildZoneEdgeData();
-  const eri = tryLoadCsv("layer7_expected_risk_index.csv");
   const topk = tryLoadCsv("layer7_top_k_early_warning.csv");
-  const alerts = tryLoadCsv("layer7_operational_alerts.csv");
   const metrics = tryLoadCsv("layer7_metrics.csv");
   const rel = tryLoadCsv("layer7_reliability_diagram.csv");
+  const graphCentrality = tryLoadCsv("layer7_graph_centrality.csv");
 
   const zones = spill?.rows.length ?? 0;
   const spillBars = spill ? topBy(spill.rows, "zone", "SSC_centrality", 10) : [];
@@ -126,6 +128,8 @@ export default function Layer7Page() {
           searchPlaceholder="Filter by model…"
         />
       </div>
+
+      <Layer7GraphCentrality rows={graphCentrality?.rows ?? []} />
 
       <div style={{ marginTop: 20 }}>
         <Note>

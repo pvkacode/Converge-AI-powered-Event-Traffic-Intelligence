@@ -2,6 +2,7 @@
 import "server-only";
 import fs from "node:fs";
 import path from "node:path";
+import { cache as reactCache } from "react";
 import Papa from "papaparse";
 
 export interface EventsCleanStats {
@@ -33,13 +34,45 @@ function truthy(v: string | undefined): boolean {
   return ["true", "1", "yes"].includes(String(v ?? "").trim().toLowerCase());
 }
 
+function statsJsonPath(): string | null {
+  const candidates = [
+    path.join(process.cwd(), "..", "outputs", "frontend", "events_clean_stats.json"),
+    path.join(process.cwd(), "outputs", "frontend", "events_clean_stats.json"),
+    path.join(process.cwd(), "..", "..", "outputs", "frontend", "events_clean_stats.json"),
+  ];
+  for (const p of candidates) {
+    if (fs.existsSync(p)) return p;
+  }
+  return null;
+}
+
 /** Live counts from events_clean.csv; falls back to documented batch figures. */
-export function loadEventsCleanStats(): EventsCleanStats {
+function loadEventsCleanStatsUncached(): EventsCleanStats {
   const fallback: EventsCleanStats = {
     total: 8173,
     closedWithoutTimestamp: 3526,
     truePlanned: 191,
   };
+
+  const statsJson = statsJsonPath();
+  if (statsJson) {
+    try {
+      const parsed = JSON.parse(fs.readFileSync(statsJson, "utf8")) as Partial<EventsCleanStats>;
+      if (
+        typeof parsed.total === "number" &&
+        typeof parsed.closedWithoutTimestamp === "number" &&
+        typeof parsed.truePlanned === "number"
+      ) {
+        return {
+          total: parsed.total,
+          closedWithoutTimestamp: parsed.closedWithoutTimestamp,
+          truePlanned: parsed.truePlanned,
+        };
+      }
+    } catch {
+      /* fall through to CSV */
+    }
+  }
 
   const abs = dataPath();
   if (!abs) return fallback;
@@ -75,3 +108,5 @@ export function loadEventsCleanStats(): EventsCleanStats {
     return fallback;
   }
 }
+
+export const loadEventsCleanStats = reactCache(loadEventsCleanStatsUncached);

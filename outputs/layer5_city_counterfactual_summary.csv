@@ -1,0 +1,9 @@
+scenario_label,total_absolute_reduction_min_citywide,pct_of_reducible_delay_citywide,n_sites_improved
+baseline,0.0,0.0,0
++2 officers,1078503.0176,37.7554,50
++5 officers,2116990.7219,74.11,50
++3 barricades,924599.5447,32.3677,50
++1 tow unit,789101.3622,27.6243,50
++1 QRU,924599.5447,32.3677,50
+diversion activated,646656.0402,22.6376,50
+full surge (+5p +5b +1t),2808110.8829,98.3042,50

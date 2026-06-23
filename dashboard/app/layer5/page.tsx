@@ -3,14 +3,20 @@ import { toNum, fmtNum, fmtCompact } from "@/lib/format";
 import { Kpi, PageHeader, Panel, EmptyState } from "@/components/ui";
 import { DataTable } from "@/components/DataTable";
 import { GroupedBar, LineSeries } from "@/components/charts";
+import { Layer5Counterfactual } from "@/components/Layer5Counterfactual";
 
-export const dynamic = "force-dynamic";
+import { PAGE_REVALIDATE_SECONDS } from "@/lib/page-config";
+
+export const revalidate = PAGE_REVALIDATE_SECONDS;
 
 export default function Layer5Page() {
   const metrics = tryLoadCsv("layer5_optimization_metrics.csv");
   const prepost = tryLoadCsv("layer5_pre_post_cvar_comparison.csv");
   const cvar = tryLoadCsv("layer5_cvar_summary.csv");
   const pareto = tryLoadCsv("layer5_pareto_front.csv");
+  const counterfactual = tryLoadCsv("layer5_counterfactual_analysis.csv");
+  const bestInterventions = tryLoadCsv("layer5_best_interventions.csv");
+  const cityCounterfactual = tryLoadCsv("layer5_city_counterfactual_summary.csv");
 
   const m: Record<string, number> = {};
   metrics?.rows.forEach((r) => {
@@ -133,6 +139,12 @@ export default function Layer5Page() {
           searchPlaceholder="Filter by service tier…"
         />
       </div>
+
+      <Layer5Counterfactual
+        counterfactualRows={counterfactual?.rows ?? []}
+        bestRows={bestInterventions?.rows ?? []}
+        cityRows={cityCounterfactual?.rows ?? []}
+      />
     </>
   );
 }

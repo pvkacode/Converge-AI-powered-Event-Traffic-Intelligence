@@ -1183,3 +1183,338 @@ try:
 
 except Exception as geo_exc:
     print(f'[geo-radius] ERROR (non-fatal): {geo_exc}')
+
+
+# ─────────────────────────────────────────────────────────────────
+# TEMPORAL DECAY ENRICHMENT (additive post-processing)
+#
+# Motivation: Layer 6 found CRITICAL sustained shift in log-duration
+# (PH max=326.8, mean-shift z=3.21) between Nov-Feb and Mar-Apr.
+# Recent precedents are therefore more informative than older ones.
+#
+# Math: φ_time(Δt) = exp(−λ·Δt_days), same exponential decay
+# family as Layer 6 forgetting (w_i = exp(−λ·Δt)) and Layer 7
+# Hawkes kernel (α·exp(−β(t−tᵢ))). Consistent mathematical
+# principle applied across three layers.
+#
+# λ derived from autocorrelation of incident duration series —
+# not hardcoded. Half-life = lag where autocorr drops below 0.5.
+# ─────────────────────────────────────────────────────────────────
+print("\n=== TEMPORAL DECAY ENRICHMENT ===")
+
+try:
+    import math
+    import shutil
+
+    LAYER6_HALF_LIFE_DAYS = 30.0
+    half_life_days = LAYER6_HALF_LIFE_DAYS
+    fallback_used = False
+
+    retrieval_path = OUTPUTS / 'layer4_planned_event_retrieval.csv'
+    events_path = DATA / 'events_clean.parquet'
+
+    if not retrieval_path.exists():
+        print('[temporal-decay] WARNING: layer4_planned_event_retrieval.csv not found — skipping')
+    elif not events_path.exists():
+        print('[temporal-decay] WARNING: events_clean.parquet not found — skipping')
+    else:
+        retrieval_temp_df = pd.read_csv(retrieval_path)
+
+        events_temp = df_all.copy()
+        if START_COL not in events_temp.columns:
+            events_temp = pd.read_parquet(events_path)
+            events_temp[START_COL] = pd.to_datetime(events_temp[START_COL], errors='coerce')
+
+        events_temp['duration_for_ac'] = pd.to_numeric(
+            events_temp.get('duration_clean', events_temp.get(DURATION_COL)),
+            errors='coerce',
+        )
+
+        try:
+            ac_df = events_temp[
+                events_temp['duration_for_ac'].notna()
+                & (events_temp['duration_for_ac'] > 0)
+                & (events_temp['duration_for_ac'] < 1440)
+            ].copy()
+            ac_df['date'] = pd.to_datetime(ac_df[START_COL], errors='coerce').dt.date
+            daily_mean = ac_df.groupby('date')['duration_for_ac'].mean().sort_index()
+            if len(daily_mean) >= 10:
+                autocorr_values = [
+                    daily_mean.autocorr(lag=lag) for lag in range(1, 61)
+                ]
+                for lag, ac in enumerate(autocorr_values, start=1):
+                    if ac is not None and not math.isnan(ac) and ac < 0.5:
+                        half_life_days = float(lag)
+                        break
+                else:
+                    half_life_days = LAYER6_HALF_LIFE_DAYS
+                    fallback_used = True
+                print(f'[temporal-decay] Derived half-life: {half_life_days:.1f} days')
+                print('  (lag where duration autocorrelation < 0.5)')
+                print(f'  (Layer 6 uses {LAYER6_HALF_LIFE_DAYS:.0f}-day half-life for comparison)')
+            else:
+                fallback_used = True
+                print('[temporal-decay] WARNING: insufficient daily duration series — using 30-day default')
+        except Exception as ac_exc:
+            fallback_used = True
+            half_life_days = LAYER6_HALF_LIFE_DAYS
+            print(f'[temporal-decay] Autocorr computation failed: {ac_exc}')
+            print(f'[temporal-decay] Using default half-life: {half_life_days} days')
+
+        if half_life_days < 1.0 or half_life_days > 180.0:
+            print(
+                f'[temporal-decay] WARNING: derived half-life {half_life_days:.1f} outside [1, 180] — '
+                f'using {LAYER6_HALF_LIFE_DAYS:.0f}-day fallback (Layer 6)'
+            )
+            half_life_days = LAYER6_HALF_LIFE_DAYS
+            fallback_used = True
+
+        lambda_decay = math.log(2) / half_life_days
+        print(f'[temporal-decay] λ = {lambda_decay:.6f} per day')
+
+        def phi_time(delta_t_days: float, lam: float = lambda_decay) -> float:
+            """φ_time(Δt) = exp(−λ · Δt_days); same form as Layer 6 forgetting."""
+            if delta_t_days < 0:
+                return 1.0
+            return math.exp(-lam * delta_t_days)
+
+        start_by_event = {
+            str(r['event_id']): pd.to_datetime(r[START_COL], errors='coerce')
+            for _, r in events_temp.iterrows()
+            if pd.notna(r.get('event_id'))
+        }
+        trust_by_event = {
+            str(r['event_id']): float(pd.to_numeric(r.get('trust_clean', r.get(TRUST_COL)), errors='coerce') or 0.7)
+            for _, r in events_temp.iterrows()
+            if pd.notna(r.get('event_id'))
+        }
+        junction_by_event = {
+            str(r['event_id']): str(r.get('junction', '') or '')
+            for _, r in events_temp.iterrows()
+            if pd.notna(r.get('event_id'))
+        }
+
+        geo_path = OUTPUTS / 'layer4_geo_radius_matches.csv'
+        geo_temp_df = pd.read_csv(geo_path) if geo_path.exists() else pd.DataFrame()
+        proto_lookup = {
+            int(r['prototype_id']): r for _, r in prototypes_df.iterrows()
+        }
+
+        def _matches_for_query(qrow: pd.Series) -> list[dict]:
+            qid = str(qrow['query_event_id'])
+            geo_sub = geo_temp_df[geo_temp_df['query_event_id'].astype(str) == qid]
+            out: list[dict] = []
+            if len(geo_sub) > 0:
+                for _, m in geo_sub.iterrows():
+                    out.append({
+                        'match_event_id': str(m['match_event_id']),
+                        'original_rank': int(pd.to_numeric(m.get('match_rank'), errors='coerce') or 0),
+                        'gower_sim': float(pd.to_numeric(m.get('gower_sim'), errors='coerce') or 0.0),
+                        's_final': float(pd.to_numeric(m.get('s_final'), errors='coerce'))
+                        if pd.notna(m.get('s_final')) else None,
+                    })
+                return out
+
+            ids = [int(x) for x in str(qrow.get('top_k_prototype_ids', '')).split(',') if x.strip()]
+            sims = [float(x) for x in str(qrow.get('top_k_similarities', '')).split(',') if x.strip()]
+            for rank, (pid, sim) in enumerate(zip(ids, sims), start=1):
+                if pid not in proto_lookup:
+                    continue
+                rep_id = str(proto_lookup[pid]['representative_event_id'])
+                out.append({
+                    'match_event_id': rep_id,
+                    'original_rank': rank,
+                    'gower_sim': float(sim),
+                    's_final': None,
+                })
+            return out
+
+        summary_rows: list[dict] = []
+        query_enrich: dict[str, dict] = {}
+        all_rank_changes: list[int] = []
+        phi_top1_vals: list[float] = []
+        top1_ages: list[float] = []
+
+        for _, qrow in retrieval_temp_df.iterrows():
+            qid = str(qrow['query_event_id'])
+            q_start = start_by_event.get(qid)
+            matches = _matches_for_query(qrow)
+            scored: list[dict] = []
+
+            for m in matches:
+                mid = m['match_event_id']
+                m_start = start_by_event.get(mid)
+                if q_start is None or m_start is None or pd.isna(q_start) or pd.isna(m_start):
+                    delta_t = 0.0
+                else:
+                    delta_t = float((q_start - m_start).total_seconds() / 86400.0)
+                    if delta_t < 0:
+                        print(f'[temporal-decay] WARNING: negative Δt for query {qid} / match {mid} — using abs()')
+                        delta_t = abs(delta_t)
+
+                phi_t = phi_time(delta_t)
+                trust_p = float(np.clip(trust_by_event.get(mid, 0.7), 0.1, 1.0))
+                if m['s_final'] is not None:
+                    s_temporal = float(m['s_final']) * phi_t
+                    score_formula = 's_gower · φ_space · φ_time · τ'
+                else:
+                    s_temporal = float(m['gower_sim']) * phi_t * trust_p
+                    score_formula = 's_gower · φ_time · τ'
+
+                scored.append({
+                    **m,
+                    'delta_t_days': int(round(delta_t)),
+                    'phi_time_weight': round(phi_t, 4),
+                    's_temporal': round(s_temporal, 6),
+                    'score_formula': score_formula,
+                })
+
+            if not scored:
+                query_enrich[qid] = {
+                    'delta_t_days': '',
+                    'phi_time_weight': '',
+                    's_temporal': '',
+                    'temporal_rank': '',
+                    'rank_change': '',
+                    'half_life_days_used': round(half_life_days, 4),
+                    'lambda_used': round(lambda_decay, 6),
+                }
+                summary_rows.append({
+                    'query_event_id': qid,
+                    'query_junction': junction_by_event.get(qid, ''),
+                    'query_start_date': str(q_start.date()) if q_start is not None and not pd.isna(q_start) else '',
+                    'temporal_mean_delta_t_days': '',
+                    'temporal_top1_delta_t_days': '',
+                    'top1_phi_time': '',
+                    'n_rank_changes_in_top5': 0,
+                    'half_life_days_used': round(half_life_days, 4),
+                })
+                continue
+
+            scored.sort(key=lambda x: -x['s_temporal'])
+            for t_rank, item in enumerate(scored, start=1):
+                item['temporal_rank'] = t_rank
+                item['rank_change'] = int(item['original_rank'] - t_rank)
+                all_rank_changes.append(abs(item['rank_change']))
+
+            top5 = scored[:5]
+            top1 = scored[0]
+            n_changes_top5 = int(sum(1 for x in top5 if abs(x['rank_change']) >= 1))
+            mean_delta_top5 = float(np.mean([x['delta_t_days'] for x in top5]))
+
+            phi_top1_vals.append(float(top1['phi_time_weight']))
+            top1_ages.append(float(top1['delta_t_days']))
+
+            query_enrich[qid] = {
+                'delta_t_days': top1['delta_t_days'],
+                'phi_time_weight': top1['phi_time_weight'],
+                's_temporal': top1['s_temporal'],
+                'temporal_rank': top1['temporal_rank'],
+                'rank_change': top1['rank_change'],
+                'half_life_days_used': round(half_life_days, 4),
+                'lambda_used': round(lambda_decay, 6),
+            }
+            summary_rows.append({
+                'query_event_id': qid,
+                'query_junction': junction_by_event.get(qid, ''),
+                'query_start_date': str(q_start.date()) if q_start is not None and not pd.isna(q_start) else '',
+                'temporal_mean_delta_t_days': round(mean_delta_top5, 2),
+                'temporal_top1_delta_t_days': top1['delta_t_days'],
+                'top1_phi_time': top1['phi_time_weight'],
+                'n_rank_changes_in_top5': n_changes_top5,
+                'half_life_days_used': round(half_life_days, 4),
+            })
+
+        enrich_df = pd.DataFrame.from_dict(query_enrich, orient='index').reset_index(names='query_event_id')
+        new_cols = [
+            'delta_t_days', 'phi_time_weight', 's_temporal', 'temporal_rank',
+            'rank_change', 'half_life_days_used', 'lambda_used',
+        ]
+        retrieval_out = retrieval_temp_df.drop(columns=new_cols, errors='ignore').merge(
+            enrich_df, on='query_event_id', how='left'
+        )
+        retrieval_out.to_csv(retrieval_path, index=False)
+
+        summary_df = pd.DataFrame(summary_rows)
+        summary_path = OUTPUTS / 'layer4_temporal_decay_summary.csv'
+        summary_df.to_csv(summary_path, index=False)
+
+        total_retrievals = int(len(all_rank_changes))
+        n_rank_changes = int(sum(1 for x in all_rank_changes if x >= 1))
+        mean_rank_change = float(np.mean(all_rank_changes)) if all_rank_changes else 0.0
+        pct_recency = (n_rank_changes / total_retrievals * 100.0) if total_retrievals else 0.0
+        mean_phi_t_top1 = float(np.mean(phi_top1_vals)) if phi_top1_vals else float('nan')
+        oldest_top1 = float(max(top1_ages)) if top1_ages else float('nan')
+        newest_top1 = float(min(top1_ages)) if top1_ages else float('nan')
+
+        if abs(half_life_days - LAYER6_HALF_LIFE_DAYS) <= 5:
+            comparison_note = (
+                f'Layer 6 uses 30-day half-life for Bayesian forgetting. Derived value of '
+                f'{half_life_days:.1f} days from duration autocorrelation is consistent with this.'
+            )
+        else:
+            comparison_note = (
+                f'Layer 6 uses 30-day half-life for Bayesian forgetting. Derived value of '
+                f'{half_life_days:.1f} days from duration autocorrelation differs from this.'
+            )
+
+        score_formula = (
+            's_gower · φ_space · φ_time · τ'
+            if len(geo_temp_df) > 0 and 's_final' in geo_temp_df.columns
+            else 's_gower · φ_time · τ'
+        )
+
+        metadata = {
+            'half_life_days': float(half_life_days),
+            'lambda_decay': float(lambda_decay),
+            'derivation_method': 'autocorrelation_daily_duration_series',
+            'autocorr_threshold': 0.5,
+            'fallback_used': bool(fallback_used),
+            'layer6_half_life_days': LAYER6_HALF_LIFE_DAYS,
+            'comparison_note': comparison_note,
+            'n_retrievals_processed': total_retrievals,
+            'n_rank_changes': n_rank_changes,
+            'pct_recency_matters': round(pct_recency, 4),
+            'mean_rank_change': round(mean_rank_change, 4),
+            'mean_phi_t_top1': round(mean_phi_t_top1, 4) if phi_top1_vals else None,
+            'oldest_top1_days': round(oldest_top1, 2) if top1_ages else None,
+            'newest_top1_days': round(newest_top1, 2) if top1_ages else None,
+            'score_formula': score_formula,
+        }
+        meta_path = OUTPUTS / 'layer4_temporal_decay_metadata.json'
+        with open(meta_path, 'w', encoding='utf-8') as mf:
+            json.dump(metadata, mf, indent=2)
+
+        FRONTEND = OUTPUTS / 'frontend'
+        FRONTEND.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(retrieval_path, FRONTEND / 'layer4_planned_event_retrieval.csv')
+        summary_df.to_csv(FRONTEND / 'layer4_temporal_decay_summary.csv', index=False)
+        shutil.copy2(meta_path, FRONTEND / 'layer4_temporal_decay_metadata.json')
+
+        pe_front = FRONTEND / 'planned_event_recommendations.csv'
+        if pe_front.exists():
+            pe_df = pd.read_csv(pe_front)
+            merge_cols = [
+                'query_event_id', 'temporal_top1_delta_t_days', 'top1_phi_time',
+                'n_rank_changes_in_top5', 'half_life_days_used',
+            ]
+            pe_merge = summary_df.rename(columns={'query_event_id': 'event_id'})
+            keep = ['event_id'] + [c for c in merge_cols[1:] if c in pe_merge.columns]
+            if 'event_id' in pe_df.columns:
+                pe_df = pe_df.drop(columns=[c for c in keep[1:] if c in pe_df.columns], errors='ignore')
+                pe_df = pe_df.merge(pe_merge[keep], on='event_id', how='left')
+                pe_df.to_csv(pe_front, index=False)
+
+        print('\n[temporal-decay] Summary:')
+        print(f'  Half-life: {half_life_days:.1f} days (λ={lambda_decay:.6f})')
+        print(f'  Re-rankings (|Δrank| ≥ 1): {n_rank_changes} / {total_retrievals} ({pct_recency:.1f}%)')
+        print(f'  Mean |rank change|: {mean_rank_change:.2f} positions')
+        print(f'  Mean φ_time of top-1 match: {mean_phi_t_top1:.3f}')
+        if top1_ages:
+            print(f'  Age range of top-1 matches: {newest_top1:.0f}–{oldest_top1:.0f} days')
+        print('  Wrote layer4_planned_event_retrieval.csv (7 new columns)')
+        print('  Wrote layer4_temporal_decay_summary.csv')
+        print('  Wrote layer4_temporal_decay_metadata.json')
+
+except Exception as temporal_exc:
+    print(f'[temporal-decay] ERROR (non-fatal): {temporal_exc}')

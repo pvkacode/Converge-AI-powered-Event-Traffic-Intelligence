@@ -1,10 +1,17 @@
 "use client";
+import { useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { NAV } from "@/lib/nav";
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  useEffect(() => {
+    NAV.forEach((item) => router.prefetch(item.href));
+  }, [router]);
+
   return (
     <aside className="sidebar">
       <div className="brand">

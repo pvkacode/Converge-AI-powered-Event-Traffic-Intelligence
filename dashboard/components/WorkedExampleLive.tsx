@@ -17,6 +17,7 @@ import { fmtNum, fmtMinutes, titleCaseValue } from "@/lib/format";
 import { Badge, MetricLine } from "./ui";
 import { MapPlaceholder } from "@/components/maps/map-ui";
 import { BackendWakeNotice } from "@/components/BackendWakeNotice";
+import { WorkedExampleExecutiveSummary } from "@/components/WorkedExampleExecutiveSummary";
 import { useSlowLoading } from "@/hooks/useSlowLoading";
 
 const WorkedExampleMap = nextDynamic(() => import("@/components/maps/WorkedExampleMap"), {
@@ -298,7 +299,9 @@ export function WorkedExampleLive({ mapData }: { mapData: WxMapData | null }) {
           </div>
         ) : (
           <>
-            <div className="pipe">
+            <WorkedExampleExecutiveSummary result={result} />
+
+            <div className="pipe" id="wx-layer-trace">
               <PipeItem idx="L1" title="Duration" layerTag="Layer 1 · survival quantiles" section={result.layer1_duration}>
                 <div className="grid grid-3" style={{ gap: 10 }}>
                   {(["p50", "p80", "p95"] as const).map((q) => (
@@ -419,22 +422,6 @@ export function WorkedExampleLive({ mapData }: { mapData: WxMapData | null }) {
                   ["Persistence class", result.layer7_spillover.early_warning],
                 ]} />
               </PipeItem>
-            </div>
-
-            {/* final synthesis */}
-            <div className="panel" style={{ marginTop: 8, borderColor: "var(--accent-line)", background: "var(--accent-soft)" }}>
-              <div className="panel-body">
-                <span className="kpi-label">Synthesised recommendation</span>
-                <p style={{ fontSize: 15.5, lineHeight: 1.55, margin: "8px 0 0", fontWeight: 500 }}>
-                  {result.recommendation.headline}
-                </p>
-                {result.recommendation.duration_plan?.note &&
-                 result.recommendation.duration_plan.source !== "layer1" ? (
-                  <p className="dim" style={{ fontSize: 12, marginTop: 8, lineHeight: 1.45 }}>
-                    {result.recommendation.duration_plan.note}
-                  </p>
-                ) : null}
-              </div>
             </div>
           </>
         )}

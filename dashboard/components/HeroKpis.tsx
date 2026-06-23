@@ -2,6 +2,8 @@
 import { motion, useReducedMotion } from "motion/react";
 import { Kpi } from "@/components/ui";
 import { fmtNum, fmtMinutes } from "@/lib/format";
+import { NriKpiCard } from "@/components/NriKpiCard";
+import type { Row } from "@/lib/csv";
 
 export interface HeroKpisData {
   hsTotal: number;
@@ -14,6 +16,7 @@ export interface HeroKpisData {
   sevSummary: string;
   spillZone: string;
   spillCentrality: number;
+  nriRow?: Row;
   closedWithoutTimestamp: number;
   truePlanned: number;
   eventsTotal: number;
@@ -49,6 +52,7 @@ export function HeroKpis({
   sevSummary,
   spillZone,
   spillCentrality,
+  nriRow,
   closedWithoutTimestamp,
   truePlanned,
   eventsTotal,
@@ -64,7 +68,7 @@ export function HeroKpis({
 
   return (
     <motion.div
-      className="grid grid-5"
+      className="grid grid-6"
       style={{ marginBottom: 24 }}
       variants={container}
       initial="hidden"
@@ -116,6 +120,8 @@ export function HeroKpis({
           }
         />
       </motion.div>
+
+      <NriKpiCard row={nriRow} />
 
       <motion.div variants={item}>
         <Kpi

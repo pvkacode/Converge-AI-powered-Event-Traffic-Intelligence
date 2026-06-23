@@ -6,7 +6,9 @@ import { DataTable } from "@/components/DataTable";
 import { VBar } from "@/components/charts";
 import { healthVariant } from "@/lib/badges";
 
-export const dynamic = "force-dynamic";
+import { PAGE_REVALIDATE_SECONDS } from "@/lib/page-config";
+
+export const revalidate = PAGE_REVALIDATE_SECONDS;
 
 export default function Layer6Page() {
   const health = tryLoadCsv("layer6_model_health_summary.csv");

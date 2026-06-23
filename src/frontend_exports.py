@@ -127,6 +127,29 @@ def run_frontend_exports() -> None:
         )
         print(f"  [OK] top25_locations.csv from DIS ({len(dis)} rows)")
 
+    events_csv = ROOT / "data" / "events_clean.csv"
+    if events_csv.exists():
+        import json as _json
+
+        ev = pd.read_csv(
+            events_csv,
+            usecols=lambda c: c in {"status", "is_censored", "is_true_planned_event"},
+            low_memory=False,
+        )
+        closed = int(
+            ((ev["status"].astype(str).str.lower() == "closed") & ev["is_censored"].astype(str).str.lower().isin(["true", "1", "yes"])).sum()
+        )
+        planned = int(ev["is_true_planned_event"].astype(str).str.lower().isin(["true", "1", "yes"]).sum())
+        stats = {
+            "total": int(len(ev)),
+            "closedWithoutTimestamp": closed,
+            "truePlanned": planned,
+        }
+        (FRONT / "events_clean_stats.json").write_text(
+            _json.dumps(stats, indent=2) + "\n", encoding="utf-8"
+        )
+        print(f"  [OK] events_clean_stats.json")
+
     print(f"\nFrontend exports → {FRONT}/")
 
 

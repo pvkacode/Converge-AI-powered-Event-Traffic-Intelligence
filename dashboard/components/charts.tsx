@@ -337,6 +337,83 @@ export function ParetoScatter({
   );
 }
 
+// Grouped horizontal bars. data: [{ name, key1, key2, ... }]
+export function GroupedHBar({
+  data,
+  keys,
+  height = 320,
+  xDomain = [0, 1] as [number, number],
+  colors,
+  rawByZone,
+}: {
+  data: Record<string, any>[];
+  keys: { key: string; label: string; color: string }[];
+  height?: number;
+  xDomain?: [number, number];
+  colors?: string[];
+  rawByZone?: Record<string, Record<string, number>>;
+}) {
+  const c = useVizColors();
+  const grid = "rgba(255,255,255,0.06)";
+
+  const CustomTip = ({ active, payload, label }: any) => {
+    if (!active || !payload?.length) return null;
+    const raw = rawByZone?.[label as string];
+    return (
+      <div className="chart-tip">
+        <div className="tip-key" style={{ marginBottom: 4 }}>{label}</div>
+        {payload.map((p: any, i: number) => (
+          <div key={i} className="row gap-2" style={{ justifyContent: "space-between", gap: 16 }}>
+            <span className="tip-key">{p.name}</span>
+            <span className="tip-val" style={{ color: p.color || p.fill }}>
+              norm {typeof p.value === "number" ? fmtNum(p.value) : p.value}
+              {raw && p.dataKey && raw[p.dataKey as string] != null
+                ? ` · raw ${fmtNum(raw[p.dataKey as string])}`
+                : ""}
+            </span>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  return (
+    <>
+      <div className="chart-wrap" style={{ width: "100%", height }}>
+        <ResponsiveContainer>
+          <BarChart data={data} layout="vertical" margin={{ top: 4, right: 16, bottom: 4, left: 8 }}>
+            <CartesianGrid horizontal={false} stroke={grid} />
+            <XAxis type="number" domain={xDomain} stroke={c.ink3} tick={{ fontSize: 11 }} />
+            <YAxis
+              type="category"
+              dataKey="name"
+              width={140}
+              stroke={c.ink3}
+              tick={{ fontSize: 11, fill: c.ink }}
+              interval={0}
+            />
+            <Tooltip content={<CustomTip />} cursor={{ fill: c.grid }} />
+            <Legend />
+            {keys.map((k, i) => (
+              <Bar
+                key={k.key}
+                dataKey={k.key}
+                name={k.label}
+                fill={colors?.[i] ?? k.color}
+                radius={[0, 4, 4, 0]}
+                maxBarSize={12}
+              />
+            ))}
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+      <div style={{ marginTop: 8 }}>
+        <Legend2 items={keys.map((k, i) => ({ label: k.label, color: colors?.[i] ?? k.color }))} />
+      </div>
+    </>
+  );
+}
+
 // Grouped before/after bars. data: [{ name, baseline, optimized }]
 export function GroupedBar({
   data,
