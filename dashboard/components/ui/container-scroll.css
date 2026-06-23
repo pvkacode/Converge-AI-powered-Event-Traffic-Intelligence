@@ -1,0 +1,94 @@
+.cs-root {
+  height: 60rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 0.5rem;
+}
+
+.cs-perspective-wrap {
+  padding: 2.5rem 0;
+  width: 100%;
+  position: relative;
+  perspective: 1000px;
+}
+
+.cs-header {
+  max-width: 64rem;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.cs-card {
+  max-width: 64rem;
+  margin-top: -3rem;
+  margin-left: auto;
+  margin-right: auto;
+  height: 30rem;
+  width: 100%;
+  border: 4px solid color-mix(in srgb, var(--ink) 22%, transparent);
+  padding: 0.5rem;
+  background: var(--surface-2);
+  border-radius: 30px;
+}
+
+.cs-card-inner {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 1rem;
+  background: var(--surface);
+  padding: 1rem;
+}
+
+@media (min-width: 768px) {
+  .cs-root {
+    height: 80rem;
+    padding: 5rem;
+  }
+
+  .cs-perspective-wrap {
+    padding: 10rem 0;
+  }
+
+  .cs-card {
+    height: 40rem;
+    padding: 1.5rem;
+  }
+
+  .cs-card-inner {
+    border-radius: 1rem;
+    padding: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-card {
+    transform: none !important;
+  }
+}
+
+.dm-stats {
+  padding: 16px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+  .dm-stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.dm-icon {
+  color: var(--accent);
+}
+
+.dm-bar {
+  background: var(--accent);
+  border-radius: 4px 4px 0 0;
+}

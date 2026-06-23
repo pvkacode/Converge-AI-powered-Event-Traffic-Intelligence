@@ -25,8 +25,12 @@ import {
 } from "@phosphor-icons/react";
 import { MiniDemo } from "./MiniDemo";
 import { HeroLayerNav } from "./HeroLayerNav";
+import { ContainerScroll } from "@/components/ui/ContainerScroll";
+import DashboardMockup from "@/components/ui/DashboardMockup";
 import { PIPELINE_LAYERS, LAYER_COLORS } from "./constants";
 import { useCountUp, useInView, scrollToId, useMounted } from "./hooks";
+import type { HeroStats } from "@/lib/hero-stats-types";
+import { formatIncidents } from "@/lib/hero-stats-format";
 import "./hero.css";
 
 const LAYER_ICONS: Record<string, React.ReactNode> = {
@@ -127,8 +131,14 @@ function CountResult({
   );
 }
 
-function CriticalTriggersMetric({ enabled }: { enabled: boolean }) {
-  const val = useCountUp(7, 1200, enabled);
+function CriticalTriggersMetric({
+  enabled,
+  count,
+}: {
+  enabled: boolean;
+  count: number;
+}) {
+  const val = useCountUp(count, 1200, enabled);
   return (
     <div className="hero-result-item">
       <div style={{ color: "var(--hero-accent)", marginBottom: 8 }}>
@@ -145,19 +155,28 @@ function CriticalTriggersMetric({ enabled }: { enabled: boolean }) {
   );
 }
 
-function PValueMetric({ enabled }: { enabled: boolean }) {
+function PValueMetric({
+  enabled,
+  mantissa,
+  exponent,
+}: {
+  enabled: boolean;
+  mantissa: number;
+  exponent: number;
+}) {
   const text = useCountUp(0, 1, false);
   const { ref, inView } = useInView(0.15);
   const show = enabled && inView;
+  const hasP = Number.isFinite(mantissa) && Number.isFinite(exponent);
   return (
     <div className="hero-result-item" ref={ref as React.RefObject<HTMLDivElement>}>
       <div style={{ color: "var(--hero-accent)", marginBottom: 8 }}>
         <Lightning size={22} weight="duotone" />
       </div>
       <div className="hero-result-num" style={{ fontSize: 26 }}>
-        {show ? (
+        {show && hasP ? (
           <>
-            2.5 × 10<sup style={{ fontSize: 14 }}>−91</sup>
+            {mantissa} × 10<sup style={{ fontSize: 14 }}>−{exponent}</sup>
           </>
         ) : (
           text
@@ -168,12 +187,13 @@ function PValueMetric({ enabled }: { enabled: boolean }) {
   );
 }
 
-export function HeroPage() {
+export function HeroPage({ stats }: { stats: HeroStats }) {
   const mounted = useMounted(50);
   const titleOn = useMounted(0);
-  const subOn = useMounted(200);
-  const ctaOn = useMounted(400);
-  const statsOn = useMounted(600);
+  const kickerOn = useMounted(250);
+  const subOn = useMounted(450);
+  const ctaOn = useMounted(650);
+  const statsOn = useMounted(850);
 
   const pipelineView = useInView(0.15);
   const diffView = useInView(0.15);
@@ -186,7 +206,9 @@ export function HeroPage() {
       <section className="hero-banner">
         <div className="hero-banner-grid">
           <div>
-            <p className="hero-kicker">Bengaluru Traffic Police · ASTraM · Gridlock 2.0</p>
+            <p className={`hero-kicker${kickerOn ? " is-visible" : ""}`}>
+              Bengaluru Traffic Police · ASTraM · Gridlock 2.0
+            </p>
             <h1 className={`hero-title${titleOn ? " is-visible" : ""}`}>CONVERGE</h1>
             <p className={`hero-subtitle${subOn ? " is-visible" : ""}`}>
               From reactive patrol logs to a predictive, self-improving disruption-intelligence
@@ -201,10 +223,31 @@ export function HeroPage() {
               </button>
             </div>
             <div className={`hero-stats${statsOn ? " is-visible" : ""}`}>
-              <HeroStat icon={<MapPin size={18} weight="duotone" />} end={8173} label="real incidents" enabled={statsOn} />
-              <HeroStat icon={<Target size={18} weight="duotone" />} end={80} label="hotspots found" enabled={statsOn} />
-              <HeroStat icon={<Users size={18} weight="duotone" />} end={294} label="junctions mapped" enabled={statsOn} />
-              <HeroStat icon={<TrendUp size={18} weight="duotone" />} end={49.81} label="CVaR reduction" isDecimal enabled={statsOn} />
+              <HeroStat
+                icon={<MapPin size={18} weight="duotone" />}
+                end={stats.incidentsTotal}
+                label="real incidents"
+                enabled={statsOn}
+              />
+              <HeroStat
+                icon={<Target size={18} weight="duotone" />}
+                end={stats.hotspotsSignificant}
+                label="hotspots found"
+                enabled={statsOn}
+              />
+              <HeroStat
+                icon={<Users size={18} weight="duotone" />}
+                end={stats.junctionsTotal}
+                label="junctions mapped"
+                enabled={statsOn}
+              />
+              <HeroStat
+                icon={<TrendUp size={18} weight="duotone" />}
+                end={stats.cvarReductionPct}
+                label="CVaR reduction"
+                isDecimal
+                enabled={statsOn}
+              />
             </div>
           </div>
 
@@ -242,7 +285,9 @@ export function HeroPage() {
             >
               <span className="hero-pill hero-pill-critical">CRITICAL</span>
               <div style={{ fontSize: 13, fontWeight: 600, marginTop: 6 }}>Model Health</div>
-              <div className="dim" style={{ fontSize: 11 }}>3 of 20 checks</div>
+              <div className="dim" style={{ fontSize: 11 }}>
+                {stats.healthCriticalChecks} of {stats.healthTotalChecks} checks
+              </div>
             </div>
 
             <div
@@ -250,7 +295,7 @@ export function HeroPage() {
               style={{ top: "38%", left: "18%" }}
             >
               <div style={{ fontFamily: "var(--font-mono)", fontSize: 13, color: "var(--hero-accent)" }}>
-                Central Zone 2
+                {stats.topSpilloverZone}
               </div>
               <div className="dim" style={{ fontSize: 11 }}>Top Spillover Zone</div>
             </div>
@@ -260,7 +305,9 @@ export function HeroPage() {
               style={{ bottom: 32, right: 0 }}
             >
               <div style={{ fontFamily: "var(--font-mono)", fontSize: 14, fontWeight: 700, color: "var(--hero-gold)" }}>
-                p ≈ 10⁻⁹¹
+                {Number.isFinite(stats.spilloverPExponent)
+                  ? `p ≈ 10⁻${stats.spilloverPExponent}`
+                  : "p ≈ —"}
               </div>
               <div className="dim" style={{ fontSize: 11 }}>spillover confirmed</div>
             </div>
@@ -272,15 +319,24 @@ export function HeroPage() {
         </div>
       </section>
 
+      {/* ── Scroll-driven dashboard preview ── */}
+      <div className="hero-container-scroll-wrap">
+        <ContainerScroll titleComponent={<></>}>
+          <DashboardMockup stats={stats} />
+        </ContainerScroll>
+      </div>
+
       {/* ── Section 2: Pipeline ── */}
       <section className="hero-pipeline" id="hero-system" ref={pipelineView.ref as React.RefObject<HTMLElement>}>
         <div className="hero-inner">
-          <p className="hero-eyebrow">The System</p>
-          <h2 className="hero-section-title">Seven layers. One decision.</h2>
-          <p className="hero-section-sub">
+          <p className={`hero-eyebrow hero-fade-up${pipelineView.inView ? " is-visible" : ""}`}>The System</p>
+          <h2 className={`hero-section-title hero-fade-up${pipelineView.inView ? " is-visible" : ""}`}>
+            Seven layers. One decision.
+          </h2>
+          <p className={`hero-section-sub hero-fade-up${pipelineView.inView ? " is-visible" : ""}`}>
             Every layer feeds the next — from raw incident data to a CVaR-bounded operational plan.
           </p>
-          <p className="hero-pipeline-hint">
+          <p className={`hero-pipeline-hint hero-fade-up${pipelineView.inView ? " is-visible" : ""}`}>
             <HandPointing size={16} weight="duotone" aria-hidden />
             Click any layer card to open its full dashboard — outputs, tables, maps, and methodology.
           </p>
@@ -308,7 +364,9 @@ export function HeroPage() {
                     </span>
                     <span className="hero-layer-name">{layer.title}</span>
                     <span className="hero-layer-tech">{layer.techniques}</span>
-                    <span className="hero-layer-tooltip">{layer.metric}</span>
+                    <span className="hero-layer-tooltip">
+                      {stats.layerMetrics[layer.id] ?? layer.metric}
+                    </span>
                   </Link>
                   {i < PIPELINE_LAYERS.length - 1 && (
                     <div className="hero-pipe-arrow">
@@ -351,8 +409,10 @@ export function HeroPage() {
       {/* ── Section 4: Differentiators ── */}
       <section className="hero-diff" ref={diffView.ref as React.RefObject<HTMLElement>}>
         <div className="hero-inner">
-          <p className="hero-eyebrow">What makes this different</p>
-          <h2 className="hero-section-title">Built for operators, documented for skeptics</h2>
+          <p className={`hero-eyebrow hero-fade-up${diffView.inView ? " is-visible" : ""}`}>What makes this different</p>
+          <h2 className={`hero-section-title hero-fade-up${diffView.inView ? " is-visible" : ""}`}>
+            Built for operators, documented for skeptics
+          </h2>
 
           <div className="hero-diff-grid">
             <div
@@ -364,11 +424,12 @@ export function HeroPage() {
               </div>
               <h3 className="hero-diff-title">Real data, cleaned honestly</h3>
               <p className="hero-diff-body">
-                8,173 ASTraM incidents from Bengaluru Traffic Police. Right-censoring modeled via
-                Kaplan-Meier, not hidden. Every row weighted by trust_score — none deleted.
+                {formatIncidents(stats.incidentsTotal)} ASTraM incidents from Bengaluru Traffic Police.
+                Right-censoring modeled via Kaplan-Meier, not hidden. Every row weighted by trust_score —
+                none deleted.
               </p>
               <div className="hero-diff-stat" style={{ color: "var(--hero-accent)" }}>
-                4,500+ censored rows handled correctly
+                {formatIncidents(stats.censoredRows)} censored rows handled correctly
               </div>
             </div>
 
@@ -412,17 +473,17 @@ export function HeroPage() {
 
       {/* ── Section 5: Results strip ── */}
       <section className="hero-results" ref={resultsView.ref as React.RefObject<HTMLElement>}>
-        <div className="hero-results-row">
+        <div className={`hero-results-row${resultsView.inView ? " is-visible" : ""}`}>
           <CountResult
             icon={<MapPin size={22} weight="duotone" />}
-            end={80}
-            suffix=" / 294"
+            end={stats.hotspotsSignificant}
+            suffix={` / ${stats.junctionsTotal}`}
             label="significant hotspots"
             enabled={resultsView.inView}
           />
           <CountResult
             icon={<Pulse size={22} weight="duotone" />}
-            end={0.7}
+            end={stats.rsfCIndex}
             label="RSF C-index"
             sub="vs 0.50 random"
             enabled={resultsView.inView}
@@ -430,7 +491,7 @@ export function HeroPage() {
           />
           <CountResult
             icon={<Clock size={22} weight="duotone" />}
-            end={40.9}
+            end={stats.plannedEventMae}
             suffix=" min"
             label="planned-event MAE"
             enabled={resultsView.inView}
@@ -438,14 +499,18 @@ export function HeroPage() {
           />
           <CountResult
             icon={<Target size={22} weight="duotone" />}
-            end={57.6}
+            end={stats.within20Pct}
             suffix="%"
             label="within 20 min of actual"
             enabled={resultsView.inView}
             decimals={1}
           />
-          <PValueMetric enabled={resultsView.inView} />
-          <CriticalTriggersMetric enabled={resultsView.inView} />
+          <PValueMetric
+            enabled={resultsView.inView}
+            mantissa={stats.spilloverPMantissa}
+            exponent={stats.spilloverPExponent}
+          />
+          <CriticalTriggersMetric enabled={resultsView.inView} count={stats.criticalRetrainTriggers} />
         </div>
       </section>
 

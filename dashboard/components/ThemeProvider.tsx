@@ -8,20 +8,20 @@ interface ThemeCtx {
 }
 const Ctx = createContext<ThemeCtx>({ theme: "light", toggle: () => {} });
 
-// The anti-flash script in app/layout.tsx already resolves the theme
-// (stored choice > OS preference > light) and writes it to <html
-// data-theme> before hydration runs, so we just read it back here instead
-// of recomputing it. SSR-safe: window is undefined during server render, so
-// this falls back to the static "light" default that matches the
-// server-rendered <html> attribute, avoiding a hydration mismatch.
-function getInitialTheme(): Theme {
-  if (typeof window === "undefined") return "light";
+// SSR always starts as "light" to match layout.tsx. After mount we sync from
+// <html data-theme>, which the blocking head script may have already set from
+// localStorage or OS preference.
+function readThemeFromDom(): Theme {
   const attr = document.documentElement.getAttribute(THEME_STORAGE_KEY);
   return isTheme(attr) ? attr : "light";
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>(getInitialTheme);
+  const [theme, setTheme] = useState<Theme>("light");
+
+  useEffect(() => {
+    setTheme(readThemeFromDom());
+  }, []);
 
   useEffect(() => {
     document.documentElement.setAttribute(THEME_STORAGE_KEY, theme);
